@@ -1,8 +1,11 @@
 
+%define OPNGENX86
+
 FMDIV_BITS		equ		8
 FMDIV_ENT		equ		(1 << FMDIV_BITS)
 FMVOL_SFTBIT	equ		4
 
+%ifdef OPNGENX86
 SIN_BITS		equ		11
 EVC_BITS		equ		10
 ENV_BITS		equ		16
@@ -10,6 +13,15 @@ KF_BITS			equ		6
 FREQ_BITS		equ		21
 ENVTBL_BIT		equ		14
 SINTBL_BIT		equ		14
+%else
+SIN_BITS		equ		10
+EVC_BITS		equ		10
+ENV_BITS		equ		16
+KF_BITS			equ		6
+FREQ_BITS		equ		21
+ENVTBL_BIT		equ		14
+SINTBL_BIT		equ		15
+%endif
 
 TL_BITS			equ		(FREQ_BITS+2)
 OPM_OUTSB		equ		(TL_BITS + 2 - 16)
@@ -104,8 +116,10 @@ section .text
 
 	extern	_opncfg
 
+%ifdef OPNGENX86
 	extern	_sinshift
 	extern	_envshift
+%endif
 
 ENVCURVE	equ		(_opncfg + opncfg_t.envcurve)
 SINTABLE	equ		(_opncfg + opncfg_t.sintable)
@@ -119,11 +133,19 @@ ENVTABLE	equ		(_opncfg + opncfg_t.envtable)
 				add		eax, [edi + slot_t.freq_cnt]
 				shr		eax, (FREQ_BITS - SIN_BITS)
 				and		eax, (SIN_ENT - 1)
+%ifdef OPNGENX86
 				mov		cl, [_sinshift + eax]
+%endif
 				mov		eax, [SINTABLE + eax*4]
+%ifdef OPNGENX86
 				add		cl, [_envshift + edx]
+%endif
 				imul	eax, [ENVTABLE + edx*4]
+%ifdef OPNGENX86
 				sar		eax, cl
+%else
+				sar		eax, (ENVTBL_BIT + SINTBL_BIT - TL_BITS)
+%endif
 %endmacro
 
 %macro	calcenv		2
@@ -280,6 +302,7 @@ og_calcch_nt:	add		edi, ch_t_size
 og_nextsamp:	neg		ebx
 				mov		[esi + opngen_t.calcremain], ebx
 				mov		ecx, eax
+%ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
 				add		eax, [esp + OPN_SAMPL]
 				imul	dword [_opncfg + opncfg_t.fmvol]
@@ -289,6 +312,21 @@ og_nextsamp:	neg		ebx
 				add		eax, [esp + OPN_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
 				add		[ebp+4], edx
+%else
+				mov		edx, [_opncfg + opncfg_t.fmvol]
+				imul	eax, [esi + opngen_t.outdl]
+				imul	ecx, [esi + opngen_t.outdr]
+				add		eax, [esp + OPN_SAMPL]
+				add		ecx, [esp + OPN_SAMPR]
+				sar		eax, 8
+				sar		ecx, 8
+				imul	eax, edx
+				imul	ecx, edx
+				sar		eax, (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8)
+				sar		ecx, (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8)
+				add		[ebp], eax
+				add		[ebp+4], ecx
+%endif
 				add		ebp, byte 8
 				dec		dword [esp + OPN_LENG]
 				jne		near og_fmout_st
@@ -424,6 +462,7 @@ ogv_calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
 ogv_nextsamp:	neg		ebx
 				mov		[esi + opngen_t.calcremain], ebx
 				mov		ecx, eax
+%ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
 				add		eax, [esp + OPNV_SAMPL]
 				imul	dword [_opncfg + opncfg_t.fmvol]
@@ -433,6 +472,21 @@ ogv_nextsamp:	neg		ebx
 				add		eax, [esp + OPNV_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
 				add		[ebp+4], edx
+%else
+				mov		edx, [_opncfg + opncfg_t.fmvol]
+				imul	eax, [esi + opngen_t.outdl]
+				imul	ecx, [esi + opngen_t.outdr]
+				add		eax, [esp + OPN_SAMPL]
+				add		ecx, [esp + OPN_SAMPR]
+				sar		eax, 8
+				sar		ecx, 8
+				imul	eax, edx
+				imul	ecx, edx
+				sar		eax, (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8)
+				sar		ecx, (OPM_OUTSB + FMDIV_BITS + 1 + 6 - FMVOL_SFTBIT - 8)
+				add		[ebp], eax
+				add		[ebp+4], ecx
+%endif
 				add		ebp, byte 8
 				dec		dword [esp + OPNV_LENG]
 				jne		near ogv_fmout_st
