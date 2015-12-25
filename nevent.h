@@ -70,11 +70,12 @@ typedef	struct _neventitem	_NEVENTITEM;
 typedef	struct _neventitem	*NEVENTITEM;
 typedef void (*NEVENTCB)(NEVENTITEM item);
 
-struct _neventitem {
+struct _neventitem
+{
 	SINT32		clock;
 	UINT32		flag;
 	NEVENTCB	proc;
-	UINT32		param;
+	INTPTR		userData;
 };
 
 typedef struct {
