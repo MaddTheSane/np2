@@ -7,7 +7,8 @@
 
 #include "sound.h"
 
-enum {
+enum
+{
 	OPNCH_MAX		= 6,
 	OPNA_CLOCK		= 3993600,
 
@@ -16,71 +17,47 @@ enum {
 	OPN_MONORAL		= 0x00000000
 };
 
-
-#if defined(OPNGENX86)
-
-enum {
+enum
+{
 	FMDIV_BITS		= 8,
 	FMDIV_ENT		= (1 << FMDIV_BITS),
 	FMVOL_SFTBIT	= 4
 };
+
+#if defined(OPNGENX86)
 
 #define SIN_BITS		11
 #define EVC_BITS		10
 #define ENV_BITS		16
-#define KF_BITS			6
 #define FREQ_BITS		21
 #define ENVTBL_BIT		14
 #define SINTBL_BIT		14
 
-#elif defined(OPNGENARM)
-
-enum {
-	FMDIV_BITS		= 8,
-	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4
-};
-
-#define SIN_BITS		8
-#define	EVC_BITS		7
-#define	ENV_BITS		16
-#define	KF_BITS			6
-#define	FREQ_BITS		20
-#define	ENVTBL_BIT		14
-#define	SINTBL_BIT		14							// env+sin 30bit max
-
 #else
-
-enum {
-	FMDIV_BITS		= 8,
-	FMDIV_ENT		= (1 << FMDIV_BITS),
-	FMVOL_SFTBIT	= 4
-};
 
 #define	SIN_BITS		10
 #define	EVC_BITS		10
 #define	ENV_BITS		16
-#define	KF_BITS			6
 #define	FREQ_BITS		21
 #define	ENVTBL_BIT		14
 #define	SINTBL_BIT		15
 
 #endif
 
-#define	TL_BITS			(FREQ_BITS+2)
-#define	OPM_OUTSB		(TL_BITS + 2 - 16)			// OPM output 16bit
+#define	TL_BITS			(FREQ_BITS + 2)
+#define	OPM_OUTSB		(TL_BITS + 2 - 16)				/* OPM output 16bit */
 
 #define	SIN_ENT			(1L << SIN_BITS)
 #define	EVC_ENT			(1L << EVC_BITS)
 
-#define	EC_ATTACK		0								// ATTACK start
-#define	EC_DECAY		(EVC_ENT << ENV_BITS)			// DECAY start
-#define	EC_OFF			((2 * EVC_ENT) << ENV_BITS)		// OFF
+#define	EC_ATTACK		0								/* ATTACK start */
+#define	EC_DECAY		(EVC_ENT << ENV_BITS)			/* DECAY start */
+#define	EC_OFF			((2 * EVC_ENT) << ENV_BITS)		/* OFF */
 
-#define	TL_MAX			(EVC_ENT * 2)
-
-enum {
-	OPNSLOT1		= 0,				// slot number
+enum
+{
+	/* slot number */
+	OPNSLOT1		= 0,
 	OPNSLOT2		= 1,
 	OPNSLOT3		= 2,
 	OPNSLOT4		= 3,
@@ -92,53 +69,56 @@ enum {
 	EM_OFF			= 0
 };
 
-typedef struct {
-	SINT32		*detune1;			// detune1
-	SINT32		totallevel;			// total level
-	SINT32		decaylevel;			// decay level
-const SINT32	*attack;			// attack ratio
-const SINT32	*decay1;			// decay1 ratio
-const SINT32	*decay2;			// decay2 ratio
-const SINT32	*release;			// release ratio
-	SINT32 		freq_cnt;			// frequency count
-	SINT32		freq_inc;			// frequency step
-	SINT32		multiple;			// multiple
-	UINT8		keyscale;			// key scale
-	UINT8		env_mode;			// envelope mode
-	UINT8		envratio;			// envelope ratio
-	UINT8		ssgeg1;				// SSG-EG
+typedef struct
+{
+	SINT32		*detune1;			/* detune1 */
+	SINT32		totallevel;			/* total level */
+	SINT32		decaylevel;			/* decay level */
+const SINT32	*attack;			/* attack ratio */
+const SINT32	*decay1;			/* decay1 ratio */
+const SINT32	*decay2;			/* decay2 ratio */
+const SINT32	*release;			/* release ratio */
+	SINT32 		freq_cnt;			/* frequency count */
+	SINT32		freq_inc;			/* frequency step */
+	SINT32		multiple;			/* multiple */
+	UINT8		keyscalerate;		/* key scale */
+	UINT8		env_mode;			/* envelope mode */
+	UINT8		envratio;			/* envelope ratio */
+	UINT8		ssgeg1;				/* SSG-EG */
 
-	SINT32		env_cnt;			// envelope count
-	SINT32		env_end;			// envelope end count
-	SINT32		env_inc;			// envelope step
-	SINT32		env_inc_attack;		// envelope attack step
-	SINT32		env_inc_decay1;		// envelope decay1 step
-	SINT32		env_inc_decay2;		// envelope decay2 step
-	SINT32		env_inc_release;	// envelope release step
+	SINT32		env_cnt;			/* envelope count */
+	SINT32		env_end;			/* envelope end count */
+	SINT32		env_inc;			/* envelope step */
+	SINT32		env_inc_attack;		/* envelope attack step */
+	SINT32		env_inc_decay1;		/* envelope decay1 step */
+	SINT32		env_inc_decay2;		/* envelope decay2 step */
+	SINT32		env_inc_release;	/* envelope release step */
 } OPNSLOT;
 
-typedef struct {
+typedef struct
+{
 	OPNSLOT	slot[4];
-	UINT8	algorithm;			// algorithm
-	UINT8	feedback;			// self feedback
+	UINT8	algorithm;			/* algorithm */
+	UINT8	feedback;			/* self feedback */
 	UINT8	playing;
 	UINT8	outslot;
-	SINT32	op1fb;				// operator1 feedback
-	SINT32	*connect1;			// operator1 connect
-	SINT32	*connect3;			// operator3 connect
-	SINT32	*connect2;			// operator2 connect
-	SINT32	*connect4;			// operator4 connect
-	UINT32	keynote[4];			// key note				// ver0.27
+	SINT32	op1fb;				/* operator1 feedback */
+	SINT32	*connect1;			/* operator1 connect */
+	SINT32	*connect3;			/* operator3 connect */
+	SINT32	*connect2;			/* operator2 connect */
+	SINT32	*connect4;			/* operator4 connect */
+	UINT32	keynote[4];			/* key note */
 
-	UINT8	keyfunc[4];			// key function
-	UINT8	kcode[4];			// key code
-	UINT8	pan;				// pan
-	UINT8	extop;				// extendopelator-enable
-	UINT8	stereo;				// stereo-enable
+	UINT8	keyfunc[4];			/* key function */
+	UINT8	kcode[4];			/* key code */
+	UINT8	pan;				/* pan */
+	UINT8	extop;				/* extendopelator-enable */
+	UINT8	stereo;				/* stereo-enable */
 	UINT8	padding;
 } OPNCH;
 
-typedef struct {
+typedef struct
+{
 	UINT	playchannels;
 	UINT	playing;
 	SINT32	feedback2;
@@ -151,7 +131,8 @@ typedef struct {
 	OPNCH	opnch[OPNCH_MAX];
 } _OPNGEN, *OPNGEN;
 
-typedef struct {
+typedef struct
+{
 	SINT32	calc1024;
 	SINT32	fmvol;
 	UINT	ratebit;
@@ -186,4 +167,3 @@ void SOUNDCALL opngen_getpcmvr(OPNGEN opngen, SINT32 *buf, UINT count);
 #ifdef __cplusplus
 }
 #endif
-
