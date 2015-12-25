@@ -783,7 +783,7 @@ int profile_readint(const OEMCHAR *lpAppName, const OEMCHAR *lpKeyName, int nDef
 	{
 		nSize = min(NELEMENTS(szBuffer), pfp.cchString + 1);
 		milstr_ncpy(szBuffer, pfp.lpString, nSize);
-		return milstr_solveINT(szBuffer);
+		return (int)milstr_solveINT(szBuffer);
 	}
 }
 
