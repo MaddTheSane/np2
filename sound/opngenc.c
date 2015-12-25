@@ -16,7 +16,6 @@
 #define	SC(db)	(SINT32)((db) * ((3.0 / EG_STEP) * (1 << ENV_BITS))) + EC_DECAY
 #define	D2(v)	(((double)(6 << KF_BITS) * log((double)(v)) / log(2.0)) + 0.5)
 #define	FMASMSHIFT	(32 - 6 - (OPM_OUTSB + 1 + FMDIV_BITS) + FMVOL_SFTBIT)
-#define	FREQBASE4096	((double)OPNA_CLOCK / calcrate / 64)
 
 
 	OPNCFG	opncfg;
@@ -61,19 +60,17 @@ void opngen_initialize(UINT rate) {
 	double	pom;
 	long	detune;
 	double	freq;
-	UINT32	calcrate;
 
-	if (rate == 44100) {
+	if (rate > (OPNA_CLOCK / 144.0)) {
 		ratebit = 0;
 	}
-	else if (rate == 22050) {
+	else if (rate > (OPNA_CLOCK / 288.0)) {
 		ratebit = 1;
 	}
 	else {
 		ratebit = 2;
 	}
-	calcrate = (OPNA_CLOCK / 72) >> ratebit;
-	opncfg.calc1024 = FMDIV_ENT * 44100 / (OPNA_CLOCK / 72);
+	opncfg.calc1024 = (SINT32)((FMDIV_ENT * (rate << ratebit) / (OPNA_CLOCK / 72.0)) + 0.5);
 
 	for (i=0; i<EVC_ENT; i++) {
 #ifdef OPNGENX86
@@ -120,24 +117,12 @@ void opngen_initialize(UINT rate) {
 	}
 	opncfg.envcurve[EVC_ENT*2] = EVC_ENT;
 
-//	opmbaserate = (1L << FREQ_BITS) / (rate * x / 44100) * 55466;
-//	Ç≈Ç‡ç°ÇÕ x == 55466ÇæÇ©ÇÁÅc
-
-//	Ç±Ç±Ç≈ FREQ_BITS >= 16Ç™èåè
-	if (rate == 44100) {
-		opncfg.ratebit = 0 + (FREQ_BITS - 16);
-	}
-	else if (rate == 22050) {
-		opncfg.ratebit = 1 + (FREQ_BITS - 16);
-	}
-	else {
-		opncfg.ratebit = 2 + (FREQ_BITS - 16);
-	}
+	opncfg.ratebit = ratebit;
 
 	for (i=0; i<4; i++) {
 		for (j=0; j<32; j++) {
 			detune = dttable[i*32 + j];
-			sft = ratebit + (FREQ_BITS - 21);
+			sft = ratebit + (FREQ_BITS - 20);
 			if (sft >= 0) {
 				detune <<= sft;
 			}
@@ -153,21 +138,14 @@ void opngen_initialize(UINT rate) {
 		attacktable[i] = decaytable[i] = 0;
 	}
 	for (i=4; i<64; i++) {
-		freq = (double)(EVC_ENT << ENV_BITS) * FREQBASE4096;
-		if (i < 8) {							// ñYÇÍÇƒÇ‹Ç∑ÅB
-			freq *= 1.0 + (i & 2) * 0.25;
-		}
-		else if (i < 60) {
+		freq = (EVC_ENT << (ENV_BITS + ratebit)) * 72.0 / 64.0;
+		if (i < 60)
+		{
 			freq *= 1.0 + (i & 3) * 0.25;
 		}
 		freq *= (double)(1 << ((i >> 2) - 1));
-#if 0
-		attacktable[i] = (SINT32)((freq + OPM_ARRATE - 1) / OPM_ARRATE);
-		decaytable[i] = (SINT32)((freq + OPM_DRRATE - 1) / OPM_DRRATE);
-#else
 		attacktable[i] = (SINT32)(freq / OPM_ARRATE);
 		decaytable[i] = (SINT32)(freq / OPM_DRRATE);
-#endif
 		if (attacktable[i] >= EC_DECAY) {
 			TRACEOUT(("attacktable %d %d %ld", i, attacktable[i], EC_DECAY));
 		}
@@ -379,7 +357,7 @@ static void channleupdate(OPNCH *ch) {
 	slot = ch->slot;
 	if (!(ch->extop)) {
 		for (i=0; i<4; i++, slot++) {
-			slot->freq_inc = (fc + slot->detune1[kc]) * slot->multiple;
+			slot->freq_inc = ((fc + slot->detune1[kc]) * slot->multiple) >> 1;
 			evr = kc >> slot->keyscale;
 			if (slot->envratio != evr) {
 				slot->envratio = evr;
@@ -393,8 +371,7 @@ static void channleupdate(OPNCH *ch) {
 	else {
 		for (i=0; i<4; i++, slot++) {
 			s = extendslot[i];
-			slot->freq_inc = (ch->keynote[s] + slot->detune1[ch->kcode[s]])
-														* slot->multiple;
+			slot->freq_inc = ((ch->keynote[s] + slot->detune1[ch->kcode[s]]) * slot->multiple) >> 1;
 			evr = ch->kcode[s] >> slot->keyscale;
 			if (slot->envratio != evr) {
 				slot->envratio = evr;
@@ -536,7 +513,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value) {
 				fn = ((ch->keyfunc[0] & 7) << 8) + value;
 				ch->kcode[0] = (blk << 2) | kftable[fn >> 7];
 //				ch->keynote[0] = fn * opmbaserate / (1L << (22-blk));
-				ch->keynote[0] = (fn << (opncfg.ratebit + blk)) >> 6;
+				ch->keynote[0] = fn << (opncfg.ratebit + blk + FREQ_BITS - 21);
 				channleupdate(ch);
 				break;
 
@@ -550,7 +527,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value) {
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
 				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
 //				ch->keynote[chpos+1] = fn * opmbaserate / (1L << (22-blk));
-				ch->keynote[chpos+1] = (fn << (opncfg.ratebit + blk)) >> 6;
+				ch->keynote[chpos + 1] = fn << (opncfg.ratebit + blk + FREQ_BITS - 21);
 				channleupdate(ch);
 				break;
 
