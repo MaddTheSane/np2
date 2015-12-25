@@ -30,7 +30,7 @@ static void IOOUTCALL opn_o08a(UINT port, REG8 dat)
 static REG8 IOINPCALL opn_i088(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[1].s.status;
 }
 
 static REG8 IOINPCALL opn_i08a(UINT port)
@@ -94,7 +94,7 @@ static void IOOUTCALL opna_o18e(UINT port, REG8 dat)
 static REG8 IOINPCALL opna_i188(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[0].s.status;
 }
 
 static REG8 IOINPCALL opna_i18a(UINT port)
@@ -185,10 +185,21 @@ static const IOINP opna_i[4] = {
  */
 void boardx2_reset(const NP2CFG *pConfig)
 {
-	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
-	opna_reset(&g_opna[1], OPNA_MODE_2203);
+	UINT nIrq1;
+	UINT nIrq2;
 
-	fmtimer_reset(0xc0);
+	nIrq1 = (pConfig->snd86opt & 0x10) | ((pConfig->snd86opt & 0x4) << 5) | ((pConfig->snd86opt & 0x8) << 3);
+	nIrq2 = (pConfig->snd26opt & 0xc0) | 0x10;
+	if (nIrq1 == nIrq2)
+	{
+		nIrq2 = (nIrq2 == 0xd0) ? 0x90 : 0xd0;
+	}
+
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
+	opna_timer(&g_opna[0], nIrq1, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
+	opna_reset(&g_opna[1], OPNA_MODE_2203);
+	opna_timer(&g_opna[1], nIrq2, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
+
 	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
 	opngen_setcfg(&g_opna[1].opngen, 3, 0);
 	if (pConfig->snd86opt & 2)
@@ -196,6 +207,7 @@ void boardx2_reset(const NP2CFG *pConfig)
 		soundrom_load(0xcc000, OEMTEXT("86"));
 	}
 	fmboard_extreg(extendchannel);
+	pcm86io_setopt(pConfig->snd86opt);
 }
 
 void boardx2_bind(void)

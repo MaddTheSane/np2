@@ -47,6 +47,7 @@ void opna_reset(POPNA opna, REG8 cCaps)
 	memset(&opna->s, 0, sizeof(opna->s));
 	opna->s.adpcmmask = ~(0x1c);
 	opna->s.cCaps = cCaps;
+	opna->s.irq = 0xff;
 	opna->s.reg[0x07] = 0xbf;
 	opna->s.reg[0x0e] = 0xff;
 	opna->s.reg[0x0f] = 0xff;
@@ -218,7 +219,7 @@ REG8 opna_readStatus(POPNA opna)
 {
 	if (opna->s.cCaps & OPNA_HAS_TIMER)
 	{
-		return g_fmtimer.status;
+		return opna->s.status;
 	}
 	return 0;
 }
@@ -244,7 +245,7 @@ REG8 opna_readExtendedStatus(POPNA opna)
 
 	if (cCaps & OPNA_HAS_TIMER)
 	{
-		ret |= g_fmtimer.status;
+		ret |= opna->s.status;
 	}
 
 	return ret;
@@ -339,25 +340,27 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			}
 			keydisp_opnakeyon(opna->s.reg, cData);
 		}
-		else
+		else if (nAddress == 0x27)
 		{
 			if (cCaps & OPNA_HAS_TIMER)
 			{
-				fmtimer_setreg(nAddress, cData);
+				opna_settimer(opna, cData);
 			}
-			if (!pExt)
+
+			if (pExt)
 			{
-				if (nAddress == 0x27)
-				{
-					opna->opngen.opnch[2].extop = cData & 0xc0;
-				}
+				pExt->WriteRegister(nAddress, cData);
 			}
 			else
 			{
-				if ((nAddress == 0x22) || (nAddress == 0x27))
-				{
-					pExt->WriteRegister(nAddress, cData);
-				}
+				opna->opngen.opnch[2].extop = cData & 0xc0;
+			}
+		}
+		else if (nAddress == 0x22)
+		{
+			if (pExt)
+			{
+				pExt->WriteRegister(nAddress, cData);
 			}
 		}
 	}

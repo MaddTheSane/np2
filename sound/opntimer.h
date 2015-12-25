@@ -6,17 +6,7 @@
 #pragma once
 
 #include "nevent.h"
-
-typedef struct {
-	UINT16	timera;
-	UINT8	timerb;
-	UINT8	status;
-	UINT8	reg;
-	UINT8	intr;
-	UINT8	irq;
-	UINT8	intdisabel;
-} _FMTIMER, *FMTIMER;
-
+#include "opna.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,10 +15,9 @@ extern "C" {
 void fmport_a(NEVENTITEM item);
 void fmport_b(NEVENTITEM item);
 
-void fmtimer_reset(UINT irq);
-void fmtimer_setreg(UINT reg, REG8 value);
+void opna_timer(POPNA opna, UINT nIrq, NEVENTID nTimerA, NEVENTID nTimerB);
+void opna_settimer(POPNA opna, REG8 cData);
 
 #ifdef __cplusplus
 }
 #endif
-

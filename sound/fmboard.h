@@ -25,7 +25,6 @@ extern "C"
 
 extern	SOUNDID		g_nSoundID;
 extern	_OPNA		g_opna[OPNA_MAX];
-extern	_FMTIMER	g_fmtimer;
 extern	_PCM86		pcm86;
 extern	_CS4231		cs4231;
 

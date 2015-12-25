@@ -65,7 +65,7 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat)
 static REG8 IOINPCALL ymf_i188(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[0].s.status;
 }
 
 static REG8 IOINPCALL ymf_i18a(UINT port)
@@ -97,7 +97,7 @@ static REG8 IOINPCALL ymf_i18c(UINT port)
 {
 	if (g_opna[0].s.extend)
 	{
-		return (g_fmtimer.status & 3);
+		return (g_opna[0].s.status & 3);
 	}
 
 	(void)port;
@@ -147,8 +147,8 @@ static const IOINP ymf_i[4] = {
 void board118_reset(const NP2CFG *pConfig)
 {
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_S98);
+	opna_timer(&g_opna[0], 0xd0, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
 
-	fmtimer_reset(0xc0);
 	opngen_setcfg(&g_opna[0].opngen, 3, OPN_STEREO | 0x038);
 	cs4231io_reset();
 	soundrom_load(0xcc000, OEMTEXT("118"));

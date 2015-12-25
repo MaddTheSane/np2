@@ -27,7 +27,6 @@
 	SOUNDID g_nSoundID;
 	_OPNA		g_opna[OPNA_MAX];
 
-	_FMTIMER	g_fmtimer;
 	_PCM86		pcm86;
 	_CS4231		cs4231;
 
@@ -76,7 +75,7 @@ REG8 fmboard_getjoy(POPNA opna)
 
 	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
 	ret &= 0x3f;
-	ret |= g_fmtimer.intr;
+	ret |= opna->s.intr;
 	return ret;
 }
 

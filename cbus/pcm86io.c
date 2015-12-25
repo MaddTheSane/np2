@@ -16,6 +16,8 @@ static const SINT32 pcm86rescue[] = {PCM86_RESCUE * 32, PCM86_RESCUE * 24,
 									 PCM86_RESCUE *  8, PCM86_RESCUE *  6,
 									 PCM86_RESCUE *  4, PCM86_RESCUE *  3};
 
+static const UINT8 s_irqtable[8] = {0xff, 0xff, 0xff, 0xff, 0x03, 0x0a, 0x0d, 0x0c};
+
 
 static void IOOUTCALL pcm86_oa460(UINT port, REG8 val) {
 
@@ -233,6 +235,15 @@ static REG8 IOINPCALL pcm86_inpdummy(UINT port) {
 
 
 // ----
+
+/**
+ * Reset
+ * @param[in] cDipSw Dip switch
+ */
+void pcm86io_setopt(REG8 cDipSw)
+{
+	pcm86.irq = s_irqtable[(cDipSw >> 3) & 7];
+}
 
 void pcm86io_bind(void) {
 

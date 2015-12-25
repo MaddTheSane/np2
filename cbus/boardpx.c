@@ -190,7 +190,7 @@ static void IOOUTCALL p86_o28e(UINT port, REG8 dat)
 static REG8 IOINPCALL p86_i288(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[4].s.status;
 }
 
 static REG8 IOINPCALL p86_i28a(UINT port)
@@ -261,7 +261,7 @@ static void IOOUTCALL spr_o48e(UINT port, REG8 dat)
 static REG8 IOINPCALL spr_i488(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[0].s.status;
 }
 
 static REG8 IOINPCALL spr_i48a(UINT port)
@@ -273,7 +273,7 @@ static REG8 IOINPCALL spr_i48a(UINT port)
 static REG8 IOINPCALL spr_i48c(UINT port)
 {
 	(void)port;
-	return (g_fmtimer.status & 3);
+	return (g_opna[0].s.status & 3);
 }
 
 static REG8 IOINPCALL spr_i48e(UINT port)
@@ -324,7 +324,7 @@ static void IOOUTCALL spr_o58e(UINT port, REG8 dat)
 static REG8 IOINPCALL spr_i588(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[1].s.status;
 }
 
 static REG8 IOINPCALL spr_i58a(UINT port)
@@ -336,7 +336,7 @@ static REG8 IOINPCALL spr_i58a(UINT port)
 static REG8 IOINPCALL spr_i58c(UINT port)
 {
 	(void)port;
-	return (g_fmtimer.status & 3);
+	return (g_opna[1].s.status & 3);
 }
 
 static REG8 IOINPCALL spr_i58e(UINT port)
@@ -387,12 +387,19 @@ static const IOINP spr_i2[4] = {
  */
 void boardpx1_reset(const NP2CFG *pConfig)
 {
+	UINT nIrq1;
+	UINT nIrq2;
+
+	nIrq1 = (pConfig->spbopt & 0xc0) | 0x10;
+	nIrq2 = (nIrq1 == 0xd0) ? 0x90 : 0xd0;
+
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
-	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_timer(&g_opna[0], nIrq1, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
+	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM);
+	opna_timer(&g_opna[1], nIrq2, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
 	opna_reset(&g_opna[2], OPNA_MODE_3438);
 	opna_reset(&g_opna[3], OPNA_MODE_3438);
 
-	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
 	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
 	opngen_setcfg(&g_opna[2].opngen, 6, OPN_STEREO | 0x3f);
@@ -437,13 +444,20 @@ static void extendchannelx2(REG8 enable) {
  */
 void boardpx2_reset(const NP2CFG *pConfig)
 {
+	UINT nIrq1;
+	UINT nIrq2;
+
+	nIrq1 = (pConfig->spbopt & 0xc0) | 0x10;
+	nIrq2 = (nIrq1 == 0xd0) ? 0x90 : 0xd0;
+
 	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_timer(&g_opna[0], nIrq1, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
 	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM);
+	opna_timer(&g_opna[1], nIrq2, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
 	opna_reset(&g_opna[2], OPNA_MODE_3438);
 	opna_reset(&g_opna[3], OPNA_MODE_3438);
 	opna_reset(&g_opna[4], OPNA_MODE_2608 | OPNA_HAS_ADPCM);
 
-	fmtimer_reset(pConfig->spbopt & 0xc0);
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
 	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
 	opngen_setcfg(&g_opna[2].opngen, 6, OPN_STEREO | 0x3f);
@@ -452,6 +466,7 @@ void boardpx2_reset(const NP2CFG *pConfig)
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opna[0].s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 	fmboard_extreg(extendchannelx2);
+	pcm86io_setopt(0x00);
 }
 
 /**
