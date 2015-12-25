@@ -1311,7 +1311,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						(scrnmng_isdispclockclick(&p))) {
 						np2oscfg.clk_x++;
 						sysmng_update(SYS_UPDATEOSCFG);
-						dclock_reset();
+						DispClock::GetInstance()->Reset();
 					}
 				}
 #endif
@@ -1344,7 +1344,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						(np2oscfg.clk_x)) {
 						np2oscfg.clk_fnt++;
 						sysmng_update(SYS_UPDATEOSCFG);
-						dclock_reset();
+						DispClock::GetInstance()->Reset();
 					}
 				}
 #endif
@@ -1448,7 +1448,7 @@ static void ExecuteOneFrame(BOOL bDraw)
 	pccore_exec(bDraw);
 	recvideo_write();
 #if defined(SUPPORT_DCLOCK)
-	dclock_callback();
+	DispClock::GetInstance()->Update();
 #endif
 }
 

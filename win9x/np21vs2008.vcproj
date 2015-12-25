@@ -1559,26 +1559,6 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\dclockd.x86"
-						>
-						<FileConfiguration
-							Name="Debug|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="NASM"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath=".\x86\makegrph.x86"
 						>
 						<FileConfiguration
