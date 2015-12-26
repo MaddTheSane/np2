@@ -219,6 +219,7 @@ BRESULT sound_create(UINT rate, UINT ms) {
 		case 11025:
 		case 22050:
 		case 44100:
+		case 48000:
 			break;
 
 		default:

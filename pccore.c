@@ -203,7 +203,7 @@ static void sound_init(void)
 	UINT	rate;
 
 	rate = np2cfg.samplingrate;
-	if ((rate != 11025) && (rate != 22050) && (rate != 44100))
+	if ((rate != 11025) && (rate != 22050) && (rate != 44100) && (rate != 48000))
 	{
 		rate = 0;
 	}
