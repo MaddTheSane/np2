@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "oplgen.h"
 #include "statsave.h"
 
 /**
@@ -43,6 +44,7 @@ struct tagOpl3
 {
 	struct tagOpl3State s;
 	INTPTR userdata;
+	_OPLGEN oplgen;
 };
 
 typedef struct tagOpl3 OPL3;

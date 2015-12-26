@@ -950,6 +950,22 @@ SOURCE=..\sound\opl3.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound\oplgen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgeng.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\ext\opna.cpp
 # End Source File
 # Begin Source File

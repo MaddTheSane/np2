@@ -126,7 +126,16 @@ void opl3_bind(POPL3 opl3)
 	{
 		pExt->Reset();
 	}
+	else
+	{
+		oplgen_reset(&opl3->oplgen, nBaseClock);
+	}
 	restore(opl3);
+
+	if (pExt == NULL)
+	{
+		sound_streamregist(&opl3->oplgen, (SOUNDCB)oplgen_getpcm);
+	}
 
 	keydisp_bindopl3(opl3->s.reg, (cCaps & OPL3_HAS_OPL3) ? 18 : 9, nBaseClock);
 }
@@ -221,6 +230,11 @@ static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 	{
 		pExt->WriteRegister(nAddress, cData);
 	}
+	else
+	{
+		sound_sync();
+		oplgen_setreg(&opl3->oplgen, nAddress, cData);
+	}
 }
 
 /**
@@ -294,6 +308,13 @@ static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 	{
 		pExt->WriteRegister(nAddress + 0x100, cData);
 	}
+#if 0
+	else
+	{
+		sound_sync();
+		oplgen_setreg(&opl3->oplgen, nAddress + 0x100, cData);
+	}
+#endif
 }
 
 /**

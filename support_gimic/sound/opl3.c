@@ -5,6 +5,8 @@
 
 #include "compiler.h"
 #include "opl3.h"
+#include "sound.h"
+#include "generic/keydisp.h"
 
 static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData);
@@ -43,6 +45,30 @@ void opl3_reset(POPL3 opl3, REG8 cCaps)
  */
 static void restore(POPL3 opl3)
 {
+	UINT i;
+
+	for (i = 0x20; i < 0x100; i++)
+	{
+		if (((i & 0xe0) == 0xa0) || ((i & 0xe0) == 0xc0))
+		{
+			continue;
+		}
+		if (((i & 0x1f) >= 0x18) || ((i & 0x07) >= 0x06))
+		{
+			continue;
+		}
+		writeRegister(opl3, i, opl3->s.reg[i]);
+		writeExtendedRegister(opl3, i, opl3->s.reg[i + 0x100]);
+	}
+	for (i = 0xa0; i < 0xa9; i++)
+	{
+		writeRegister(opl3, i, opl3->s.reg[i]);
+		writeRegister(opl3, i + 0x10, (REG8)(opl3->s.reg[i + 0x10] & 0xdf));
+		writeRegister(opl3, i + 0x20, opl3->s.reg[i + 0x20]);
+		writeExtendedRegister(opl3, i, opl3->s.reg[i + 0x100]);
+		writeExtendedRegister(opl3, i + 0x10, (REG8)(opl3->s.reg[i + 0x110] & 0xdf));
+		writeExtendedRegister(opl3, i + 0x20, opl3->s.reg[i + 0x120]);
+	}
 }
 
 /**
@@ -51,7 +77,17 @@ static void restore(POPL3 opl3)
  */
 void opl3_bind(POPL3 opl3)
 {
+	UINT nBaseClock = 3579545;
+	UINT8 cCaps = opl3->s.cCaps;
+
+	nBaseClock = (cCaps & OPL3_HAS_OPL3) ? 3579545 : 3993600;
+
+	oplgen_reset(&opl3->oplgen, nBaseClock);
+	sound_streamregist(&opl3->oplgen, (SOUNDCB)oplgen_getpcm);
+
 	restore(opl3);
+
+	keydisp_bindopl3(opl3->s.reg, (cCaps & OPL3_HAS_OPL3) ? 18 : 9, nBaseClock);
 }
 
 /**
@@ -84,6 +120,63 @@ void opl3_writeRegister(POPL3 opl3, UINT nAddress, REG8 cData)
  */
 static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 {
+	const UINT8 cCaps = opl3->s.cCaps;
+
+	switch (nAddress & 0xe0)
+	{
+		case 0x20:
+		case 0x40:
+		case 0x60:
+		case 0x80:
+			if (((nAddress & 0x1f) >= 0x18) || ((nAddress & 7) >= 6))
+			{
+				return;
+			}
+			break;
+
+		case 0xa0:
+			if (nAddress == 0xbd)
+			{
+				break;
+			}
+			if ((nAddress & 0x0f) >= 9)
+			{
+				return;
+			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, (REG8)(nAddress & 0x0f), cData);
+			}
+			break;
+
+		case 0xc0:
+			if ((nAddress & 0x1f) >= 9)
+			{
+				return;
+			}
+			if (!(cCaps & OPL3_HAS_OPL3))
+			{
+				cData |= 0x30;
+			}
+			break;
+
+		case 0xe0:
+			if (!(cCaps & OPL3_HAS_OPL2))
+			{
+				return;
+			}
+			if (((nAddress & 0x1f) >= 0x18) || ((nAddress & 7) >= 6))
+			{
+				return;
+			}
+			break;
+
+		default:
+			return;
+	}
+
+	sound_sync();
+	oplgen_setreg(&opl3->oplgen, nAddress, cData);
 }
 
 /**
@@ -106,6 +199,56 @@ void opl3_writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
  */
 static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 {
+	const UINT8 cCaps = opl3->s.cCaps;
+
+	if (!(cCaps & OPL3_HAS_OPL3))
+	{
+		return;
+	}
+
+	switch (nAddress & 0xe0)
+	{
+		case 0x20:
+		case 0x40:
+		case 0x60:
+		case 0x80:
+		case 0xe0:
+			if (((nAddress & 0x1f) >= 0x18) || ((nAddress & 7) >= 6))
+			{
+				return;
+			}
+			break;
+
+		case 0xa0:
+			if ((nAddress & 0x0f) >= 9)
+			{
+				return;
+			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, (REG8)((nAddress & 0x0f) + 9), cData);
+			}
+			break;
+
+		case 0xc0:
+			if ((nAddress & 0x1f) >= 9)
+			{
+				return;
+			}
+			break;
+
+		default:
+			if ((nAddress == 0x04) || (nAddress == 0x05) || (nAddress == 0x08))
+			{
+				break;
+			}
+			return;
+	}
+
+#if 0
+	sound_sync();
+	oplgen_setreg(&opl3->oplgen, nAddress + 0x100, cData);
+#endif
 }
 
 /**
