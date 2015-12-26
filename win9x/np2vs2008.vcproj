@@ -1450,7 +1450,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\opl3.c"
+					RelativePath=".\ext\opl3.cpp"
 					>
 				</File>
 				<File
@@ -2034,6 +2034,10 @@
 					>
 					<File
 						RelativePath=".\ext\externalchipmanager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopl3.cpp"
 						>
 					</File>
 					<File
@@ -3008,6 +3012,10 @@
 					</File>
 					<File
 						RelativePath=".\ext\externalchipmanager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopl3.h"
 						>
 					</File>
 					<File

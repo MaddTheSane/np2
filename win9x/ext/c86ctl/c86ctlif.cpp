@@ -158,6 +158,10 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 					{
 						nRealChipType = IExternalChip::kYM2608;
 					}
+					else if (!memcmp(info.Devname, "GMC-OPL3", 8))
+					{
+						nRealChipType = IExternalChip::kYMF262;
+					}
 					if (nChipType == nRealChipType)
 					{
 						// サウンドチップ取得できた
