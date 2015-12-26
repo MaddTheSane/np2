@@ -355,6 +355,8 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SPARKBOARD, MFCHECK(SOUND_SW == 0x40));
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_AMD98, MFCHECK(SOUND_SW == 0x80));
 #if defined(SUPPORT_PX)
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SOUNDORCHESTRA, MFCHECK(SOUND_SW == 0x32));
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_SOUNDORCHESTRAV, MFCHECK(SOUND_SW == 0x82));
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PX1, MFCHECK(SOUND_SW == 0x30));
 	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_PX2, MFCHECK(SOUND_SW == 0x50));
 #endif	// defined(SUPPORT_PX)

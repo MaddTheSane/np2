@@ -826,6 +826,16 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 #if defined(SUPPORT_PX)
+		case IDM_SOUNDORCHESTRA:
+			np2cfg.SOUND_SW = 0x32;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
+		case IDM_SOUNDORCHESTRAV:
+			np2cfg.SOUND_SW = 0x82;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
 		case IDM_PX1:
 			np2cfg.SOUND_SW = 0x30;
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;

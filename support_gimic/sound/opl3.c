@@ -35,8 +35,14 @@ void opl3_destruct(POPL3 opl3)
  */
 void opl3_reset(POPL3 opl3, REG8 cCaps)
 {
+	UINT i;
+
 	memset(&opl3->s, 0, sizeof(opl3->s));
 	opl3->s.cCaps = cCaps;
+	for (i = 0; i < 2; i++)
+	{
+		memset(opl3->s.reg + (i * 0x100) + 0x20, 0xff, 0x80);
+	}
 }
 
 /**
@@ -46,6 +52,10 @@ void opl3_reset(POPL3 opl3, REG8 cCaps)
 static void restore(POPL3 opl3)
 {
 	UINT i;
+
+	writeExtendedRegister(opl3, 0x05, opl3->s.reg[0x105]);
+	writeExtendedRegister(opl3, 0x04, opl3->s.reg[0x104]);
+	writeExtendedRegister(opl3, 0x08, opl3->s.reg[0x108]);
 
 	for (i = 0x20; i < 0x100; i++)
 	{
@@ -69,6 +79,7 @@ static void restore(POPL3 opl3)
 		writeExtendedRegister(opl3, i + 0x10, (REG8)(opl3->s.reg[i + 0x110] & 0xdf));
 		writeExtendedRegister(opl3, i + 0x20, opl3->s.reg[i + 0x120]);
 	}
+	writeExtendedRegister(opl3, 0xbd, opl3->s.reg[0xbd]);
 }
 
 /**

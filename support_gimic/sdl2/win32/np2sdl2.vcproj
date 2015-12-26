@@ -1216,6 +1216,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\sound\oplgenc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgeng.c"
+					>
+				</File>
+				<File
 					RelativePath="..\ext\opna.cpp"
 					>
 					<FileConfiguration
@@ -2179,6 +2187,14 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\opl3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgencfg.h"
 					>
 				</File>
 				<File

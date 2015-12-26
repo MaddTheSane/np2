@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "sound.h"
+
 enum
 {
 	OPLCH_MAX		= 9,

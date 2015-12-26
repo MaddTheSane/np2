@@ -437,14 +437,14 @@ void oplgen_reset(OPLGEN oplgen, UINT nBaseClock)
 		ch++;
 	}
 
-#if 0
-	/* TODO */
-	for (i = 0x30; i < 0xc0; i++)
+	for (i = 0x20; i < 0xa0; i++)
 	{
-		oplgen_setreg(oplgen, 0, i, 0xff);
-		oplgen_setreg(oplgen, 3, i, 0xff);
+		oplgen_setreg(oplgen, i, 0xff);
 	}
-#endif
+	for (i = 0xa0; i < 0x100; i++)
+	{
+		oplgen_setreg(oplgen, i, 0x00);
+	}
 }
 
 static void setslot(OPLGEN oplgen, UINT reg, REG8 value)
