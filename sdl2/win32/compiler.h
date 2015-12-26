@@ -73,8 +73,3 @@ typedef	signed int			SINT32;
 #define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16
-
-#ifdef __cplusplus
-#undef min
-#undef max
-#endif	/* __cplusplus */

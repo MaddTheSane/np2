@@ -218,7 +218,7 @@ int C86BoxUSB::Transaction(const void* lpOutput, int cbOutput, void* lpInput, in
 
 	if ((lpInput != NULL) && (cbInput > 0))
 	{
-		cbInput = std::min(cbInput, static_cast<int>(sizeof(sBuffer)));
+		cbInput = (std::min)(cbInput, static_cast<int>(sizeof(sBuffer)));
 		::memcpy(lpInput, sBuffer, cbInput);
 	}
 	return C86CTL_ERR_NONE;
