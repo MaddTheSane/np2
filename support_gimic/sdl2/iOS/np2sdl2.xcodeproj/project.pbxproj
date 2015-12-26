@@ -14,6 +14,8 @@
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		BA0A37ED193EA29400009566 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EB193EA29400009566 /* Default-Landscape.png */; };
 		BA0A37EE193EA29400009566 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EC193EA29400009566 /* Icon-72.png */; };
+		BA2CAE5B1C2E7F2900288316 /* oplgenc.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE581C2E7F2900288316 /* oplgenc.c */; };
+		BA2CAE5C1C2E7F2900288316 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE5A1C2E7F2900288316 /* oplgeng.c */; };
 		BA52395F1BC3E4FC00E7C617 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA52395E1BC3E4FC00E7C617 /* Default-568h@2x.png */; };
 		BA7E839619063AFB00041C04 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E81AD19063AFA00041C04 /* bios.c */; };
 		BA7E839719063AFB00041C04 /* bios09.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E81AF19063AFA00041C04 /* bios09.c */; };
@@ -304,6 +306,10 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA0A37EB193EA29400009566 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		BA0A37EC193EA29400009566 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		BA2CAE571C2E7F2900288316 /* oplgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgen.h; sourceTree = "<group>"; };
+		BA2CAE581C2E7F2900288316 /* oplgenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgenc.c; sourceTree = "<group>"; };
+		BA2CAE591C2E7F2900288316 /* oplgencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgencfg.h; sourceTree = "<group>"; };
+		BA2CAE5A1C2E7F2900288316 /* oplgeng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgeng.c; sourceTree = "<group>"; };
 		BA52395E1BC3E4FC00E7C617 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BA7E81AD19063AFA00041C04 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
 		BA7E81AE19063AFA00041C04 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
@@ -1328,6 +1334,10 @@
 				BA7E834C19063AFB00041C04 /* getsnd */,
 				BADADEBE1BDF806400137975 /* opl3.c */,
 				BADADEBF1BDF806400137975 /* opl3.h */,
+				BA2CAE571C2E7F2900288316 /* oplgen.h */,
+				BA2CAE581C2E7F2900288316 /* oplgenc.c */,
+				BA2CAE591C2E7F2900288316 /* oplgencfg.h */,
+				BA2CAE5A1C2E7F2900288316 /* oplgeng.c */,
 				BAFFDA281B59058D00C5DE2E /* opna.c */,
 				BAFFDA291B59058D00C5DE2E /* opna.h */,
 				BA7E835519063AFB00041C04 /* opngen.h */,
@@ -1522,6 +1532,7 @@
 				BA7E844519063AFB00041C04 /* gcircle.c in Sources */,
 				BA7E83E219063AFB00041C04 /* menuvram.c in Sources */,
 				BA7E842A19063AFB00041C04 /* dmac.c in Sources */,
+				BA2CAE5B1C2E7F2900288316 /* oplgenc.c in Sources */,
 				BA7E83B019063AFB00041C04 /* cbuscore.c in Sources */,
 				BA7E842B19063AFB00041C04 /* egc.c in Sources */,
 				BA7E842E19063AFB00041C04 /* fdc.c in Sources */,
@@ -1649,6 +1660,7 @@
 				BA7E83C319063AFB00041C04 /* textcnv.c in Sources */,
 				BA7E83B819063AFB00041C04 /* sasiio.c in Sources */,
 				BA7E83E119063AFB00041C04 /* menusys.c in Sources */,
+				BA2CAE5C1C2E7F2900288316 /* oplgeng.c in Sources */,
 				BA7E83EE19063AFB00041C04 /* sxsi.c in Sources */,
 				BA7E845D19063AFB00041C04 /* ini.c in Sources */,
 				BA7E83D919063AFB00041C04 /* filesel.c in Sources */,
