@@ -1,6 +1,6 @@
 
 #if defined(SUPPORT_KEYDISP)
-BOOL kdispwin_initialize(HINSTANCE hInstance);
+BRESULT kdispwin_initialize(HINSTANCE hInstance);
 void kdispwin_create(HINSTANCE hInstance);
 void kdispwin_destroy(void);
 HWND kdispwin_gethwnd(void);
@@ -18,7 +18,7 @@ void kdispwin_writeini(void);
 #endif
 
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
-BOOL mdbgwin_initialize(HINSTANCE hInstance);
+BRESULT mdbgwin_initialize(HINSTANCE hInstance);
 void mdbgwin_create(HINSTANCE hInstance);
 void mdbgwin_destroy(void);
 void mdbgwin_process(void);
@@ -36,7 +36,7 @@ void mdbgwin_writeini(void);
 #endif
 
 #if defined(SUPPORT_SOFTKBD)
-BOOL skbdwin_initialize(HINSTANCE hInstance);
+BRESULT skbdwin_initialize(HINSTANCE hInstance);
 void skbdwin_deinitialize(void);
 void skbdwin_create(HINSTANCE hInstance);
 void skbdwin_destroy(void);

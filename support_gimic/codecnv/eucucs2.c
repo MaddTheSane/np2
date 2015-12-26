@@ -64,7 +64,7 @@ static UINT euctoucs2(UINT16 *lpOutput, UINT cchOutput, const char *lpInput, UIN
 	nLength = codecnv_euctosjis(NULL, 0, lpInput, cchInput);
 	if (nLength)
 	{
-		pWork = malloc(nLength * sizeof(char));
+		pWork = (char*)malloc(nLength * sizeof(char));
 		nLength = codecnv_euctosjis(pWork, nLength, lpInput, cchInput);
 		nLength = codecnv_sjistoucs2(lpOutput, cchOutput, pWork, nLength);
 		free(pWork);

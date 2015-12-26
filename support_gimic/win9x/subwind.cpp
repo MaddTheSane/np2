@@ -272,7 +272,7 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0L);
 }
 
-BOOL kdispwin_initialize(HINSTANCE hInstance) {
+BRESULT kdispwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
@@ -574,7 +574,7 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0);
 }
 
-BOOL mdbgwin_initialize(HINSTANCE hInstance) {
+BRESULT mdbgwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
@@ -842,7 +842,7 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 	return(0L);
 }
 
-BOOL skbdwin_initialize(HINSTANCE hInstance) {
+BRESULT skbdwin_initialize(HINSTANCE hInstance) {
 
 	WNDCLASS	wc;
 
