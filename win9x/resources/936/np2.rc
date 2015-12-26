@@ -1149,6 +1149,8 @@ END
 
 IDR_PXMENU MENU DISCARDABLE 
 BEGIN
+    MENUITEM "Sound Orchestra",             IDM_SOUNDORCHESTRA
+    MENUITEM "Sound Orchestra-V",           IDM_SOUNDORCHESTRAV
     MENUITEM "Otomi x2",                    IDM_PX1
     MENUITEM "Otomi x2 + 86",               IDM_PX2
 END

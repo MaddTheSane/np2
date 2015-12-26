@@ -13,6 +13,7 @@
 #if defined(SUPPORT_PX)
 #include	"boardpx.h"
 #endif	// defined(SUPPORT_PX)
+#include	"boardso.h"
 #include	"amd98.h"
 #include	"pcm86io.h"
 #include	"cs4231io.h"
@@ -25,7 +26,8 @@
 
 
 	SOUNDID g_nSoundID;
-	_OPNA		g_opna[OPNA_MAX];
+	OPL3 g_opl3;
+	OPNA g_opna[OPNA_MAX];
 
 	_PCM86		pcm86;
 	_CS4231		cs4231;
@@ -109,6 +111,7 @@ void fmboard_construct(void)
 	{
 		opna_construct(&g_opna[i]);
 	}
+	opl3_construct(&g_opl3);
 }
 
 /**
@@ -122,6 +125,7 @@ void fmboard_destruct(void)
 	{
 		opna_destruct(&g_opna[i]);
 	}
+	opl3_destruct(&g_opl3);
 }
 
 /**
@@ -144,6 +148,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 		{
 			opna_reset(&g_opna[i], 0);
 		}
+		opl3_reset(&g_opl3, 0);
 	}
 
 	extfn = NULL;
@@ -189,6 +194,14 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 			break;
 
 		case SOUNDID_AMD98:
+			break;
+
+		case SOUNDID_SOUNDORCHESTRA:
+			boardso_reset(pConfig, FALSE);
+			break;
+
+		case SOUNDID_SOUNDORCHESTRAV:
+			boardso_reset(pConfig, TRUE);
 			break;
 
 #if defined(SUPPORT_PX)
@@ -251,6 +264,11 @@ void fmboard_bind(void) {
 			amd98_bind();
 			break;
 
+		case SOUNDID_SOUNDORCHESTRA:
+		case SOUNDID_SOUNDORCHESTRAV:
+			boardso_bind();
+			break;
+
 #if defined(SUPPORT_PX)
 		case SOUNDID_PX1:
 			boardpx1_bind();
@@ -264,5 +282,6 @@ void fmboard_bind(void) {
 		default:
 			break;
 	}
+
 	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
 }

@@ -485,6 +485,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\cbus\boardso.c"
+					>
+				</File>
+				<File
 					RelativePath="..\cbus\boardspb.c"
 					>
 				</File>
@@ -1098,6 +1102,18 @@
 				</File>
 				<File
 					RelativePath="..\sound\fmboard.c"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opl3.c"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgenc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgeng.c"
 					>
 				</File>
 				<File
@@ -1859,6 +1875,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\cbus\boardso.h"
+					>
+				</File>
+				<File
 					RelativePath="..\cbus\boardspb.h"
 					>
 				</File>
@@ -2372,6 +2392,18 @@
 				</File>
 				<File
 					RelativePath="..\sound\fmboard.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opl3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgencfg.h"
 					>
 				</File>
 				<File

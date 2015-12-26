@@ -14,6 +14,8 @@
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
 		BA0A37ED193EA29400009566 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EB193EA29400009566 /* Default-Landscape.png */; };
 		BA0A37EE193EA29400009566 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EC193EA29400009566 /* Icon-72.png */; };
+		BA2CAE5B1C2E7F2900288316 /* oplgenc.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE581C2E7F2900288316 /* oplgenc.c */; };
+		BA2CAE5C1C2E7F2900288316 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE5A1C2E7F2900288316 /* oplgeng.c */; };
 		BA52395F1BC3E4FC00E7C617 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BA52395E1BC3E4FC00E7C617 /* Default-568h@2x.png */; };
 		BA7E839619063AFB00041C04 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E81AD19063AFA00041C04 /* bios.c */; };
 		BA7E839719063AFB00041C04 /* bios09.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E81AF19063AFA00041C04 /* bios09.c */; };
@@ -226,6 +228,8 @@
 		BA7E84A719063AFB00041C04 /* sdrawq16.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839319063AFB00041C04 /* sdrawq16.c */; };
 		BA7E84A819063AFB00041C04 /* vram.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839419063AFB00041C04 /* vram.c */; };
 		BA7E84AF190650A800041C04 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7E84AE190650A800041C04 /* main.m */; };
+		BADADEBD1BDF804700137975 /* boardso.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEBB1BDF804700137975 /* boardso.c */; };
+		BADADEC01BDF806400137975 /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEBE1BDF806400137975 /* opl3.c */; };
 		BAE349681B86CE20006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349661B86CE20006EBD05 /* pcmmix.c */; };
 		BAFFDA2A1B59058D00C5DE2E /* opna.c in Sources */ = {isa = PBXBuildFile; fileRef = BAFFDA281B59058D00C5DE2E /* opna.c */; };
 		FD779EDE0E26BA1200F39101 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD779EDD0E26BA1200F39101 /* CoreAudio.framework */; };
@@ -302,6 +306,10 @@
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA0A37EB193EA29400009566 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		BA0A37EC193EA29400009566 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		BA2CAE571C2E7F2900288316 /* oplgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgen.h; sourceTree = "<group>"; };
+		BA2CAE581C2E7F2900288316 /* oplgenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgenc.c; sourceTree = "<group>"; };
+		BA2CAE591C2E7F2900288316 /* oplgencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgencfg.h; sourceTree = "<group>"; };
+		BA2CAE5A1C2E7F2900288316 /* oplgeng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgeng.c; sourceTree = "<group>"; };
 		BA52395E1BC3E4FC00E7C617 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		BA7E81AD19063AFA00041C04 /* bios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bios.c; sourceTree = "<group>"; };
 		BA7E81AE19063AFA00041C04 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
@@ -692,6 +700,10 @@
 		BA7E84AD19063C1600041C04 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA7E84AE190650A800041C04 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BAA9AE101C2B6ECD00C88FD6 /* opngencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opngencfg.h; sourceTree = "<group>"; };
+		BADADEBB1BDF804700137975 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
+		BADADEBC1BDF804700137975 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
+		BADADEBE1BDF806400137975 /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
+		BADADEBF1BDF806400137975 /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
 		BAE349661B86CE20006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
 		BAE349671B86CE20006EBD05 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
 		BAFFDA281B59058D00C5DE2E /* opna.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opna.c; sourceTree = "<group>"; };
@@ -941,6 +953,8 @@
 				BA7E81D019063AFA00041C04 /* board86.h */,
 				BA7E81D119063AFA00041C04 /* boardpx.c */,
 				BA7E81D219063AFA00041C04 /* boardpx.h */,
+				BADADEBB1BDF804700137975 /* boardso.c */,
+				BADADEBC1BDF804700137975 /* boardso.h */,
 				BA7E81D319063AFA00041C04 /* boardspb.c */,
 				BA7E81D419063AFA00041C04 /* boardspb.h */,
 				BA7E81D519063AFA00041C04 /* boardx2.c */,
@@ -1318,6 +1332,12 @@
 				BA7E834819063AFB00041C04 /* fmboard.c */,
 				BA7E834919063AFB00041C04 /* fmboard.h */,
 				BA7E834C19063AFB00041C04 /* getsnd */,
+				BADADEBE1BDF806400137975 /* opl3.c */,
+				BADADEBF1BDF806400137975 /* opl3.h */,
+				BA2CAE571C2E7F2900288316 /* oplgen.h */,
+				BA2CAE581C2E7F2900288316 /* oplgenc.c */,
+				BA2CAE591C2E7F2900288316 /* oplgencfg.h */,
+				BA2CAE5A1C2E7F2900288316 /* oplgeng.c */,
 				BAFFDA281B59058D00C5DE2E /* opna.c */,
 				BAFFDA291B59058D00C5DE2E /* opna.h */,
 				BA7E835519063AFB00041C04 /* opngen.h */,
@@ -1512,6 +1532,7 @@
 				BA7E844519063AFB00041C04 /* gcircle.c in Sources */,
 				BA7E83E219063AFB00041C04 /* menuvram.c in Sources */,
 				BA7E842A19063AFB00041C04 /* dmac.c in Sources */,
+				BA2CAE5B1C2E7F2900288316 /* oplgenc.c in Sources */,
 				BA7E83B019063AFB00041C04 /* cbuscore.c in Sources */,
 				BA7E842B19063AFB00041C04 /* egc.c in Sources */,
 				BA7E842E19063AFB00041C04 /* fdc.c in Sources */,
@@ -1639,6 +1660,7 @@
 				BA7E83C319063AFB00041C04 /* textcnv.c in Sources */,
 				BA7E83B819063AFB00041C04 /* sasiio.c in Sources */,
 				BA7E83E119063AFB00041C04 /* menusys.c in Sources */,
+				BA2CAE5C1C2E7F2900288316 /* oplgeng.c in Sources */,
 				BA7E83EE19063AFB00041C04 /* sxsi.c in Sources */,
 				BA7E845D19063AFB00041C04 /* ini.c in Sources */,
 				BA7E83D919063AFB00041C04 /* filesel.c in Sources */,
@@ -1664,9 +1686,11 @@
 				BA7E840619063AFB00041C04 /* memdbg32.c in Sources */,
 				BA7E843319063AFB00041C04 /* gdc_sub.c in Sources */,
 				BA7E83FD19063AFB00041C04 /* cmndraw.c in Sources */,
+				BADADEBD1BDF804700137975 /* boardso.c in Sources */,
 				BA7E848019063AFB00041C04 /* getogg.c in Sources */,
 				BA7E848E19063AFB00041C04 /* sndcsec.c in Sources */,
 				BA7E841D19063AFB00041C04 /* i286c_mn.c in Sources */,
+				BADADEC01BDF806400137975 /* opl3.c in Sources */,
 				BA7E849A19063AFB00041C04 /* dispsync.c in Sources */,
 				BA7E84A319063AFB00041C04 /* scrnsave.c in Sources */,
 				BA7E83A819063AFB00041C04 /* atapicmd.c in Sources */,

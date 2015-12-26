@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BA2CAE551C2E7EFE00288316 /* oplgenc.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE521C2E7EFE00288316 /* oplgenc.c */; };
+		BA2CAE561C2E7EFE00288316 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE541C2E7EFE00288316 /* oplgeng.c */; };
 		BA99F2D51BD4DD1000B97E10 /* externalchipmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */; };
 		BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA8481963E34B00747635 /* threadbase.cpp */; };
+		BADADEB71BDF7F9B00137975 /* boardso.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEB51BDF7F9B00137975 /* boardso.c */; };
+		BADADEBA1BDF7FC700137975 /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEB81BDF7FC700137975 /* opl3.c */; };
 		BAE3496B1B86CE43006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349691B86CE43006EBD05 /* pcmmix.c */; };
 		BAE484661B59BEDC001D9E86 /* externalopna.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE484631B59BEDC001D9E86 /* externalopna.cpp */; };
 		BAE484671B59BEDC001D9E86 /* opna.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE484651B59BEDC001D9E86 /* opna.cpp */; };
@@ -241,12 +245,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BA2CAE511C2E7EFE00288316 /* oplgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgen.h; sourceTree = "<group>"; };
+		BA2CAE521C2E7EFE00288316 /* oplgenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgenc.c; sourceTree = "<group>"; };
+		BA2CAE531C2E7EFE00288316 /* oplgencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgencfg.h; sourceTree = "<group>"; };
+		BA2CAE541C2E7EFE00288316 /* oplgeng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgeng.c; sourceTree = "<group>"; };
 		BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = externalchipmanager.cpp; sourceTree = "<group>"; };
 		BA99F2D41BD4DD1000B97E10 /* externalchipmanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = externalchipmanager.h; sourceTree = "<group>"; };
 		BAA9AE0F1C2B6E6800C88FD6 /* opngencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opngencfg.h; sourceTree = "<group>"; };
 		BAAEA8481963E34B00747635 /* threadbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadbase.cpp; sourceTree = "<group>"; };
 		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BADADEB51BDF7F9B00137975 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
+		BADADEB61BDF7F9B00137975 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
+		BADADEB81BDF7FC700137975 /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
+		BADADEB91BDF7FC700137975 /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
 		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
 		BAE349691B86CE43006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
 		BAE3496A1B86CE43006EBD05 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
@@ -869,6 +881,8 @@
 				BAF84B6F195AA10400183062 /* board86.h */,
 				BAF84B70195AA10400183062 /* boardpx.c */,
 				BAF84B71195AA10400183062 /* boardpx.h */,
+				BADADEB51BDF7F9B00137975 /* boardso.c */,
+				BADADEB61BDF7F9B00137975 /* boardso.h */,
 				BAF84B72195AA10400183062 /* boardspb.c */,
 				BAF84B73195AA10400183062 /* boardspb.h */,
 				BAF84B74195AA10400183062 /* boardx2.c */,
@@ -1293,6 +1307,12 @@
 				BAF84E56195AA38300183062 /* fmboard.c */,
 				BAF84E57195AA38300183062 /* fmboard.h */,
 				BAF84E5A195AA38300183062 /* getsnd */,
+				BADADEB81BDF7FC700137975 /* opl3.c */,
+				BADADEB91BDF7FC700137975 /* opl3.h */,
+				BA2CAE511C2E7EFE00288316 /* oplgen.h */,
+				BA2CAE521C2E7EFE00288316 /* oplgenc.c */,
+				BA2CAE531C2E7EFE00288316 /* oplgencfg.h */,
+				BA2CAE541C2E7EFE00288316 /* oplgeng.c */,
 				BAFFDA261B5901D500C5DE2E /* opna.h */,
 				BAF84E63195AA38300183062 /* opngen.h */,
 				BAF84E64195AA38300183062 /* opngenc.c */,
@@ -1443,6 +1463,7 @@
 				BAF84DD6195AA10500183062 /* i286c_fe.c in Sources */,
 				BAF84DB9195AA10500183062 /* dipswbmp.c in Sources */,
 				BAE76FFD1B52B64E00920E49 /* spfmlight.cpp in Sources */,
+				BADADEBA1BDF7FC700137975 /* opl3.c in Sources */,
 				BAF84E27195AA10500183062 /* np2.c in Sources */,
 				BAF84DEE195AA10500183062 /* iocore.c in Sources */,
 				BAF84E26195AA10500183062 /* mousemng.c in Sources */,
@@ -1551,6 +1572,7 @@
 				BAF84D65195AA10500183062 /* board26k.c in Sources */,
 				BAF84D58195AA10500183062 /* bios1b.c in Sources */,
 				BAF84D97195AA10500183062 /* menudlg.c in Sources */,
+				BA2CAE551C2E7EFE00288316 /* oplgenc.c in Sources */,
 				BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */,
 				BAF84DB8195AA10500183062 /* cmver.c in Sources */,
 				BAF84E8B195AA38300183062 /* fmboard.c in Sources */,
@@ -1580,6 +1602,7 @@
 				BAF84DF2195AA10500183062 /* nmiio.c in Sources */,
 				BAF84D7F195AA10500183062 /* ucs2utf8.c in Sources */,
 				BAF84E05195AA10500183062 /* dmav30.c in Sources */,
+				BADADEB71BDF7F9B00137975 /* boardso.c in Sources */,
 				BAF84E07195AA10500183062 /* memegc.c in Sources */,
 				BAF84DED195AA10500183062 /* gdc_sub.c in Sources */,
 				BAF84DD0195AA10500183062 /* i286c.c in Sources */,
@@ -1607,6 +1630,7 @@
 				BAF84D56195AA10500183062 /* bios19.c in Sources */,
 				BAF84DBE195AA10500183062 /* keydisp.c in Sources */,
 				BAF84E0C195AA10500183062 /* memvram.c in Sources */,
+				BA2CAE561C2E7EFE00288316 /* oplgeng.c in Sources */,
 				BAF84DA5195AA10500183062 /* fddfile.c in Sources */,
 				BAF84D99195AA10500183062 /* menumbox.c in Sources */,
 				BAF84E23195AA10500183062 /* joymng.c in Sources */,

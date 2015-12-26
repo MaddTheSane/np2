@@ -62,7 +62,7 @@ struct tagOpna
 	_ADPCM adpcm;
 };
 
-typedef struct tagOpna _OPNA;
+typedef struct tagOpna OPNA;
 typedef struct tagOpna* POPNA;
 typedef const struct tagOpna* PCOPNA;
 
