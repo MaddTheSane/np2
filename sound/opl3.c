@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "opl3.h"
 #include "sound.h"
+#include "generic/keydisp.h"
 
 static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData);
 static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData);
@@ -96,6 +97,8 @@ void opl3_bind(POPL3 opl3)
 	sound_streamregist(&opl3->oplgen, (SOUNDCB)oplgen_getpcm);
 
 	restore(opl3);
+
+	keydisp_bindopl3(opl3->s.reg, (cCaps & OPL3_HAS_OPL3) ? 18 : 9, nBaseClock);
 }
 
 /**
@@ -150,6 +153,10 @@ static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 			if ((nAddress & 0x0f) >= 9)
 			{
 				return;
+			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, (REG8)(nAddress & 0x0f), cData);
 			}
 			break;
 
@@ -227,6 +234,10 @@ static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData)
 			if ((nAddress & 0x0f) >= 9)
 			{
 				return;
+			}
+			if (nAddress & 0x10)
+			{
+				keydisp_opl3keyon(opl3->s.reg, (REG8)((nAddress & 0x0f) + 9), cData);
 			}
 			break;
 

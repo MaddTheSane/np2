@@ -79,8 +79,10 @@ BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw);
 void keydisp_reset(void);
 void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock);
 void keydisp_bindpsg(const UINT8 *pcRegister, UINT nBaseClock);
+void keydisp_bindopl3(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock);
 void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 cData);
 void keydisp_psg(const UINT8 *pcRegister, UINT nAddress);
+void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, REG8 cData);
 void keydisp_midi(const UINT8 *msg);
 
 #ifdef __cplusplus
@@ -93,8 +95,10 @@ void keydisp_midi(const UINT8 *msg);
 #define keydisp_reset()
 #define keydisp_bindopna(r, c, b)
 #define keydisp_bindpsg(r, b)
+#define keydisp_bindopl3(r, c, b)
 #define keydisp_opnakeyon(r, d)
 #define keydisp_psg(r, a)
+#define keydisp_opl3keyon(r, c, d)
 #define	keydisp_midi(a)
 
 #endif
