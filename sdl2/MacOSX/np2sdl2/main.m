@@ -35,5 +35,5 @@ int main(int argc, char * argv[])
 	}
 	*q = NULL;
 
-	return np2_main(argc, argv);
+	return np2_main((int)(q - argv), argv);
 }
