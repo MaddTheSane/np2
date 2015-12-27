@@ -29,7 +29,7 @@
 	OPL3 g_opl3;
 	OPNA g_opna[OPNA_MAX];
 
-	_PCM86		pcm86;
+	_PCM86		g_pcm86;
 	_CS4231		cs4231;
 
 static void	(*extfn)(REG8 enable);

@@ -366,6 +366,6 @@ void SOUNDCALL pcm86gen_getpcm(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 				pcm86stereo8(pcm86, lpBuffer, nCount);
 				break;
 		}
-		pcm86gen_checkbuf();
+		pcm86gen_checkbuf(pcm86);
 	}
 }

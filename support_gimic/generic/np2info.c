@@ -280,12 +280,12 @@ static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 	if (g_nSoundID & 4) {
 		milstr_ncat(str, ex->cr, maxlen);
 		OEMSPRINTF(buf, str_pcm86a,
-							pcm86rate8[pcm86.fifo & 7] >> 3,
-							(16 - ((pcm86.dactrl >> 3) & 8)),
-							milstr_list(str_chpan, (pcm86.dactrl >> 4) & 3));
+							pcm86rate8[g_pcm86.fifo & 7] >> 3,
+							(16 - ((g_pcm86.dactrl >> 3) & 8)),
+							milstr_list(str_chpan, (g_pcm86.dactrl >> 4) & 3));
 		milstr_ncat(str, buf, maxlen);
 		milstr_ncat(str, ex->cr, maxlen);
-		OEMSPRINTF(buf, str_pcm86b, pcm86.virbuf, pcm86.fifosize);
+		OEMSPRINTF(buf, str_pcm86b, g_pcm86.virbuf, g_pcm86.fifosize);
 		milstr_ncat(str, buf, maxlen);
 	}
 }
