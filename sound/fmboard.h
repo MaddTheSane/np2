@@ -27,7 +27,7 @@ extern "C"
 extern	SOUNDID		g_nSoundID;
 extern	OPL3		g_opl3;
 extern	OPNA		g_opna[OPNA_MAX];
-extern	_PCM86		pcm86;
+extern	_PCM86		g_pcm86;
 extern	_CS4231		cs4231;
 
 REG8 fmboard_getjoy(POPNA opna);

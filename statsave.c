@@ -857,7 +857,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
 	}
 	if (nSaveFlags & FLAG_PCM86)
 	{
-		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
+		ret |= statflag_write(sfh, &g_pcm86, sizeof(g_pcm86));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
@@ -899,7 +899,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	}
 	if (nSaveFlags & FLAG_PCM86)
 	{
-		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
+		ret |= statflag_read(sfh, &g_pcm86, sizeof(g_pcm86));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
@@ -918,7 +918,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	pcm86gen_update();
 	if (nSaveFlags & FLAG_PCM86)
 	{
-		fmboard_extenable((REG8)(pcm86.extfunc & 1));
+		fmboard_extenable((REG8)(g_pcm86.extfunc & 1));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
