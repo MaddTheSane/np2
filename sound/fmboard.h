@@ -7,11 +7,11 @@
 
 #if !defined(DISABLE_SOUND)
 
+#include "cs4231.h"
 #include "opl3.h"
 #include "opna.h"
 #include "opntimer.h"
 #include "pcm86.h"
-#include "cs4231.h"
 
 #if defined(SUPPORT_PX)
 #define OPNA_MAX	5
