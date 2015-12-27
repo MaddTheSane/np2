@@ -90,7 +90,7 @@ void pcm86_setpcmrate(REG8 val);
 void pcm86_setnextintr(void);
 
 void SOUNDCALL pcm86gen_checkbuf(void);
-void SOUNDCALL pcm86gen_getpcm(void *hdl, SINT32 *pcm, UINT count);
+void SOUNDCALL pcm86gen_getpcm(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount);
 
 BOOL pcm86gen_intrq(void);
 
