@@ -577,7 +577,7 @@ void opngen_setreg(OPNGEN opngen, REG8 chbase, UINT reg, REG8 value)
 				ch = opngen->opnch + chbase + 2;
 				blk = ch->keyfunc[chpos+1] >> 3;
 				fn = ((ch->keyfunc[chpos+1] & 7) << 8) + value;
-				ch->kcode[chpos+1] = (blk << 2) | kftable[fn >> 7];
+				ch->kcode[chpos + 1] = (blk << 2) | kftable[fn >> 7];
 				ch->keynote[chpos + 1] = fn << (opncfg.ratebit + blk + FREQ_BITS - 21);
 				channleupdate(ch);
 				break;
