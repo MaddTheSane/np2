@@ -36,6 +36,8 @@ const SINT32	*release;			/* release ratio */
 	SINT32		env_inc_attack;		/* envelope attack step */
 	SINT32		env_inc_decay1;		/* envelope decay1 step */
 	SINT32		env_inc_release;	/* envelope release step */
+
+	SINT32*		sintable;			/* sin */
 } OPLSLOT;
 
 typedef struct

@@ -7,11 +7,6 @@
 #include "oplgen.h"
 #include "oplgencfg.h"
 
-#if defined(OPLGEN_ENVSHIFT)
-extern char envshift[EVC_ENT];
-extern char sinshift[SIN_ENT];
-#endif	/* defined(OPLGEN_ENVSHIFT) */
-
 #define	CALCENV(e, c, s)													\
 	(c)->slot[(s)].env_cnt += (c)->slot[(s)].env_inc;						\
 	if ((c)->slot[(s)].env_cnt >= (c)->slot[(s)].env_end)					\
@@ -49,14 +44,14 @@ extern char sinshift[SIN_ENT];
 					oplcfg.envcurve[(c)->slot[(s)].env_cnt >> ENV_BITS];
 
 #if defined(OPLGEN_ENVSHIFT)
-static SINT32 SLOTOUT(SINT32 e, SINT32 c)
+static SINT32 SLOTOUT(const SINT32* s, SINT32 e, SINT32 c)
 {
 	c = (c >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1);
-	return (oplcfg.sintable[c] * oplcfg.envtable[e]) >> (sinshift[c] + envshift[e]);
+	return ((s)[c] * oplcfg.envtable[e]) >> (SINTBL_BIT + oplcfg.envshift[e]);
 }
 #else	/* defined(OPLGEN_ENVSHIFT) */
-#define SLOTOUT(e, c)														\
-	((oplcfg.sintable[((c) >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1)]		\
+#define SLOTOUT(s, e, c)													\
+	(((s)[((c) >> (FREQ_BITS - SIN_BITS)) & (SIN_ENT - 1)]					\
 			* oplcfg.envtable[(e)]) >> (ENVTBL_BIT + SINTBL_BIT - TL_BITS))
 #endif	/* defined(OPLGEN_ENVSHIFT) */
 
@@ -80,13 +75,13 @@ static void calcratechannel(OPLGEN oplgen, OPLCH *ch)
 		{
 			/* with self feed back */
 			opout = ch->op1fb;
-			ch->op1fb = SLOTOUT(envout, ch->slot[0].freq_cnt + ((ch->op1fb >> ch->feedback) << (FREQ_BITS - (TL_BITS - 2))));
+			ch->op1fb = SLOTOUT(ch->slot[0].sintable, envout, ch->slot[0].freq_cnt + ((ch->op1fb >> ch->feedback) << (FREQ_BITS - (TL_BITS - 2))));
 			opout = (opout + ch->op1fb) >> 1;
 		}
 		else
 		{
 			/* without self feed back */
-			opout = SLOTOUT(envout, ch->slot[0].freq_cnt);
+			opout = SLOTOUT(ch->slot[0].sintable, envout, ch->slot[0].freq_cnt);
 		}
 		/* output slot1 */
 		*ch->connect1 += opout;
@@ -95,7 +90,7 @@ static void calcratechannel(OPLGEN oplgen, OPLCH *ch)
 	CALCENV(envout, ch, 1);
 	if (envout >= 0)
 	{
-		*ch->connect2 += SLOTOUT(envout, ch->slot[1].freq_cnt + (oplgen->feedback2 << (FREQ_BITS - (TL_BITS - 2))));
+		*ch->connect2 += SLOTOUT(ch->slot[1].sintable, envout, ch->slot[1].freq_cnt + (oplgen->feedback2 << (FREQ_BITS - (TL_BITS - 2))));
 	}
 }
 
@@ -136,13 +131,13 @@ static UINT calcraterhythm(OPLGEN oplgen)
 				{
 					/* with self feed back */
 					opout = ch7->op1fb;
-					ch7->op1fb = SLOTOUT(envout, ch7->slot[0].freq_cnt + ((ch7->op1fb >> ch7->feedback) << (FREQ_BITS - (TL_BITS - 2))));
+					ch7->op1fb = SLOTOUT(ch7->slot[0].sintable, envout, ch7->slot[0].freq_cnt + ((ch7->op1fb >> ch7->feedback) << (FREQ_BITS - (TL_BITS - 2))));
 					opout = (opout + ch7->op1fb) >> 1;
 				}
 				else
 				{
 					/* without self feed back */
-					opout = SLOTOUT(envout, ch7->slot[0].freq_cnt);
+					opout = SLOTOUT(ch7->slot[0].sintable, envout, ch7->slot[0].freq_cnt);
 				}
 			}
 		}
@@ -152,7 +147,7 @@ static UINT calcraterhythm(OPLGEN oplgen)
 		CALCENV(envout, ch7, 1);
 		if (envout >= 0)
 		{
-			*ch7->connect2 += SLOTOUT(envout, ch7->slot[1].freq_cnt + (opout << (FREQ_BITS - (TL_BITS - 2))));
+			*ch7->connect2 += SLOTOUT(ch7->slot[1].sintable, envout, ch7->slot[1].freq_cnt + (opout << (FREQ_BITS - (TL_BITS - 2))));
 		}
 		playing++;
 	}
@@ -179,7 +174,7 @@ static UINT calcraterhythm(OPLGEN oplgen)
 			{
 				freq += DEG2FREQ(90);
 			}
-			*ch8->connect2 += SLOTOUT(envout, freq);
+			*ch8->connect2 += SLOTOUT(ch8->slot[0].sintable, envout, freq);
 		}
 		playing++;
 	}
@@ -196,7 +191,7 @@ static UINT calcraterhythm(OPLGEN oplgen)
 			{
 				freq += DEG2FREQ(90);
 			}
-			*ch8->connect2 += SLOTOUT(envout, freq);
+			*ch8->connect2 += SLOTOUT(ch8->slot[1].sintable, envout, freq);
 		}
 		playing++;
 	}
@@ -208,7 +203,7 @@ static UINT calcraterhythm(OPLGEN oplgen)
 		CALCENV(envout, ch9, 0);
 		if (envout >= 0)
 		{
-			*ch9->connect2 += SLOTOUT(envout, ch9->slot[0].freq_cnt);
+			*ch9->connect2 += SLOTOUT(ch9->slot[0].sintable, envout, ch9->slot[0].freq_cnt);
 		}
 		playing++;
 	}
@@ -220,7 +215,7 @@ static UINT calcraterhythm(OPLGEN oplgen)
 		if (envout >= 0)
 		{
 			freq = (on) ? DEG2FREQ(270) : DEG2FREQ(90);
-			*ch9->connect2 += SLOTOUT(envout, freq);
+			*ch9->connect2 += SLOTOUT(ch9->slot[1].sintable, envout, freq);
 		}
 		playing++;
 	}

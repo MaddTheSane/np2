@@ -16,12 +16,6 @@
 #define	EG_STEP			(96.0 / EVC_ENT)					/* dB step */
 #define	SC(db)			(SINT32)((db) * ((3.0 / EG_STEP) * (1 << ENV_BITS))) + EC_DECAY
 
-#if defined(OPLGEN_ENVSHIFT)
-	char	envshift[EVC_ENT];
-	char	sinshift[SIN_ENT];
-#endif	/* defined(OPLGEN_ENVSHIFT) */
-
-
 static	SINT32	attacktable[94];
 static	SINT32	decaytable[94];
 
@@ -110,7 +104,7 @@ void oplgen_initialize(UINT rate)
 		{
 			pom = (double)(1 << sft) / pow(10.0, EG_STEP * (EVC_ENT - i) / 20.0);
 			oplcfg.envtable[i] = (SINT32)pom;
-			envshift[i] = sft - TL_BITS;
+			oplcfg.envshift[i] = sft - TL_BITS;
 			if (oplcfg.envtable[i] >= (1 << (ENVTBL_BIT - 1)))
 			{
 				break;
@@ -124,27 +118,14 @@ void oplgen_initialize(UINT rate)
 	}
 	for (i = 0; i < SIN_ENT; i++)
 	{
-#if defined(OPLGEN_ENVSHIFT)
-		sft = SINTBL_BIT;
-		while (sft < (SINTBL_BIT + 8))
-		{
-			pom = (double)((1 << sft) - 1) * sin(2 * M_PI * i / SIN_ENT);
-			oplcfg.sintable[i] = (SINT32)pom;
-			sinshift[i] = sft;
-			if (oplcfg.sintable[i] >= (1 << (SINTBL_BIT - 1)))
-			{
-				break;
-			}
-			if (oplcfg.sintable[i] <= -1 * (1 << (SINTBL_BIT - 1)))
-			{
-				break;
-			}
-			sft++;
-		}
-#else	/* defined(OPLGEN_ENVSHIFT) */
 		pom = (double)((1 << SINTBL_BIT) - 1) * sin(2 * M_PI * i / SIN_ENT);
-		oplcfg.sintable[i] = (SINT32)pom;
-#endif	/* defined(OPLGEN_ENVSHIFT) */
+		oplcfg.sintable[0][i] = (SINT32)pom;
+	}
+	for (i = 0; i < SIN_ENT; i++)
+	{
+		oplcfg.sintable[1][i] = (i & (SIN_ENT >> 1)) ? 0 : oplcfg.sintable[0][i];
+		oplcfg.sintable[2][i] = oplcfg.sintable[0][i & ((SIN_ENT >> 1) - 1)];
+		oplcfg.sintable[3][i] = (i & (SIN_ENT >> 2)) ? 0 : oplcfg.sintable[0][i & ((SIN_ENT >> 2) - 1)];
 	}
 	for (i = 0; i < EVC_ENT; i++)
 	{
@@ -261,6 +242,11 @@ static void set_sl_rr(OPLSLOT *slot, REG8 value)
 			slot->env_inc = 0;
 		}
 	}
+}
+
+static void set_wavesel(OPLSLOT *slot, REG8 value)
+{
+	slot->sintable = oplcfg.sintable[value & 3];
 }
 
 /* ----- */
@@ -488,6 +474,10 @@ static void setslot(OPLGEN oplgen, UINT reg, REG8 value)
 		case 0x80:	/* SL:RR */
 			set_sl_rr(slot, value);
 			break;
+
+		case 0xe0:	/* WSEL */
+			set_wavesel(slot, value);
+			break;
 	}
 }
 
@@ -540,15 +530,13 @@ void oplgen_setreg(OPLGEN oplgen, UINT reg, REG8 value)
 		case 0x40:
 		case 0x60:
 		case 0x80:
+		case 0xe0:
 			setslot(oplgen, reg, value);
 			break;
 
 		case 0xa0:
 		case 0xc0:
 			setch(oplgen, reg, value);
-			break;
-
-		case 0xe0:
 			break;
 	}
 }
