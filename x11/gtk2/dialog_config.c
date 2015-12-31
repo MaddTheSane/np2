@@ -293,7 +293,7 @@ create_configure_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(baseclock_combo), baseclock_str[i]);
 	}
 
-	baseclock_entry = GTK_BIN(baseclock_combo)->child;
+	baseclock_entry = gtk_bin_get_child(GTK_BIN(baseclock_combo));
 	gtk_widget_show(baseclock_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(baseclock_entry), FALSE);
 	switch (np2cfg.baseclock) {
@@ -323,7 +323,7 @@ create_configure_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(rate_combo), clockmult_str[i]);
 	}
 
-	clockmult_entry = GTK_BIN(rate_combo)->child;
+	clockmult_entry = gtk_bin_get_child(GTK_BIN(rate_combo));
 	gtk_widget_show(clockmult_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(clockmult_entry), FALSE);
 	switch (np2cfg.multiple) {

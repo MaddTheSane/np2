@@ -161,7 +161,7 @@ t98_newdisk_dialog(GtkWidget *dialog, const int kind)
 	gtk_box_pack_start(GTK_BOX(hbox), combo, FALSE, FALSE, 5);
 	gtk_widget_show(combo);
 
-	entry = GTK_BIN(combo)->child;
+	entry = gtk_bin_get_child(GTK_BIN(combo));
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
 	gtk_entry_set_max_length(GTK_ENTRY(entry), 3);
 	gtk_entry_set_text(GTK_ENTRY(entry), "");

@@ -794,7 +794,7 @@ create_pc9801_26_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(ioport_combo), snd26_ioport_str[i]);
 	}
 
-	snd26_ioport_entry = GTK_BIN(ioport_combo)->child;
+	snd26_ioport_entry = gtk_bin_get_child(GTK_BIN(ioport_combo));
 	gtk_widget_show(snd26_ioport_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd26_ioport_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd26_ioport_entry), snd26_ioport_str[SND26_GET_IOPORT()]);
@@ -812,7 +812,7 @@ create_pc9801_26_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(int_combo), snd26_intr_str[i]);
 	}
 
-	snd26_int_entry = GTK_BIN(int_combo)->child;
+	snd26_int_entry = gtk_bin_get_child(GTK_BIN(int_combo));
 	gtk_widget_show(snd26_int_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd26_int_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd26_int_entry), snd26_intr_str[SND26_GET_INTR()]);
@@ -830,7 +830,7 @@ create_pc9801_26_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(romaddr_combo), snd26_romaddr_str[i]);
 	}
 
-	snd26_romaddr_entry = GTK_BIN(romaddr_combo)->child;
+	snd26_romaddr_entry = gtk_bin_get_child(GTK_BIN(romaddr_combo));
 	gtk_widget_show(snd26_romaddr_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd26_romaddr_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd26_romaddr_entry), snd26_romaddr_str[SND26_GET_ROMADDR()]);
@@ -887,7 +887,7 @@ create_pc9801_86_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(ioport_combo), snd86_ioport_str[i]);
 	}
 
-	snd86_ioport_entry = GTK_BIN(ioport_combo)->child;
+	snd86_ioport_entry = gtk_bin_get_child(GTK_BIN(ioport_combo));
 	gtk_widget_show(snd86_ioport_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd86_ioport_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd86_ioport_entry), snd86_ioport_str[SND86_GET_IOPORT()]);
@@ -907,7 +907,7 @@ create_pc9801_86_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(int_combo), snd86_intr_str[i]);
 	}
 
-	snd86_int_entry = GTK_BIN(int_combo)->child;
+	snd86_int_entry = gtk_bin_get_child(GTK_BIN(int_combo));
 	gtk_widget_show(snd86_int_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd86_int_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd86_int_entry), snd86_intr_str[SND86_GET_INTR()]);
@@ -925,7 +925,7 @@ create_pc9801_86_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(soundid_combo), snd86_soundid_str[i]);
 	}
 
-	snd86_soundid_entry = GTK_BIN(soundid_combo)->child;
+	snd86_soundid_entry = gtk_bin_get_child(GTK_BIN(soundid_combo));
 	gtk_widget_show(snd86_soundid_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(snd86_soundid_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(snd86_soundid_entry), snd86_soundid_str[SND86_GET_SOUNDID()]);
@@ -993,7 +993,7 @@ create_spb_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(ioport_combo), spb_ioport_str[i]);
 	}
 
-	spb_ioport_entry = GTK_BIN(ioport_combo)->child;
+	spb_ioport_entry = gtk_bin_get_child(GTK_BIN(ioport_combo));
 	gtk_widget_show(spb_ioport_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(spb_ioport_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(spb_ioport_entry), spb_ioport_str[SPB_GET_IOPORT()]);
@@ -1011,7 +1011,7 @@ create_spb_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(int_combo), spb_intr_str[i]);
 	}
 
-	spb_int_entry = GTK_BIN(int_combo)->child;
+	spb_int_entry = gtk_bin_get_child(GTK_BIN(int_combo));
 	gtk_widget_show(spb_int_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(spb_int_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(spb_int_entry), spb_intr_str[SPB_GET_INTR()]);
@@ -1029,7 +1029,7 @@ create_spb_note(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(romaddr_combo), spb_romaddr_str[i]);
 	}
 
-	spb_romaddr_entry = GTK_BIN(romaddr_combo)->child;
+	spb_romaddr_entry = gtk_bin_get_child(GTK_BIN(romaddr_combo));
 	gtk_widget_show(spb_romaddr_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(spb_romaddr_entry), FALSE);
 	gtk_entry_set_text(GTK_ENTRY(spb_romaddr_entry), spb_romaddr_str[SPB_GET_ROMADDR()]);
@@ -1118,7 +1118,7 @@ joypad_device_changed(GtkEditable *e, gpointer d)
 			gtk_combo_box_append_text(GTK_COMBO_BOX(joypad_axis_combo[i]), joypad_num_str[j]);
 		}
 
-		axis_entry[i] = GTK_BIN(joypad_axis_combo[i])->child;
+		axis_entry[i] = gtk_bin_get_child(GTK_BIN(joypad_axis_combo[i]));
 		gtk_widget_show(axis_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(axis_entry[i]), FALSE);
 
@@ -1136,7 +1136,7 @@ joypad_device_changed(GtkEditable *e, gpointer d)
 			gtk_combo_box_append_text(GTK_COMBO_BOX(joypad_button_combo[i]), joypad_num_str[j]);
 		}
 
-		button_entry[i] = GTK_BIN(joypad_button_combo[i])->child;
+		button_entry[i] = gtk_bin_get_child(GTK_BIN(joypad_button_combo[i]));
 		gtk_widget_show(button_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(button_entry[i]), FALSE);
 
@@ -1224,7 +1224,7 @@ create_joypad_note(void)
 		ndrv = 0;
 	}
 
-	devlist_entry = GTK_BIN(joypad_devlist_combo)->child;
+	devlist_entry = gtk_bin_get_child(GTK_BIN(joypad_devlist_combo));
 	gtk_widget_show(devlist_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(devlist_entry), FALSE);
 	g_signal_connect(GTK_OBJECT(devlist_entry), "changed",
@@ -1244,7 +1244,7 @@ create_joypad_note(void)
 
 		gtk_combo_box_append_text(GTK_COMBO_BOX(joypad_axis_combo[i]), joypad_noconnect_str);
 
-		axis_entry[i] = GTK_BIN(joypad_axis_combo[i])->child;
+		axis_entry[i] = gtk_bin_get_child(GTK_BIN(joypad_axis_combo[i]));
 		gtk_widget_show(axis_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(axis_entry[i]), FALSE);
 		gtk_entry_set_text(GTK_ENTRY(axis_entry[i]), joypad_noconnect_str);
@@ -1267,7 +1267,7 @@ create_joypad_note(void)
 
 		gtk_combo_box_append_text(GTK_COMBO_BOX(joypad_button_combo[i]), joypad_noconnect_str);
 
-		button_entry[i] = GTK_BIN(joypad_button_combo[i])->child;
+		button_entry[i] = gtk_bin_get_child(GTK_BIN(joypad_button_combo[i]));
 		gtk_widget_show(button_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(button_entry[i]), FALSE);
 		gtk_entry_set_text(GTK_ENTRY(button_entry[i]), joypad_noconnect_str);
