@@ -820,22 +820,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
-		case IDM_AMD98:
-			np2cfg.SOUND_SW = 0x80;
-			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
-			break;
-
 #if defined(SUPPORT_PX)
-		case IDM_SOUNDORCHESTRA:
-			np2cfg.SOUND_SW = 0x32;
-			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
-			break;
-
-		case IDM_SOUNDORCHESTRAV:
-			np2cfg.SOUND_SW = 0x82;
-			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
-			break;
-
 		case IDM_PX1:
 			np2cfg.SOUND_SW = 0x30;
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
@@ -846,6 +831,21 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		case IDM_SOUNDORCHESTRA:
+			np2cfg.SOUND_SW = 0x32;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
+		case IDM_SOUNDORCHESTRAV:
+			np2cfg.SOUND_SW = 0x82;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
+		case IDM_AMD98:
+			np2cfg.SOUND_SW = 0x80;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
 
 		case IDM_JASTSOUND:
 			np2oscfg.jastsnd = !np2oscfg.jastsnd;
