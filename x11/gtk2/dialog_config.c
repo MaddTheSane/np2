@@ -80,10 +80,12 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	const gchar *base = gtk_entry_get_text(GTK_ENTRY(baseclock_entry));
 	const gchar *multp = gtk_entry_get_text(GTK_ENTRY(clockmult_entry));
 #if defined(SUPPORT_RESUME)
-	gint resume = GTK_TOGGLE_BUTTON(resume_checkbutton)->active;
+	gint resume = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(resume_checkbutton));
 #endif
 #if defined(GCC_CPU_ARCH_IA32)
-	gint disablemmx = GTK_TOGGLE_BUTTON(disablemmx_checkbutton)->active;
+	gint disablemmx = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(disablemmx_checkbutton));
 #endif
 	guint bufsize;
 	guint mult;
