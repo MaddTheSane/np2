@@ -406,8 +406,10 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	snd86_ioport = gtk_entry_get_text(GTK_ENTRY(snd86_ioport_entry));
 	snd86_intr = gtk_entry_get_text(GTK_ENTRY(snd86_int_entry));
 	snd86_soundid = gtk_entry_get_text(GTK_ENTRY(snd86_soundid_entry));
-	snd86_interrupt = GTK_TOGGLE_BUTTON(snd86_int_checkbutton)->active;
-	snd86_biosrom = GTK_TOGGLE_BUTTON(snd86_rom_checkbutton)->active;
+	snd86_interrupt = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(snd86_int_checkbutton));
+	snd86_biosrom = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(snd86_rom_checkbutton));
 
 	renewal = FALSE;
 	snd86opt = snd86opt_mask = 0;
@@ -463,7 +465,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	spb_intr = gtk_entry_get_text(GTK_ENTRY(spb_int_entry));
 	spb_romaddr = gtk_entry_get_text(GTK_ENTRY(spb_romaddr_entry));
 	spb_vrl = (UINT8)(GTK_ADJUSTMENT(spb_vr_level_adj)->value);
-	spb_x = GTK_TOGGLE_BUTTON(spb_reverse_channel_checkbutton)->active;
+	spb_x = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(spb_reverse_channel_checkbutton));
 
 	renewal = FALSE;
 	spbopt = spbopt_mask = 0;
@@ -499,7 +502,9 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	}
 	spb_vrc = 0;
 	for (i = 0; i < NELEMENTS(spb_vr_channel_str); i++) {
-		spb_vrc |= GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i])->active ? (1 << i) : 0;
+		spb_vrc |= gtk_toggle_button_get_active(
+		    GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i]))
+		    ? (1 << i) : 0;
 	}
 	if (np2cfg.spb_vrc != spb_vrc) {
 		np2cfg.spb_vrc = spb_vrc;
@@ -523,7 +528,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 
 	/* JoyPad */
 	if (!(np2oscfg.JOYPAD1 & 2)) {
-		joypad[0] = GTK_TOGGLE_BUTTON(joypad_use_checkbutton[0])->active;
+		joypad[0] = gtk_toggle_button_get_active(
+		    GTK_TOGGLE_BUTTON(joypad_use_checkbutton[0]));
 
 		renewal = FALSE;
 		if ((np2oscfg.JOYPAD1 ^ joypad[0]) & 1) {
@@ -630,10 +636,14 @@ snd86_default_button_clicked(GtkButton *b, gpointer d)
 	gtk_entry_set_text(GTK_ENTRY(snd86_ioport_entry), "0188");
 	gtk_entry_set_text(GTK_ENTRY(snd86_int_entry), "INT5");
 	gtk_entry_set_text(GTK_ENTRY(snd86_soundid_entry), "4x");
-	if (!GTK_TOGGLE_BUTTON(snd86_int_checkbutton)->active)
-		g_signal_emit_by_name(G_OBJECT(snd86_int_checkbutton), "clicked");
-	if (!GTK_TOGGLE_BUTTON(snd86_rom_checkbutton)->active)
-		g_signal_emit_by_name(G_OBJECT(snd86_rom_checkbutton), "clicked");
+	if (!gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(snd86_int_checkbutton)))
+		g_signal_emit_by_name(G_OBJECT(snd86_int_checkbutton),
+		    "clicked");
+	if (!gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(snd86_rom_checkbutton)))
+		g_signal_emit_by_name(G_OBJECT(snd86_rom_checkbutton),
+		    "clicked");
 }
 
 static void
@@ -645,8 +655,10 @@ spb_default_button_clicked(GtkButton *b, gpointer d)
 	gtk_entry_set_text(GTK_ENTRY(spb_int_entry), "INT5");
 	gtk_entry_set_text(GTK_ENTRY(spb_romaddr_entry), "CC000");
 	for (i = 0; i < NELEMENTS(spb_vr_channel_str); i++) {
-		if (GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i])->active)
-			g_signal_emit_by_name(G_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
+		if (gtk_toggle_button_get_active(
+		    GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i])))
+			g_signal_emit_by_name(
+			    G_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
 	}
 }
 

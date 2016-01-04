@@ -86,9 +86,12 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	int i;
 
 	/* Video tab */
-	video_lcd = GTK_TOGGLE_BUTTON(video_lcd_checkbutton)->active;
-	video_lcdrev = GTK_TOGGLE_BUTTON(video_lcd_reverse_checkbutton)->active;
-	video_skipline = GTK_TOGGLE_BUTTON(video_skipline_checkbutton)->active;
+	video_lcd = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(video_lcd_checkbutton));
+	video_lcdrev = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(video_lcd_reverse_checkbutton));
+	video_skipline = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(video_skipline_checkbutton));
 	video_skipline_ratio = (guint)GTK_ADJUSTMENT(video_skipline_ratio_adj)->value;
 
 	renewal = FALSE;
@@ -118,7 +121,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	}
 
 	/* Chip tab */
-	chip_color16 = GTK_TOGGLE_BUTTON(chip_enable_color16_checkbutton)->active;
+	chip_color16 = gtk_toggle_button_get_active(
+	    GTK_TOGGLE_BUTTON(chip_enable_color16_checkbutton));
 
 	renewal = FALSE;
 	if (np2cfg.uPD72020 != chip_uPD72020) {
@@ -177,7 +181,8 @@ static void
 lcd_checkbutton_clicked(GtkCheckButton *b, gpointer d)
 {
 
-	gtk_widget_set_sensitive((GtkWidget *)d, GTK_TOGGLE_BUTTON(b)->active);
+	gtk_widget_set_sensitive((GtkWidget *)d,
+	    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b)));
 }
 
 static void
