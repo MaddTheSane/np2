@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <vector>
+#include "externalchip.h"
 #include "gimic/gimic.h"
 #include "spfm/spfmmanager.h"
 
@@ -26,10 +28,11 @@ public:
 	void Mute(bool bMute);
 
 private:
-	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
+	static CExternalChipManager sm_instance;	/*!< 唯一のインスタンスです */
+	std::vector<IExternalChip*> m_chips;		/*!< モジュール */
 
-	CGimic m_gimic;
-	CSpfmManager m_spfm;
+	CGimic m_gimic;								/*!< C86Ctl インスタンス */
+	CSpfmManager m_spfm;						/*!< SCCI インスタンス */
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 

@@ -130,7 +130,7 @@ void soundmng_play(void)
 	if (soundmng.opened)
 	{
 		SDL_PauseAudio(0);
-#if defined(SUPPORT_ROMEO)
+#if defined(SUPPORT_EXTERNALCHIP)
 		CExternalChipManager::GetInstance()->Mute(false);
 #endif
 	}
@@ -141,7 +141,7 @@ void soundmng_stop(void)
 	if (soundmng.opened)
 	{
 		SDL_PauseAudio(1);
-#if defined(SUPPORT_ROMEO)
+#if defined(SUPPORT_EXTERNALCHIP)
 		CExternalChipManager::GetInstance()->Mute(true);
 #endif
 	}
