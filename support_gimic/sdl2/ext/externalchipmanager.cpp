@@ -17,7 +17,6 @@ CExternalChipManager CExternalChipManager::sm_instance;
  */
 CExternalChipManager::CExternalChipManager()
 	: m_pGimic(NULL)
-	, m_pLight(NULL)
 {
 }
 
@@ -42,7 +41,7 @@ void CExternalChipManager::Initialize()
 void CExternalChipManager::Deinitialize()
 {
 	Release(m_pGimic);
-	Release(m_pLight);
+	m_spfm.Deinitialize();
 }
 
 /**
@@ -92,18 +91,10 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 	}
 
 	// SPFM Light
-	if (m_pLight == NULL)
+	IExternalChip* pSpfm = m_spfm.GetInterface(nChipType, nClock);
+	if (pSpfm != NULL)
 	{
-		CSpfmLight* pModule = new CSpfmLight;
-		if (pModule->Initialize(nChipType, nClock))
-		{
-			m_pLight = new CExternalOpna(pModule);
-			return m_pLight;
-		}
-		else
-		{
-			delete pModule;
-		}
+		return new CExternalOpna(pSpfm);
 	}
 	return NULL;
 }
@@ -124,10 +115,8 @@ void CExternalChipManager::Release(IExternalChip* pChip)
 		pChip->Reset();
 		delete pChip;
 	}
-	if (m_pLight == pChip)
+	else
 	{
-		m_pLight = NULL;
-		pChip->Reset();
 		delete pChip;
 	}
 }
@@ -141,10 +130,7 @@ void CExternalChipManager::Reset()
 	{
 		m_pGimic->Reset();
 	}
-	if (m_pLight)
-	{
-		m_pLight->Reset();
-	}
+	m_spfm.Reset();
 }
 
 /**
@@ -157,8 +143,5 @@ void CExternalChipManager::Mute(bool bMute)
 	{
 		m_pGimic->Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
 	}
-	if (m_pLight)
-	{
-		m_pLight->Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
-	}
+	m_spfm.Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
 }

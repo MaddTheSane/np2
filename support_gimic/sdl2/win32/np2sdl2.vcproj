@@ -1110,7 +1110,15 @@
 						Name="spfm"
 						>
 						<File
+							RelativePath="..\ext\spfm\spfminterface.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\ext\spfm\spfmlight.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\spfm\spfmmanager.cpp"
 							>
 						</File>
 					</Filter>
@@ -2064,7 +2072,15 @@
 						Name="spfm"
 						>
 						<File
+							RelativePath="..\ext\spfm\spfminterface.h"
+							>
+						</File>
+						<File
 							RelativePath="..\ext\spfm\spfmlight.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\spfm\spfmmanager.h"
 							>
 						</File>
 					</Filter>

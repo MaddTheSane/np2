@@ -6,6 +6,7 @@
 #pragma once
 
 #include "externalchip.h"
+#include "spfm/spfmmanager.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -28,8 +29,7 @@ private:
 	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
 
 	IExternalChip* m_pGimic;
-	IExternalChip* m_pLight;
-
+	CSpfmManager m_spfm;
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 
