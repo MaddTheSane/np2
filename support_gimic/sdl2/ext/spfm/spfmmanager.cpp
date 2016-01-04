@@ -5,8 +5,7 @@
 
 #include "compiler.h"
 #include "spfmmanager.h"
-#include <algorithm>
-#include "spfminterface.h"
+#include "spfmlight.h"
 #include "dosio.h"
 #include "common/profile.h"
 
@@ -63,7 +62,7 @@ IExternalChip* CSpfmManager::GetInterface(IExternalChip::ChipType nChipType, UIN
 		return NULL;
 	}
 
-	CSpfmInterface* ret = NULL;
+	IExternalChip* pChip = NULL;
 
 	OEMCHAR szPath[MAX_PATH];
 	milstr_ncpy(szPath, file_getcd(OEMTEXT("SCCI.ini")), NELEMENTS(szPath));
@@ -73,7 +72,7 @@ IExternalChip* CSpfmManager::GetInterface(IExternalChip::ChipType nChipType, UIN
 	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
 	{
 		OEMCHAR* lpSections = szSections;
-		while (*lpSections != '\0')
+		while ((pChip == NULL) && (*lpSections != '\0'))
 		{
 			OEMCHAR* lpKeyName = lpSections;
 			const size_t cchKeyName = OEMSTRLEN(lpSections);
@@ -93,37 +92,64 @@ IExternalChip* CSpfmManager::GetInterface(IExternalChip::ChipType nChipType, UIN
 				continue;
 			}
 
-			if (profile_readint(lpKeyName, OEMTEXT("SLOT_00_CHIP_ID"), 0, pfh) != nScChipType)
+			std::string deviceName(lpKeyName + 11, lpKeyName + cchKeyName - 1);
+
+			CSpfmLight* pDevice = NULL;
+			std::map<std::string, CSpfmLight*>::iterator it = m_devices.find(deviceName);
+			if (it != m_devices.end())
 			{
-				continue;
+				pDevice = it->second;
 			}
 
-			lpKeyName[cchKeyName - 1] = '\0';
-			const OEMCHAR* lpDeviceName = lpKeyName + 11;
-
-			ret = CSpfmInterface::CreateInstance(this, lpDeviceName, nChipType);
-			if (ret)
+			for (UINT i = 0; i < 4; i++)
 			{
-				m_interfaces.push_back(ret);
+				if ((pDevice) && (pDevice->IsAttached(i)))
+				{
+					continue;
+				}
+
+				OEMCHAR szAppName[32];
+				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID"), i);
+				if (profile_readint(lpKeyName, szAppName, 0, pfh) != nScChipType)
+				{
+					continue;
+				}
+				if (pDevice == NULL)
+				{
+					pDevice = CSpfmLight::CreateInstance(this, deviceName.c_str());
+					if (pDevice == NULL)
+					{
+						break;
+					}
+					m_devices[deviceName] = pDevice;
+				}
+
+				pChip = pDevice->Attach(i, nChipType, nClock);
+				if (pChip)
+				{
+					break;
+				}
 			}
 		}
 	}
 	profile_close(pfh);
 
-	return ret;
+	return pChip;
 }
 
 /**
  * Detach
  */
-void CSpfmManager::Detach(CSpfmInterface* pInstance)
+void CSpfmManager::Detach(CSpfmLight* pInstance)
 {
-	std::vector<CSpfmInterface*>::iterator it = std::find(m_interfaces.begin(), m_interfaces.end(), pInstance);
-	if (it == m_interfaces.end())
+	for (std::map<std::string, CSpfmLight*>::iterator it = m_devices.begin(); it != m_devices.end(); ++it)
 	{
-		return;
+		if (it->second == pInstance)
+		{
+			m_devices.erase(it);
+			return;
+		}
 	}
-	m_interfaces.erase(it);
 }
 
 /**
@@ -131,9 +157,9 @@ void CSpfmManager::Detach(CSpfmInterface* pInstance)
  */
 void CSpfmManager::Reset()
 {
-	for (std::vector<CSpfmInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
+	for (std::map<std::string, CSpfmLight*>::iterator it = m_devices.begin(); it != m_devices.end(); ++it)
 	{
-		(*it)->Reset();
+		it->second->Reset();
 	}
 }
 

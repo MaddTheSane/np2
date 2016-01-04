@@ -6,9 +6,8 @@
 #pragma once
 
 #include "../externalchip.h"
-#include "misc/tty.h"
 
-class CSpfmManager;
+class CSpfmLight;
 
 /**
  * @brief The class of interface
@@ -16,9 +15,7 @@ class CSpfmManager;
 class CSpfmInterface : public IExternalChip
 {
 public:
-	static CSpfmInterface* CreateInstance(CSpfmManager* pManager, const OEMCHAR* lpDeviceName, ChipType nChipType);
-
-	CSpfmInterface(CSpfmManager* pManager, ChipType nChipType);
+	CSpfmInterface(CSpfmLight* pDevice, UINT nSlot, ChipType nChipType, UINT nClock);
 	virtual ~CSpfmInterface();
 	void Deinitialize();
 	virtual ChipType GetChipType();
@@ -27,8 +24,7 @@ public:
 	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
 private:
-	CSpfmManager* m_pManager;		/*!< Manager */
-	ChipType m_nChipType;			/*!< ChipType */
-	CTty m_serial;					/*!< Serial */
-	bool Open(const OEMCHAR* lpDeviceName);
+	CSpfmLight* m_pDevice;		/*!< Device */
+	UINT m_nSlot;				/*!< Slot */
+	ChipType m_nChipType;		/*!< ChipType */
 };

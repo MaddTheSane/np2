@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include <vector>
+#include <map>
+#include <string>
 #include "../externalchip.h"
 
 class CSpfmInterface;
@@ -21,7 +22,7 @@ public:
 	~CSpfmManager();
 	void Deinitialize();
 	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
-	void Detach(CSpfmInterface* pInstance);
+	void Detach(CSpfmLight* pInstance);
 	void Reset();
 	INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
@@ -49,5 +50,5 @@ private:
 		SC_TYPE_Y8950,
 		SC_TYPE_MAX
 	};
-	std::vector<CSpfmInterface*> m_interfaces;			/*!< interfaces */
+	std::map<std::string, CSpfmLight*> m_devices;		/*!< devices */
 };

@@ -5,30 +5,17 @@
 
 #include "compiler.h"
 #include "spfminterface.h"
-#include "spfmmanager.h"
-#include "misc/threadbase.h"
-
-/**
- *
- */
-CSpfmInterface* CSpfmInterface::CreateInstance(CSpfmManager* pManager, const OEMCHAR* lpDeviceName, ChipType nChipType)
-{
-	CSpfmInterface* pInstance = new CSpfmInterface(pManager, nChipType);
-	if (!pInstance->Open(lpDeviceName))
-	{
-		delete pInstance;
-		return NULL;
-	}
-	return pInstance;
-}
+#include "spfmlight.h"
 
 /**
  * Constructor
  * @param[in] pMagager The instance of manager
+ * @param[in] nSlot The number of slot
  * @param[in] nChipType The type of chip
  */
-CSpfmInterface::CSpfmInterface(CSpfmManager* pManager, IExternalChip::ChipType nChipType)
-	: m_pManager(pManager)
+CSpfmInterface::CSpfmInterface(CSpfmLight* pDevice, UINT nSlot, ChipType nChipType, UINT nClock)
+	: m_pDevice(pDevice)
+	, m_nSlot(nSlot)
 	, m_nChipType(nChipType)
 {
 }
@@ -38,43 +25,7 @@ CSpfmInterface::CSpfmInterface(CSpfmManager* pManager, IExternalChip::ChipType n
  */
 CSpfmInterface::~CSpfmInterface()
 {
-	Deinitialize();
-	if (m_pManager)
-	{
-		m_pManager->Detach(this);
-	}
-}
-
-/**
- * Open serial
- */
-bool CSpfmInterface::Open(const OEMCHAR* lpDeviceName)
-{
-	if (!m_serial.Open(lpDeviceName, 1500000, OEMTEXT("8N1")))
-	{
-		return false;
-	}
-
-	const unsigned char query[1] = {0xff};
-	m_serial.Write(query, sizeof(query));
-
-	CThreadBase::Delay(100 * 1000);
-
-	char buffer[4];
-	if ((m_serial.Read(buffer, 2) != 2) || (buffer[0] != 'L') || (buffer[1] != 'T'))
-	{
-		m_serial.Close();
-		return false;
-	}
-	return true;
-}
-
-/**
- * Deinitialize
- */
-void CSpfmInterface::Deinitialize()
-{
-	m_serial.Close();
+	m_pDevice->Detach(m_nSlot);
 }
 
 /**
@@ -91,13 +42,7 @@ IExternalChip::ChipType CSpfmInterface::GetChipType()
  */
 void CSpfmInterface::Reset()
 {
-	const unsigned char reset[1] = {0xfe};
-	m_serial.Write(reset, sizeof(reset));
-
-	CThreadBase::Delay(10 * 1000);
-
-	char buffer[4];
-	m_serial.Read(buffer, 2);
+	m_pDevice->Reset();
 }
 
 /**
@@ -107,12 +52,7 @@ void CSpfmInterface::Reset()
  */
 void CSpfmInterface::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	unsigned char cmd[4];
-	cmd[0] = 0x00;
-	cmd[1] = static_cast<unsigned char>((nAddr >> 7) & 2);
-	cmd[2] = static_cast<unsigned char>(nAddr & 0xff);
-	cmd[3] = cData;
-	m_serial.Write(cmd, sizeof(cmd));
+	m_pDevice->WriteRegister(m_nSlot, nAddr, cData);
 }
 
 /**
