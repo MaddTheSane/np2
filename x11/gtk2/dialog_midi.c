@@ -349,7 +349,7 @@ create_midi_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(ioport_combo), mpu98_ioport_str[i]);
 	}
 
-	mpu98_ioport_entry = GTK_BIN(ioport_combo)->child;
+	mpu98_ioport_entry = gtk_bin_get_child(GTK_BIN(ioport_combo));
 	gtk_widget_show(mpu98_ioport_entry);
 	g_signal_connect(GTK_OBJECT(mpu98_ioport_entry), "changed",
 	    G_CALLBACK(mpu98_ioport_entry_changed), NULL);
@@ -373,7 +373,7 @@ create_midi_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(intr_combo), mpu98_intr_str[i]);
 	}
 
-	mpu98_intr_entry = GTK_BIN(intr_combo)->child;
+	mpu98_intr_entry = gtk_bin_get_child(GTK_BIN(intr_combo));
 	gtk_widget_show(mpu98_intr_entry);
 	g_signal_connect(GTK_OBJECT(mpu98_intr_entry), "changed",
 	    G_CALLBACK(mpu98_intr_entry_changed), NULL);
@@ -449,7 +449,7 @@ create_midi_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(midiout_combo), mpu98_midiout_str[i]);
 	}
 
-	mpu98_midiout_entry = GTK_BIN(midiout_combo)->child;
+	mpu98_midiout_entry = gtk_bin_get_child(GTK_BIN(midiout_combo));
 	gtk_widget_show(mpu98_midiout_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(mpu98_midiout_entry), FALSE);
 	for (i = 0; i < NELEMENTS(mpu98_midiout_str); i++) {
@@ -484,7 +484,7 @@ create_midi_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(midiin_combo), mpu98_midiin_str[i]);
 	}
 
-	mpu98_midiin_entry = GTK_BIN(midiin_combo)->child;
+	mpu98_midiin_entry = gtk_bin_get_child(GTK_BIN(midiin_combo));
 	gtk_widget_show(mpu98_midiin_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(mpu98_midiin_entry), FALSE);
 	for (i = 0; i < NELEMENTS(mpu98_midiin_str); i++) {
@@ -521,7 +521,7 @@ create_midi_dialog(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(module_combo), cmmidi_mdlname[i]);
 	}
 
-	mpu98_module_entry = GTK_BIN(module_combo)->child;
+	mpu98_module_entry = gtk_bin_get_child(GTK_BIN(module_combo));
 	gtk_widget_show(mpu98_module_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(mpu98_module_entry), TRUE);
 	gtk_entry_set_text(GTK_ENTRY(mpu98_module_entry), np2oscfg.mpu.mdl);
