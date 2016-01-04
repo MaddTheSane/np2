@@ -32,6 +32,9 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
 			m_bHasPsg = true;
 			m_bHasRhythm = true;
 			break;
+
+		default:
+			break;
 	}
 }
 
