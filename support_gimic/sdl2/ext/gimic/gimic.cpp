@@ -13,7 +13,6 @@
  */
 CGimic::CGimic()
 	: m_pChip(NULL)
-	, m_nClock(7987200)
 {
 }
 
@@ -22,7 +21,6 @@ CGimic::CGimic()
  */
 CGimic::~CGimic()
 {
-	Deinitialize();
 }
 
 /**
@@ -32,51 +30,42 @@ CGimic::~CGimic()
  * @retval true Succeeded
  * @retval false Failed
  */
-bool CGimic::Initialize(IExternalChip::ChipType nChipType, UINT nClock)
+IExternalChip* CGimic::GetInterface(IExternalChip::ChipType nChipType, UINT nClock)
 {
-	Deinitialize();
+	if (m_pChip)
+	{
+		return NULL;
+	}
 
 	CGimicUSB* pGimic = new CGimicUSB();
 	if ((pGimic->Initialize() == C86CTL_ERR_NONE) && (GetChipTypeInner(pGimic) == nChipType))
 	{
-		m_pChip = pGimic;
-		m_nClock = nClock;
-		Reset();
-		return true;
+		m_pChip = new CInterface(this, pGimic, nClock);
+		m_pChip->Reset();
+		return m_pChip;
 	}
 	delete pGimic;
 
 	C86BoxUSB* pC86Box = new C86BoxUSB();
 	if ((pC86Box->Initialize() == C86CTL_ERR_NONE) && (GetChipTypeInner(pC86Box) == nChipType))
 	{
-		m_pChip = pC86Box;
-		Reset();
-		return true;
+		m_pChip = new CInterface(this, pGimic, nClock);
+		m_pChip->Reset();
+		return m_pChip;
 	}
 	delete pC86Box;
-	return false;
+	return NULL;
 }
 
 /**
- * Deinitialize
+ * Detach
  */
-void CGimic::Deinitialize()
+void CGimic::Detach(IExternalChip* pChip)
 {
-	if (m_pChip)
+	if (m_pChip == pChip)
 	{
-		m_pChip->Deinitialize();
-		delete m_pChip;
 		m_pChip = NULL;
 	}
-}
-
-/**
- * Get chip type
- * @return The type of the chip
- */
-IExternalChip::ChipType CGimic::GetChipType()
-{
-	return GetChipTypeInner(m_pChip);
 }
 
 /**
@@ -110,21 +99,46 @@ IExternalChip::ChipType CGimic::GetChipTypeInner(c86ctl::IC86RealChip* pChip)
 }
 
 /**
+ * Constructor
+ */
+CGimic::CInterface::CInterface(CGimic* pManager, c86ctl::IC86RealChip* pChip, UINT nClock)
+	: m_pManager(pManager)
+	, m_pChip(pChip)
+	, m_nClock(nClock)
+{
+}
+
+/**
+ * Destructor
+ */
+CGimic::CInterface::~CInterface()
+{
+	m_pManager->Detach(this);
+	delete m_pChip;
+}
+
+/**
+ * Get chip type
+ * @return The type of the chip
+ */
+IExternalChip::ChipType CGimic::CInterface::GetChipType()
+{
+	return CGimic::GetChipTypeInner(m_pChip);
+}
+
+/**
  * Reset
  */
-void CGimic::Reset()
+void CGimic::CInterface::Reset()
 {
-	if (m_pChip)
-	{
-		m_pChip->Reset();
+	m_pChip->Reset();
 
-		// G.I.M.I.C の初期化
-		CGimicUSB* gimicusb = dynamic_cast<CGimicUSB*>(m_pChip);
-		if (gimicusb)
-		{
-			gimicusb->SetPLLClock(m_nClock);
-			gimicusb->SetSSGVolume(31);
-		}
+	// G.I.M.I.C の初期化
+	CGimicUSB* gimicusb = dynamic_cast<CGimicUSB*>(m_pChip);
+	if (gimicusb)
+	{
+		gimicusb->SetPLLClock(m_nClock);
+		gimicusb->SetSSGVolume(31);
 	}
 }
 
@@ -133,13 +147,9 @@ void CGimic::Reset()
  * @param[in] nAddr The address
  * @param[in] cData The data
  */
-void CGimic::WriteRegister(UINT nAddr, UINT8 cData)
+void CGimic::CInterface::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	// printf("WriteReg %04x %02x\n", nAddr, cData);
-	if (m_pChip)
-	{
-		m_pChip->Out(nAddr, cData);
-	}
+	m_pChip->Out(nAddr, cData);
 }
 
 /**
@@ -148,7 +158,7 @@ void CGimic::WriteRegister(UINT nAddr, UINT8 cData)
  * @param[in] nParameter パラメータ
  * @return リザルト
  */
-INTPTR CGimic::Message(UINT nMessage, INTPTR nParameter)
+INTPTR CGimic::CInterface::Message(UINT nMessage, INTPTR nParameter)
 {
 	return 0;
 }

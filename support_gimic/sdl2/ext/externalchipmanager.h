@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "externalchip.h"
+#include "gimic/gimic.h"
 #include "spfm/spfmmanager.h"
 
 /**
@@ -28,7 +28,7 @@ public:
 private:
 	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
 
-	IExternalChip* m_pGimic;
+	CGimic m_gimic;
 	CSpfmManager m_spfm;
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };

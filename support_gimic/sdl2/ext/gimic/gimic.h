@@ -15,20 +15,34 @@ namespace c86ctl
 /**
  * @brief The class of accessing G.I.M.I.C
  */
-class CGimic : public IExternalChip
+class CGimic
 {
 public:
 	CGimic();
 	virtual ~CGimic();
-	bool Initialize(IExternalChip::ChipType nChipType, UINT nClock);
-	void Deinitialize();
-	virtual ChipType GetChipType();
-	virtual void Reset();
-	virtual void WriteRegister(UINT nAddr, UINT8 cData);
-	virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
+	void Detach(IExternalChip* pChip);
+	static IExternalChip::ChipType GetChipTypeInner(c86ctl::IC86RealChip* pDevice);
 
 private:
-	c86ctl::IC86RealChip* m_pChip;		/*!< The instance of the chip */
-	UINT m_nClock;						/*!< The clock */
-	static IExternalChip::ChipType GetChipTypeInner(c86ctl::IC86RealChip* pDevice);
+	/**
+	 * @brief The interface
+	 */
+	class CInterface : public IExternalChip
+	{
+	public:
+		CInterface(CGimic* pManager, c86ctl::IC86RealChip* pChip, UINT nClock);
+		virtual ~CInterface();
+		virtual ChipType GetChipType();
+		virtual void Reset();
+		virtual void WriteRegister(UINT nAddr, UINT8 cData);
+		virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+
+	private:
+		CGimic* m_pManager;					/*!< The instance of the manager */
+		c86ctl::IC86RealChip* m_pChip;		/*!< The instance of the chip */
+		UINT m_nClock;						/*!< The clock */
+	};
+
+	IExternalChip* m_pChip;			/* The instance of the interface */
 };
