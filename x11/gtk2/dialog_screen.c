@@ -92,7 +92,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	    GTK_TOGGLE_BUTTON(video_lcd_reverse_checkbutton));
 	video_skipline = gtk_toggle_button_get_active(
 	    GTK_TOGGLE_BUTTON(video_skipline_checkbutton));
-	video_skipline_ratio = (guint)GTK_ADJUSTMENT(video_skipline_ratio_adj)->value;
+	video_skipline_ratio = (guint)gtk_adjustment_get_value(
+	    GTK_ADJUSTMENT(video_skipline_ratio_adj));
 
 	renewal = FALSE;
 	if (np2cfg.skipline != video_skipline) {
@@ -146,11 +147,13 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	}
 
 	/* Timing tab */
-	timing_realpal = ((guint)GTK_ADJUSTMENT(timing_realpal_adj)->value) + 32;
+	timing_realpal = (guint)gtk_adjustment_get_value(
+	    GTK_ADJUSTMENT(timing_realpal_adj)) + 32;
 
 	renewal = FALSE;
 	for (i =  0; i < NELEMENTS(timing_waitclock_str); i++) {
-		timing_waitclock[i] = (guint)GTK_ADJUSTMENT(timing_waitclock_adj[i])->value;
+		timing_waitclock[i] = (guint)gtk_adjustment_get_value(
+		    GTK_ADJUSTMENT(timing_waitclock_adj[i]));
 		if (np2cfg.wait[i * 2] != timing_waitclock[i]) {
 			np2cfg.wait[i * 2] = timing_waitclock[i];
 			np2cfg.wait[i * 2 + 1] = 1;

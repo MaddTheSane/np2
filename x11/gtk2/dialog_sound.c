@@ -333,7 +333,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	/* Mixer */
 	renewal = FALSE;
 	for (i = 0; i < NELEMENTS(mixer_vol_tbl); i++) {
-		mixer_vol[i] = (guint)(GTK_ADJUSTMENT(mixer_adj[i])->value);
+		mixer_vol[i] = (guint)gtk_adjustment_get_value(
+		    GTK_ADJUSTMENT(mixer_adj[i]));
 		if (*mixer_vol_tbl[i].valp != mixer_vol[i]) {
 			*mixer_vol_tbl[i].valp = mixer_vol[i];
 			renewal = TRUE;
@@ -347,7 +348,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	/* PC-9801-14 */
 	renewal = FALSE;
 	for (i = 0; i < NELEMENTS(snd14_vol_str); i++) {
-		snd14_vol14[i] = (guint)(GTK_ADJUSTMENT(snd14_adj[i])->value);
+		snd14_vol14[i] = (guint)gtk_adjustment_get_value(
+		    GTK_ADJUSTMENT(snd14_adj[i]));
 		if (np2cfg.vol14[i] != snd14_vol14[i]) {
 			np2cfg.vol14[i] = snd14_vol14[i];
 			renewal = TRUE;
@@ -464,7 +466,8 @@ ok_button_clicked(GtkButton *b, gpointer d)
 	spb_ioport = gtk_entry_get_text(GTK_ENTRY(spb_ioport_entry));
 	spb_intr = gtk_entry_get_text(GTK_ENTRY(spb_int_entry));
 	spb_romaddr = gtk_entry_get_text(GTK_ENTRY(spb_romaddr_entry));
-	spb_vrl = (UINT8)(GTK_ADJUSTMENT(spb_vr_level_adj)->value);
+	spb_vrl = (UINT8)gtk_adjustment_get_value(
+	    GTK_ADJUSTMENT(spb_vr_level_adj));
 	spb_x = gtk_toggle_button_get_active(
 	    GTK_TOGGLE_BUTTON(spb_reverse_channel_checkbutton));
 
