@@ -212,7 +212,7 @@ create_video_note(void)
 	gtk_box_pack_start(GTK_BOX(main_widget), video_lcd_checkbutton,
 	    FALSE, FALSE, 0);
 	if (np2cfg.LCD_MODE & 1) {
-		g_signal_emit_by_name(GTK_OBJECT(video_lcd_checkbutton),
+		g_signal_emit_by_name(G_OBJECT(video_lcd_checkbutton),
 		    "clicked");
 	}
 
@@ -226,12 +226,12 @@ create_video_note(void)
 	if (np2cfg.LCD_MODE & 1) {
 		if (np2cfg.LCD_MODE & 2) {
 			g_signal_emit_by_name(
-			  GTK_OBJECT(video_lcd_reverse_checkbutton), "clicked");
+			  G_OBJECT(video_lcd_reverse_checkbutton), "clicked");
 		}
 	} else {
 		gtk_widget_set_sensitive(video_lcd_reverse_checkbutton, FALSE);
 	}
-	g_signal_connect(GTK_OBJECT(video_lcd_checkbutton), "clicked",
+	g_signal_connect(G_OBJECT(video_lcd_checkbutton), "clicked",
 	    G_CALLBACK(lcd_checkbutton_clicked),
 	    (gpointer)video_lcd_reverse_checkbutton);
 
@@ -241,7 +241,7 @@ create_video_note(void)
 	gtk_box_pack_start(GTK_BOX(main_widget), video_skipline_checkbutton,
 	    FALSE, FALSE, 0);
 	if (np2cfg.skipline) {
-		g_signal_emit_by_name(GTK_OBJECT(video_skipline_checkbutton),
+		g_signal_emit_by_name(G_OBJECT(video_skipline_checkbutton),
 		    "clicked");
 	}
 
@@ -302,12 +302,12 @@ create_chip_note(void)
 		gtk_widget_show(upd72020_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gdc_hbox), upd72020_radiobutton[i],
 		    TRUE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(upd72020_radiobutton[i]), "clicked",
+		g_signal_connect(G_OBJECT(upd72020_radiobutton[i]), "clicked",
 		    G_CALLBACK(uPD72020_radiobutton_clicked),
 		    GUINT_TO_POINTER(i));
 	}
 	g_signal_emit_by_name(
-	    GTK_OBJECT(upd72020_radiobutton[np2cfg.uPD72020 ? 1 : 0]),
+	    G_OBJECT(upd72020_radiobutton[np2cfg.uPD72020 ? 1 : 0]),
 	    "clicked");
 
 	/*
@@ -330,10 +330,10 @@ create_chip_note(void)
 		gtk_widget_show(gc_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(gc_hbox), gc_radiobutton[i], TRUE,
 		    FALSE, 0);
-		g_signal_connect(GTK_OBJECT(gc_radiobutton[i]), "clicked",
+		g_signal_connect(G_OBJECT(gc_radiobutton[i]), "clicked",
 		    G_CALLBACK(gc_radiobutton_clicked), GUINT_TO_POINTER(i));
 	}
-	g_signal_emit_by_name(GTK_OBJECT(gc_radiobutton[np2cfg.grcg & 3]),
+	g_signal_emit_by_name(G_OBJECT(gc_radiobutton[np2cfg.grcg & 3]),
 	    "clicked");
 
 	/*
@@ -346,7 +346,7 @@ create_chip_note(void)
 	    chip_enable_color16_checkbutton, FALSE, FALSE, 2);
 	if (np2cfg.color16) {
 		g_signal_emit_by_name(
-		    GTK_OBJECT(chip_enable_color16_checkbutton), "clicked");
+		    G_OBJECT(chip_enable_color16_checkbutton), "clicked");
 	}
 
 	return main_widget;
@@ -431,7 +431,7 @@ create_screen_dialog(void)
 	gtk_window_set_resizable(GTK_WINDOW(screen_dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(screen_dialog), 5);
 
-	g_signal_connect(GTK_OBJECT(screen_dialog), "destroy",
+	g_signal_connect(G_OBJECT(screen_dialog), "destroy",
 	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_widget = gtk_vbox_new(FALSE, 0);
@@ -470,13 +470,13 @@ create_screen_dialog(void)
 #else
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 #endif
-	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(screen_dialog));
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked",
+	    G_CALLBACK(gtk_widget_destroy), G_OBJECT(screen_dialog));
 
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
 	gtk_box_pack_end(GTK_BOX(confirm_widget), ok_button, FALSE, FALSE, 0);
-	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
+	g_signal_connect(G_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)screen_dialog);
 #if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18)
 	gtk_widget_set_can_default(ok_button, TRUE);

@@ -87,7 +87,7 @@ anex_newdisk_dialog(GtkWidget *dialog)
 	if (last >= NELEMENTS(hddsize)) {
 		last = 0;
 	}
-	g_signal_emit_by_name(GTK_OBJECT(button[last]), "clicked");
+	g_signal_emit_by_name(G_OBJECT(button[last]), "clicked");
 
 	gtk_widget_show_all(dialog);
 
@@ -337,7 +337,7 @@ create_newdisk_fd_dialog(const char *filename)
 	if (i == ndisktype) {
 		i = (i <= 1) ? 0 : 1;	/* 2HD */
 	}
-	g_signal_emit_by_name(GTK_OBJECT(button[i]), "clicked");
+	g_signal_emit_by_name(G_OBJECT(button[i]), "clicked");
 
 	gtk_widget_show_all(dialog);
 

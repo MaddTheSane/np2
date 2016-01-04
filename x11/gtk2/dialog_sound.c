@@ -631,9 +631,9 @@ snd86_default_button_clicked(GtkButton *b, gpointer d)
 	gtk_entry_set_text(GTK_ENTRY(snd86_int_entry), "INT5");
 	gtk_entry_set_text(GTK_ENTRY(snd86_soundid_entry), "4x");
 	if (!GTK_TOGGLE_BUTTON(snd86_int_checkbutton)->active)
-		g_signal_emit_by_name(GTK_OBJECT(snd86_int_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(snd86_int_checkbutton), "clicked");
 	if (!GTK_TOGGLE_BUTTON(snd86_rom_checkbutton)->active)
-		g_signal_emit_by_name(GTK_OBJECT(snd86_rom_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(snd86_rom_checkbutton), "clicked");
 }
 
 static void
@@ -646,7 +646,7 @@ spb_default_button_clicked(GtkButton *b, gpointer d)
 	gtk_entry_set_text(GTK_ENTRY(spb_romaddr_entry), "CC000");
 	for (i = 0; i < NELEMENTS(spb_vr_channel_str); i++) {
 		if (GTK_TOGGLE_BUTTON(spb_vr_channel_checkbutton[i])->active)
-			g_signal_emit_by_name(GTK_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
+			g_signal_emit_by_name(G_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
 	}
 }
 
@@ -702,7 +702,7 @@ create_mixer_note(void)
 	mixer_default_button = gtk_button_new_with_label("Default");
 	gtk_widget_show(mixer_default_button);
 	gtk_box_pack_end(GTK_BOX(hbox), mixer_default_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(mixer_default_button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(mixer_default_button), "clicked",
 	    G_CALLBACK(mixer_default_button_clicked), NULL);
 
 	return root_widget;
@@ -750,7 +750,7 @@ create_pc9801_14_note(void)
 	snd14_default_button = gtk_button_new_with_label("Default");
 	gtk_widget_show(snd14_default_button);
 	gtk_box_pack_end(GTK_BOX(hbox), snd14_default_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(snd14_default_button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(snd14_default_button), "clicked",
 	    G_CALLBACK(snd14_default_button_clicked), NULL);
 
 	return root_widget;
@@ -844,7 +844,7 @@ create_pc9801_26_note(void)
 	snd26_default_button = gtk_button_new_with_label("Default");
 	gtk_widget_show(snd26_default_button);
 	gtk_box_pack_end(GTK_BOX(hbox), snd26_default_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(snd26_default_button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(snd26_default_button), "clicked",
 	    G_CALLBACK(snd26_default_button_clicked), NULL);
 
 	return root_widget;
@@ -897,7 +897,7 @@ create_pc9801_86_note(void)
 	gtk_widget_show(snd86_int_checkbutton);
 	gtk_table_attach_defaults(GTK_TABLE(table), snd86_int_checkbutton, 2, 3, 0, 1);
 	if (SND86_GET_INTERRUPT())
-		g_signal_emit_by_name(GTK_OBJECT(snd86_int_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(snd86_int_checkbutton), "clicked");
 
 	int_combo = gtk_combo_box_entry_new_text();
 	gtk_widget_show(int_combo);
@@ -935,7 +935,7 @@ create_pc9801_86_note(void)
 	gtk_widget_show(snd86_rom_checkbutton);
 	gtk_table_attach_defaults(GTK_TABLE(table), snd86_rom_checkbutton, 2, 3, 1, 2);
 	if (SND86_GET_BIOSROM())
-		g_signal_emit_by_name(GTK_OBJECT(snd86_rom_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(snd86_rom_checkbutton), "clicked");
 
 	/* "Default" button */
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -946,7 +946,7 @@ create_pc9801_86_note(void)
 	snd86_default_button = gtk_button_new_with_label("Default");
 	gtk_widget_show(snd86_default_button);
 	gtk_box_pack_end(GTK_BOX(hbox), snd86_default_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(snd86_default_button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(snd86_default_button), "clicked",
 	    G_CALLBACK(snd86_default_button_clicked), NULL);
 
 	return root_widget;
@@ -1044,7 +1044,7 @@ create_spb_note(void)
 		gtk_widget_show(spb_vr_channel_checkbutton[i]);
 		gtk_table_attach_defaults(GTK_TABLE(table), spb_vr_channel_checkbutton[i], i+1, i+2, 2, 3);
 		if (np2cfg.spb_vrc & (1 << i))
-			g_signal_emit_by_name(GTK_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
+			g_signal_emit_by_name(G_OBJECT(spb_vr_channel_checkbutton[i]), "clicked");
 	}
 
 	vr_level_label = gtk_label_new("level");
@@ -1063,7 +1063,7 @@ create_spb_note(void)
 	gtk_widget_show(spb_reverse_channel_checkbutton);
 	gtk_table_attach_defaults(GTK_TABLE(table), spb_reverse_channel_checkbutton, 0, 6, 3, 4);
 	if (np2cfg.spb_x)
-		g_signal_emit_by_name(GTK_OBJECT(spb_reverse_channel_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(spb_reverse_channel_checkbutton), "clicked");
 
 	/* "Default" button */
 	hbox = gtk_hbox_new(FALSE, 0);
@@ -1074,7 +1074,7 @@ create_spb_note(void)
 	spb_default_button = gtk_button_new_with_label("Default");
 	gtk_widget_show(spb_default_button);
 	gtk_box_pack_end(GTK_BOX(hbox), spb_default_button, FALSE, FALSE, 5);
-	g_signal_connect_swapped(GTK_OBJECT(spb_default_button), "clicked",
+	g_signal_connect_swapped(G_OBJECT(spb_default_button), "clicked",
 	    G_CALLBACK(spb_default_button_clicked), NULL);
 
 	return root_widget;
@@ -1227,7 +1227,7 @@ create_joypad_note(void)
 	devlist_entry = gtk_bin_get_child(GTK_BIN(joypad_devlist_combo));
 	gtk_widget_show(devlist_entry);
 	gtk_editable_set_editable(GTK_EDITABLE(devlist_entry), FALSE);
-	g_signal_connect(GTK_OBJECT(devlist_entry), "changed",
+	g_signal_connect(G_OBJECT(devlist_entry), "changed",
 	    G_CALLBACK(joypad_device_changed), (gpointer)joypad_devlist_combo);
 
 	/* Axis */
@@ -1248,7 +1248,7 @@ create_joypad_note(void)
 		gtk_widget_show(axis_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(axis_entry[i]), FALSE);
 		gtk_entry_set_text(GTK_ENTRY(axis_entry[i]), joypad_noconnect_str);
-		g_signal_connect(GTK_OBJECT(axis_entry[i]), "changed",
+		g_signal_connect(G_OBJECT(axis_entry[i]), "changed",
 		    G_CALLBACK(joypad_axis_entry_changed),
 		    (gpointer)(&joypad_axis[i]));
 	}
@@ -1271,7 +1271,7 @@ create_joypad_note(void)
 		gtk_widget_show(button_entry[i]);
 		gtk_editable_set_editable(GTK_EDITABLE(button_entry[i]), FALSE);
 		gtk_entry_set_text(GTK_ENTRY(button_entry[i]), joypad_noconnect_str);
-		g_signal_connect(GTK_OBJECT(button_entry[i]), "changed",
+		g_signal_connect(G_OBJECT(button_entry[i]), "changed",
 		    G_CALLBACK(joypad_button_entry_changed),
 		    (gpointer)(&joypad_button[i]));
 	}
@@ -1299,7 +1299,7 @@ create_joypad_note(void)
 		gtk_entry_set_text(GTK_ENTRY(devlist_entry), joypad_nodevice_str);
 	}
 	if (np2oscfg.JOYPAD1 & 1) {
-		g_signal_emit_by_name(GTK_OBJECT(joypad_use_checkbutton[0]), "clicked");
+		g_signal_emit_by_name(G_OBJECT(joypad_use_checkbutton[0]), "clicked");
 	}
 
 	return root_widget;
@@ -1332,7 +1332,7 @@ create_driver_note(void)
 		driver_radiobutton[i] = gtk_radio_button_new_with_label_from_widget(i > 0 ? GTK_RADIO_BUTTON(driver_radiobutton[i-1]) : NULL, driver_name[i]);
 		gtk_widget_show(driver_radiobutton[i]);
 		gtk_box_pack_start(GTK_BOX(driver_vbox), driver_radiobutton[i], TRUE, FALSE, 0);
-		g_signal_connect(GTK_OBJECT(driver_radiobutton[i]), "clicked",
+		g_signal_connect(G_OBJECT(driver_radiobutton[i]), "clicked",
 		    G_CALLBACK(driver_radiobutton_clicked), GINT_TO_POINTER(i));
 	}
 #if !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
@@ -1344,7 +1344,7 @@ create_driver_note(void)
 #if defined(USE_SDLAUDIO) || defined(USE_SDLMIXER)
 	case SNDDRV_SDL:
 #endif
-		g_signal_emit_by_name(GTK_OBJECT(driver_radiobutton[np2oscfg.snddrv]), "clicked");
+		g_signal_emit_by_name(G_OBJECT(driver_radiobutton[np2oscfg.snddrv]), "clicked");
 		break;
 
 #if !defined(USE_SDLAUDIO) && !defined(USE_SDLMIXER)
@@ -1390,7 +1390,7 @@ create_sound_dialog(void)
 	gtk_window_set_modal(GTK_WINDOW(sound_dialog), TRUE);
 	gtk_window_set_resizable(GTK_WINDOW(sound_dialog), FALSE);
 
-	g_signal_connect(GTK_OBJECT(sound_dialog), "destroy",
+	g_signal_connect(G_OBJECT(sound_dialog), "destroy",
 	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_vbox = gtk_vbox_new(FALSE, 0);
@@ -1444,8 +1444,8 @@ create_sound_dialog(void)
 #else
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 #endif
-	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(sound_dialog));
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked",
+	    G_CALLBACK(gtk_widget_destroy), G_OBJECT(sound_dialog));
 
 	ok_button = gtk_button_new_from_stock(GTK_STOCK_OK);
 	gtk_widget_show(ok_button);
@@ -1457,7 +1457,7 @@ create_sound_dialog(void)
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 #endif
-	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
+	g_signal_connect(G_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)sound_dialog);
 	gtk_widget_grab_default(ok_button);
 

@@ -256,7 +256,7 @@ create_configure_dialog(void)
 	gtk_window_set_resizable(GTK_WINDOW(config_dialog), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(config_dialog), 5);
 
-	g_signal_connect(GTK_OBJECT(config_dialog), "destroy",
+	g_signal_connect(G_OBJECT(config_dialog), "destroy",
 	    G_CALLBACK(dialog_destroy), NULL);
 
 	main_widget = gtk_vbox_new(FALSE, 0);
@@ -344,9 +344,9 @@ create_configure_dialog(void)
 	gtk_box_pack_start(GTK_BOX(cpuframe_vbox), realclock_label, FALSE, FALSE, 2);
 	gtk_misc_set_alignment(GTK_MISC(realclock_label), 1.0, 0.5);
 
-	g_signal_connect(GTK_OBJECT(baseclock_entry), "changed",
+	g_signal_connect(G_OBJECT(baseclock_entry), "changed",
 	  G_CALLBACK(clock_changed), (gpointer)realclock_label);
-	g_signal_connect(GTK_OBJECT(clockmult_entry), "changed",
+	g_signal_connect(G_OBJECT(clockmult_entry), "changed",
 	  G_CALLBACK(clock_changed), (gpointer)realclock_label);
 	clock_changed(NULL, realclock_label);
 
@@ -378,7 +378,7 @@ create_configure_dialog(void)
 #else
 		GTK_WIDGET_UNSET_FLAGS(rate_radiobutton[i], GTK_CAN_FOCUS);
 #endif
-		g_signal_connect(GTK_OBJECT(arch_radiobutton[i]), "clicked",
+		g_signal_connect(G_OBJECT(arch_radiobutton[i]), "clicked",
 		    G_CALLBACK(arch_radiobutton_clicked), (gpointer)architecture[i].arch);
 	}
 	for (i = 0; i < NELEMENTS(architecture); i++) {
@@ -391,7 +391,7 @@ create_configure_dialog(void)
 		milstr_ncpy(np2cfg.model, "VX", sizeof(np2cfg.model));
 		sysmng_update(SYS_UPDATECFG);
 	}
-	g_signal_emit_by_name(GTK_OBJECT(arch_radiobutton[i]), "clicked");
+	g_signal_emit_by_name(G_OBJECT(arch_radiobutton[i]), "clicked");
 
 	/*
 	 * Sound frame
@@ -424,7 +424,7 @@ create_configure_dialog(void)
 #else
 		GTK_WIDGET_UNSET_FLAGS(rate_radiobutton[i], GTK_CAN_FOCUS);
 #endif
-		g_signal_connect(GTK_OBJECT(rate_radiobutton[i]), "clicked",
+		g_signal_connect(G_OBJECT(rate_radiobutton[i]), "clicked",
 		    G_CALLBACK(rate_radiobutton_clicked), GINT_TO_POINTER(samplingrate[i].rate));
 	}
 	if (np2cfg.samplingrate == 11025) {
@@ -438,7 +438,7 @@ create_configure_dialog(void)
 		np2cfg.samplingrate = 22050;
 		sysmng_update(SYS_UPDATECFG|SYS_UPDATERATE);
 	}
-	g_signal_emit_by_name(GTK_OBJECT(rate_radiobutton[i]), "clicked");
+	g_signal_emit_by_name(G_OBJECT(rate_radiobutton[i]), "clicked");
 
 	soundbuffer_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(soundbuffer_hbox);
@@ -475,7 +475,7 @@ create_configure_dialog(void)
 	gtk_widget_show(resume_checkbutton);
 	gtk_box_pack_start(GTK_BOX(main_widget), resume_checkbutton, FALSE, FALSE, 1);
 	if (np2oscfg.resume) {
-		g_signal_emit_by_name(GTK_OBJECT(resume_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(resume_checkbutton), "clicked");
 	}
 #endif
 
@@ -487,7 +487,7 @@ create_configure_dialog(void)
 	if (mmxflag & MMXFLAG_NOTSUPPORT) {
 		gtk_widget_set_sensitive(disablemmx_checkbutton, FALSE);
 	} else if (mmxflag & MMXFLAG_DISABLE) {
-		g_signal_emit_by_name(GTK_OBJECT(disablemmx_checkbutton), "clicked");
+		g_signal_emit_by_name(G_OBJECT(disablemmx_checkbutton), "clicked");
 	}
 #endif
 
@@ -504,7 +504,7 @@ create_configure_dialog(void)
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
 	GTK_WIDGET_SET_FLAGS(ok_button, GTK_HAS_DEFAULT);
 #endif
-	g_signal_connect(GTK_OBJECT(ok_button), "clicked",
+	g_signal_connect(G_OBJECT(ok_button), "clicked",
 	    G_CALLBACK(ok_button_clicked), (gpointer)config_dialog);
 	gtk_widget_grab_default(ok_button);
 
@@ -516,8 +516,8 @@ create_configure_dialog(void)
 #else
 	GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
 #endif
-	g_signal_connect_swapped(GTK_OBJECT(cancel_button), "clicked",
-	    G_CALLBACK(gtk_widget_destroy), GTK_OBJECT(config_dialog));
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked",
+	    G_CALLBACK(gtk_widget_destroy), G_OBJECT(config_dialog));
 
 	gtk_widget_show_all(config_dialog);
 }
