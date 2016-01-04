@@ -108,12 +108,12 @@ static gboolean
 key_press_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
-	if (ev->keyval == GDK_F11) {
+	if (ev->keyval == GDK_KEY_F11) {
 		if ((np2oscfg.F11KEY == 1) && (scrnmode & SCRNMODE_FULLSCREEN))
 			xmenu_toggle_menu();
 		else if (np2oscfg.F11KEY == 2)
 			xmenu_select_screen(scrnmode ^ SCRNMODE_FULLSCREEN);
-	} else if ((ev->keyval == GDK_F12) && (np2oscfg.F12KEY == 0))
+	} else if ((ev->keyval == GDK_KEY_F12) && (np2oscfg.F12KEY == 0))
 		xmenu_toggle_item(NULL, "mousemode", !np2oscfg.MOUSE_SW);
 	else
 		gtkkbd_keydown(ev->keyval);
@@ -128,7 +128,7 @@ static gboolean
 key_release_evhandler(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
-	if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
+	if ((ev->keyval != GDK_KEY_F12) || (np2oscfg.F12KEY != 0))
 		gtkkbd_keyup(ev->keyval);
 	return TRUE;
 }

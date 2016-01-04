@@ -96,7 +96,7 @@ skbdwin_key_press(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	if (ev->type == GDK_KEY_PRESS) {
-		if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
+		if ((ev->keyval != GDK_KEY_F12) || (np2oscfg.F12KEY != 0))
 			gtkkbd_keydown(ev->keyval);
 		return TRUE;
 	}
@@ -107,7 +107,7 @@ skbdwin_key_release(GtkWidget *w, GdkEventKey *ev, gpointer p)
 {
 
 	if (ev->type == GDK_KEY_RELEASE) {
-		if ((ev->keyval != GDK_F12) || (np2oscfg.F12KEY != 0))
+		if ((ev->keyval != GDK_KEY_F12) || (np2oscfg.F12KEY != 0))
 			gtkkbd_keyup(ev->keyval);
 		return TRUE;
 	}
