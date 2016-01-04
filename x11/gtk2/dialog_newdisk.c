@@ -59,7 +59,13 @@ anex_newdisk_dialog(GtkWidget *dialog)
 	/* dialog table */
 	dialog_table = gtk_table_new(4, 2, FALSE);
 	gtk_table_set_col_spacings(GTK_TABLE(dialog_table), 5);
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14)
+	gtk_container_add(
+	    GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	    dialog_table);
+#else
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),dialog_table);
+#endif
 	gtk_widget_show(dialog_table);
 
 	/* "HDD Size" label */
@@ -138,7 +144,13 @@ t98_newdisk_dialog(GtkWidget *dialog, const int kind)
 	/* dialog table */
 	dialog_table = gtk_table_new(2, 3, FALSE);
 	gtk_table_set_col_spacings(GTK_TABLE(dialog_table), 5);
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14)
+	gtk_container_add(
+	    GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	    dialog_table);
+#else
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),dialog_table);
+#endif
 	gtk_widget_show(dialog_table);
 
 	/* "HDD Size" label */
@@ -291,7 +303,13 @@ create_newdisk_fd_dialog(const char *filename)
 
 	/* dialog table */
 	dialog_table = gtk_table_new(2, 3, FALSE);
+#if GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14)
+	gtk_container_add(
+	    GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
+	    dialog_table);
+#else
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox),dialog_table);
+#endif
 	gtk_table_set_col_spacings(GTK_TABLE(dialog_table), 5);
 	gtk_widget_show(dialog_table);
 
