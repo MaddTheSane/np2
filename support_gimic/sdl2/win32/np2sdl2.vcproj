@@ -1110,6 +1110,10 @@
 						Name="scci"
 						>
 						<File
+							RelativePath="..\ext\scci\scciif.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\ext\scci\sccisoundchip.cpp"
 							>
 						</File>
@@ -1123,22 +1127,6 @@
 						</File>
 						<File
 							RelativePath="..\ext\scci\sccispfmlight.cpp"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="spfm"
-						>
-						<File
-							RelativePath="..\ext\spfm\spfminterface.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\ext\spfm\spfmlight.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\ext\spfm\spfmmanager.cpp"
 							>
 						</File>
 					</Filter>
@@ -2100,6 +2088,10 @@
 							>
 						</File>
 						<File
+							RelativePath="..\ext\scci\scciif.h"
+							>
+						</File>
+						<File
 							RelativePath="..\ext\scci\sccisoundchip.h"
 							>
 						</File>
@@ -2113,22 +2105,6 @@
 						</File>
 						<File
 							RelativePath="..\ext\scci\sccispfmlight.h"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="spfm"
-						>
-						<File
-							RelativePath="..\ext\spfm\spfminterface.h"
-							>
-						</File>
-						<File
-							RelativePath="..\ext\spfm\spfmlight.h"
-							>
-						</File>
-						<File
-							RelativePath="..\ext\spfm\spfmmanager.h"
 							>
 						</File>
 					</Filter>

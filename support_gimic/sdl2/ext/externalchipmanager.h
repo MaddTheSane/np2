@@ -8,7 +8,7 @@
 #include <vector>
 #include "externalchip.h"
 #include "gimic/gimic.h"
-#include "spfm/spfmmanager.h"
+#include "scci/scciif.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -32,7 +32,7 @@ private:
 	std::vector<IExternalChip*> m_chips;		/*!< モジュール */
 
 	CGimic m_gimic;								/*!< C86Ctl インスタンス */
-	CSpfmManager m_spfm;						/*!< SCCI インスタンス */
+	CScciIf m_scci;							/*!< SCCI インスタンス */
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 

@@ -12,7 +12,6 @@ namespace scci
 
 class SoundChip;
 
-#if 0
 /**
  * @brief Sound Chip Infomation
  */
@@ -24,7 +23,6 @@ struct SCCI_SOUND_CHIP_INFO
 	UINT dColock;							/*!< Sound Chip clock */
 	UINT dCompatibleColock[2];				/*!< Sound Chip clock */
 };
-#endif	// 0
 
 /**
  * @brief Sound Interface Manager
@@ -66,13 +64,17 @@ public:
 
 	/**
 	 * Sound Interface instance initialize
+	 * @retval true If succeeded
+	 * @retval false If failed
 	 */
-	// virtual bool initializeInstance() = 0;
+	virtual bool initializeInstance() = 0;
 
 	/**
 	 * Sound Interface instance release
+	 * @retval true If succeeded
+	 * @retval false If failed
 	 */
-	// virtual bool releaseInstance() = 0;
+	virtual bool releaseInstance() = 0;
 };
 
 /**
@@ -112,8 +114,11 @@ public:
 class SoundChip
 {
 public:
-	// get sound chip information
-	// virtual const SCCI_SOUND_CHIP_INFO* getSoundChipInfo() = 0;
+	/**
+	 * Gets the informations of the sound chip
+	 * @return The pointer of informations
+	 */
+	virtual const SCCI_SOUND_CHIP_INFO* getSoundChipInfo() = 0;
 
 	/**
 	 * Gets sound chip type
@@ -136,5 +141,7 @@ public:
 	 */
 	// virtual bool init() = 0;
 };
+
+SoundInterfaceManager* GetSoundInterfaceManager();
 
 }	// namespace scci

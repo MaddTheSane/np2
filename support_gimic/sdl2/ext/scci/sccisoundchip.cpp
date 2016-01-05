@@ -34,6 +34,15 @@ CSoundChip::~CSoundChip()
 }
 
 /**
+ * Gets the informations of the sound chip
+ * @return The pointer of informations
+ */
+const SCCI_SOUND_CHIP_INFO* CSoundChip::getSoundChipInfo()
+{
+	return NULL;
+}
+
+/**
  * Gets sound chip type
  * @return The type of the chip
  */

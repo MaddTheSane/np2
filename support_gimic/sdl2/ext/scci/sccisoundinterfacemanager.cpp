@@ -13,6 +13,18 @@
 namespace scci
 {
 
+//! Singleton instance
+CSoundInterfaceManager CSoundInterfaceManager::sm_instance;
+
+/**
+ * Gets instance
+ * @return The instance of sound manager
+ */
+SoundInterfaceManager* GetSoundInterfaceManager()
+{
+	return CSoundInterfaceManager::GetInstance();
+}
+
 /**
  * Constructor
  */
@@ -205,6 +217,26 @@ bool CSoundInterfaceManager::reset()
 		}
 	}
 	return !err;
+}
+
+/**
+ * Sound Interface instance initialize
+ * @retval true If succeeded
+ * @retval false If failed
+ */
+bool CSoundInterfaceManager::initializeInstance()
+{
+	return true;
+}
+
+/**
+ * Sound Interface instance release
+ * @retval true If succeeded
+ * @retval false If failed
+ */
+bool CSoundInterfaceManager::releaseInstance()
+{
+	return true;
 }
 
 }	// namespace scci

@@ -48,7 +48,7 @@ void CExternalChipManager::Deinitialize()
 		delete pChip;
 	}
 
-	m_spfm.Deinitialize();
+	m_scci.Deinitialize();
 }
 
 /**
@@ -95,7 +95,7 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 	/* SPFM Light */
 	if (pChip == NULL)
 	{
-		pChip = m_spfm.GetInterface(nChipType, nClock);
+		pChip = m_scci.GetInterface(nChipType, nClock);
 	}
 
 	/* ƒ‰ƒbƒsƒ“ƒO */

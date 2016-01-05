@@ -20,6 +20,7 @@ class CSoundChip : public SoundChip
 public:
 	CSoundChip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock);
 	virtual ~CSoundChip();
+	virtual const SCCI_SOUND_CHIP_INFO* getSoundChipInfo();
 	virtual SC_CHIP_TYPE getSoundChipType();
 
 protected:

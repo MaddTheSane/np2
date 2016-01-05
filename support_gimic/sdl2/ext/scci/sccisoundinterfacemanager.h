@@ -19,13 +19,17 @@ class CSoundInterface;
  */
 class CSoundInterfaceManager : public SoundInterfaceManager
 {
-private:
+public:
+	static CSoundInterfaceManager* GetInstance();
+
 	virtual bool releaseInterface(SoundInterface* pSoundInterface);
 	virtual bool releaseAllInterface();
 	virtual SoundChip* getSoundChip(SC_CHIP_TYPE iSoundChipType, UINT dClock);
 	virtual bool releaseSoundChip(SoundChip* pSoundChip);
 	virtual bool releaseAllSoundChip();
 	virtual bool reset();
+	virtual bool initializeInstance();
+	virtual bool releaseInstance();
 
 private:
 	static CSoundInterfaceManager sm_instance;					/*!< Singleton */
@@ -37,5 +41,14 @@ private:
 
 	friend class CSoundInterface;
 };
+
+/**
+ * Gets instance
+ * @return The instance of sound manager
+ */
+inline CSoundInterfaceManager* CSoundInterfaceManager::GetInstance()
+{
+	return &sm_instance;
+}
 
 }	// namespace scci
