@@ -1107,6 +1107,26 @@
 						</File>
 					</Filter>
 					<Filter
+						Name="scci"
+						>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
 						Name="spfm"
 						>
 						<File
@@ -2065,6 +2085,34 @@
 						</File>
 						<File
 							RelativePath="..\ext\gimic\gimicusb.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="scci"
+						>
+						<File
+							RelativePath="..\ext\scci\scci.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\SCCIDefines.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.h"
 							>
 						</File>
 					</Filter>
