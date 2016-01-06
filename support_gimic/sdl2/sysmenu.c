@@ -292,6 +292,16 @@ static void sys_cmd(MENUID id) {
 			update |= SYS_UPDATECFG;
 			break;
 
+		case MID_SOUNDORCHESTRA:
+			np2cfg.SOUND_SW = 0x32;
+			update |= SYS_UPDATECFG;
+			break;
+
+		case MID_SOUNDORCHESTRAV:
+			np2cfg.SOUND_SW = 0x82;
+			update |= SYS_UPDATECFG;
+			break;
+
 		case MID_AMD98:
 			np2cfg.SOUND_SW = 0x80;
 			update |= SYS_UPDATECFG;
@@ -498,6 +508,8 @@ BRESULT sysmenu_menuopen(UINT menutype, int x, int y) {
 	menusys_setcheck(MID_PC9801_118, (b == 0x08));
 	menusys_setcheck(MID_SPEAKBOARD, (b == 0x20));
 	menusys_setcheck(MID_SPARKBOARD, (b == 0x40));
+	menusys_setcheck(MID_SOUNDORCHESTRA, (b == 0x32));
+	menusys_setcheck(MID_SOUNDORCHESTRAV, (b == 0x82));
 	menusys_setcheck(MID_AMD98, (b == 0x80));
 	menusys_setcheck(MID_JASTSND, (np2oscfg.jastsnd & 1));
 	menusys_setcheck(MID_SEEKSND, (np2cfg.MOTOR & 1));
