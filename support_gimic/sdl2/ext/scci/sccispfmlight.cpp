@@ -71,7 +71,7 @@ void CSpfmLight::Deinitialize()
  */
 size_t CSpfmLight::AddRef()
 {
-	const size_t nRef = __super::AddRef();
+	const size_t nRef = CSoundInterface::AddRef();
 	if (nRef == 1)
 	{
 		m_serial.Open(m_info.cInterfaceName, 1500000, OEMTEXT("8N1"));
@@ -85,7 +85,7 @@ size_t CSpfmLight::AddRef()
  */
 size_t CSpfmLight::Release()
 {
-	const size_t nRef = __super::Release();
+	const size_t nRef = CSoundInterface::Release();
 	if (nRef == 0)
 	{
 		m_serial.Close();
