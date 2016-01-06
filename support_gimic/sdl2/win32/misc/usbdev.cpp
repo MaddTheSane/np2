@@ -45,11 +45,17 @@ CUsbDev::~CUsbDev()
  * USB オープン
  * @param[in] vid ベンダー ID
  * @param[in] pid プロダクト ID
+ * @param[in] nIndex インデックス
  * @retval true 成功
  * @retval false 失敗
  */
-bool CUsbDev::Open(unsigned int vid, unsigned int pid)
+bool CUsbDev::Open(unsigned int vid, unsigned int pid, unsigned int nIndex)
 {
+	if (nIndex != 0)
+	{
+		return false;
+	}
+
 	if (vid == 0x16c0)
 	{
 		if (pid == 0x05e5)
