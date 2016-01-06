@@ -20,26 +20,49 @@ class CSoundInterfaceManager;
 class CSoundInterface : public SoundInterface
 {
 public:
-	CSoundInterface(CSoundInterfaceManager* pManager);
+	CSoundInterface(CSoundInterfaceManager* pManager, const std::string& deviceName);
 	virtual ~CSoundInterface();
+	virtual size_t AddRef();
+	virtual size_t Release();
+	void ReleaseAllChips();
+	const SCCI_INTERFACE_INFO* GetInfo() const;
+	SoundChip* GetSoundChip(SC_CHIP_TYPE iSoundChipType, UINT dClock);
 
 	/**
-	 * Attach
-	 * @param[in] nSlot The number of the slot
-	 * @param[in] iSoundChipType The type of the chip
-	 * @param[in] dClock The clock of the chip
-	 * @return The instance of the chip
+	 * Initialize
+	 * @retval true If succeeded
+	 * @retval false If failed
 	 */
-	virtual SoundChip* Attach(UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock) = 0;
+	virtual bool Initialize() = 0;
 
-	bool IsAttached(UINT nSlot) const;
+	/**
+	 * Deinitialize
+	 */
+	virtual void Deinitialize() = 0;
+
+	/**
+	 * Add
+	 * @param[in] info The information
+	 */
+	virtual void Add(const SCCI_SOUND_CHIP_INFO& info) = 0;
 
 protected:
-	CSoundInterfaceManager* m_pManager;				/*!< Manager */
-	std::map<UINT, CSoundChip*> m_chips;			/*!< interfaces */
-	void Detach(UINT nSlot);
+	size_t m_nRef;							/*!< The reference counter */
+	CSoundInterfaceManager* m_pManager;		/*!< Manager */
+	SCCI_INTERFACE_INFO m_info;				/*!< The information */
+	std::map<UINT, CSoundChip*> m_chips;	/*!< The interfaces */
+	void Delete(UINT dBusID);
 
 	friend class CSoundChip;
 };
+
+/**
+ * Gets the informations of the sound interface
+ * @return The poitner of the information
+ */
+inline const SCCI_INTERFACE_INFO* CSoundInterface::GetInfo() const
+{
+	return &m_info;
+}
 
 }	// namespace scci

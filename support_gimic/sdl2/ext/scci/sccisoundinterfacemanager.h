@@ -5,8 +5,7 @@
 
 #pragma once
 
-#include <map>
-#include <string>
+#include <vector>
 #include "scci.h"
 
 namespace scci
@@ -22,6 +21,9 @@ class CSoundInterfaceManager : public SoundInterfaceManager
 public:
 	static CSoundInterfaceManager* GetInstance();
 
+	virtual size_t getInterfaceCount();
+	virtual const SCCI_INTERFACE_INFO* getInterfaceInfo(size_t iInterfaceNo);
+	virtual SoundInterface* getInterface(size_t iInterfaceNo);
 	virtual bool releaseInterface(SoundInterface* pSoundInterface);
 	virtual bool releaseAllInterface();
 	virtual SoundChip* getSoundChip(SC_CHIP_TYPE iSoundChipType, UINT dClock);
@@ -32,12 +34,13 @@ public:
 	virtual bool releaseInstance();
 
 private:
-	static CSoundInterfaceManager sm_instance;					/*!< Singleton */
-	std::map<std::string, CSoundInterface*> m_interfaces;		/*!< interfaces */
+	static CSoundInterfaceManager sm_instance;				/*!< Singleton */
+	std::vector<CSoundInterface*> m_interfaces;				/*!< The list of interfaces */
+	std::vector<CSoundInterface*> m_attachedInterfaces;		/*!< The list of attached interfaces */
 
 	CSoundInterfaceManager();
 	~CSoundInterfaceManager();
-	void Detach(CSoundInterface* pInterface);
+	void Delete(CSoundInterface* pInterface);
 
 	friend class CSoundInterface;
 };

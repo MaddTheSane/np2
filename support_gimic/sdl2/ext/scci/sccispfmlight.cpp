@@ -12,54 +12,44 @@ namespace scci
 {
 
 /**
- * Creates instance
- * @param[in] pManager The instance of the manager
- * @param[in] lpDeviceName The name of the device
- * @return The instance
- */
-CSpfmLight* CSpfmLight::CreateInstance(CSoundInterfaceManager* pManager, const OEMCHAR* lpDeviceName)
-{
-	CSpfmLight* pInterface = new CSpfmLight(pManager);
-	if (!pInterface->OpenTty(lpDeviceName))
-	{
-		delete pInterface;
-		pInterface = NULL;
-	}
-	return pInterface;
-}
-
-/**
  * Constructor
  * @param[in] pManager The instance of the manager
+ * @param[in] deviceName The name of the device
  */
-CSpfmLight::CSpfmLight(CSoundInterfaceManager* pManager)
-	: CSoundInterface(pManager)
+CSpfmLight::CSpfmLight(CSoundInterfaceManager* pManager, const std::string& deviceName)
+	: CSoundInterface(pManager, deviceName)
 	, m_bReseted(false)
 {
 }
 
 /**
- * Open serial
- * @param[in] lpDeviceName The name of the device
+ * Destructor
+ */
+CSpfmLight::~CSpfmLight()
+{
+}
+
+/**
+ * Initialize
  * @retval true If succeeded
  * @retval false If failed
  */
-bool CSpfmLight::OpenTty(const OEMCHAR* lpDeviceName)
+bool CSpfmLight::Initialize()
 {
-	if (!m_serial.Open(lpDeviceName, 1500000, OEMTEXT("8N1")))
+	CTty serial;
+	if (!serial.Open(m_info.cInterfaceName, 1500000, OEMTEXT("8N1")))
 	{
 		return false;
 	}
 
 	const unsigned char query[1] = {0xff};
-	m_serial.Write(query, sizeof(query));
+	serial.Write(query, sizeof(query));
 
 	CThreadBase::Delay(100 * 1000);
 
 	char buffer[4];
-	if ((m_serial.Read(buffer, 2) != 2) || (buffer[0] != 'L') || (buffer[1] != 'T'))
+	if ((serial.Read(buffer, 2) != 2) || (buffer[0] != 'L') || (buffer[1] != 'T'))
 	{
-		m_serial.Close();
 		return false;
 	}
 
@@ -68,33 +58,62 @@ bool CSpfmLight::OpenTty(const OEMCHAR* lpDeviceName)
 }
 
 /**
- * Destructor
+ * Deinitialize
  */
-CSpfmLight::~CSpfmLight()
+void CSpfmLight::Deinitialize()
 {
 	m_serial.Close();
 }
 
 /**
- * Attach
- * @param[in] nSlot The number of the slot
- * @param[in] iSoundChipType The type of the chip
- * @param[in] dClock The clock of the chip
- * @return The instance of the chip
+ * Increments the reference count
+ * @return The new reference count
  */
-SoundChip* CSpfmLight::Attach(UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock)
+size_t CSpfmLight::AddRef()
 {
-	if (IsAttached(nSlot))
+	const size_t nRef = __super::AddRef();
+	if (nRef == 1)
 	{
-		return NULL;
+		m_serial.Open(m_info.cInterfaceName, 1500000, OEMTEXT("8N1"));
 	}
+	return nRef;
+}
 
-	CSoundChip* pChip = new Chip(this, nSlot, iSoundChipType, dClock);
-	if (pChip)
+/**
+ * Decrements the reference count
+ * @return The new reference count
+ */
+size_t CSpfmLight::Release()
+{
+	const size_t nRef = __super::Release();
+	if (nRef == 0)
 	{
-		m_chips[nSlot] = pChip;
+		m_serial.Close();
 	}
-	return pChip;
+	return nRef;
+}
+
+/**
+ * Add
+ * @param[in] info The information
+ */
+void CSpfmLight::Add(const SCCI_SOUND_CHIP_INFO& info)
+{
+	std::map<UINT, CSoundChip*>::iterator it = m_chips.find(info.dBusID);
+	if (it == m_chips.end())
+	{
+		m_chips[info.dBusID] = new Chip(this, info);
+		m_info.iSoundChipCount++;
+	}
+}
+
+/**
+ * Is supported low level API
+ * @retval true yes
+ */
+bool CSpfmLight::isSupportLowLevelApi()
+{
+	return true;
 }
 
 /**
@@ -147,12 +166,10 @@ bool CSpfmLight::reset()
 /**
  * Constructor
  * @param[in] pInterface The instance of the sound interface
- * @param[in] nSlot The number of the slot
- * @param[in] iSoundChipType The type of the chip
- * @param[in] dClock The clock of the chip
+ * @param[in] info The information
  */
-CSpfmLight::Chip::Chip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock)
-	: CSoundChip(pInterface, nSlot, iSoundChipType, dClock)
+CSpfmLight::Chip::Chip(CSoundInterface* pInterface, const SCCI_SOUND_CHIP_INFO& info)
+	: CSoundChip(pInterface, info)
 {
 }
 
@@ -167,11 +184,21 @@ CSpfmLight::Chip::Chip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSo
 bool CSpfmLight::Chip::setRegister(UINT dAddr, UINT dData)
 {
 	unsigned char cmd[4];
-	cmd[0] = static_cast<unsigned char>(m_nSlot & 0x0f);
+	cmd[0] = static_cast<unsigned char>(m_info.dBusID & 0x0f);
 	cmd[1] = static_cast<unsigned char>((dAddr >> 7) & 2);
 	cmd[2] = static_cast<unsigned char>(dAddr & 0xff);
 	cmd[3] = static_cast<unsigned char>(dData);
 	return m_pInterface->setData(cmd, sizeof(cmd));
+}
+
+/**
+ * Initializes sound chip(clear registers)
+ * @retval true If succeeded
+ * @retval false If failed
+ */
+bool CSpfmLight::Chip::init()
+{
+	return m_pInterface->reset();
 }
 
 }	// namespace scci

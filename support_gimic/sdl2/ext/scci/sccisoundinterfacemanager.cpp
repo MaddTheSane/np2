@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "sccisoundinterfacemanager.h"
+#include <algorithm>
 #include "sccisoundinterface.h"
 #include "sccispfmlight.h"
 #include "dosio.h"
@@ -40,18 +41,61 @@ CSoundInterfaceManager::~CSoundInterfaceManager()
 }
 
 /**
- * Detach
+ * Delete
  * @param[in] pInterface The instance of the sound interface
  */
-void CSoundInterfaceManager::Detach(CSoundInterface* pInterface)
+void CSoundInterfaceManager::Delete(CSoundInterface* pInterface)
 {
-	for (std::map<std::string, CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
+	std::vector<CSoundInterface*>::iterator it = std::find(m_interfaces.begin(), m_interfaces.end(), pInterface);
+	if (it != m_interfaces.end())
 	{
-		if (it->second == pInterface)
-		{
-			m_interfaces.erase(it);
-			break;
-		}
+		m_interfaces.erase(it);
+	}
+}
+
+/**
+ * Get the count of interfaces
+ * @return The count of interfaces
+ */
+size_t CSoundInterfaceManager::getInterfaceCount()
+{
+	return m_interfaces.size();
+}
+
+/**
+ * Get the information of the interface
+ * @param[in] iInterfaceNo The index of interfaces
+ * @return The information
+ */
+const SCCI_INTERFACE_INFO* CSoundInterfaceManager::getInterfaceInfo(size_t iInterfaceNo)
+{
+	if (iInterfaceNo < m_interfaces.size())
+	{
+		return m_interfaces[iInterfaceNo]->GetInfo();
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+/**
+ * Gets interface instance
+ * @param[in] iInterfaceNo The index of interfaces
+ * @return The instance
+ */
+SoundInterface* CSoundInterfaceManager::getInterface(size_t iInterfaceNo)
+{
+	if (iInterfaceNo < m_interfaces.size())
+	{
+		CSoundInterface* pInterface = m_interfaces[iInterfaceNo];
+		m_attachedInterfaces.push_back(pInterface);
+		pInterface->AddRef();
+		return pInterface;
+	}
+	else
+	{
+		return NULL;
 	}
 }
 
@@ -63,15 +107,17 @@ void CSoundInterfaceManager::Detach(CSoundInterface* pInterface)
  */
 bool CSoundInterfaceManager::releaseInterface(SoundInterface* pSoundInterface)
 {
-	for (std::map<std::string, CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
+	std::vector<CSoundInterface*>::iterator it = std::find(m_attachedInterfaces.begin(), m_attachedInterfaces.end(), pSoundInterface);
+	if (it != m_attachedInterfaces.end())
 	{
-		if (it->second == pSoundInterface)
-		{
-			delete static_cast<CSoundInterface*>(pSoundInterface);
-			return true;
-		}
+		m_attachedInterfaces.erase(it);
+		static_cast<CSoundInterface*>(pSoundInterface)->Release();
+		return true;
 	}
-	return false;
+	else
+	{
+		return false;
+	}
 }
 
 /**
@@ -81,12 +127,9 @@ bool CSoundInterfaceManager::releaseInterface(SoundInterface* pSoundInterface)
  */
 bool CSoundInterfaceManager::releaseAllInterface()
 {
-	while (!m_interfaces.empty())
+	while (!m_attachedInterfaces.empty())
 	{
-		if (!releaseInterface(m_interfaces.begin()->second))
-		{
-			return false;
-		}
+		releaseInterface(m_attachedInterfaces.back());
 	}
 	return true;
 }
@@ -104,79 +147,15 @@ SoundChip* CSoundInterfaceManager::getSoundChip(SC_CHIP_TYPE iSoundChipType, UIN
 		return NULL;
 	}
 
-	SoundChip* pChip = NULL;
-
-	OEMCHAR szPath[MAX_PATH];
-	milstr_ncpy(szPath, file_getcd(OEMTEXT("SCCI.ini")), NELEMENTS(szPath));
-	PFILEH pfh = profile_open(szPath, PFILEH_READONLY);
-
-	OEMCHAR szSections[4096];
-	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
+	for (std::vector<CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
 	{
-		OEMCHAR* lpSections = szSections;
-		while ((pChip == NULL) && (*lpSections != '\0'))
+		SoundChip* pChip = (*it)->GetSoundChip(iSoundChipType, dClock);
+		if (pChip)
 		{
-			OEMCHAR* lpKeyName = lpSections;
-			const size_t cchKeyName = OEMSTRLEN(lpSections);
-			lpSections += cchKeyName + 1;
-
-			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) != 0)
-			{
-				continue;
-			}
-			if ((lpKeyName[10] != '(') || (lpKeyName[cchKeyName - 1] != ')'))
-			{
-				continue;
-			}
-
-			if (profile_readint(lpKeyName, OEMTEXT("ACTIVE"), 0, pfh) == 0)
-			{
-				continue;
-			}
-
-			std::string deviceName(lpKeyName + 11, lpKeyName + cchKeyName - 1);
-
-			CSoundInterface* pInterface = NULL;
-			std::map<std::string, CSoundInterface*>::iterator it = m_interfaces.find(deviceName);
-			if (it != m_interfaces.end())
-			{
-				pInterface = it->second;
-			}
-
-			for (UINT i = 0; i < 4; i++)
-			{
-				if ((pInterface) && (pInterface->IsAttached(i)))
-				{
-					continue;
-				}
-
-				OEMCHAR szAppName[32];
-				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID"), i);
-				if (profile_readint(lpKeyName, szAppName, 0, pfh) != iSoundChipType)
-				{
-					continue;
-				}
-				if (pInterface == NULL)
-				{
-					pInterface = CSpfmLight::CreateInstance(this, deviceName.c_str());
-					if (pInterface == NULL)
-					{
-						break;
-					}
-					m_interfaces[deviceName] = pInterface;
-				}
-
-				pChip = pInterface->Attach(i, iSoundChipType, dClock);
-				if (pChip)
-				{
-					break;
-				}
-			}
+			return pChip;
 		}
 	}
-	profile_close(pfh);
-
-	return pChip;
+	return NULL;
 }
 
 /**
@@ -209,9 +188,9 @@ bool CSoundInterfaceManager::releaseAllSoundChip()
 bool CSoundInterfaceManager::reset()
 {
 	bool err = false;
-	for (std::map<std::string, CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
+	for (std::vector<CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
 	{
-		if (!it->second->reset())
+		if (!(*it)->reset())
 		{
 			err = true;
 		}
@@ -226,6 +205,60 @@ bool CSoundInterfaceManager::reset()
  */
 bool CSoundInterfaceManager::initializeInstance()
 {
+	OEMCHAR szPath[MAX_PATH];
+	milstr_ncpy(szPath, file_getcd(OEMTEXT("SCCI.ini")), NELEMENTS(szPath));
+	PFILEH pfh = profile_open(szPath, PFILEH_READONLY);
+
+	OEMCHAR szSections[4096];
+	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
+	{
+		OEMCHAR* lpSections = szSections;
+		while (*lpSections != '\0')
+		{
+			OEMCHAR* lpKeyName = lpSections;
+			const size_t cchKeyName = OEMSTRLEN(lpSections);
+			lpSections += cchKeyName + 1;
+
+			if (milstr_memcmp(lpKeyName, OEMTEXT("SPFM Light")) != 0)
+			{
+				continue;
+			}
+			if ((lpKeyName[10] != '(') || (lpKeyName[cchKeyName - 1] != ')'))
+			{
+				continue;
+			}
+
+			if (profile_readint(lpKeyName, OEMTEXT("ACTIVE"), 0, pfh) == 0)
+			{
+				continue;
+			}
+
+			std::string deviceName(lpKeyName + 11, lpKeyName + cchKeyName - 1);
+
+			CSoundInterface* pInterface = new CSpfmLight(this, deviceName);
+			if (!pInterface->Initialize())
+			{
+				delete pInterface;
+				continue;
+			}
+
+			for (UINT i = 0; i < 4; i++)
+			{
+				SCCI_SOUND_CHIP_INFO info;
+				memset(&info, 0, sizeof(info));
+
+				OEMCHAR szAppName[32];
+				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID"), i);
+				info.iSoundChip = static_cast<SC_CHIP_TYPE>(profile_readint(lpKeyName, szAppName, 0, pfh));
+
+				pInterface->Add(info);
+			}
+
+			m_interfaces.push_back(pInterface);
+		}
+	}
+	profile_close(pfh);
+
 	return true;
 }
 
@@ -236,6 +269,12 @@ bool CSoundInterfaceManager::initializeInstance()
  */
 bool CSoundInterfaceManager::releaseInstance()
 {
+	while (!m_interfaces.empty())
+	{
+		CSoundInterface* pInterface = m_interfaces.back();
+		m_interfaces.pop_back();
+		delete pInterface;
+	}
 	return true;
 }
 

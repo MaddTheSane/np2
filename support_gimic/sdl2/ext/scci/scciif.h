@@ -34,18 +34,18 @@ private:
 	 */
 	class Chip : public IExternalChip
 	{
-		public:
-			Chip(CScciIf* pScciIf, scci::SoundChip* pSoundChip);
-			virtual ~Chip();
-			operator scci::SoundChip*();
-			virtual ChipType GetChipType();
-			virtual void Reset();
-			virtual void WriteRegister(UINT nAddr, UINT8 cData);
-			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+	public:
+		Chip(CScciIf* pScciIf, scci::SoundChip* pSoundChip);
+		virtual ~Chip();
+		operator scci::SoundChip*();
+		virtual ChipType GetChipType();
+		virtual void Reset();
+		virtual void WriteRegister(UINT nAddr, UINT8 cData);
+		virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
-		private:
-			CScciIf* m_pScciIf;				//!< 親インスタンス
-			scci::SoundChip* m_pSoundChip;	//!< チップ インスタンス
+	private:
+		CScciIf* m_pScciIf;				/*!< 親インスタンス */
+		scci::SoundChip* m_pSoundChip;	/*!< チップ インスタンス */
 	};
 
 	void Detach(Chip* pChip);

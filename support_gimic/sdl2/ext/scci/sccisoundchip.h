@@ -18,16 +18,28 @@ class CSoundInterface;
 class CSoundChip : public SoundChip
 {
 public:
-	CSoundChip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock);
+	CSoundChip(CSoundInterface* pInterface, const SCCI_SOUND_CHIP_INFO& info);
 	virtual ~CSoundChip();
+	bool Release();
+	SCCI_SOUND_CHIP_INFO* GetSoundChipInfo();
+	bool IsMatch(SC_CHIP_TYPE iSoundChipType, UINT dClock) const;
+
+	// SoundChip
 	virtual const SCCI_SOUND_CHIP_INFO* getSoundChipInfo();
 	virtual SC_CHIP_TYPE getSoundChipType();
 
 protected:
 	CSoundInterface* m_pInterface;	/*!< Interface */
-	UINT m_nSlot;					/*!< Slot */
-	SC_CHIP_TYPE m_iSoundChipType;	/*!< Chiptype */
-	UINT m_dClock;					/*!< Clock */
+	SCCI_SOUND_CHIP_INFO m_info;	/*!< The information */
 };
+
+/**
+ * Gets the informations of the sound chip
+ * @return The pointer of informations
+ */
+inline SCCI_SOUND_CHIP_INFO* CSoundChip::GetSoundChipInfo()
+{
+	return &m_info;
+}
 
 }	// namespace scci

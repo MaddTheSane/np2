@@ -13,6 +13,15 @@ namespace scci
 class SoundChip;
 
 /**
+ * @brief Sound Interface Infomation
+ */
+struct SCCI_INTERFACE_INFO
+{
+	char cInterfaceName[64];				/*!< Interface Name */
+	size_t iSoundChipCount;					/*!< Sound Chip Count */
+};
+
+/**
  * @brief Sound Chip Infomation
  */
 struct SCCI_SOUND_CHIP_INFO
@@ -20,9 +29,14 @@ struct SCCI_SOUND_CHIP_INFO
 	char cSoundChipName[64];				/*!< Sound Chip Name */
 	SC_CHIP_TYPE iSoundChip;				/*!< Sound Chip ID */
 	SC_CHIP_TYPE iCompatibleSoundChip[2];	/*!< Compatible Sound Chip ID */
-	UINT dColock;							/*!< Sound Chip clock */
-	UINT dCompatibleColock[2];				/*!< Sound Chip clock */
+	UINT dClock;							/*!< Sound Chip clock */
+	UINT dCompatibleClock[2];				/*!< Sound Chip clock */
+	bool bIsUsed;							/*!< Sound Chip Used Check */
+	UINT dBusID;							/*!< 接続バスID */
+	SC_CHIP_LOCATION dSoundLocation;		/*!< サウンドロケーション */
 };
+
+class SoundInterface;
 
 /**
  * @brief Sound Interface Manager
@@ -30,7 +44,40 @@ struct SCCI_SOUND_CHIP_INFO
 class SoundInterfaceManager
 {
 public:
-	/* ---------- HI LEVEL APIs ---------- */
+	/**
+	 * Gets the count of interfaces
+	 * @return The count of interfaces
+	 */
+	virtual size_t getInterfaceCount() = 0;
+
+	/**
+	 * Gets the information of the interface
+	 * @param[in] iInterfaceNo The index of interfaces
+	 * @return The information
+	 */
+	virtual const SCCI_INTERFACE_INFO* getInterfaceInfo(size_t iInterfaceNo) = 0;
+
+	/**
+	 * Gets interface instance
+	 * @param[in] iInterfaceNo The index of interfaces
+	 * @return The instance
+	 */
+	virtual SoundInterface* getInterface(size_t iInterfaceNo) = 0;
+
+	/**
+	 * Releases interface instance
+	 * @param[in] pSoundInterface The instance of the interface
+	 * @retval true If succeeded
+	 * @retval false If failed
+	 */
+	virtual bool releaseInterface(SoundInterface* pSoundInterface) = 0;
+
+	/**
+	 * Release all interface instance
+	 * @retval true If succeeded
+	 * @retval false If failed
+	 */
+	virtual bool releaseAllInterface() = 0;
 
 	/**
 	 * Gets instance of the sound chip
@@ -83,6 +130,13 @@ public:
 class SoundInterface
 {
 public:
+	/**
+	 * Is supported low level API
+	 * @retval true yes
+	 * @retval false no
+	 */
+	virtual bool isSupportLowLevelApi() = 0;
+
 	/**
 	 * Sends data to the interface
 	 * @param[in] pData The buffer of data
@@ -137,9 +191,11 @@ public:
 	virtual bool setRegister(UINT dAddr, UINT dData) = 0;
 
 	/**
-	 * initialize sound chip(clear registers)
+	 * Initializes sound chip(clear registers)
+	 * @retval true If succeeded
+	 * @retval false If failed
 	 */
-	// virtual bool init() = 0;
+	virtual bool init() = 0;
 };
 
 SoundInterfaceManager* GetSoundInterfaceManager();

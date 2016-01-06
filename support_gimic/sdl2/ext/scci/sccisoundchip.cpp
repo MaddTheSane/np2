@@ -13,15 +13,11 @@ namespace scci
 /**
  * Constructor
  * @param[in] pInterface The instance of the sound interface
- * @param[in] nSlot The number of slot
- * @param[in] iSoundChipType The type of the chip
- * @param[in] dClock The clock of the chip
+ * @param[in] info The information
  */
-CSoundChip::CSoundChip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock)
+CSoundChip::CSoundChip(CSoundInterface* pInterface, const SCCI_SOUND_CHIP_INFO& info)
 	: m_pInterface(pInterface)
-	, m_nSlot(nSlot)
-	, m_iSoundChipType(iSoundChipType)
-	, m_dClock(dClock)
+	, m_info(info)
 {
 }
 
@@ -30,7 +26,43 @@ CSoundChip::CSoundChip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSo
  */
 CSoundChip::~CSoundChip()
 {
-	m_pInterface->Detach(m_nSlot);
+	Release();
+	m_pInterface->Delete(m_info.dBusID);
+}
+
+/**
+ * Release the chip
+ * @retval true If succeeded
+ * @retval false If failed
+ */
+bool CSoundChip::Release()
+{
+	if (m_info.bIsUsed)
+	{
+		m_info.bIsUsed = false;
+		m_pInterface->Release();
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/**
+ * Is macthed?
+ * @param[in] iSoundChipType The type of the chip
+ * @param[in] dClock The clock of the chip
+ * @retval true Yes
+ * @retval false No
+ */
+bool CSoundChip::IsMatch(SC_CHIP_TYPE iSoundChipType, UINT dClock) const
+{
+	if (m_info.iSoundChip == iSoundChipType)
+	{
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -39,7 +71,7 @@ CSoundChip::~CSoundChip()
  */
 const SCCI_SOUND_CHIP_INFO* CSoundChip::getSoundChipInfo()
 {
-	return NULL;
+	return &m_info;
 }
 
 /**
@@ -48,7 +80,7 @@ const SCCI_SOUND_CHIP_INFO* CSoundChip::getSoundChipInfo()
  */
 SC_CHIP_TYPE CSoundChip::getSoundChipType()
 {
-	return m_iSoundChipType;
+	return m_info.iSoundChip;
 }
 
 }	// namespace scci

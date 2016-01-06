@@ -13,17 +13,25 @@ namespace scci
 {
 
 /**
- * @brief The class of SPFM
+ * @brief The class of SPFM Light
  */
 class CSpfmLight : public CSoundInterface
 {
 public:
-	static CSpfmLight* CreateInstance(CSoundInterfaceManager* pManager, const OEMCHAR* lpDeviceName);
+	CSpfmLight(CSoundInterfaceManager* pManager, const std::string& deviceName);
+	virtual ~CSpfmLight();
+
+	virtual bool Initialize();
+	virtual void Deinitialize();
+	virtual size_t AddRef();
+	virtual size_t Release();
+	virtual void Add(const SCCI_SOUND_CHIP_INFO& info);
+
+	virtual bool isSupportLowLevelApi();
 	virtual bool setData(const unsigned char* pData, size_t dSendDataLen);
 	virtual size_t getData(unsigned char* pData, size_t dGetDataLen);
 	virtual bool reset();
 
-	virtual SoundChip* Attach(UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock);
 
 protected:
 	bool m_bReseted;								/*!< Reset flag */
@@ -35,13 +43,10 @@ protected:
 	class Chip : public CSoundChip
 	{
 	public:
-		Chip(CSoundInterface* pInterface, UINT nSlot, SC_CHIP_TYPE iSoundChipType, UINT dClock);
+		Chip(CSoundInterface* pInterface, const SCCI_SOUND_CHIP_INFO& info);
 		virtual bool setRegister(UINT dAddr, UINT dData);
+		virtual bool init();
 	};
-
-	CSpfmLight(CSoundInterfaceManager* pManager);
-	virtual ~CSpfmLight();
-	bool OpenTty(const OEMCHAR* lpDeviceName);
 
 	friend class Chip;
 };
