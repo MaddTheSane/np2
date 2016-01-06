@@ -6,8 +6,8 @@
 #pragma once
 
 #include <map>
-#include <string>
 #include "scci.h"
+#include "oemtext.h"
 
 namespace scci
 {
@@ -21,7 +21,7 @@ class CSoundInterfaceManager;
 class CSoundInterface : public SoundInterface
 {
 public:
-	CSoundInterface(CSoundInterfaceManager* pManager, const std::string& deviceName);
+	CSoundInterface(CSoundInterfaceManager* pManager, const std::oemstring& deviceName);
 	virtual ~CSoundInterface();
 	virtual size_t AddRef();
 	virtual size_t Release();

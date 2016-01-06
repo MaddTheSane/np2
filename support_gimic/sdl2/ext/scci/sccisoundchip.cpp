@@ -58,9 +58,16 @@ bool CSoundChip::Release()
  */
 bool CSoundChip::IsMatch(SC_CHIP_TYPE iSoundChipType, UINT dClock) const
 {
-	if (m_info.iSoundChip == iSoundChipType)
+	if ((m_info.iSoundChip == iSoundChipType) && (m_info.dClock == dClock))
 	{
 		return true;
+	}
+	for (UINT i = 0; i < 2; i++)
+	{
+		if ((m_info.iCompatibleSoundChip[i] == iSoundChipType) && (m_info.dCompatibleClock[i] == dClock))
+		{
+			return true;
+		}
 	}
 	return false;
 }

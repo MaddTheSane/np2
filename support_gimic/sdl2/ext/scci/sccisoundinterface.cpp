@@ -16,13 +16,13 @@ namespace scci
  * @param[in] pManager The instance of the manager
  * @param[in] deviceName The information
  */
-CSoundInterface::CSoundInterface(CSoundInterfaceManager* pManager, const std::string& deviceName)
+CSoundInterface::CSoundInterface(CSoundInterfaceManager* pManager, const std::oemstring& deviceName)
 	: m_nRef(0)
 	, m_pManager(pManager)
 {
 	memset(&m_info, 0, sizeof(m_info));
 
-	strcpy(m_info.cInterfaceName, deviceName.c_str());
+	milstr_ncpy(m_info.cInterfaceName, deviceName.c_str(), NELEMENTS(m_info.cInterfaceName));
 	m_info.iSoundChipCount = 0;
 }
 

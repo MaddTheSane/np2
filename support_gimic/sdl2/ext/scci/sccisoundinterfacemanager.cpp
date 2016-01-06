@@ -246,10 +246,29 @@ bool CSoundInterfaceManager::initializeInstance()
 			{
 				SCCI_SOUND_CHIP_INFO info;
 				memset(&info, 0, sizeof(info));
+				info.dBusID = i;
 
 				OEMCHAR szAppName[32];
+				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_NAME"), i);
+				profile_read(lpKeyName, szAppName, info.cSoundChipName, OEMTEXT(""), NELEMENTS(info.cSoundChipName), pfh);
+
 				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID"), i);
 				info.iSoundChip = static_cast<SC_CHIP_TYPE>(profile_readint(lpKeyName, szAppName, 0, pfh));
+
+				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_CLOCK"), i);
+				info.dClock = profile_readint(lpKeyName, szAppName, 0, pfh);
+
+				for (UINT j = 0; j < 2; j++)
+				{
+					OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID_CMP%d"), i, j + 1);
+					info.iCompatibleSoundChip[j] = static_cast<SC_CHIP_TYPE>(profile_readint(lpKeyName, szAppName, 0, pfh));
+
+					OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_CLOCK_CMP%d"), i, j + 1);
+					info.dCompatibleClock[j] = profile_readint(lpKeyName, szAppName, 0, pfh);
+				}
+
+				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_LOCATION"), i);
+				info.dSoundLocation = static_cast<SC_CHIP_LOCATION>(profile_readint(lpKeyName, szAppName, 0, pfh));
 
 				pInterface->Add(info);
 			}

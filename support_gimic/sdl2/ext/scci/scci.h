@@ -17,7 +17,7 @@ class SoundChip;
  */
 struct SCCI_INTERFACE_INFO
 {
-	char cInterfaceName[64];				/*!< Interface Name */
+	OEMCHAR cInterfaceName[64];				/*!< Interface Name */
 	size_t iSoundChipCount;					/*!< Sound Chip Count */
 };
 
@@ -26,7 +26,7 @@ struct SCCI_INTERFACE_INFO
  */
 struct SCCI_SOUND_CHIP_INFO
 {
-	char cSoundChipName[64];				/*!< Sound Chip Name */
+	OEMCHAR cSoundChipName[64];				/*!< Sound Chip Name */
 	SC_CHIP_TYPE iSoundChip;				/*!< Sound Chip ID */
 	SC_CHIP_TYPE iCompatibleSoundChip[2];	/*!< Compatible Sound Chip ID */
 	UINT dClock;							/*!< Sound Chip clock */
