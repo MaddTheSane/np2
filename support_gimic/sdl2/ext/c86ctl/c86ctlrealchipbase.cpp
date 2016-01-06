@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "c86ctlrealchipbase.h"
+#include "c86ctlgimic.h"
 
 namespace c86ctl
 {
@@ -77,6 +78,18 @@ size_t CRealChipBase::Release()
  */
 C86CtlErr CRealChipBase::initialize()
 {
+	for (size_t i = 0; i < 1; i++)
+	{
+		CGimic* pGimic = new CGimic(i);
+		if (pGimic->initialize() != C86CTL_ERR_NONE)
+		{
+			pGimic->deinitialize();
+			delete pGimic;
+			continue;
+		}
+		m_devices.push_back(pGimic);
+	}
+
 	return C86CTL_ERR_NONE;
 }
 

@@ -124,6 +124,26 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 				iSoundChipType = SC_TYPE_YMF288;
 				break;
 
+			case IExternalChip::kYM3812:
+				iSoundChipType = SC_TYPE_YM3812;
+				break;
+
+			case IExternalChip::kYMF262:
+				iSoundChipType = SC_TYPE_YMF262;
+				break;
+
+			case IExternalChip::kY8950:
+				iSoundChipType = SC_TYPE_Y8950;
+				break;
+
+			case IExternalChip::kAY8910:
+				iSoundChipType = SC_TYPE_AY8910;
+				break;
+
+			case IExternalChip::kYM2151:
+				iSoundChipType = SC_TYPE_YM2151;
+				break;
+
 			default:
 				break;
 		}
@@ -131,7 +151,7 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 		SoundChip* pSoundChip = m_pManager->getSoundChip(iSoundChipType, nClock);
 		if (pSoundChip != NULL)
 		{
-			// サウンドチップ取得できた
+			/* サウンドチップ取得できた */
 			return new Chip(this, pSoundChip);
 		}
 	} while (false /*CONSTCOND*/);
@@ -156,7 +176,7 @@ void CScciIf::Detach(CScciIf::Chip* pChip)
 	}
 }
 
-// ---- チップ
+/* ---- チップ */
 
 /**
  * コンストラクタ
@@ -207,8 +227,26 @@ IExternalChip::ChipType CScciIf::Chip::GetChipType()
 		case SC_TYPE_YM2612:
 			return IExternalChip::kYM3438;
 
+		case SC_TYPE_YM3812:
+			return IExternalChip::kYM3812;
+
+		case SC_TYPE_YMF262:
+			return IExternalChip::kYMF262;
+
 		case SC_TYPE_YMF288:
 			return IExternalChip::kYMF288;
+
+		case SC_TYPE_Y8950:
+			return IExternalChip::kY8950;
+
+		case SC_TYPE_AY8910:
+			return IExternalChip::kAY8910;
+
+		case SC_TYPE_YM2151:
+			return IExternalChip::kYM2151;
+
+		default:
+			break;
 	}
 	return IExternalChip::kNone;
 }

@@ -1,5 +1,5 @@
 /**
- * @file	externalopna.cpp
+ * @file	externalchipmanager.cpp
  * @brief	外部チップ管理クラスの動作の定義を行います
  */
 
@@ -16,14 +16,6 @@ CExternalChipManager CExternalChipManager::sm_instance;
  */
 CExternalChipManager::CExternalChipManager()
 {
-}
-
-/**
- * デストラクタ
- */
-CExternalChipManager::~CExternalChipManager()
-{
-	Deinitialize();
 }
 
 /**
@@ -48,6 +40,7 @@ void CExternalChipManager::Deinitialize()
 		delete pChip;
 	}
 
+	m_c86ctl.Deinitialize();
 	m_scci.Deinitialize();
 }
 
@@ -72,6 +65,14 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 				pChip = GetInterface(IExternalChip::kYMF288, nClock);
 				break;
 
+			case IExternalChip::kY8950:
+				pChip = GetInterface(IExternalChip::kYM3812, nClock);
+				break;
+
+			case IExternalChip::kYM3812:
+				pChip = GetInterface(IExternalChip::kYMF262, nClock * 4);
+				break;
+
 			default:
 				break;
 		}
@@ -92,7 +93,7 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 	/* G.I.M.I.C / C86BOX */
 	if (pChip == NULL)
 	{
-		pChip = m_gimic.GetInterface(nChipType, nClock);
+		pChip = m_c86ctl.GetInterface(nChipType, nClock);
 	}
 
 	/* SPFM Light */

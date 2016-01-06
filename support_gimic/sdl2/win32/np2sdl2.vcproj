@@ -1091,18 +1091,22 @@
 						>
 					</File>
 					<Filter
-						Name="gimic"
+						Name="c86ctl"
 						>
 						<File
-							RelativePath="..\ext\gimic\c86boxusb.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlc86box.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimic.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlgimic.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimicusb.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.cpp"
 							>
 						</File>
 					</Filter>
@@ -2061,18 +2065,26 @@
 						>
 					</File>
 					<Filter
-						Name="gimic"
+						Name="c86ctl"
 						>
 						<File
-							RelativePath="..\ext\gimic\c86boxusb.h"
+							RelativePath="..\ext\c86ctl\c86ctl.h"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\c86ctl.h"
+							RelativePath="..\ext\c86ctl\c86ctlc86box.h"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimicusb.h"
+							RelativePath="..\ext\c86ctl\c86ctlgimic.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.h"
 							>
 						</File>
 					</Filter>

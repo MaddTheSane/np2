@@ -250,7 +250,7 @@ bool CSoundInterfaceManager::initializeInstance()
 
 				OEMCHAR szAppName[32];
 				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_NAME"), i);
-				profile_read(lpKeyName, szAppName, info.cSoundChipName, OEMTEXT(""), NELEMENTS(info.cSoundChipName), pfh);
+				profile_read(lpKeyName, szAppName, OEMTEXT(""), info.cSoundChipName, NELEMENTS(info.cSoundChipName), pfh);
 
 				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_ID"), i);
 				info.iSoundChip = static_cast<SC_CHIP_TYPE>(profile_readint(lpKeyName, szAppName, 0, pfh));

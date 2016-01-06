@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "externalchip.h"
-#include "gimic/gimic.h"
+#include "c86ctl/c86ctlif.h"
 #include "scci/scciif.h"
 
 /**
@@ -19,7 +19,6 @@ public:
 	static CExternalChipManager* GetInstance();
 
 	CExternalChipManager();
-	~CExternalChipManager();
 	void Initialize();
 	void Deinitialize();
 	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
@@ -31,8 +30,8 @@ private:
 	static CExternalChipManager sm_instance;	/*!< 唯一のインスタンスです */
 	std::vector<IExternalChip*> m_chips;		/*!< モジュール */
 
-	CGimic m_gimic;								/*!< C86Ctl インスタンス */
-	CScciIf m_scci;							/*!< SCCI インスタンス */
+	C86CtlIf m_c86ctl;							/*!< C86Ctl インスタンス */
+	CScciIf m_scci;								/*!< SCCI インスタンス */
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 
