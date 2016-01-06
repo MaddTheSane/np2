@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "..\externalchip.h"
+#include "../externalchip.h"
 
 namespace scci
 {

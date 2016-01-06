@@ -71,6 +71,9 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 			case IExternalChip::kYM3438:
 				pChip = GetInterface(IExternalChip::kYMF288, nClock);
 				break;
+
+			default:
+				break;
 		}
 	}
 	return pChip;
@@ -107,6 +110,9 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 			case IExternalChip::kYM3438:
 			case IExternalChip::kYMF288:
 				pChip = new CExternalOpna(pChip);
+				break;
+
+			default:
 				break;
 		}
 	}

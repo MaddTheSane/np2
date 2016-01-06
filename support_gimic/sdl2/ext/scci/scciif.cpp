@@ -123,6 +123,9 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 			case IExternalChip::kYMF288:
 				iSoundChipType = SC_TYPE_YMF288;
 				break;
+
+			default:
+				break;
 		}
 
 		SoundChip* pSoundChip = m_pManager->getSoundChip(iSoundChipType, nClock);
