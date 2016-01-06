@@ -6,7 +6,10 @@
 #include "compiler.h"
 #include "externalchipmanager.h"
 #include <algorithm>
+#include "externalopl3.h"
+#include "externalopm.h"
 #include "externalopna.h"
+#include "externalpsg.h"
 
 /*! 唯一のインスタンスです */
 CExternalChipManager CExternalChipManager::sm_instance;
@@ -73,6 +76,10 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 				pChip = GetInterface(IExternalChip::kYMF262, nClock * 4);
 				break;
 
+			case IExternalChip::kAY8910:
+				pChip = GetInterface(IExternalChip::kYMF288, nClock * 2);
+				break;
+
 			default:
 				break;
 		}
@@ -111,6 +118,20 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 			case IExternalChip::kYM3438:
 			case IExternalChip::kYMF288:
 				pChip = new CExternalOpna(pChip);
+				break;
+
+			case IExternalChip::kYM3812:
+			case IExternalChip::kYMF262:
+			case IExternalChip::kY8950:
+				pChip = new CExternalOpl3(pChip);
+				break;
+
+			case IExternalChip::kAY8910:
+				pChip = new CExternalPsg(pChip);
+				break;
+
+			case IExternalChip::kYM2151:
+				pChip = new CExternalOpm(pChip);
 				break;
 
 			default:

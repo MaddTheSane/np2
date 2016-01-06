@@ -11,11 +11,10 @@
  * @param[in] pChip チップ
  */
 CExternalOpna::CExternalOpna(IExternalChip* pChip)
-	: m_pChip(pChip)
+	: CExternalPsg(pChip)
 	, m_bHasPsg(false)
 	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
-	, m_cPsgMix(0x3f)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
@@ -32,9 +31,6 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
 			m_bHasPsg = true;
 			m_bHasRhythm = true;
 			break;
-
-		default:
-			break;
 	}
 }
 
@@ -43,16 +39,6 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
  */
 CExternalOpna::~CExternalOpna()
 {
-	delete m_pChip;
-}
-
-/**
- * チップ タイプを得る
- * @return チップ タイプ
- */
-IExternalChip::ChipType CExternalOpna::GetChipType()
-{
-	return m_pChip->GetChipType();
 }
 
 /**
@@ -60,7 +46,9 @@ IExternalChip::ChipType CExternalOpna::GetChipType()
  */
 void CExternalOpna::Reset()
 {
-	m_pChip->Reset();
+	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
+	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
+	CExternalPsg::Reset();
 }
 
 /**
@@ -70,43 +58,24 @@ void CExternalOpna::Reset()
  */
 void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 {
-	if (nAddr == 0x07)
+	if (nAddr < 0x10)
 	{
-		// psg mix
-		m_cPsgMix = cData;
+		CExternalPsg::WriteRegister(nAddr, cData);
 	}
-	else if ((nAddr == 0x0e) || (nAddr == 0x0f))
+	else
 	{
-		return;
+		if ((nAddr & 0xf0) == 0x40)
+		{
+			// ttl
+			m_cTtl[((nAddr & 0x100) >> 4) + (nAddr & 15)] = cData;
+		}
+		else if ((nAddr & 0xfc) == 0xb0)
+		{
+			// algorithm
+			m_cAlgorithm[((nAddr & 0x100) >> 6) + (nAddr & 3)] = cData;
+		}
+		WriteRegisterInner(nAddr, cData);
 	}
-	else if ((nAddr & 0xf0) == 0x40)
-	{
-		// ttl
-		m_cTtl[((nAddr & 0x100) >> 4) + (nAddr & 15)] = cData;
-	}
-	else if ((nAddr & 0xfc) == 0xb0)
-	{
-		// algorithm
-		m_cAlgorithm[((nAddr & 0x100) >> 6) + (nAddr & 3)] = cData;
-	}
-	WriteRegisterInner(nAddr, cData);
-}
-
-/**
- * メッセージ
- * @param[in] nMessage メッセージ
- * @param[in] nParameter パラメータ
- * @return 結果
- */
-INTPTR CExternalOpna::Message(UINT nMessage, INTPTR nParameter)
-{
-	switch (nMessage)
-	{
-		case kMute:
-			Mute(nParameter != 0);
-			break;
-	}
-	return 0;
 }
 
 /**
@@ -115,7 +84,7 @@ INTPTR CExternalOpna::Message(UINT nMessage, INTPTR nParameter)
  */
 void CExternalOpna::Mute(bool bMute) const
 {
-	WriteRegisterInner(0x07, (bMute) ? 0x3f : m_cPsgMix);
+	CExternalPsg::Mute(bMute);
 
 	const int nVolume = (bMute) ? -127 : 0;
 	for (UINT ch = 0; ch < 3; ch++)
@@ -123,16 +92,6 @@ void CExternalOpna::Mute(bool bMute) const
 		SetVolume(ch + 0, nVolume);
 		SetVolume(ch + 4, nVolume);
 	}
-}
-
-/**
- * レジスタ書き込み(内部)
- * @param[in] nAddr アドレス
- * @param[in] cData データ
- */
-void CExternalOpna::WriteRegisterInner(UINT nAddr, UINT8 cData) const
-{
-	m_pChip->WriteRegister(nAddr, cData);
 }
 
 /**
