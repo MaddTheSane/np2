@@ -134,26 +134,32 @@ static void restore(POPNA opna)
 void opna_bind(POPNA opna)
 {
 	UINT8 cCaps = opna->s.cCaps;
+	UINT nClock = 3993600;
 
-	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, 3993600);
+	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, nClock);
 	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindpsg(opna->s.reg, 3993600);
+		keydisp_bindpsg(opna->s.reg, nClock);
 	}
 
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 	if (pExt == NULL)
 	{
-		IExternalChip::ChipType nChipType = IExternalChip::kYMF288;
-		if (cCaps & OPNA_HAS_ADPCM)
+		IExternalChip::ChipType nChipType = IExternalChip::kYM2203;
+		if (cCaps & OPNA_HAS_EXTENDEDFM)
 		{
-			nChipType = IExternalChip::kYM2608;
+			nChipType = IExternalChip::kYMF288;
+			nClock *= 2;
+			if (cCaps & OPNA_HAS_ADPCM)
+			{
+				nChipType = IExternalChip::kYM2608;
+			}
+			else if (cCaps == OPNA_MODE_3438)
+			{
+				nChipType = IExternalChip::kYM3438;
+			}
 		}
-		if (cCaps == OPNA_MODE_3438)
-		{
-			nChipType = IExternalChip::kYM3438;
-		}
-		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, 3993600 * 2));
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, nClock));
 		opna->userdata = reinterpret_cast<INTPTR>(pExt);
 	}
 	if (pExt)

@@ -26,6 +26,7 @@ public:
 protected:
 	IExternalChip* m_pChip;				//!< チップ
 	bool m_bHasPsg;						//!< PSG
+	bool m_bHasExtend;					//!< Extend
 	bool m_bHasRhythm;					//!< Rhythm
 	bool m_bHasADPCM;					//!< ADPCM
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
