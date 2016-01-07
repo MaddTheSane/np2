@@ -14,7 +14,7 @@ namespace c86ctl
  * Constructor
  * @param[in] nIndex The index
  */
-CGimic::CGimic(size_t nIndex)
+CGimic::CGimic(UINT nIndex)
 	: m_nRef(1)
 	, m_nIndex(nIndex)
 	, m_nChipType(CHIP_UNKNOWN)

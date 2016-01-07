@@ -78,7 +78,7 @@ size_t CRealChipBase::Release()
  */
 C86CtlErr CRealChipBase::initialize()
 {
-	for (size_t i = 0; i < 1; i++)
+	for (UINT i = 0; i < 1; i++)
 	{
 		CGimic* pGimic = new CGimic(i);
 		if (pGimic->initialize() != C86CTL_ERR_NONE)

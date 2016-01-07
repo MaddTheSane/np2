@@ -19,7 +19,7 @@ namespace c86ctl
 class CGimic : public CRealChipBase::CDevice, protected CThreadBase
 {
 public:
-	CGimic(size_t nIndex);
+	CGimic(UINT nIndex);
 	virtual ~CGimic();
 
 	// IRealUnknown
@@ -101,7 +101,7 @@ private:
 	};
 
 	size_t m_nRef;			/*!< The reference counter */
-	size_t m_nIndex;		/*!< The index of devices */
+	UINT m_nIndex;			/*!< The index of devices */
 	ChipType m_nChipType;	/*!< The type of chip */
 	size_t m_nQueIndex;		/*!< The position in que */
 	size_t m_nQueCount;		/*!< The count in que */

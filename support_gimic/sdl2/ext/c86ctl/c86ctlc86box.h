@@ -20,7 +20,7 @@ namespace c86ctl
 class CC86Box : public CRealChipBase::CDevice, protected CThreadBase
 {
 public:
-	CC86Box(size_t nIndex);
+	CC86Box(UINT nIndex);
 	virtual ~CC86Box();
 
 	// IRealUnknown
@@ -43,7 +43,7 @@ private:
 	class Chip3 : public IRealChip3
 	{
 	public:
-		Chip3(CC86Box* pC86Box, size_t nDevId, ChipType nChipType);
+		Chip3(CC86Box* pC86Box, UINT nDevId, ChipType nChipType);
 
 		// IRealUnknown
 		virtual size_t AddRef();
@@ -63,7 +63,7 @@ private:
 
 	private:
 		CC86Box* m_pC86Box;			/*!< The instance of the device */
-		size_t m_nDevId;			/*!< The type of devices */
+		UINT m_nDevId;				/*!< The type of devices */
 		ChipType m_nChipType;		/*!< The type of chip */
 		UINT8 m_sReg[0x200];		/*!< register */
 
@@ -71,7 +71,7 @@ private:
 	};
 
 	size_t m_nRef;					/*!< The reference counter */
-	size_t m_nIndex;				/*!< The index of devices */
+	UINT m_nIndex;					/*!< The index of devices */
 	CUsbDev m_usb;					/*!< USB */
 	CGuard m_usbGuard;				/*!< The quard of accessing USB */
 	CGuard m_queGuard;				/*!< The quard of que */

@@ -102,7 +102,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 		}
 
 		/* ‰¹Œ¹‚ð’T‚· */
-		const int nDeviceCount = m_pChipBase->getNumberOfChip();
+		const int nDeviceCount = static_cast<int>(m_pChipBase->getNumberOfChip());
 		for (int i = 0; i < nDeviceCount; i++)
 		{
 			/* Žg—p’†? */
@@ -159,15 +159,15 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 			m_pChipBase->getChipInterface(i, IID_IRealChip3, reinterpret_cast<void**>(&pChip3));
 			if (pChip3 != NULL)
 			{
-				c86ctl::ChipType nChipType = CHIP_UNKNOWN;
-				pChip3->getChipType(&nChipType);
+				c86ctl::ChipType nType = CHIP_UNKNOWN;
+				pChip3->getChipType(&nType);
 
 				IExternalChip::ChipType nRealChipType = IExternalChip::kNone;
-				if (nChipType == CHIP_OPNA)
+				if (nType == CHIP_OPNA)
 				{
 					nRealChipType = IExternalChip::kYM2608;
 				}
-				else if ((nChipType == CHIP_YM2608NOADPCM) || (nChipType == CHIP_OPN3L))
+				else if ((nType == CHIP_YM2608NOADPCM) || (nType == CHIP_OPN3L))
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}

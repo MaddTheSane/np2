@@ -104,7 +104,7 @@ static const char* GetBoardName(CBUS_BOARD_TYPE nType)
  * Constructor
  * @param[in] nIndex The index
  */
-CC86Box::CC86Box(size_t nIndex)
+CC86Box::CC86Box(UINT nIndex)
 	: m_nRef(1)
 	, m_nIndex(nIndex)
 	, m_nQueIndex(0)
@@ -380,7 +380,7 @@ bool CC86Box::Task()
  * @param[in] nDevId The id of the chip
  * @param[in] nChipType The type of the chip
  */
-CC86Box::Chip3::Chip3(CC86Box* pC86Box, size_t nDevId, ChipType nChipType)
+CC86Box::Chip3::Chip3(CC86Box* pC86Box, UINT nDevId, ChipType nChipType)
 	: m_pC86Box(pC86Box)
 	, m_nDevId(nDevId)
 	, m_nChipType(nChipType)
