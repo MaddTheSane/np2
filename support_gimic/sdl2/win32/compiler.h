@@ -24,6 +24,11 @@ typedef	unsigned short		UINT16;
 typedef	signed int			SINT32;
 #endif
 
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+typedef LONG_PTR ssize_t;
+#endif
+
 #define	BRESULT				UINT
 #define	OEMCHAR				char
 #define	OEMTEXT(string)		string

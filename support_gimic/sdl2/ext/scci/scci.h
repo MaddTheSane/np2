@@ -103,6 +103,20 @@ public:
 	virtual bool releaseAllSoundChip() = 0;
 
 	/**
+	 * Sets delay time
+	 * @param[in] dMSec delay time
+	 * @retval true If succeeded
+	 * @retval false If failed
+	 */
+	virtual bool setDelay(UINT dMSec) = 0;
+
+	/**
+	 * Gets delay time
+	 * @return delay time
+	 */
+	virtual UINT getDelay() = 0;
+
+	/**
 	 * Resets all interfaces
 	 * @retval true If succeeded
 	 * @retval false If failed
@@ -153,6 +167,20 @@ public:
 	 * @return The size of read
 	 */
 	virtual size_t getData(unsigned char* pData, size_t dGetDataLen) = 0;
+
+	/**
+	 * Sets delay time
+	 * @param[in] dDelay delay time
+	 * @retval true If succeeded
+	 * @retval false If failed
+	 */
+	virtual bool setDelay(UINT dDelay) = 0;
+
+	/**
+	 * Gets delay time
+	 * @return delay time
+	 */
+	virtual UINT getDelay() = 0;
 
 	/**
 	 * Resets the interface

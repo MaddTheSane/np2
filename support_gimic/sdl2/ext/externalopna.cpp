@@ -15,6 +15,7 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	, m_bHasPsg(false)
 	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
+	, m_cCtrl(0)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
@@ -49,6 +50,7 @@ CExternalOpna::~CExternalOpna()
  */
 void CExternalOpna::Reset()
 {
+	m_cCtrl = 0;
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 	CExternalPsg::Reset();
@@ -67,7 +69,15 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 	}
 	else
 	{
-		if ((nAddr & 0xf0) == 0x40)
+		if (nAddr == 0x27)
+		{
+			if (((m_cCtrl ^ cData) & 0xc0) == 0)
+			{
+				return;
+			}
+			m_cCtrl = cData;
+		}
+		else if ((nAddr & 0xf0) == 0x40)
 		{
 			// ttl
 			m_cTtl[((nAddr & 0x100) >> 4) + (nAddr & 15)] = cData;
@@ -106,7 +116,7 @@ void CExternalOpna::SetVolume(UINT nChannel, int nVolume) const
 {
 	const UINT nBaseReg = (nChannel & 4) ? 0x140 : 0x40;
 
-	//! アルゴリズム スロット マスク
+	/*! アルゴリズム スロット マスク */
 	static const UINT8 s_opmask[] = {0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f};
 	UINT8 cMask = s_opmask[m_cAlgorithm[nChannel & 7] & 7];
 	const UINT8* pTtl = m_cTtl + ((nChannel & 4) << 2);

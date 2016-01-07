@@ -30,6 +30,7 @@ SoundInterfaceManager* GetSoundInterfaceManager()
  * Constructor
  */
 CSoundInterfaceManager::CSoundInterfaceManager()
+	: m_nDelayTime(0)
 {
 }
 
@@ -181,6 +182,36 @@ bool CSoundInterfaceManager::releaseAllSoundChip()
 }
 
 /**
+ * Sets delay time
+ * @param[in] dMSec delay time
+ * @retval true If succeeded
+ * @retval false If failed
+ */
+bool CSoundInterfaceManager::setDelay(UINT dMSec)
+{
+	if (dMSec > 10000)
+	{
+		return false;
+	}
+	m_nDelayTime = dMSec;
+
+	for (std::vector<CSoundInterface*>::iterator it = m_interfaces.begin(); it != m_interfaces.end(); ++it)
+	{
+		(*it)->setDelay(dMSec);
+	}
+	return true;
+}
+
+/**
+ * Gets delay time
+ * @return delay time
+ */
+UINT CSoundInterfaceManager::getDelay()
+{
+	return m_nDelayTime;
+}
+
+/**
  * Resets all interfaces
  * @retval true If succeeded
  * @retval false If failed
@@ -209,6 +240,8 @@ bool CSoundInterfaceManager::initializeInstance()
 	milstr_ncpy(szPath, file_getcd(OEMTEXT("SCCI.ini")), NELEMENTS(szPath));
 	PFILEH pfh = profile_open(szPath, PFILEH_READONLY);
 
+	m_nDelayTime = profile_readint(OEMTEXT("scci"), OEMTEXT("DelayTime"), 0, pfh);
+
 	OEMCHAR szSections[4096];
 	if (profile_getsectionnames(szSections, NELEMENTS(szSections), pfh))
 	{
@@ -235,7 +268,7 @@ bool CSoundInterfaceManager::initializeInstance()
 
 			std::string deviceName(lpKeyName + 11, lpKeyName + cchKeyName - 1);
 
-			CSoundInterface* pInterface = new CSpfmLight(this, deviceName);
+			CSoundInterface* pInterface = new CSpfmLight(this, deviceName, m_nDelayTime);
 			if (!pInterface->Initialize())
 			{
 				delete pInterface;
@@ -257,6 +290,11 @@ bool CSoundInterfaceManager::initializeInstance()
 
 				OEMSPRINTF(szAppName, OEMTEXT("SLOT_%02d_CHIP_CLOCK"), i);
 				info.dClock = profile_readint(lpKeyName, szAppName, 0, pfh);
+
+				if (info.iSoundChip == 0)
+				{
+					continue;
+				}
 
 				for (UINT j = 0; j < 2; j++)
 				{

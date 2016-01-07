@@ -22,11 +22,12 @@ public:
 	virtual void WriteRegister(UINT nAddr, UINT8 cData);
 
 protected:
-	bool m_bHasPsg;						//!< PSG
-	bool m_bHasRhythm;					//!< Rhythm
-	bool m_bHasADPCM;					//!< ADPCM
-	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
-	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
+	bool m_bHasPsg;						/*!< PSG */
+	bool m_bHasRhythm;					/*!< Rhythm */
+	bool m_bHasADPCM;					/*!< ADPCM */
+	UINT8 m_cCtrl;						/*!< コントロール */
+	UINT8 m_cAlgorithm[8];				/*!< アルゴリズム テーブル */
+	UINT8 m_cTtl[8 * 4];				/*!< TTL テーブル */
 
 	virtual void Mute(bool bMute) const;
 	void SetVolume(UINT nChannel, int nVolume) const;

@@ -29,12 +29,15 @@ public:
 	virtual SoundChip* getSoundChip(SC_CHIP_TYPE iSoundChipType, UINT dClock);
 	virtual bool releaseSoundChip(SoundChip* pSoundChip);
 	virtual bool releaseAllSoundChip();
+	virtual bool setDelay(UINT dMSec);
+	virtual UINT getDelay();
 	virtual bool reset();
 	virtual bool initializeInstance();
 	virtual bool releaseInstance();
 
 private:
 	static CSoundInterfaceManager sm_instance;				/*!< Singleton */
+	UINT m_nDelayTime;										/*!< Delay time */
 	std::vector<CSoundInterface*> m_interfaces;				/*!< The list of interfaces */
 	std::vector<CSoundInterface*> m_attachedInterfaces;		/*!< The list of attached interfaces */
 

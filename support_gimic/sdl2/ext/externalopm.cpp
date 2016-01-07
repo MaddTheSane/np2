@@ -109,7 +109,7 @@ void CExternalOpm::WriteRegisterInner(UINT nAddr, UINT8 cData) const
  */
 void CExternalOpm::SetVolume(UINT nChannel, int nVolume) const
 {
-	//! アルゴリズム スロット マスク
+	/*! アルゴリズム スロット マスク */
 	static const UINT8 s_opmask[] = {0x08, 0x08, 0x08, 0x08, 0x0c, 0x0e, 0x0e, 0x0f};
 	UINT8 cMask = s_opmask[m_cAlgorithm[nChannel] & 7];
 

@@ -21,9 +21,9 @@ public:
 	virtual INTPTR Message(UINT nMessage, INTPTR nParameter);
 
 protected:
-	IExternalChip* m_pChip;				//!< チップ
-	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
-	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
+	IExternalChip* m_pChip;				/*!< チップ */
+	UINT8 m_cAlgorithm[8];				/*!< アルゴリズム テーブル */
+	UINT8 m_cTtl[8 * 4];				/*!< TTL テーブル */
 
 	void Mute(bool bMute) const;
 	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
