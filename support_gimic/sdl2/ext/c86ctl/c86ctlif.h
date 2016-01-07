@@ -6,7 +6,7 @@
 #pragma once
 
 #include <map>
-#include "..\externalchip.h"
+#include "../externalchip.h"
 
 namespace c86ctl
 {

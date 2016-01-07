@@ -318,6 +318,6 @@ public:
 	virtual C86CtlErr getModuleType(ChipType* pnType) = 0;
 };
 
-C86CtlErr CreateInstance(REFIID riid, void** ppi);
+C86CtlErr CreateInstance(IID riid, void** ppi);
 
 }

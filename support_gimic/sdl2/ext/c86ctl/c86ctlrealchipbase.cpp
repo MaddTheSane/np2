@@ -19,7 +19,7 @@ CRealChipBase CRealChipBase::sm_instance;
  * @param[out] ppi The pointer of the interface
  * @return C86CTL_ERR
  */
-C86CtlErr CreateInstance(REFIID riid, void** ppi)
+C86CtlErr CreateInstance(IID riid, void** ppi)
 {
 	if (ppi == NULL)
 	{
