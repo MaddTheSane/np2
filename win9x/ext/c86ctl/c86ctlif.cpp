@@ -189,6 +189,10 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}
+				else if (nType == CHIP_Y8950ADPCM)
+				{
+					nRealChipType = IExternalChip::kY8950;
+				}
 				if (nChipType == nRealChipType)
 				{
 					// サウンドチップ取得できた
