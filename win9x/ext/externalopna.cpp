@@ -17,6 +17,7 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
+	, m_cMode(0)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
@@ -68,6 +69,10 @@ IExternalChip::ChipType CExternalOpna::GetChipType()
  */
 void CExternalOpna::Reset()
 {
+	m_cPsgMix = 0x3f;
+	m_cMode = 0;
+	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
+	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 	m_pChip->Reset();
 }
 
@@ -81,11 +86,25 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 	if (nAddr == 0x07)
 	{
 		// psg mix
+		cData &= 0x3f;
+		if (m_cPsgMix == cData)
+		{
+			return;
+		}
 		m_cPsgMix = cData;
 	}
 	else if ((nAddr == 0x0e) || (nAddr == 0x0f))
 	{
 		return;
+	}
+	else if (nAddr == 0x27)
+	{
+		cData &= 0xc0;
+		if (m_cMode == cData)
+		{
+			return;
+		}
+		m_cMode = cData;
 	}
 	else if ((nAddr & 0xf0) == 0x40)
 	{
