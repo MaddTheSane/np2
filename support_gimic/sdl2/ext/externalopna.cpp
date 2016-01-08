@@ -13,23 +13,34 @@
 CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	: CExternalPsg(pChip)
 	, m_bHasPsg(false)
+	, m_bHasExtend(false)
 	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
-	, m_cCtrl(0)
+	, m_cMode(0)
 {
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
 
 	switch (GetChipType())
 	{
+		case IExternalChip::kYM2203:
+			m_bHasPsg = true;
+			break;
+
 		case IExternalChip::kYM2608:
 			m_bHasPsg = true;
+			m_bHasExtend = true;
 			m_bHasRhythm = true;
 			m_bHasADPCM = true;
 			break;
 
+		case IExternalChip::kYM3438:
+			m_bHasExtend = true;
+			break;
+
 		case IExternalChip::kYMF288:
 			m_bHasPsg = true;
+			m_bHasExtend = true;
 			m_bHasRhythm = true;
 			break;
 
@@ -50,10 +61,17 @@ CExternalOpna::~CExternalOpna()
  */
 void CExternalOpna::Reset()
 {
-	m_cCtrl = 0;
+	m_cMode = 0;
 	memset(m_cAlgorithm, 0, sizeof(m_cAlgorithm));
 	memset(m_cTtl, 0x7f, sizeof(m_cTtl));
-	CExternalPsg::Reset();
+	if (m_bHasPsg)
+	{
+		CExternalPsg::Reset();
+	}
+	else
+	{
+		m_pChip->Reset();
+	}
 }
 
 /**
@@ -65,17 +83,21 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
 {
 	if (nAddr < 0x10)
 	{
-		CExternalPsg::WriteRegister(nAddr, cData);
+		if (m_bHasPsg)
+		{
+			CExternalPsg::WriteRegister(nAddr, cData);
+		}
 	}
 	else
 	{
 		if (nAddr == 0x27)
 		{
-			if (((m_cCtrl ^ cData) & 0xc0) == 0)
+			cData &= 0xc0;
+			if (m_cMode == cData)
 			{
 				return;
 			}
-			m_cCtrl = cData;
+			m_cMode = cData;
 		}
 		else if ((nAddr & 0xf0) == 0x40)
 		{
@@ -97,13 +119,19 @@ void CExternalOpna::WriteRegister(UINT nAddr, UINT8 cData)
  */
 void CExternalOpna::Mute(bool bMute) const
 {
-	CExternalPsg::Mute(bMute);
+	if (m_bHasPsg)
+	{
+		CExternalPsg::Mute(bMute);
+	}
 
 	const int nVolume = (bMute) ? -127 : 0;
 	for (UINT ch = 0; ch < 3; ch++)
 	{
 		SetVolume(ch + 0, nVolume);
-		SetVolume(ch + 4, nVolume);
+		if (m_bHasExtend)
+		{
+			SetVolume(ch + 4, nVolume);
+		}
 	}
 }
 

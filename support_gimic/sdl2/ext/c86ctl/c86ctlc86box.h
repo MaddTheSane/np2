@@ -75,8 +75,8 @@ private:
 	CUsbDev m_usb;					/*!< USB */
 	CGuard m_usbGuard;				/*!< The quard of accessing USB */
 	CGuard m_queGuard;				/*!< The quard of que */
-	size_t m_nQueIndex;				/*!< The position in que */
-	size_t m_nQueCount;				/*!< The count in que */
+	UINT m_nQueIndex;				/*!< The position in que */
+	UINT m_nQueCount;				/*!< The count in que */
 	UINT m_que[0x400];				/*!< que */
 	std::vector<Chip3*> m_chips;	/*!< The list of chips */
 

@@ -65,8 +65,8 @@ private:
 	CTty m_serial;					/*!< Serial */
 	CGuard m_ttyGuard;				/*!< The quard of accessing USB */
 	CGuard m_queGuard;				/*!< The quard of que */
-	size_t m_nQueIndex;				/*!< The position in que */
-	size_t m_nQueCount;				/*!< The count in que */
+	UINT m_nQueIndex;				/*!< The position in que */
+	UINT m_nQueCount;				/*!< The count in que */
 	QueData m_que[0x400];			/*!< que */
 
 	ssize_t Read(unsigned char* lpBuffer, ssize_t cbBuffer, UINT nUntil);

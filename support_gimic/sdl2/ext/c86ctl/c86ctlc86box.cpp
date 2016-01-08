@@ -90,7 +90,7 @@ static const BoardName s_names[] =
 static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 {
 	const CBUS_BOARD_TYPE nId = static_cast<CBUS_BOARD_TYPE>(nType & 0xffff);
-	for (size_t i = 0; i < _countof(s_names); i++)
+	for (UINT i = 0; i < NELEMENTS(s_names); i++)
 	{
 		if (s_names[i].nId == nId)
 		{
@@ -323,14 +323,14 @@ C86CtlErr CC86Box::Reset()
 void CC86Box::Out(UINT nDevId, UINT nAddr, UINT8 cData)
 {
 	m_queGuard.Enter();
-	while (m_nQueCount >= _countof(m_que))
+	while (m_nQueCount >= NELEMENTS(m_que))
 	{
 		m_queGuard.Leave();
 		Delay(1000);
 		m_queGuard.Enter();
 	}
 
-	m_que[(m_nQueIndex + m_nQueCount) % _countof(m_que)] = (nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
+	m_que[(m_nQueIndex + m_nQueCount) % NELEMENTS(m_que)] = (nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
 	m_nQueCount++;
 
 	m_queGuard.Leave();
@@ -347,10 +347,10 @@ bool CC86Box::Task()
 	int nIndex = 0;
 
 	m_queGuard.Enter();
-	while ((m_nQueCount) && ((nIndex + 8) < _countof(sData)))
+	while ((m_nQueCount) && ((nIndex + 8) < NELEMENTS(sData)))
 	{
 		const UINT data = m_que[m_nQueIndex];
-		m_nQueIndex = (m_nQueIndex + 1) % _countof(m_que);
+		m_nQueIndex = (m_nQueIndex + 1) % NELEMENTS(m_que);
 		m_nQueCount--;
 
 		sData[nIndex++] = static_cast<UINT8>(data >> 0);

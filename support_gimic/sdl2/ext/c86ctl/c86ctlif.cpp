@@ -128,15 +128,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 				if (pGimic->getModuleInfo(&info) == C86CTL_ERR_NONE)
 				{
 					IExternalChip::ChipType nRealChipType = IExternalChip::kNone;
-					if (!memcmp(info.Devname, "GMC-OPL3", 8))
-					{
-						nRealChipType = IExternalChip::kYMF262;
-					}
-					else if (!memcmp(info.Devname, "GMC-OPM", 7))
-					{
-						nRealChipType = IExternalChip::kYM2151;
-					}
-					else if (!memcmp(info.Devname, "GMC-OPN3L", 9))
+					if (!memcmp(info.Devname, "GMC-OPN3L", 9))
 					{
 						nRealChipType = IExternalChip::kYMF288;
 					}
@@ -144,6 +136,15 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 					{
 						nRealChipType = IExternalChip::kYM2608;
 					}
+					else if (!memcmp(info.Devname, "GMC-OPL3", 8))
+					{
+						nRealChipType = IExternalChip::kYMF262;
+					}
+					else if (!memcmp(info.Devname, "GMC-OPM", 7))
+					{
+						nRealChipType = IExternalChip::kYM2151;
+					}
+
 					if (nChipType == nRealChipType)
 					{
 						/* サウンドチップ取得できた */
@@ -163,13 +164,21 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 				pChip3->getChipType(&nType);
 
 				IExternalChip::ChipType nRealChipType = IExternalChip::kNone;
-				if (nType == CHIP_OPNA)
+				if (nType == CHIP_YM2203)
+				{
+					nRealChipType = IExternalChip::kYM2203;
+				}
+				else if (nType == CHIP_OPNA)
 				{
 					nRealChipType = IExternalChip::kYM2608;
 				}
 				else if ((nType == CHIP_YM2608NOADPCM) || (nType == CHIP_OPN3L))
 				{
 					nRealChipType = IExternalChip::kYMF288;
+				}
+				else if (nType == CHIP_Y8950ADPCM)
+				{
+					nRealChipType = IExternalChip::kY8950;
 				}
 				if (nChipType == nRealChipType)
 				{

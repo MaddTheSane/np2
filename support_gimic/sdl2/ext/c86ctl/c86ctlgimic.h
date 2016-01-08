@@ -103,8 +103,8 @@ private:
 	size_t m_nRef;			/*!< The reference counter */
 	UINT m_nIndex;			/*!< The index of devices */
 	ChipType m_nChipType;	/*!< The type of chip */
-	size_t m_nQueIndex;		/*!< The position in que */
-	size_t m_nQueCount;		/*!< The count in que */
+	UINT m_nQueIndex;		/*!< The position in que */
+	UINT m_nQueCount;		/*!< The count in que */
 	CUsbDev m_usb;			/*!< USB */
 	CGuard m_usbGuard;		/*!< The guard of accessing USB */
 	CGuard m_queGuard;		/*!< The guard of que */

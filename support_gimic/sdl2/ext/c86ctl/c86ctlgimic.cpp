@@ -302,14 +302,14 @@ UINT CGimic::GetChipAddr(UINT nAddr) const
 void CGimic::Out(UINT nAddr, UINT8 cData)
 {
 	m_queGuard.Enter();
-	while (m_nQueCount >= _countof(m_que))
+	while (m_nQueCount >= NELEMENTS(m_que))
 	{
 		m_queGuard.Leave();
 		Delay(1000);
 		m_queGuard.Enter();
 	}
 
-	FMDATA& data = m_que[(m_nQueIndex + m_nQueCount) % _countof(m_que)];
+	FMDATA& data = m_que[(m_nQueIndex + m_nQueCount) % NELEMENTS(m_que)];
 	data.wAddr = static_cast<UINT16>(nAddr);
 	data.cData = cData;
 	m_nQueCount++;
@@ -336,7 +336,7 @@ bool CGimic::Task()
 
 		if (nAddr < 0xfc)
 		{
-			if ((nIndex + 2 + 1) >= _countof(sData))
+			if ((nIndex + 2 + 1) >= NELEMENTS(sData))
 			{
 				break;
 			}
@@ -345,7 +345,7 @@ bool CGimic::Task()
 		}
 		else if ((nAddr >= 0x100) && (nAddr <= 0x1fb))
 		{
-			if ((nIndex + 3 + 1) >= _countof(sData))
+			if ((nIndex + 3 + 1) >= NELEMENTS(sData))
 			{
 				break;
 			}
@@ -354,7 +354,7 @@ bool CGimic::Task()
 			sData[nIndex++] = cData;
 		}
 
-		m_nQueIndex = (m_nQueIndex + 1) % _countof(m_que);
+		m_nQueIndex = (m_nQueIndex + 1) % NELEMENTS(m_que);
 		m_nQueCount--;
 	}
 	m_queGuard.Leave();

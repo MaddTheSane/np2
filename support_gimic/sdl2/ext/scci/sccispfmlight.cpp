@@ -284,7 +284,7 @@ bool CSpfmLight::AddEvent(UINT nData)
 
 	m_bReseted = false;
 
-	while (m_nQueCount >= _countof(m_que))
+	while (m_nQueCount >= NELEMENTS(m_que))
 	{
 		m_queGuard.Leave();
 		Delay(1000);
