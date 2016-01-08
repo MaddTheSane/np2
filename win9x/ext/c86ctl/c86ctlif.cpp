@@ -177,15 +177,15 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 			m_pChipBase->getChipInterface(i, IID_IRealChip3, reinterpret_cast<LPVOID*>(&pChip3));
 			if (pChip3 != NULL)
 			{
-				c86ctl::ChipType nChipType = CHIP_UNKNOWN;
-				pChip3->getChipType(&nChipType);
+				c86ctl::ChipType nType = CHIP_UNKNOWN;
+				pChip3->getChipType(&nType);
 
 				IExternalChip::ChipType nRealChipType = IExternalChip::kNone;
-				if (nChipType == CHIP_OPNA)
+				if (nType == CHIP_OPNA)
 				{
 					nRealChipType = IExternalChip::kYM2608;
 				}
-				else if ((nChipType == CHIP_YM2608NOADPCM) || (nChipType == CHIP_OPN3L))
+				else if ((nType == CHIP_YM2608NOADPCM) || (nType == CHIP_OPN3L))
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}
