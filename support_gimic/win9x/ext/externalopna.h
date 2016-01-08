@@ -30,6 +30,7 @@ protected:
 	bool m_bHasRhythm;					//!< Rhythm
 	bool m_bHasADPCM;					//!< ADPCM
 	UINT8 m_cPsgMix;					//!< PSG ミキサー
+	UINT8 m_cMode;						/*!< モード */
 	UINT8 m_cAlgorithm[8];				//!< アルゴリズム テーブル
 	UINT8 m_cTtl[8 * 4];				//!< TTL テーブル
 
