@@ -13,6 +13,7 @@
 CExternalOpna::CExternalOpna(IExternalChip* pChip)
 	: m_pChip(pChip)
 	, m_bHasPsg(false)
+	, m_bHasExtend(false)
 	, m_bHasRhythm(false)
 	, m_bHasADPCM(false)
 	, m_cPsgMix(0x3f)
@@ -22,14 +23,24 @@ CExternalOpna::CExternalOpna(IExternalChip* pChip)
 
 	switch (GetChipType())
 	{
+		case IExternalChip::kYM2203:
+			m_bHasPsg = true;
+			break;
+
 		case IExternalChip::kYM2608:
 			m_bHasPsg = true;
+			m_bHasExtend = true;
 			m_bHasRhythm = true;
 			m_bHasADPCM = true;
 			break;
 
+		case IExternalChip::kYM3438:
+			m_bHasExtend = true;
+			break;
+
 		case IExternalChip::kYMF288:
 			m_bHasPsg = true;
+			m_bHasExtend = true;
 			m_bHasRhythm = true;
 			break;
 	}
@@ -112,13 +123,19 @@ INTPTR CExternalOpna::Message(UINT nMessage, INTPTR nParameter)
  */
 void CExternalOpna::Mute(bool bMute) const
 {
-	WriteRegisterInner(0x07, (bMute) ? 0x3f : m_cPsgMix);
+	if (m_bHasPsg)
+	{
+		WriteRegisterInner(0x07, (bMute) ? 0x3f : m_cPsgMix);
+	}
 
 	const int nVolume = (bMute) ? -127 : 0;
 	for (UINT ch = 0; ch < 3; ch++)
 	{
 		SetVolume(ch + 0, nVolume);
-		SetVolume(ch + 4, nVolume);
+		if (m_bHasExtend)
+		{
+			SetVolume(ch + 4, nVolume);
+		}
 	}
 }
 

@@ -137,6 +137,10 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 		SC_CHIP_TYPE iSoundChipType = SC_TYPE_NONE;
 		switch (nChipType)
 		{
+			case IExternalChip::kYM2203:
+				iSoundChipType = SC_TYPE_YM2203;
+				break;
+
 			case IExternalChip::kYM2608:
 				iSoundChipType = SC_TYPE_YM2608;
 				break;
@@ -243,6 +247,9 @@ IExternalChip::ChipType CScciIf::Chip::GetChipType()
 
 	switch (iSoundChip)
 	{
+		case SC_TYPE_YM2203:
+			return IExternalChip::kYM2203;
+
 		case SC_TYPE_YM2608:
 			return IExternalChip::kYM2608;
 
