@@ -631,6 +631,14 @@ SOURCE=..\CBUS\BOARD86.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\cbus\boardso.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\CBUS\BOARDSPB.C
 # End Source File
 # Begin Source File
@@ -934,7 +942,27 @@ SOURCE=..\SOUND\FMBOARD.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\FMTIMER.C
+SOURCE=.\ext\opl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opl3.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgeng.c
 # End Source File
 # Begin Source File
 
@@ -946,18 +974,26 @@ SOURCE=..\sound\opna.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\OPNGENC.C
+SOURCE=..\sound\opngen.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\x86\OPNGENG.X86
+SOURCE=..\sound\opngenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\x86\opngeng.x86
 
 !IF  "$(CFG)" == "np21 - Win32 Release"
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\rel21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -968,8 +1004,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\relnt21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -980,8 +1016,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trc21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -992,8 +1028,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trap21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -1004,8 +1040,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\dbg21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -1014,6 +1050,14 @@ InputName=OPNGENG
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.h
 # End Source File
 # Begin Source File
 
@@ -1392,11 +1436,35 @@ SOURCE=.\ext\externalchipmanager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ext\externalopl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ext\externalopna.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ext\externalopna.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.h
 # End Source File
 # Begin Source File
 
@@ -1557,73 +1625,6 @@ InputName=CPUTYPE
 # Begin Source File
 
 SOURCE=.\DCLOCK.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DCLOCKD.X86
-
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\rel21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\relnt21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trc21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trap21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\dbg21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 

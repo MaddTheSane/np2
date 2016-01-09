@@ -699,6 +699,7 @@ static void openpopup(HWND hWnd, LPARAM lp)
 	menu_addmenures(hMenu, -1, IDR_TOOLWIN, FALSE);
 	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
 	setSkinMruMenu(hMenu);
+	xmenu_update(hMenu);
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);
@@ -898,7 +899,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 			break;
 
 		case WM_CLOSE:
-			sysmenu_settoolwin(0);
+			np2oscfg.toolwin = 0;
 			sysmng_update(SYS_UPDATEOSCFG);
 			DestroyWindow(hWnd);
 			break;
@@ -990,7 +991,7 @@ twope_err2:
 	DeleteObject(hbmp);
 
 twope_err1:
-	sysmenu_settoolwin(0);
+	np2oscfg.toolwin = 0;
 	sysmng_update(SYS_UPDATEOSCFG);
 	return;
 }

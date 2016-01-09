@@ -7,6 +7,8 @@
 #include "externalchipmanager.h"
 #include <algorithm>
 #include "np2.h"
+#include "externalopl3.h"
+#include "externalopm.h"
 #include "externalopna.h"
 
 /*! 唯一のインスタンスです */
@@ -57,13 +59,34 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 	IExternalChip* pChip = GetInterfaceInner(nChipType, nClock);
 	if (pChip == NULL)
 	{
-		if (nChipType == IExternalChip::kYMF288)
+		switch (nChipType)
 		{
-			pChip = GetInterface(IExternalChip::kYM2608, nClock);
-		}
-		else if (nChipType == IExternalChip::kYM3438)
-		{
-			pChip = GetInterface(IExternalChip::kYMF288, nClock);
+			case IExternalChip::kAY8910:
+				pChip = GetInterface(IExternalChip::kYM2203, nClock);
+				break;
+
+			case IExternalChip::kYM2203:
+				pChip = GetInterface(IExternalChip::kYMF288, nClock * 2);
+				break;
+
+			case IExternalChip::kYMF288:
+				pChip = GetInterface(IExternalChip::kYM2608, nClock);
+				break;
+
+			case IExternalChip::kYM3438:
+				pChip = GetInterface(IExternalChip::kYMF288, nClock);
+				break;
+
+			case IExternalChip::kY8950:
+				pChip = GetInterface(IExternalChip::kYM3812, nClock);
+				break;
+
+			case IExternalChip::kYM3812:
+				pChip = GetInterface(IExternalChip::kYMF262, nClock * 4);
+				break;
+
+			default:
+				break;
 		}
 	}
 	return pChip;
@@ -79,6 +102,7 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 {
 	IExternalChip* pChip = NULL;
 
+	/* ROMEO */
 	if (np2oscfg.useromeo)
 	{
 		if (pChip == NULL)
@@ -86,24 +110,46 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 			pChip = m_juliet.GetInterface(nChipType, nClock);
 		}
 	}
+
+	/* SCCI */
 	if (pChip == NULL)
 	{
 		pChip = m_scci.GetInterface(nChipType, nClock);
 	}
+
+	/* G.I.M.I.C / C86BOX */
 	if (pChip == NULL)
 	{
 		pChip = m_c86ctl.GetInterface(nChipType, nClock);
 	}
 
-	// ラッピング
+	/* ラッピング */
 	if (pChip)
 	{
 		switch (nChipType)
 		{
+			case IExternalChip::kAY8910:
+				pChip = new CExternalPsg(pChip);
+				break;
+
+			case IExternalChip::kYM2203:
 			case IExternalChip::kYM2608:
 			case IExternalChip::kYM3438:
 			case IExternalChip::kYMF288:
 				pChip = new CExternalOpna(pChip);
+				break;
+
+			case IExternalChip::kYM3812:
+			case IExternalChip::kYMF262:
+			case IExternalChip::kY8950:
+				pChip = new CExternalOpl3(pChip);
+				break;
+
+			case IExternalChip::kYM2151:
+				pChip = new CExternalOpm(pChip);
+				break;
+
+			default:
 				break;
 		}
 	}

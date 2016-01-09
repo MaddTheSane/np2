@@ -16,10 +16,19 @@ public:
 	 */
 	enum ChipType
 	{
-		kNone				= 0,
-		kYM2608,
-		kYM3438,
-		kYMF288
+		kNone		= 0,	/*!< None */
+		kAY8910,			/*!< AY-3-8910 */
+
+		kYM2203,			/*!< OPN */
+		kYM2608,			/*!< OPNA */
+		kYM3438,			/*!< OPN2 */
+		kYMF288,			/*!< OPN3 */
+
+		kYM3812,			/*!< OPL2 */
+		kYMF262,			/*!< OPL3 */
+		kY8950,				/*!< Y8950 */
+
+		kYM2151				/*!< OPM */
 	};
 
 	/**
@@ -34,7 +43,9 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~IExternalChip() { }
+	virtual ~IExternalChip()
+	{
+	}
 
 	/**
 	 * Get chip type

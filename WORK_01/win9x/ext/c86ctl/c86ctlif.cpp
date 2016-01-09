@@ -9,7 +9,7 @@
 
 using namespace c86ctl;
 
-//! インタフェイス
+/*! インタフェイス */
 typedef HRESULT (WINAPI * FnCreateInstance)(REFIID riid, LPVOID* ppi);
 
 /**
@@ -43,7 +43,7 @@ bool C86CtlIf::Initialize()
 
 	do
 	{
-		// DLL 読み込み
+		/* DLL 読み込み */
 		m_hModule = ::LoadLibrary(TEXT("c86ctl.dll"));
 		if (m_hModule == NULL)
 		{
@@ -55,14 +55,14 @@ bool C86CtlIf::Initialize()
 			break;
 		}
 
-		// インスタンス作成
+		/* インスタンス作成 */
 		(*CreateInstance)(IID_IRealChipBase, reinterpret_cast<LPVOID*>(&m_pChipBase));
 		if (m_pChipBase == NULL)
 		{
 			break;
 		}
 
-		// 初期化
+		/* 初期化 */
 		if (m_pChipBase->initialize() != C86CTL_ERR_NONE)
 		{
 			break;
@@ -123,17 +123,17 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 			break;
 		}
 
-		// 音源を探す
+		/* 音源を探す */
 		const int nDeviceCount = m_pChipBase->getNumberOfChip();
 		for (int i = 0; i < nDeviceCount; i++)
 		{
-			// 使用中?
+			/* 使用中? */
 			if (m_chips.find(i) != m_chips.end())
 			{
 				continue;
 			}
 
-			// チップを探す
+			/* チップを探す */
 			IRealChip* pRealChip = NULL;
 			m_pChipBase->getChipInterface(i, IID_IRealChip, reinterpret_cast<LPVOID*>(&pRealChip));
 			if (pRealChip == NULL)
@@ -141,7 +141,7 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 				continue;
 			}
 
-			// G.I.M.I.C 判定
+			/* G.I.M.I.C 判定 */
 			IGimic* pGimic = NULL;
 			m_pChipBase->getChipInterface(i, IID_IGimic, reinterpret_cast<LPVOID*>(&pGimic));
 			if (pGimic)
@@ -158,9 +158,18 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 					{
 						nRealChipType = IExternalChip::kYM2608;
 					}
+					else if (!memcmp(info.Devname, "GMC-OPL3", 8))
+					{
+						nRealChipType = IExternalChip::kYMF262;
+					}
+					else if (!memcmp(info.Devname, "GMC-OPM", 7))
+					{
+						nRealChipType = IExternalChip::kYM2151;
+					}
+
 					if (nChipType == nRealChipType)
 					{
-						// サウンドチップ取得できた
+						/* サウンドチップ取得できた */
 						Chip* pChip = new Chip(this, pRealChip, pGimic, nRealChipType, nClock);
 						m_chips[i] = pChip;
 						return pChip;
@@ -168,26 +177,34 @@ IExternalChip* C86CtlIf::GetInterface(IExternalChip::ChipType nChipType, UINT nC
 				}
 			}
 
-			// その他の判定
+			/* その他の判定 */
 			IRealChip3* pChip3 = NULL;
 			m_pChipBase->getChipInterface(i, IID_IRealChip3, reinterpret_cast<LPVOID*>(&pChip3));
 			if (pChip3 != NULL)
 			{
-				c86ctl::ChipType nChipType = CHIP_UNKNOWN;
-				pChip3->getChipType(&nChipType);
+				c86ctl::ChipType nType = CHIP_UNKNOWN;
+				pChip3->getChipType(&nType);
 
 				IExternalChip::ChipType nRealChipType = IExternalChip::kNone;
-				if (nChipType == CHIP_OPNA)
+				if (nType == CHIP_YM2203)
+				{
+					nRealChipType = IExternalChip::kYM2203;
+				}
+				else if (nType == CHIP_OPNA)
 				{
 					nRealChipType = IExternalChip::kYM2608;
 				}
-				else if ((nChipType == CHIP_YM2608NOADPCM) || (nChipType == CHIP_OPN3L))
+				else if ((nType == CHIP_YM2608NOADPCM) || (nType == CHIP_OPN3L))
 				{
 					nRealChipType = IExternalChip::kYMF288;
 				}
+				else if (nType == CHIP_Y8950ADPCM)
+				{
+					nRealChipType = IExternalChip::kY8950;
+				}
 				if (nChipType == nRealChipType)
 				{
-					// サウンドチップ取得できた
+					/* サウンドチップ取得できた */
 					Chip* pChip = new Chip(this, pChip3, NULL, nRealChipType, nClock);
 					m_chips[i] = pChip;
 					return pChip;
@@ -223,7 +240,7 @@ void C86CtlIf::Detach(C86CtlIf::Chip* pChip)
 	}
 }
 
-// ---- チップ
+/* ---- チップ */
 
 /**
  * コンストラクタ

@@ -24,6 +24,11 @@ typedef	unsigned short		UINT16;
 typedef	signed int			SINT32;
 #endif
 
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+typedef LONG_PTR ssize_t;
+#endif
+
 #define	BRESULT				UINT
 #define	OEMCHAR				char
 #define	OEMTEXT(string)		string
@@ -73,8 +78,3 @@ typedef	signed int			SINT32;
 #define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16
-
-#ifdef __cplusplus
-#undef min
-#undef max
-#endif	/* __cplusplus */

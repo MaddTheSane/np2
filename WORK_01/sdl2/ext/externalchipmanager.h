@@ -5,7 +5,10 @@
 
 #pragma once
 
+#include <vector>
 #include "externalchip.h"
+#include "c86ctl/c86ctlif.h"
+#include "scci/scciif.h"
 
 /**
  * @brief 外部チップ管理クラス
@@ -16,7 +19,6 @@ public:
 	static CExternalChipManager* GetInstance();
 
 	CExternalChipManager();
-	~CExternalChipManager();
 	void Initialize();
 	void Deinitialize();
 	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
@@ -25,11 +27,11 @@ public:
 	void Mute(bool bMute);
 
 private:
-	static CExternalChipManager sm_instance;	//!< 唯一のインスタンスです
+	static CExternalChipManager sm_instance;	/*!< 唯一のインスタンスです */
+	std::vector<IExternalChip*> m_chips;		/*!< モジュール */
 
-	IExternalChip* m_pGimic;
-	IExternalChip* m_pLight;
-
+	C86CtlIf m_c86ctl;							/*!< C86Ctl インスタンス */
+	CScciIf m_scci;								/*!< SCCI インスタンス */
 	IExternalChip* GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock);
 };
 

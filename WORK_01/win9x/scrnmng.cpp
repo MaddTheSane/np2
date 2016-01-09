@@ -16,8 +16,7 @@
 #include "winloc.h"
 #include "mousemng.h"
 #include "scrnmng.h"
-#include "sysmng.h"
-#include "menu.h"
+// #include "sysmng.h"
 #include "np2class.h"
 #include "pccore.h"
 #include "scrndraw.h"
@@ -80,67 +79,63 @@ static	SCRNSTAT	scrnstat;
 static	SCRNSURF	scrnsurf;
 
 
-static void setwindowsize(HWND hWnd, int width, int height) {
-
-	RECT	workrc;
-	int		scx;
-	int		scy;
-	UINT	cnt;
-	RECT	rectwindow;
-	RECT	rectclient;
-	int		cx;
-	int		cy;
-	UINT	update;
-
+static void setwindowsize(HWND hWnd, int width, int height)
+{
+	RECT workrc;
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
-	scx = GetSystemMetrics(SM_CXSCREEN);
-	scy = GetSystemMetrics(SM_CYSCREEN);
+	const int scx = GetSystemMetrics(SM_CXSCREEN);
+	const int scy = GetSystemMetrics(SM_CYSCREEN);
 
-	cnt = 2;
-	do {
+	UINT cnt = 2;
+	do
+	{
+		RECT rectwindow;
 		GetWindowRect(hWnd, &rectwindow);
+		RECT rectclient;
 		GetClientRect(hWnd, &rectclient);
-		cx = width;
+		int winx = (np2oscfg.winx != CW_USEDEFAULT) ? np2oscfg.winx : rectwindow.left;
+		int winy = (np2oscfg.winy != CW_USEDEFAULT) ? np2oscfg.winy : rectwindow.top;
+		int cx = width;
 		cx += np2oscfg.paddingx * 2;
 		cx += rectwindow.right - rectwindow.left;
 		cx -= rectclient.right - rectclient.left;
-		cy = height;
+		int cy = height;
 		cy += np2oscfg.paddingy * 2;
 		cy += rectwindow.bottom - rectwindow.top;
 		cy -= rectclient.bottom - rectclient.top;
 
-		update = 0;
-		if (scx < cx) {
-			np2oscfg.winx = (scx - cx) / 2;
-			update |= SYS_UPDATEOSCFG;
+		if (scx < cx)
+		{
+			winx = (scx - cx) / 2;
 		}
-		else {
-			if ((np2oscfg.winx + cx) > workrc.right) {
-				np2oscfg.winx = workrc.right - cx;
-				update |= SYS_UPDATEOSCFG;
+		else
+		{
+			if ((winx + cx) > workrc.right)
+			{
+				winx = workrc.right - cx;
 			}
-			if (np2oscfg.winx < workrc.left) {
-				np2oscfg.winx = workrc.left;
-				update |= SYS_UPDATEOSCFG;
-			}
-		}
-		if (scy < cy) {
-			np2oscfg.winy = (scy - cy) / 2;
-			update |= SYS_UPDATEOSCFG;
-		}
-		else {
-			if ((np2oscfg.winy + cy) > workrc.bottom) {
-				np2oscfg.winy = workrc.bottom - cy;
-				update |= SYS_UPDATEOSCFG;
-			}
-			if (np2oscfg.winy < workrc.top) {
-				np2oscfg.winy = workrc.top;
-				update |= SYS_UPDATEOSCFG;
+			if (winx < workrc.left)
+			{
+				winx = workrc.left;
 			}
 		}
-		sysmng_update(update);
-		MoveWindow(hWnd, np2oscfg.winx, np2oscfg.winy, cx, cy, TRUE);
-	} while(--cnt);
+		if (scy < cy)
+		{
+			winy = (scy - cy) / 2;
+		}
+		else
+		{
+			if ((winy + cy) > workrc.bottom)
+			{
+				winy = workrc.bottom - cy;
+			}
+			if (winy < workrc.top)
+			{
+				winy = workrc.top;
+			}
+		}
+		MoveWindow(hWnd, winx, winy, cx, cy, TRUE);
+	} while (--cnt);
 }
 
 static void renewalclientsize(BOOL winloc) {
@@ -348,7 +343,7 @@ const RECT	*scrn;
 	}
 	clearoutofrect(scrn, &base);
 #if defined(SUPPORT_DCLOCK)
-	dclock_redraw();
+	DispClock::GetInstance()->Redraw();
 #endif
 }
 
@@ -358,11 +353,12 @@ static void paletteinit()
 	GetSystemPaletteEntries(hdc, 0, 256, ddraw.pal);
 	ReleaseDC(g_hWndMain, hdc);
 #if defined(SUPPORT_DCLOCK)
+	const RGB32* pal32 = DispClock::GetInstance()->GetPalettes();
 	for (UINT i = 0; i < 4; i++)
 	 {
-		ddraw.pal[i + START_PALORG].peBlue = dclockpal.pal32[i].p.b;
-		ddraw.pal[i + START_PALORG].peRed = dclockpal.pal32[i].p.r;
-		ddraw.pal[i + START_PALORG].peGreen = dclockpal.pal32[i].p.g;
+		ddraw.pal[i + START_PALORG].peBlue = pal32[i].p.b;
+		ddraw.pal[i + START_PALORG].peRed = pal32[i].p.r;
+		ddraw.pal[i + START_PALORG].peGreen = pal32[i].p.g;
 		ddraw.pal[i + START_PALORG].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
 #endif
@@ -433,7 +429,6 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 
 	DWORD			winstyle;
 	DWORD			winstyleex;
-	HMENU			hmenu;
 	LPDIRECTDRAW2	ddraw2;
 	DDSURFACEDESC	ddsd;
 	DDPIXELFORMAT	ddpf;
@@ -446,15 +441,12 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	ZeroMemory(&scrnmng, sizeof(scrnmng));
 	winstyle = GetWindowLong(g_hWndMain, GWL_STYLE);
 	winstyleex = GetWindowLong(g_hWndMain, GWL_EXSTYLE);
-	hmenu = GetMenu(g_hWndMain);
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 		scrnmode &= ~SCRNMODE_ROTATEMASK;
 		scrnmng.flag = SCRNFLAG_FULLSCREEN;
 		winstyle &= ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME);
 		winstyle |= WS_POPUP;
 		winstyleex |= WS_EX_TOPMOST;
-		CheckMenuItem(hmenu, IDM_WINDOW, MF_UNCHECKED);
-		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_CHECKED);
 		ddraw.menudisp = 0;
 		ddraw.menusize = GetSystemMetrics(SM_CYMENU);
 		np2class_enablemenu(g_hWndMain, FALSE);
@@ -470,8 +462,6 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		}
 		winstyle &= ~WS_POPUP;
 		winstyleex &= ~WS_EX_TOPMOST;
-		CheckMenuItem(hmenu, IDM_WINDOW, MF_CHECKED);
-		CheckMenuItem(hmenu, IDM_FULLSCREEN, MF_UNCHECKED);
 	}
 	SetWindowLong(g_hWndMain, GWL_STYLE, winstyle);
 	SetWindowLong(g_hWndMain, GWL_EXSTYLE, winstyleex);
@@ -484,7 +474,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 
 	if (scrnmode & SCRNMODE_FULLSCREEN) {
 #if defined(SUPPORT_DCLOCK)
-		dclock_init();
+		DispClock::GetInstance()->Initialize();
 #endif
 		ddraw2->SetCooperativeLevel(g_hWndMain,
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
@@ -557,7 +547,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 			goto scre_err;
 		}
 #if defined(SUPPORT_DCLOCK)
-		dclock_palset(bitcolor);
+		DispClock::GetInstance()->SetPalettes(bitcolor);
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
@@ -565,7 +555,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwWidth = DCLOCK_WIDTH;
 		ddsd.dwHeight = DCLOCK_HEIGHT;
 		ddraw2->CreateSurface(&ddsd, &ddraw.clocksurf, NULL);
-		dclock_reset();
+		DispClock::GetInstance()->Reset();
 #endif
 	}
 	else {
@@ -878,13 +868,20 @@ void scrnmng_update(void) {
 
 // ----
 
-void scrnmng_setmultiple(int multiple) {
-
-	if (scrnstat.multiple != multiple) {
+void scrnmng_setmultiple(int multiple)
+{
+	if (scrnstat.multiple != multiple)
+	{
 		scrnstat.multiple = multiple;
 		renewalclientsize(TRUE);
 	}
 }
+
+int scrnmng_getmultiple(void)
+{
+	return scrnstat.multiple;
+}
+
 
 
 // ----
@@ -902,52 +899,49 @@ BOOL scrnmng_isdispclockclick(const POINT *pt) {
 	}
 }
 
-void scrnmng_dispclock(void) {
+void scrnmng_dispclock(void)
+{
+	if (!ddraw.clocksurf)
+	{
+		return;
+	}
+	if (!DispClock::GetInstance()->IsDisplayed())
+	{
+		return;
+	}
 
-	DDSURFACEDESC	dest;
-const RECT			*scrn;
-																// ver0.26
-	if (!ddraw.clocksurf) {
-		return;
-	}
-	if (!dclock_disp()) {
-		return;
-	}
-	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
+	const RECT* scrn;
+	if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU))
+	{
 		scrn = &ddraw.scrn;
 	}
-	else {
+	else
+	{
 		scrn = &ddraw.scrnclip;
 	}
-	if ((scrn->bottom + DCLOCK_HEIGHT) > ddraw.height) {
+	if ((scrn->bottom + DCLOCK_HEIGHT) > ddraw.height)
+	{
 		return;
 	}
-	dclock_make();
+	DispClock::GetInstance()->Make();
+
+	DDSURFACEDESC dest;
 	ZeroMemory(&dest, sizeof(dest));
 	dest.dwSize = sizeof(dest);
-	if (ddraw.clocksurf->Lock(NULL, &dest, DDLOCK_WAIT, NULL) == DD_OK) {
-		if (scrnmng.bpp == 8) {
-			dclock_out8(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 16) {
-			dclock_out16(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 24) {
-			dclock_out24(dest.lpSurface, dest.lPitch);
-		}
-		else if (scrnmng.bpp == 32) {
-			dclock_out32(dest.lpSurface, dest.lPitch);
-		}
+	if (ddraw.clocksurf->Lock(NULL, &dest, DDLOCK_WAIT, NULL) == DD_OK)
+	{
+		DispClock::GetInstance()->Draw(scrnmng.bpp, dest.lpSurface, dest.lPitch);
 		ddraw.clocksurf->Unlock(NULL);
 	}
 	if (ddraw.primsurf->BltFast(ddraw.width - DCLOCK_WIDTH - 4,
 									ddraw.height - DCLOCK_HEIGHT,
 									ddraw.clocksurf, (RECT *)&rectclk,
-									DDBLTFAST_WAIT) == DDERR_SURFACELOST) {
+									DDBLTFAST_WAIT) == DDERR_SURFACELOST)
+	{
 		ddraw.primsurf->Restore();
 		ddraw.clocksurf->Restore();
 	}
-	dclock_cntdown(np2oscfg.DRAW_SKIP);
+	DispClock::GetInstance()->CountDown(np2oscfg.DRAW_SKIP);
 }
 #endif
 
@@ -1063,9 +1057,8 @@ void scrnmng_sizing(UINT side, RECT *rect) {
 	scrnsizing.mul = mul;
 }
 
-void scrnmng_exitsizing(void) {
-
-	sysmenu_setscrnmul(scrnsizing.mul);
+void scrnmng_exitsizing(void)
+{
 	scrnmng_setmultiple(scrnsizing.mul);
 	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }

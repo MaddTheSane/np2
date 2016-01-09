@@ -42,6 +42,9 @@ struct tagOpnaState
 	UINT16	base;
 	UINT8	adpcmmask;
 	UINT8	cCaps;
+	UINT8	status;
+	UINT8	irq;
+	UINT8	intr;
 	UINT8	keyreg[8];
 	UINT8	reg[0x200];
 };
@@ -59,7 +62,7 @@ struct tagOpna
 	_ADPCM adpcm;
 };
 
-typedef struct tagOpna _OPNA;
+typedef struct tagOpna OPNA;
 typedef struct tagOpna* POPNA;
 typedef const struct tagOpna* PCOPNA;
 

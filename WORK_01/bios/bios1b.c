@@ -432,10 +432,8 @@ static REG8 fdd_operate(REG8 type, REG8 rpm, BOOL ndensity) {
 
 		case 0x04:								// ƒZƒ“ƒX
 			ret_ah = 0x00;
-			if (fdd_diskaccess()) {
-				ret_ah = 0xc0;
-			}
-			else if (fdd_diskprotect(fdc.us)) {
+			if (fdd_diskprotect(fdc.us))
+			{
 				ret_ah = 0x10;
 			}
 			if (CPU_AL & 0x80) {				// 2HD

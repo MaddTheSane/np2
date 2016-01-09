@@ -13,6 +13,7 @@
 #if defined(SUPPORT_PX)
 #include	"boardpx.h"
 #endif	// defined(SUPPORT_PX)
+#include	"boardso.h"
 #include	"amd98.h"
 #include	"pcm86io.h"
 #include	"cs4231io.h"
@@ -24,11 +25,11 @@
 #include	"keystat.h"
 
 
-	UINT32		g_usesound;
-	_OPNA		g_opna[OPNA_MAX];
+	SOUNDID g_nSoundID;
+	OPL3 g_opl3;
+	OPNA g_opna[OPNA_MAX];
 
-	_FMTIMER	g_fmtimer;
-	_PCM86		pcm86;
+	_PCM86		g_pcm86;
 	_CS4231		cs4231;
 
 static void	(*extfn)(REG8 enable);
@@ -76,7 +77,7 @@ REG8 fmboard_getjoy(POPNA opna)
 
 	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
 	ret &= 0x3f;
-	ret |= g_fmtimer.intr;
+	ret |= opna->s.intr;
 	return ret;
 }
 
@@ -110,6 +111,7 @@ void fmboard_construct(void)
 	{
 		opna_construct(&g_opna[i]);
 	}
+	opl3_construct(&g_opl3);
 }
 
 /**
@@ -123,13 +125,16 @@ void fmboard_destruct(void)
 	{
 		opna_destruct(&g_opna[i]);
 	}
+	opl3_destruct(&g_opl3);
 }
 
 /**
  * Reset
+ * @param[in] pConfig The pointer of config
+ * @param[in] nSoundId The sound ID
  */
-void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
-
+void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
+{
 	UINT8 cross;
 	UINT i;
 
@@ -137,74 +142,83 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 	beep_reset();												// ver0.27a
 	cross = pConfig->snd_x;										// ver0.30
 
-	if (g_usesound != type)
+	if (g_nSoundID != nSoundID)
 	{
 		for (i = 0; i < NELEMENTS(g_opna); i++)
 		{
 			opna_reset(&g_opna[i], 0);
 		}
+		opl3_reset(&g_opl3, 0);
 	}
 
 	extfn = NULL;
 	pcm86_reset();
 	cs4231_reset();
 
-	board14_reset(pConfig, (type == 1) ? TRUE : FALSE);
+	board14_reset(pConfig, (nSoundID == SOUNDID_PC_9801_14) ? TRUE : FALSE);
 	amd98_reset(pConfig);
 
-	switch (type)
+	switch (nSoundID)
 	{
-		case 0x01:
+		case SOUNDID_PC_9801_14:
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			board26k_reset(pConfig);
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			board86_reset(pConfig, FALSE);
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			boardx2_reset(pConfig);
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			board118_reset(pConfig);
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			board86_reset(pConfig, TRUE);
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			boardspb_reset(pConfig);
 			cross ^= pConfig->spb_x;
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			boardspr_reset(pConfig);
 			cross ^= pConfig->spb_x;
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			break;
 
-#if	defined(SUPPORT_PX)
-		case 0x30:
+		case SOUNDID_SOUNDORCHESTRA:
+			boardso_reset(pConfig, FALSE);
+			break;
+
+		case SOUNDID_SOUNDORCHESTRAV:
+			boardso_reset(pConfig, TRUE);
+			break;
+
+#if defined(SUPPORT_PX)
+		case SOUNDID_PX1:
 			boardpx1_reset(pConfig);
 			break;
 
-		case 0x50:
+		case SOUNDID_PX2:
 			boardpx2_reset(pConfig);
 			break;
 #endif	// defined(SUPPORT_PX)
 
 		default:
-			type = 0;
+			nSoundID = SOUNDID_NONE;
 			break;
 	}
-	g_usesound = type;
+	g_nSoundID = nSoundID;
 	soundmng_setreverse(cross);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
@@ -212,53 +226,62 @@ void fmboard_reset(const NP2CFG *pConfig, UINT32 type) {
 void fmboard_bind(void) {
 
 	keydisp_reset();
-	switch (g_usesound)
+	switch (g_nSoundID)
 	{
-		case 0x01:
+		case SOUNDID_PC_9801_14:
 			board14_bind();
 			break;
 
-		case 0x02:
+		case SOUNDID_PC_9801_26K:
 			board26k_bind();
 			break;
 
-		case 0x04:
+		case SOUNDID_PC_9801_86:
 			board86_bind();
 			break;
 
-		case 0x06:
+		case SOUNDID_PC_9801_86_26K:
 			boardx2_bind();
 			break;
 
-		case 0x08:
+		case SOUNDID_PC_9801_118:
 			board118_bind();
 			break;
 
-		case 0x14:
+		case SOUNDID_PC_9801_86_ADPCM:
 			board86_bind();
 			break;
 
-		case 0x20:
+		case SOUNDID_SPEAKBOARD:
 			boardspb_bind();
 			break;
 
-		case 0x40:
+		case SOUNDID_SPARKBOARD:
 			boardspr_bind();
 			break;
 
-		case 0x80:
+		case SOUNDID_AMD98:
 			amd98_bind();
 			break;
 
+		case SOUNDID_SOUNDORCHESTRA:
+		case SOUNDID_SOUNDORCHESTRAV:
+			boardso_bind();
+			break;
+
 #if defined(SUPPORT_PX)
-		case 0x30:
+		case SOUNDID_PX1:
 			boardpx1_bind();
 			break;
 
-		case 0x50:
+		case SOUNDID_PX2:
 			boardpx2_bind();
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		default:
+			break;
 	}
+
 	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
 }

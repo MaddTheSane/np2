@@ -47,6 +47,7 @@ void opna_reset(POPNA opna, REG8 cCaps)
 	memset(&opna->s, 0, sizeof(opna->s));
 	opna->s.adpcmmask = ~(0x1c);
 	opna->s.cCaps = cCaps;
+	opna->s.irq = 0xff;
 	opna->s.reg[0x07] = 0xbf;
 	opna->s.reg[0x0e] = 0xff;
 	opna->s.reg[0x0f] = 0xff;
@@ -133,26 +134,32 @@ static void restore(POPNA opna)
 void opna_bind(POPNA opna)
 {
 	UINT8 cCaps = opna->s.cCaps;
+	UINT nClock = 3993600;
 
-	keydisp_bindfm(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3);
+	keydisp_bindopna(opna->s.reg, (cCaps & OPNA_HAS_EXTENDEDFM) ? 6 : 3, nClock);
 	if (cCaps & OPNA_HAS_PSG)
 	{
-		keydisp_bindpsg(opna->s.reg);
+		keydisp_bindpsg(opna->s.reg, nClock);
 	}
 
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 	if (pExt == NULL)
 	{
-		IExternalChip::ChipType nChipType = IExternalChip::kYMF288;
-		if (cCaps & OPNA_HAS_ADPCM)
+		IExternalChip::ChipType nChipType = IExternalChip::kYM2203;
+		if (cCaps & OPNA_HAS_EXTENDEDFM)
 		{
-			nChipType = IExternalChip::kYM2608;
+			nChipType = IExternalChip::kYMF288;
+			nClock *= 2;
+			if (cCaps & OPNA_HAS_ADPCM)
+			{
+				nChipType = IExternalChip::kYM2608;
+			}
+			else if (cCaps == OPNA_MODE_3438)
+			{
+				nChipType = IExternalChip::kYM3438;
+			}
 		}
-		if (cCaps == OPNA_MODE_3438)
-		{
-			nChipType = IExternalChip::kYM3438;
-		}
-		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, 3993600 * 2));
+		pExt = static_cast<CExternalOpna*>(CExternalChipManager::GetInstance()->GetInterface(nChipType, nClock));
 		opna->userdata = reinterpret_cast<INTPTR>(pExt);
 	}
 	if (pExt)
@@ -218,7 +225,7 @@ REG8 opna_readStatus(POPNA opna)
 {
 	if (opna->s.cCaps & OPNA_HAS_TIMER)
 	{
-		return g_fmtimer.status;
+		return opna->s.status;
 	}
 	return 0;
 }
@@ -244,7 +251,7 @@ REG8 opna_readExtendedStatus(POPNA opna)
 
 	if (cCaps & OPNA_HAS_TIMER)
 	{
-		ret |= g_fmtimer.status;
+		ret |= opna->s.status;
 	}
 
 	return ret;
@@ -337,27 +344,29 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 			{
 				pExt->WriteRegister(nAddress, cData);
 			}
-			keydisp_fmkeyon(opna->s.reg, cChannel, cData);
+			keydisp_opnakeyon(opna->s.reg, cData);
 		}
-		else
+		else if (nAddress == 0x27)
 		{
 			if (cCaps & OPNA_HAS_TIMER)
 			{
-				fmtimer_setreg(nAddress, cData);
+				opna_settimer(opna, cData);
 			}
-			if (!pExt)
+
+			if (pExt)
 			{
-				if (nAddress == 0x27)
-				{
-					opna->opngen.opnch[2].extop = cData & 0xc0;
-				}
+				pExt->WriteRegister(nAddress, cData);
 			}
 			else
 			{
-				if ((nAddress == 0x22) || (nAddress == 0x27))
-				{
-					pExt->WriteRegister(nAddress, cData);
-				}
+				opna->opngen.opnch[2].extop = cData & 0xc0;
+			}
+		}
+		else if (nAddress == 0x22)
+		{
+			if (pExt)
+			{
+				pExt->WriteRegister(nAddress, cData);
 			}
 		}
 	}

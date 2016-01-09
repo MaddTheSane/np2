@@ -1984,9 +1984,9 @@ create_menu(void)
 	menubar = gtk_ui_manager_get_widget(menu_hdl.ui_manager, "/MainMenu");
 
 	gtk_widget_add_events(menubar, EVENT_MASK);
-	g_signal_connect(GTK_OBJECT(menubar), "enter_notify_event",
+	g_signal_connect(G_OBJECT(menubar), "enter_notify_event",
 	            G_CALLBACK(enter_notify_evhandler), NULL);
-	g_signal_connect(GTK_OBJECT(menubar), "leave_notify_event",
+	g_signal_connect(G_OBJECT(menubar), "leave_notify_event",
 	            G_CALLBACK(leave_notify_evhandler), NULL);
 
 	return menubar;

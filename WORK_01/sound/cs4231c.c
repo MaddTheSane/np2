@@ -1,9 +1,12 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"sound.h"
-#include	"fmboard.h"
+/**
+ * @file	cs4231c.c
+ * @brief	Implementation of the CS4231
+ */
+
+#include "compiler.h"
+#include "cs4231.h"
+#include "iocore.h"
+#include "fmboard.h"
 
 
 	CS4231CFG	cs4231cfg;

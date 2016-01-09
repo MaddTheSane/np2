@@ -29,7 +29,7 @@ static void IOOUTCALL opn_o18a(UINT port, REG8 dat)
 static REG8 IOINPCALL opn_i188(UINT port)
 {
 	(void)port;
-	return g_fmtimer.status;
+	return g_opna[0].s.status;
 }
 
 static REG8 IOINPCALL opn_i18a(UINT port)
@@ -66,9 +66,9 @@ static const IOINP opn_i[4] = {
 void board26k_reset(const NP2CFG *pConfig)
 {
 	opna_reset(&g_opna[0], OPNA_MODE_2203 | OPNA_HAS_TIMER | OPNA_S98);
+	opna_timer(&g_opna[0], (pConfig->snd26opt & 0xc0) | 0x10, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
 
 	opngen_setcfg(&g_opna[0].opngen, 3, 0x00);
-	fmtimer_reset(pConfig->snd26opt & 0xc0);
 	soundrom_loadex(pConfig->snd26opt & 7, OEMTEXT("26"));
 	g_opna[0].s.base = (pConfig->snd26opt & 0x10) ? 0x000 : 0x100;
 }

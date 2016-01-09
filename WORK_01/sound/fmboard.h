@@ -1,20 +1,17 @@
 /**
  * @file	fmboard.h
+ * @brief	Interface of The board manager
  */
 
 #pragma once
 
 #if !defined(DISABLE_SOUND)
 
-#include "fmtimer.h"
-#include "opna.h"
-#include "pcm86.h"
 #include "cs4231.h"
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#include "opl3.h"
+#include "opna.h"
+#include "opntimer.h"
+#include "pcm86.h"
 
 #if defined(SUPPORT_PX)
 #define OPNA_MAX	5
@@ -22,10 +19,15 @@ extern "C"
 #define OPNA_MAX	2
 #endif	/* defined(SUPPORT_PX) */
 
-extern	UINT32		g_usesound;
-extern	_OPNA		g_opna[OPNA_MAX];
-extern	_FMTIMER	g_fmtimer;
-extern	_PCM86		pcm86;
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+extern	SOUNDID		g_nSoundID;
+extern	OPL3		g_opl3;
+extern	OPNA		g_opna[OPNA_MAX];
+extern	_PCM86		g_pcm86;
 extern	_CS4231		cs4231;
 
 REG8 fmboard_getjoy(POPNA opna);
@@ -35,7 +37,7 @@ void fmboard_extenable(REG8 enable);
 
 void fmboard_construct(void);
 void fmboard_destruct(void);
-void fmboard_reset(const NP2CFG *pConfig, UINT32 type);
+void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID);
 void fmboard_bind(void);
 
 #ifdef __cplusplus
