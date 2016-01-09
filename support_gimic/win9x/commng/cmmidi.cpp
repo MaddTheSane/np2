@@ -1,15 +1,12 @@
 /**
  * @file	cmmidi.cpp
- * @brief	Communication port manager (MIDI)
- *
- * @author	$Author: yui $
- * @date	$Date: 2011/03/07 09:54:11 $
+ * @brief	MIDI クラスの動作の定義を行います
  */
 
 #include "compiler.h"
+#include "cmmidi.h"
 #include "np2.h"
 #include "mimpidef.h"
-#include "commng.h"
 #if defined(VERMOUTH_LIB) || defined(MT32SOUND_DLL)
 #include "sound.h"
 #endif

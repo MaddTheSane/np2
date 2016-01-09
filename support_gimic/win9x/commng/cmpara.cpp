@@ -1,6 +1,10 @@
-#include	"compiler.h"
-#include	"commng.h"
+/**
+ * @file	cmpara.cpp
+ * @brief	パラレル クラスの動作の定義を行います
+ */
 
+#include "compiler.h"
+#include "cmpara.h"
 
 typedef struct {
 	HANDLE	hdl;

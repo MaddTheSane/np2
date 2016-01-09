@@ -1,6 +1,9 @@
-#include	"compiler.h"
-#include	"commng.h"
-
+/**
+ * @file	cmserial.cpp
+ * @brief	シリアル クラスの動作の定義を行います
+ */
+#include "compiler.h"
+#include "cmserial.h"
 
 const UINT32 cmserial_speed[10] = {110, 300, 1200, 2400, 4800,
 							9600, 19200, 38400, 57600, 115200};

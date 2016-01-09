@@ -1,9 +1,11 @@
+/**
+ * @file	cmmidi.h
+ * @brief	MIDI クラスの宣言およびインターフェイスの定義をします
+ */
 
-// ---- com manager midi for windows
+#pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "commng.h"
 
 extern const TCHAR cmmidi_midimapper[];
 #if defined(VERMOUTH_LIB)
@@ -18,8 +20,3 @@ void cmmidi_initailize(void);
 COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module);
 void cmmidi_recvdata(HMIDIIN hdr, UINT32 data);
 void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data);
-
-#ifdef __cplusplus
-}
-#endif
-

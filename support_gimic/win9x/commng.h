@@ -1,3 +1,8 @@
+/**
+ * @file	commng.h
+ */
+
+#pragma once
 
 // ---- com manager interface
 
@@ -81,8 +86,3 @@ enum {
 };
 
 void commng_initialize(void);
-
-#include	"cmserial.h"
-#include	"cmmidi.h"
-#include	"cmpara.h"
-

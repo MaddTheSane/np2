@@ -2,7 +2,7 @@
 #include	"strres.h"
 #include	"resource.h"
 #include	"np2.h"
-#include	"commng.h"
+#include	"commng\cmmidi.h"
 #include	"sysmng.h"
 #include	"dialog.h"
 #include	"dialogs.h"

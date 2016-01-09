@@ -21,7 +21,7 @@
 #include "np2arg.h"
 #include "dosio.h"
 #include "misc\tstring.h"
-#include "commng.h"
+#include "commng\cmmidi.h"
 #include "joymng.h"
 #include "mousemng.h"
 #include "scrnmng.h"

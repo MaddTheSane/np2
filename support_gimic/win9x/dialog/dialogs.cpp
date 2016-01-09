@@ -12,7 +12,7 @@
 #include "bmpdata.h"
 #include "dosio.h"
 #include "misc\tstring.h"
-#include "commng.h"
+#include "commng\cmmidi.h"
 #include "dialogs.h"
 #include "np2.h"
 #if defined(MT32SOUND_DLL)

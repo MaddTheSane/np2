@@ -2,6 +2,9 @@
 #include	"np2.h"
 #include	"commng.h"
 #include	"cmjasts.h"
+#include "commng/cmmidi.h"
+#include "commng/cmpara.h"
+#include "commng/cmserial.h"
 
 
 // ---- non connect
