@@ -7,30 +7,19 @@
 #include "cmmidi.h"
 #include "np2.h"
 #include "mimpidef.h"
-#if defined(VERMOUTH_LIB) || defined(MT32SOUND_DLL)
-#include "sound.h"
-#endif
-#if defined(VERMOUTH_LIB)
-#include "sound\vermouth\vermouth.h"
-#endif
+
+#include "cmmidiout32.h"
 #if defined(MT32SOUND_DLL)
-#include "ext\mt32snd.h"
-#endif
-#include "keydisp.h"
-
-#if !defined(__GNUC__)
-#pragma comment(lib, "winmm.lib")
-#endif	// !defined(__GNUC__)
-
+#include "cmmidioutmt32sound.h"
+#endif	// defined(MT32SOUND_DLL)
 #if defined(VERMOUTH_LIB)
-extern	MIDIMOD	vermouth_module;
-#endif
-
+#include "cmmidioutvermouth.h"
+#endif	// defined(VERMOUTH_LIB)
+#include "keydisp.h"
 
 #define MIDIOUTS(a, b, c)	(((c) << 16) + (b << 8) + (a))
 #define MIDIOUTS2(a)		(*(UINT16 *)(a))
 #define MIDIOUTS3(a)		((*(UINT32 *)(a)) & 0xffffff)
-
 
 const TCHAR cmmidi_midimapper[] = TEXT("MIDI MAPPER");
 #if defined(VERMOUTH_LIB)
@@ -85,12 +74,6 @@ enum {
 	CMMIDI_MIDIOUT		= 0x01,
 	CMMIDI_MIDIIN		= 0x02,
 	CMMIDI_MIDIINSTART	= 0x04,
-#if defined(VERMOUTH_LIB)
-	CMMIDI_VERMOUTH		= 0x08,
-#endif
-#if defined(MT32SOUND_DLL)
-	CMMIDI_MT32SOUND	= 0x10,
-#endif
 
 	MIDICTRL_READY		= 0,
 	MIDICTRL_2BYTES,
@@ -111,23 +94,10 @@ typedef struct {
 	UINT8	ctrl[28];
 } _MIDICH, *MIDICH;
 
-typedef struct {
-	HMIDIOUT	hmidiout;
-	MIDIHDR		midihdr;
-} OUTFNWIN32;
-
-typedef union {
-	OUTFNWIN32	win32;
-#if defined(VERMOUTH_LIB)
-	MIDIHDL		vermouth;
-#endif
-} HMIDIFNOUT;
-
 struct _cmmidi {
 	UINT		opened;
-	void		(*shortout)(CMMIDI self, UINT32 msg);
-	void		(*longout)(CMMIDI self, const UINT8 *msg, UINT leng);
-	HMIDIFNOUT	out;
+
+	CComMidiOut* m_pMidiOut;
 
 	HMIDIIN		hmidiin;
 	MIDIHDR		hmidiinhdr;
@@ -141,7 +111,6 @@ struct _cmmidi {
 
 	UINT8		buffer[MIDI_BUFFER];
 	_MIDICH		mch[16];
-	UINT8		excvbuf[MIDI_BUFFER];
 
 	UINT8		def_en;
 	MIMPIDEF	def;
@@ -169,27 +138,6 @@ static	UINT8	midictrlindex[128];
 
 
 // ----
-
-static BRESULT getmidioutid(const OEMCHAR *midiout, UINT *ret) {
-
-	UINT		num;
-	UINT		i;
-	MIDIOUTCAPS	moc;
-
-	num = midiOutGetNumDevs();
-	for (i=0; i<num; i++) {
-		if ((midiOutGetDevCaps(i, &moc, sizeof(moc)) == MMSYSERR_NOERROR) &&
-			(!milstr_cmp(midiout, moc.szPname))) {
-			*ret = i;
-			return(SUCCESS);
-		}
-	}
-	if (!milstr_cmp(midiout, cmmidi_midimapper)) {
-		*ret = MIDI_MAPPER;
-		return(SUCCESS);
-	}
-	return(FAILURE);
-}
 
 static BRESULT getmidiinid(const OEMCHAR *midiin, UINT *ret) {
 
@@ -224,118 +172,6 @@ static UINT module2number(const OEMCHAR *module) {
 	return(i);
 }
 
-
-// ---- N/C
-
-static void midi_ncshort(CMMIDI midi, UINT32 msg) {
-
-	(void)midi;
-	(void)msg;
-}
-
-static void midi_nclong(CMMIDI midi, const UINT8 *msg, UINT leng) {
-
-	(void)midi;
-	(void)msg;
-	(void)leng;
-}
-
-
-// ---- Win32 API
-
-static void waitlastexclusiveout(CMMIDI midi) {
-
-	if (midi->midiexcvwait) {
-		midi->midiexcvwait = 0;
-		while(midiOutUnprepareHeader(midi->out.win32.hmidiout,
-										&midi->out.win32.midihdr,
-										sizeof(midi->out.win32.midihdr))
-												== MIDIERR_STILLPLAYING) { }
-	}
-}
-
-static void midi_win32short(CMMIDI midi, UINT32 msg) {
-
-	waitlastexclusiveout(midi);
-	midiOutShortMsg(midi->out.win32.hmidiout, (DWORD)msg);
-}
-
-static void midi_win32long(CMMIDI midi, const UINT8 *msg, UINT leng) {
-
-	waitlastexclusiveout(midi);
-	CopyMemory(midi->excvbuf, msg, leng);
-	midi->out.win32.midihdr.lpData = (char *)midi->excvbuf;
-	midi->out.win32.midihdr.dwFlags = 0;
-	midi->out.win32.midihdr.dwBufferLength = leng;
-	midiOutPrepareHeader(midi->out.win32.hmidiout, &midi->out.win32.midihdr,
-											sizeof(midi->out.win32.midihdr));
-	midiOutLongMsg(midi->out.win32.hmidiout, &midi->out.win32.midihdr,
-											sizeof(midi->out.win32.midihdr));
-	midi->midiexcvwait = 1;
-}
-
-
-// ---- Vermouth
-
-#if defined(VERMOUTH_LIB)
-static void midi_vermouthshort(CMMIDI midi, UINT32 msg) {
-
-	sound_sync();
-	midiout_shortmsg(midi->out.vermouth, msg);
-}
-
-static void midi_vermouthlong(CMMIDI midi, const UINT8 *msg, UINT leng) {
-
-	sound_sync();
-	midiout_longmsg(midi->out.vermouth, msg, leng);
-}
-
-static void SOUNDCALL vermouth_getpcm(MIDIHDL hdl, SINT32 *pcm, UINT count) {
-
-const SINT32	*ptr;
-	UINT		size;
-
-	while(count) {
-		size = count;
-		ptr = midiout_get(hdl, &size);
-		if (ptr == NULL) {
-			break;
-		}
-		count -= size;
-		do {
-			pcm[0] += ptr[0];
-			pcm[1] += ptr[1];
-			ptr += 2;
-			pcm += 2;
-		} while(--size);
-	}
-}
-#endif
-
-
-// ---- MT-32
-
-#if defined(MT32SOUND_DLL)
-static void midi_mt32short(CMMIDI midi, UINT32 msg)
-{
-	sound_sync();
-	MT32Sound::GetInstance()->ShortMsg(msg);
-}
-
-static void midi_mt32long(CMMIDI midi, const UINT8 *msg, UINT leng)
-{
-	sound_sync();
-	MT32Sound::GetInstance()->LongMsg(msg, leng);
-}
-
-static void SOUNDCALL mt32_getpcm(MIDIHDL hdl, SINT32 *pcm, UINT count)
-{
-	MT32Sound::GetInstance()->Mix(pcm, count);
-}
-#endif
-
-
-
 // ----
 
 static void midiallnoteoff(CMMIDI midi) {
@@ -348,7 +184,7 @@ static void midiallnoteoff(CMMIDI midi) {
 		msg[1] = 0x7b;
 		msg[2] = 0x00;
 		keydisp_midi(msg);
-		midi->shortout(midi, MIDIOUTS3(msg));
+		midi->m_pMidiOut->Short(MIDIOUTS3(msg));
 	}
 }
 
@@ -392,7 +228,7 @@ const UINT8	*excv;
 			break;
 	}
 	if (excv) {
-		midi->longout(midi, excv, excvsize);
+		midi->m_pMidiOut->Long(excv, excvsize);
 	}
 	midiallnoteoff(midi);
 }
@@ -406,19 +242,18 @@ static void midisetparam(CMMIDI midi) {
 	mch = midi->mch;
 	for (i=0; i<16; i++, mch++) {
 		if (mch->press != 0xff) {
-			midi->shortout(midi, MIDIOUTS(0xa0+i, mch->press, 0));
+			midi->m_pMidiOut->Short(MIDIOUTS(0xa0+i, mch->press, 0));
 		}
 		if (mch->bend != 0xffff) {
-			midi->shortout(midi, (mch->bend << 8) + 0xe0+i);
+			midi->m_pMidiOut->Short((mch->bend << 8) + 0xe0+i);
 		}
 		for (j=0; j<NELEMENTS(midictrltbl); j++) {
 			if (mch->ctrl[j+1] != 0xff) {
-				midi->shortout(midi,
-							MIDIOUTS(0xb0+i, midictrltbl[j], mch->ctrl[j+1]));
+				midi->m_pMidiOut->Short(MIDIOUTS(0xb0+i, midictrltbl[j], mch->ctrl[j+1]));
 			}
 		}
 		if (mch->prog != 0xff) {
-			midi->shortout(midi, MIDIOUTS(0xc0+i, mch->prog, 0));
+			midi->m_pMidiOut->Short(MIDIOUTS(0xc0+i, mch->prog, 0));
 		}
 	}
 }
@@ -534,7 +369,7 @@ static UINT midiwrite(CMMIDI midi, UINT8 data) {
 						break;
 				}
 				keydisp_midi(midi->buffer);
-				midi->shortout(midi, MIDIOUTS2(midi->buffer));
+				midi->m_pMidiOut->Short(MIDIOUTS2(midi->buffer));
 				midi->midictrl = MIDICTRL_READY;
 				return(2);
 			}
@@ -567,7 +402,7 @@ static UINT midiwrite(CMMIDI midi, UINT8 data) {
 						break;
 				}
 				keydisp_midi(midi->buffer);
-				midi->shortout(midi, MIDIOUTS3(midi->buffer));
+				midi->m_pMidiOut->Short(MIDIOUTS3(midi->buffer));
 				midi->midictrl = MIDICTRL_READY;
 				return(3);
 			}
@@ -575,7 +410,7 @@ static UINT midiwrite(CMMIDI midi, UINT8 data) {
 
 		case MIDICTRL_EXCLUSIVE:
 			if (data == MIDI_EOX) {
-				midi->longout(midi, midi->buffer, midi->mpos);
+				midi->m_pMidiOut->Long(midi->buffer, midi->mpos);
 				midi->midictrl = MIDICTRL_READY;
 				return(midi->mpos);
 			}
@@ -607,12 +442,10 @@ static UINT midiwrite(CMMIDI midi, UINT8 data) {
 	return(0);
 }
 
-static INTPTR midimsg(COMMNG self, UINT msg, INTPTR param) {
+static INTPTR midimsg(CMMIDI midi, UINT msg, INTPTR param) {
 
-	CMMIDI	midi;
 	COMFLAG	flag;
 
-	midi = (CMMIDI)(self + 1);
 	switch(msg) {
 		case COMMSG_MIDIRESET:
 			midireset(midi);
@@ -696,17 +529,10 @@ static CMMIDI midiinhdlget(HMIDIIN hmidiin) {
 	return(NULL);
 }
 
-static void midirelease(COMMNG self) {
+static void midirelease(CMMIDI midi) {
 
-	CMMIDI	midi;
-
-	midi = (CMMIDI)(self + 1);
 	midiallnoteoff(midi);
-	if (midi->opened & CMMIDI_MIDIOUT) {
-		waitlastexclusiveout(midi);
-		midiOutReset(midi->out.win32.hmidiout);
-		midiOutClose(midi->out.win32.hmidiout);
-	}
+	delete midi->m_pMidiOut;
 	if (midi->opened & CMMIDI_MIDIIN) {
 		if (midi->opened & CMMIDI_MIDIINSTART) {
 			midiInStop(midi->hmidiin);
@@ -717,18 +543,6 @@ static void midirelease(COMMNG self) {
 		midiInClose(midi->hmidiin);
 		midiinhdlunreg(midi);
 	}
-#if defined(VERMOUTH_LIB)
-	if (midi->opened & CMMIDI_VERMOUTH) {
-		midiout_destroy(midi->out.vermouth);
-	}
-#endif
-#if defined(MT32SOUND_DLL)
-	if (midi->opened & CMMIDI_MT32SOUND)
-	{
-		MT32Sound::GetInstance()->Close();
-	}
-#endif
-	_MFREE(self);
 }
 
 
@@ -749,25 +563,33 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 
 	UINT		opened;
 	UINT		id;
-	void		(*shortout)(CMMIDI self, UINT32 msg);
-	void		(*longout)(CMMIDI self, const UINT8 *msg, UINT leng);
-	HMIDIFNOUT	out;
 	HMIDIIN		hmidiin = NULL;
 	CMMIDI		midi;
 
 	opened = 0;
-	ZeroMemory(&out, sizeof(out));
-	shortout = midi_ncshort;
-	longout = midi_nclong;
-	if (getmidioutid(midiout, &id) == SUCCESS) {
-		if (midiOutOpen(&out.win32.hmidiout, id, 0, 0, CALLBACK_NULL)
-														== MMSYSERR_NOERROR) {
-			midiOutReset(out.win32.hmidiout);
-			shortout = midi_win32short;
-			longout = midi_win32long;
-			opened |= CMMIDI_MIDIOUT;
-		}
+
+	CComMidiOut* pMidiOut = NULL;
+#if defined(VERMOUTH_LIB)
+	if ((pMidiOut == NULL) && (!milstr_cmp(midiout, cmmidi_vermouth)))
+	{
+		pMidiOut = CComMidiOutVermouth::CreateInstance();
 	}
+#endif	// defined(VERMOUTH_LIB)
+#if defined(MT32SOUND_DLL)
+	if ((pMidiOut == NULL) && (!milstr_cmp(midiout, cmmidi_mt32sound)))
+	{
+		pMidiOut = CComMidiOutMT32Sound::CreateInstance();
+	}
+#endif	// defined(MT32SOUND_DLL)
+	if (pMidiOut == NULL)
+	{
+		pMidiOut = CComMidiOut32::CreateInstance(midiout);
+	}
+	if (pMidiOut)
+	{
+		opened |= CMMIDI_MIDIOUT;
+	}
+
 	if (getmidiinid(midiin, &id) == SUCCESS) {
 		if (midiInOpen(&hmidiin, id, (DWORD_PTR)g_hWndMain, 0, CALLBACK_WINDOW)
 														== MMSYSERR_NOERROR) {
@@ -775,37 +597,20 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 			opened |= CMMIDI_MIDIIN;
 		}
 	}
-#if defined(VERMOUTH_LIB)
-	else if (!milstr_cmp(midiout, cmmidi_vermouth)) {
-		out.vermouth = midiout_create(vermouth_module, 512);
-		if (out.vermouth != NULL) {
-			shortout = midi_vermouthshort;
-			longout = midi_vermouthlong;
-			opened |= CMMIDI_VERMOUTH;
-		}
-	}
-#endif
-#if defined(MT32SOUND_DLL)
-	else if (!milstr_cmp(midiout, cmmidi_mt32sound)) {
-		if (MT32Sound::GetInstance()->Open())
-		{
-			shortout = midi_mt32short;
-			longout = midi_mt32long;
-			opened |= CMMIDI_MT32SOUND;
-		}
-	}
-#endif
 	if (!opened)
 	{
 		return NULL;
 	}
 
+	if (pMidiOut == NULL)
+	{
+		pMidiOut = new CComMidiOut;
+	}
+
 	midi = new _cmmidi;
 	ZeroMemory(midi, sizeof(*midi));
 	midi->opened = opened;
-	midi->shortout = shortout;
-	midi->longout = longout;
-	midi->out = out;
+	midi->m_pMidiOut = pMidiOut;
 	midi->midictrl = MIDICTRL_READY;
 #if 1
 	midi->hmidiin = hmidiin;
@@ -818,16 +623,6 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 			midiInAddBuffer(hmidiin, &midi->hmidiinhdr, sizeof(MIDIHDR));
 			midiInStart(hmidiin);
 		}
-	}
-#endif
-#if defined(VERMOUTH_LIB)
-	if (opened & CMMIDI_VERMOUTH) {
-		sound_streamregist((void *)out.vermouth, (SOUNDCB)vermouth_getpcm);
-	}
-#endif
-#if defined(MT32SOUND_DLL)
-	if (opened & CMMIDI_MT32SOUND) {
-		sound_streamregist(NULL, (SOUNDCB)mt32_getpcm);
 	}
 #endif
 //	midi->midisyscnt = 0;
@@ -945,6 +740,7 @@ CComMidi::~CComMidi()
 {
 	if (m_pMidi)
 	{
+		midirelease(m_pMidi);
 		delete m_pMidi;
 	}
 }
@@ -972,5 +768,5 @@ UINT8 CComMidi::GetStat()
 
 INTPTR CComMidi::Message(UINT msg, INTPTR param)
 {
-	return 0;
+	return midimsg(m_pMidi, msg, param);
 }

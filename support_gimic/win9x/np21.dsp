@@ -1247,6 +1247,78 @@ SOURCE=..\TRAP\STEPTRAP.C
 # Begin Group "win9x"
 
 # PROP Default_Filter ""
+# Begin Group "commng"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\commng\cmbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.h
+# End Source File
+# End Group
 # Begin Group "dialog"
 
 # PROP Default_Filter ""
@@ -1541,19 +1613,11 @@ SOURCE=.\misc\WndProc.h
 # End Group
 # Begin Source File
 
-SOURCE=.\CMMIDI.CPP
+SOURCE=.\commng.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMPARA.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\CMSERIAL.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\COMMNG.CPP
+SOURCE=.\commng.h
 # End Source File
 # Begin Source File
 

@@ -1415,6 +1415,34 @@ SOURCE=.\commng\cmmidi.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\commng\cmmidiout.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\commng\cmnull.cpp
 # End Source File
 # Begin Source File
@@ -1732,7 +1760,11 @@ SOURCE=.\misc\WndProc.h
 # End Group
 # Begin Source File
 
-SOURCE=.\COMMNG.CPP
+SOURCE=.\commng.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng.h
 # End Source File
 # Begin Source File
 
