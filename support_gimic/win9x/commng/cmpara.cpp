@@ -6,81 +6,62 @@
 #include "compiler.h"
 #include "cmpara.h"
 
-typedef struct {
-	HANDLE	hdl;
-} _CMPARA, *CMPARA;
-
-
-static UINT pararead(COMMNG self, UINT8 *data) {
-
-	return(0);
-}
-
-static UINT parawrite(COMMNG self, UINT8 data) {
-
-	CMPARA	para;
-	DWORD	writesize;
-
-	para = (CMPARA)(self + 1);
-	WriteFile(para->hdl, &data, 1, &writesize, NULL);
-	return(1);
-}
-
-static UINT8 paragetstat(COMMNG self) {
-
-	return(0);
-}
-
-static INTPTR paramsg(COMMNG self, UINT msg, INTPTR param) {
-
-	(void)self;
-	(void)msg;
-	(void)param;
-	return(0);
-}
-
-static void pararelease(COMMNG self) {
-
-	CMPARA	para;
-
-	para = (CMPARA)(self + 1);
-	CloseHandle(para->hdl);
-	_MFREE(self);
-}
-
-
-// ----
-
-COMMNG cmpara_create(UINT port) {
-
-	TCHAR	commstr[16];
-	HANDLE	hdl;
-	COMMNG	ret;
-	CMPARA	para;
-
-	wsprintf(commstr, _T("LPT%u"), port);
-	hdl = CreateFile(commstr, GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
-	if (hdl == INVALID_HANDLE_VALUE) {
-		goto cpcre_err1;
+CComPara* CComPara::CreateInstance(UINT nPort)
+{
+	CComPara* pPara = new CComPara;
+	if (!pPara->Initialize(nPort))
+	{
+		delete pPara;
+		pPara = NULL;
 	}
-	ret = (COMMNG)_MALLOC(sizeof(_COMMNG) + sizeof(_CMPARA), "PARALLEL");
-	if (ret == NULL) {
-		goto cpcre_err2;
-	}
-	ret->connect = COMCONNECT_PARALLEL;
-	ret->read = pararead;
-	ret->write = parawrite;
-	ret->getstat = paragetstat;
-	ret->msg = paramsg;
-	ret->release = pararelease;
-	para = (CMPARA)(ret + 1);
-	para->hdl = hdl;
-	return(ret);
-
-cpcre_err2:
-	CloseHandle(hdl);
-
-cpcre_err1:
-	return(NULL);
+	return pPara;
 }
 
+/**
+ * コンストラクタ
+ */
+CComPara::CComPara()
+	: CComBase(COMCONNECT_PARALLEL)
+	, m_hParallel(INVALID_HANDLE_VALUE)
+{
+}
+
+/**
+ * デストラクタ
+ */
+CComPara::~CComPara()
+{
+	if (m_hParallel != INVALID_HANDLE_VALUE)
+	{
+		::CloseHandle(m_hParallel);
+	}
+}
+
+bool CComPara::Initialize(UINT nPort)
+{
+	TCHAR szName[16];
+	wsprintf(szName, TEXT("LPT%u"), nPort);
+	m_hParallel = CreateFile(szName, GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, NULL);
+	return (m_hParallel != INVALID_HANDLE_VALUE);
+}
+
+UINT CComPara::Read(UINT8* pData)
+{
+	return 0;
+}
+
+UINT CComPara::Write(UINT8 cData)
+{
+	DWORD dwWrittenSize;
+	return (::WriteFile(m_hParallel, &cData, 1, &dwWrittenSize, NULL)) ? 1 : 0;
+}
+
+UINT8 CComPara::GetStat()
+{
+	return 0x00;
+}
+
+INTPTR CComPara::Message(UINT msg, INTPTR param)
+{
+	return 0;
+}

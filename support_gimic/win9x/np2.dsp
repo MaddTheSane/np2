@@ -1399,11 +1399,27 @@ SOURCE=..\TRAP\STEPTRAP.C
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\commng\cmbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmbase.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\commng\cmmidi.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\commng\cmmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.h
 # End Source File
 # Begin Source File
 

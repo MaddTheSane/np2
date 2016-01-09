@@ -5,8 +5,28 @@
 
 #pragma once
 
-#include "commng.h"
+#include "cmbase.h"
 
 extern const UINT32 cmserial_speed[10];
 
-COMMNG cmserial_create(UINT port, UINT8 param, UINT32 speed);
+/**
+ * @brief commng シリアル デバイス クラス
+ */
+class CComSerial : public CComBase
+{
+public:
+	static CComSerial* CreateInstance(UINT nPort, UINT8 cParam, UINT32 nSpeed);
+
+protected:
+	CComSerial();
+	virtual ~CComSerial();
+	virtual UINT Read(UINT8* pData);
+	virtual UINT Write(UINT8 cData);
+	virtual UINT8 GetStat();
+	virtual INTPTR Message(UINT msg, INTPTR param);
+
+private:
+	HANDLE m_hSerial;		/*!< シリアル ハンドル */
+
+	bool Initialize(UINT nPort, UINT8 cParam, UINT32 nSpeed);
+};

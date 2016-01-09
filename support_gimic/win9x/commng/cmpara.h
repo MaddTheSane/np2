@@ -5,6 +5,26 @@
 
 #pragma once
 
-#include "commng.h"
+#include "cmbase.h"
 
-COMMNG cmpara_create(UINT port);
+/**
+ * @brief commng パラレル デバイス クラス
+ */
+class CComPara : public CComBase
+{
+public:
+	static CComPara* CreateInstance(UINT nPort);
+
+protected:
+	CComPara();
+	virtual ~CComPara();
+	virtual UINT Read(UINT8* pData);
+	virtual UINT Write(UINT8 cData);
+	virtual UINT8 GetStat();
+	virtual INTPTR Message(UINT msg, INTPTR param);
+
+private:
+	HANDLE m_hParallel;			/*!< パラレル ハンドル */
+
+	bool Initialize(UINT nPort);
+};

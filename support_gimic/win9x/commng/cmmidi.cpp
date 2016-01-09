@@ -426,11 +426,8 @@ static void midisetparam(CMMIDI midi) {
 
 // ----
 
-static UINT midiread(COMMNG self, UINT8 *data) {
+static UINT midiread(CMMIDI midi, UINT8 *data) {
 
-	CMMIDI	midi;
-
-	midi = (CMMIDI)(self + 1);
 	if (midi->recvsize) {
 		midi->recvsize--;
 		*data = midi->recvbuf[midi->recvpos];
@@ -440,13 +437,11 @@ static UINT midiread(COMMNG self, UINT8 *data) {
 	return(0);
 }
 
-static UINT midiwrite(COMMNG self, UINT8 data) {
+static UINT midiwrite(CMMIDI midi, UINT8 data) {
 
-	CMMIDI	midi;
 	MIDICH	mch;
 	int		type;
 
-	midi = (CMMIDI)(self + 1);
 	switch(data) {
 		case MIDI_TIMING:
 		case MIDI_START:
@@ -612,11 +607,6 @@ static UINT midiwrite(COMMNG self, UINT8 data) {
 	return(0);
 }
 
-static UINT8 midigetstat(COMMNG self) {
-
-	return(0x00);
-}
-
 static INTPTR midimsg(COMMNG self, UINT msg, INTPTR param) {
 
 	CMMIDI	midi;
@@ -755,7 +745,7 @@ void cmmidi_initailize(void) {
 	midictrlindex[32] = 1;
 }
 
-COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
+CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 
 	UINT		opened;
 	UINT		id;
@@ -763,7 +753,6 @@ COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 	void		(*longout)(CMMIDI self, const UINT8 *msg, UINT leng);
 	HMIDIFNOUT	out;
 	HMIDIIN		hmidiin = NULL;
-	COMMNG		ret;
 	CMMIDI		midi;
 
 	opened = 0;
@@ -806,21 +795,13 @@ COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 		}
 	}
 #endif
-	if (!opened) {
-		goto cmcre_err1;
+	if (!opened)
+	{
+		return NULL;
 	}
-	ret = (COMMNG)_MALLOC(sizeof(_COMMNG) + sizeof(_CMMIDI), "MIDI");
-	if (ret == NULL) {
-		goto cmcre_err2;
-	}
-	ret->connect = COMCONNECT_MIDI;
-	ret->read = midiread;
-	ret->write = midiwrite;
-	ret->getstat = midigetstat;
-	ret->msg = midimsg;
-	ret->release = midirelease;
-	midi = (CMMIDI)(ret + 1);
-	ZeroMemory(midi, sizeof(_CMMIDI));
+
+	midi = new _cmmidi;
+	ZeroMemory(midi, sizeof(*midi));
 	midi->opened = opened;
 	midi->shortout = shortout;
 	midi->longout = longout;
@@ -856,27 +837,7 @@ COMMNG cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 //	midi->midiexcvwait = 0;
 	midi->midimodule = (UINT8)module2number(module);
 	FillMemory(midi->mch, sizeof(midi->mch), 0xff);
-	return(ret);
-
-cmcre_err2:
-	if (opened & CMMIDI_MIDIOUT) {
-		midiOutReset(out.win32.hmidiout);
-		midiOutClose(out.win32.hmidiout);
-	}
-#if defined(VERMOUTH_LIB)
-	if (opened & CMMIDI_VERMOUTH) {
-		midiout_destroy(out.vermouth);
-	}
-#endif
-#if defined(MT32SOUND_DLL)
-	if (opened & CMMIDI_MT32SOUND)
-	{
-		MT32Sound::GetInstance()->Close();
-	}
-#endif
-
-cmcre_err1:
-	return(NULL);
+	return midi;
 }
 
 
@@ -955,3 +916,61 @@ void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data) {
 	}
 }
 
+// ---- クラス
+
+CComMidi* CComMidi::CreateInstance(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
+{
+	CComMidi* pMidi = new CComMidi;
+	if (!pMidi->Initialize(lpMidiOut, lpMidiIn, lpModule))
+	{
+		delete pMidi;
+		pMidi = NULL;
+	}
+	return pMidi;
+}
+
+/**
+ * コンストラクタ
+ */
+CComMidi::CComMidi()
+	: CComBase(COMCONNECT_MIDI)
+	, m_pMidi(NULL)
+{
+}
+
+/**
+ * デストラクタ
+ */
+CComMidi::~CComMidi()
+{
+	if (m_pMidi)
+	{
+		delete m_pMidi;
+	}
+}
+
+bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
+{
+	m_pMidi = cmmidi_create(lpMidiOut, lpMidiIn, lpModule);
+	return (m_pMidi != NULL);
+}
+
+UINT CComMidi::Read(UINT8* pData)
+{
+	return midiread(m_pMidi, pData);
+}
+
+UINT CComMidi::Write(UINT8 cData)
+{
+	return midiwrite(m_pMidi, cData);
+}
+
+UINT8 CComMidi::GetStat()
+{
+	return 0x00;
+}
+
+INTPTR CComMidi::Message(UINT msg, INTPTR param)
+{
+	return 0;
+}

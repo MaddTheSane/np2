@@ -1,5 +1,6 @@
 /**
  * @file	commng.h
+ * @brief	COM マネージャの宣言およびインターフェイスの定義をします
  */
 
 #pragma once
