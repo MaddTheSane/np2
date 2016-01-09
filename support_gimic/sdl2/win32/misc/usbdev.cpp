@@ -267,8 +267,14 @@ int CUsbDev::WriteBulk(const void* lpBuffer, int cbBuffer)
 	}
 
 	DWORD dwLength = 0;
-	if (!::WinUsb_WritePipe(m_hWinUsb, m_cOutPipeId, static_cast<PUCHAR>(const_cast<void*>(lpBuffer)), static_cast<ULONG>(cbBuffer), &dwLength, 0))
+	while (!::WinUsb_WritePipe(m_hWinUsb, m_cOutPipeId, static_cast<PUCHAR>(const_cast<void*>(lpBuffer)), static_cast<ULONG>(cbBuffer), &dwLength, 0))
 	{
+		if (GetLastError() == ERROR_SEM_TIMEOUT)
+		{
+			::Sleep(1);
+			continue;
+		}
+
 		Close();
 		return -1;
 	}

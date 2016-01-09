@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "c86ctlrealchipbase.h"
+#include "c86ctlc86box.h"
 #include "c86ctlgimic.h"
 
 namespace c86ctl
@@ -90,6 +91,18 @@ C86CtlErr CRealChipBase::initialize()
 		m_devices.push_back(pGimic);
 	}
 
+	for (UINT i = 0; i < 1; i++)
+	{
+		CC86Box* pC86Box = new CC86Box(i);
+		if (pC86Box->initialize() != C86CTL_ERR_NONE)
+		{
+			pC86Box->deinitialize();
+			delete pC86Box;
+			continue;
+		}
+		m_devices.push_back(pC86Box);
+	}
+
 	return C86CTL_ERR_NONE;
 }
 
@@ -101,7 +114,9 @@ C86CtlErr CRealChipBase::deinitialize()
 {
 	for (std::vector<CDevice*>::iterator it = m_devices.begin(); it != m_devices.end(); ++it)
 	{
-		delete *it;
+		CDevice* pDevice = *it;
+		pDevice->deinitialize();
+		delete pDevice;
 	}
 	m_devices.clear();
 
