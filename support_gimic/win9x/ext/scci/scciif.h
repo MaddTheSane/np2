@@ -5,11 +5,10 @@
 
 #pragma once
 
-#include <vector>
-#include "..\externalchip.h"
+#include "../externalchip.h"
 
-class SoundInterfaceManager;
 class SoundChip;
+class SoundInterfaceManager;
 
 /**
  * @brief SCCI アクセス クラス
@@ -25,29 +24,28 @@ public:
 	IExternalChip* GetInterface(IExternalChip::ChipType nChipType, UINT nClock);
 
 private:
-	HMODULE m_hModule;					//!< モジュール	
-	SoundInterfaceManager* m_pManager;	//!< マネージャ
+	HMODULE m_hModule;					/*!< モジュール */
+	SoundInterfaceManager* m_pManager;	/*!< マネージャ */
 
 	/**
 	 * @brief チップ クラス
 	 */
 	class Chip : public IExternalChip
 	{
-		public:
-			Chip(CScciIf* pScciIf, SoundChip* pSoundChip);
-			virtual ~Chip();
-			operator SoundChip*();
-			virtual ChipType GetChipType();
-			virtual void Reset();
-			virtual void WriteRegister(UINT nAddr, UINT8 cData);
-			virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
+	public:
+		Chip(CScciIf* pScciIf, SoundChip* pSoundChip);
+		virtual ~Chip();
+		operator SoundChip*();
+		virtual ChipType GetChipType();
+		virtual void Reset();
+		virtual void WriteRegister(UINT nAddr, UINT8 cData);
+		virtual INTPTR Message(UINT nMessage, INTPTR nParameter = 0);
 
-		private:
-			CScciIf* m_pScciIf;			//!< 親インスタンス
-			SoundChip* m_pSoundChip;	//!< チップ インスタンス
+	private:
+		CScciIf* m_pScciIf;			/*!< 親インスタンス */
+		SoundChip* m_pSoundChip;	/*!< チップ インスタンス */
 	};
 
-	std::vector<Chip*> m_chips;			//!< チップ
 	void Detach(Chip* pChip);
 	friend class Chip;
 };

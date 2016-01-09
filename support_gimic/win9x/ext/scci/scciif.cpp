@@ -7,7 +7,6 @@
 #include "scciif.h"
 #include "scci.h"
 #include "SCCIDefines.h"
-#include <algorithm>
 
 /**
  * コンストラクタ
@@ -46,28 +45,28 @@ bool CScciIf::Initialize()
 			break;
 		}
 
-		// サウンドインターフェースマネージャー取得用関数アドレス取得
+		/* サウンドインターフェースマネージャー取得用関数アドレス取得 */
 		SCCIFUNC fnGetSoundInterfaceManager = reinterpret_cast<SCCIFUNC>(::GetProcAddress(m_hModule, "getSoundInterfaceManager"));
 		if (fnGetSoundInterfaceManager == NULL)
 		{
 			break;
 		}
 
-		// サウンドインターフェースマネージャー取得
+		/* サウンドインターフェースマネージャー取得 */
 		m_pManager = (*fnGetSoundInterfaceManager)();
 		if (m_pManager == NULL)
 		{
 			break;
 		}
 
-		// サウンドインターフェースマネージャーインスタンス初期化
-		// 必ず最初に実行してください
+		/* サウンドインターフェースマネージャーインスタンス初期化 */
+		/* 必ず最初に実行してください */
 		if (!m_pManager->initializeInstance())
 		{
 			break;
 		}
 
-		// リセットを行う
+		/* リセットを行う */
 		Reset();
 		return true;
 	} while (false /*CONSTCOND*/);
@@ -83,16 +82,11 @@ void CScciIf::Deinitialize()
 {
 	if (m_pManager)
 	{
-		while (!m_chips.empty())
-		{
-			delete m_chips.front();
-		}
-
-		// 一括開放する場合（チップ一括開放の場合）
+		/* 一括開放する場合（チップ一括開放の場合） */
 		m_pManager->releaseAllSoundChip();
 
-		// サウンドインターフェースマネージャーインスタンス開放
-		// FreeLibraryを行う前に必ず呼び出ししてください
+		/* サウンドインターフェースマネージャーインスタンス開放 */
+		/* FreeLibraryを行う前に必ず呼び出ししてください */
 		m_pManager->releaseInstance();
 
 		m_pManager = NULL;
@@ -112,7 +106,7 @@ void CScciIf::Reset()
 {
 	if (m_pManager)
 	{
-		// リセットを行う
+		/* リセットを行う */
 		m_pManager->reset();
 	}
 }
@@ -137,6 +131,10 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 		SC_CHIP_TYPE iSoundChipType = SC_TYPE_NONE;
 		switch (nChipType)
 		{
+			case IExternalChip::kAY8910:
+				iSoundChipType = SC_TYPE_AY8910;
+				break;
+
 			case IExternalChip::kYM2203:
 				iSoundChipType = SC_TYPE_YM2203;
 				break;
@@ -164,15 +162,20 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 			case IExternalChip::kY8950:
 				iSoundChipType = SC_TYPE_Y8950;
 				break;
+
+			case IExternalChip::kYM2151:
+				iSoundChipType = SC_TYPE_YM2151;
+				break;
+
+			default:
+				break;
 		}
 
 		SoundChip* pSoundChip = m_pManager->getSoundChip(iSoundChipType, nClock);
 		if (pSoundChip != NULL)
 		{
-			// サウンドチップ取得できた
-			Chip* pChip = new Chip(this, pSoundChip);
-			m_chips.push_back(pChip);
-			return pChip;
+			/* サウンドチップ取得できた */
+			return new Chip(this, pSoundChip);
 		}
 	} while (false /*CONSTCOND*/);
 
@@ -189,20 +192,14 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
  */
 void CScciIf::Detach(CScciIf::Chip* pChip)
 {
-	std::vector<Chip*>::iterator it = std::find(m_chips.begin(), m_chips.end(), pChip);
-	if (it != m_chips.end())
-	{
-		m_chips.erase(it);
-	}
-
-	// チップの開放（チップ単位で開放の場合）
+	/* チップの開放（チップ単位で開放の場合） */
 	if (m_pManager)
 	{
 		m_pManager->releaseSoundChip(*pChip);
 	}
 }
 
-// ---- チップ
+/* ---- チップ */
 
 /**
  * コンストラクタ
@@ -247,6 +244,9 @@ IExternalChip::ChipType CScciIf::Chip::GetChipType()
 
 	switch (iSoundChip)
 	{
+		case SC_TYPE_AY8910:
+			return IExternalChip::kAY8910;
+
 		case SC_TYPE_YM2203:
 			return IExternalChip::kYM2203;
 
@@ -267,6 +267,12 @@ IExternalChip::ChipType CScciIf::Chip::GetChipType()
 
 		case SC_TYPE_Y8950:
 			return IExternalChip::kY8950;
+
+		case SC_TYPE_YM2151:
+			return IExternalChip::kYM2151;
+
+		default:
+			break;
 	}
 	return IExternalChip::kNone;
 }

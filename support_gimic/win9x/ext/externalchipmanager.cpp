@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "np2.h"
 #include "externalopl3.h"
+#include "externalopm.h"
 #include "externalopna.h"
 
 /*! 唯一のインスタンスです */
@@ -60,6 +61,10 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 	{
 		switch (nChipType)
 		{
+			case IExternalChip::kAY8910:
+				pChip = GetInterface(IExternalChip::kYM2203, nClock);
+				break;
+
 			case IExternalChip::kYM2203:
 				pChip = GetInterface(IExternalChip::kYMF288, nClock * 2);
 				break;
@@ -79,6 +84,9 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 			case IExternalChip::kYM3812:
 				pChip = GetInterface(IExternalChip::kYMF262, nClock * 4);
 				break;
+
+			default:
+				break;
 		}
 	}
 	return pChip;
@@ -94,6 +102,7 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 {
 	IExternalChip* pChip = NULL;
 
+	/* ROMEO */
 	if (np2oscfg.useromeo)
 	{
 		if (pChip == NULL)
@@ -101,20 +110,28 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 			pChip = m_juliet.GetInterface(nChipType, nClock);
 		}
 	}
+
+	/* SCCI */
 	if (pChip == NULL)
 	{
 		pChip = m_scci.GetInterface(nChipType, nClock);
 	}
+
+	/* G.I.M.I.C / C86BOX */
 	if (pChip == NULL)
 	{
 		pChip = m_c86ctl.GetInterface(nChipType, nClock);
 	}
 
-	// ラッピング
+	/* ラッピング */
 	if (pChip)
 	{
 		switch (nChipType)
 		{
+			case IExternalChip::kAY8910:
+				pChip = new CExternalPsg(pChip);
+				break;
+
 			case IExternalChip::kYM2203:
 			case IExternalChip::kYM2608:
 			case IExternalChip::kYM3438:
@@ -126,6 +143,13 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
 			case IExternalChip::kYMF262:
 			case IExternalChip::kY8950:
 				pChip = new CExternalOpl3(pChip);
+				break;
+
+			case IExternalChip::kYM2151:
+				pChip = new CExternalOpm(pChip);
+				break;
+
+			default:
 				break;
 		}
 	}

@@ -1591,11 +1591,27 @@ SOURCE=.\ext\externalopl3.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ext\externalopm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ext\externalopna.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ext\externalopna.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.h
 # End Source File
 # Begin Source File
 

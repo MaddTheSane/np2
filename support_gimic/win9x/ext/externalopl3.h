@@ -21,8 +21,8 @@ public:
 	virtual INTPTR Message(UINT nMessage, INTPTR nParameter);
 
 protected:
-	IExternalChip* m_pChip;				//!< チップ
-	UINT8 m_cKon[2][16];				//!< KON テーブル
+	IExternalChip* m_pChip;				/*!< チップ*/
+	UINT8 m_cKon[2][16];				/*!< KON テーブル */
 
 	void Mute(bool bMute);
 	void WriteRegisterInner(UINT nAddr, UINT8 cData) const;
