@@ -1087,30 +1087,62 @@
 						>
 					</File>
 					<File
+						RelativePath="..\ext\externalopl3.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopm.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\ext\externalopna.cpp"
 						>
 					</File>
+					<File
+						RelativePath="..\ext\externalpsg.cpp"
+						>
+					</File>
 					<Filter
-						Name="gimic"
+						Name="c86ctl"
 						>
 						<File
-							RelativePath="..\ext\gimic\c86boxusb.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlc86box.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimic.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlgimic.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimicusb.cpp"
+							RelativePath="..\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.cpp"
 							>
 						</File>
 					</Filter>
 					<Filter
-						Name="spfm"
+						Name="scci"
 						>
 						<File
-							RelativePath="..\ext\spfm\spfmlight.cpp"
+							RelativePath="..\ext\scci\scciif.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.cpp"
 							>
 						</File>
 					</Filter>
@@ -1148,7 +1180,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\sound\opl3.c"
+					RelativePath="..\ext\opl3.cpp"
 					>
 				</File>
 				<File
@@ -2041,30 +2073,74 @@
 						>
 					</File>
 					<File
+						RelativePath="..\ext\externalopl3.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopm.h"
+						>
+					</File>
+					<File
 						RelativePath="..\ext\externalopna.h"
 						>
 					</File>
+					<File
+						RelativePath="..\ext\externalpsg.h"
+						>
+					</File>
 					<Filter
-						Name="gimic"
+						Name="c86ctl"
 						>
 						<File
-							RelativePath="..\ext\gimic\c86boxusb.h"
+							RelativePath="..\ext\c86ctl\c86ctl.h"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\c86ctl.h"
+							RelativePath="..\ext\c86ctl\c86ctlc86box.h"
 							>
 						</File>
 						<File
-							RelativePath="..\ext\gimic\gimicusb.h"
+							RelativePath="..\ext\c86ctl\c86ctlgimic.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.h"
 							>
 						</File>
 					</Filter>
 					<Filter
-						Name="spfm"
+						Name="scci"
 						>
 						<File
-							RelativePath="..\ext\spfm\spfmlight.h"
+							RelativePath="..\ext\scci\scci.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\SCCIDefines.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\scciif.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.h"
 							>
 						</File>
 					</Filter>

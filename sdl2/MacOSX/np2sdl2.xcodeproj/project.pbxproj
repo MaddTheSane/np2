@@ -11,17 +11,25 @@
 		BA2CAE561C2E7EFE00288316 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE541C2E7EFE00288316 /* oplgeng.c */; };
 		BA99F2D51BD4DD1000B97E10 /* externalchipmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */; };
 		BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAAEA8481963E34B00747635 /* threadbase.cpp */; };
+		BADA5F341C3C9ECD00FAEC20 /* scciif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F2A1C3C9ECD00FAEC20 /* scciif.cpp */; };
+		BADA5F351C3C9ECD00FAEC20 /* sccisoundchip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F2C1C3C9ECD00FAEC20 /* sccisoundchip.cpp */; };
+		BADA5F361C3C9ECD00FAEC20 /* sccisoundinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F2E1C3C9ECD00FAEC20 /* sccisoundinterface.cpp */; };
+		BADA5F371C3C9ECD00FAEC20 /* sccisoundinterfacemanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F301C3C9ECD00FAEC20 /* sccisoundinterfacemanager.cpp */; };
+		BADA5F381C3C9ECD00FAEC20 /* sccispfmlight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F321C3C9ECD00FAEC20 /* sccispfmlight.cpp */; };
+		BADA5F451C3DE7E600FAEC20 /* c86ctlc86box.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F3D1C3DE7E600FAEC20 /* c86ctlc86box.cpp */; };
+		BADA5F461C3DE7E600FAEC20 /* c86ctlgimic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F3F1C3DE7E600FAEC20 /* c86ctlgimic.cpp */; };
+		BADA5F471C3DE7E600FAEC20 /* c86ctlif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F411C3DE7E600FAEC20 /* c86ctlif.cpp */; };
+		BADA5F481C3DE7E600FAEC20 /* c86ctlrealchipbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F431C3DE7E600FAEC20 /* c86ctlrealchipbase.cpp */; };
+		BADA5F4D1C3DE84900FAEC20 /* externalopl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F491C3DE84900FAEC20 /* externalopl3.cpp */; };
+		BADA5F4E1C3DE84900FAEC20 /* externalopm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F4B1C3DE84900FAEC20 /* externalopm.cpp */; };
+		BADA5F521C3DE86F00FAEC20 /* externalpsg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F4F1C3DE86F00FAEC20 /* externalpsg.cpp */; };
+		BADA5F531C3DE86F00FAEC20 /* opl3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADA5F511C3DE86F00FAEC20 /* opl3.cpp */; };
 		BADADEB71BDF7F9B00137975 /* boardso.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEB51BDF7F9B00137975 /* boardso.c */; };
-		BADADEBA1BDF7FC700137975 /* opl3.c in Sources */ = {isa = PBXBuildFile; fileRef = BADADEB81BDF7FC700137975 /* opl3.c */; };
 		BAE3496B1B86CE43006EBD05 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE349691B86CE43006EBD05 /* pcmmix.c */; };
 		BAE484661B59BEDC001D9E86 /* externalopna.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE484631B59BEDC001D9E86 /* externalopna.cpp */; };
 		BAE484671B59BEDC001D9E86 /* opna.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE484651B59BEDC001D9E86 /* opna.cpp */; };
 		BAE484691B59BF18001D9E86 /* board118.c in Sources */ = {isa = PBXBuildFile; fileRef = BAE484681B59BF18001D9E86 /* board118.c */; };
 		BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FEC1B50038300920E49 /* usbdev.cpp */; };
-		BAE76FF81B5003A100920E49 /* c86boxusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF21B5003A100920E49 /* c86boxusb.cpp */; };
-		BAE76FF91B5003A100920E49 /* gimicusb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FF51B5003A100920E49 /* gimicusb.cpp */; };
-		BAE76FFD1B52B64E00920E49 /* spfmlight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE76FFB1B52B64E00920E49 /* spfmlight.cpp */; };
-		BAE770081B52B69F00920E49 /* gimic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE770061B52B69F00920E49 /* gimic.cpp */; };
 		BAE7700B1B52B91000920E49 /* tty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAE770091B52B91000920E49 /* tty.cpp */; };
 		BAF84B17195AA04F00183062 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84B16195AA04F00183062 /* Cocoa.framework */; };
 		BAF84B21195AA04F00183062 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BAF84B1F195AA04F00183062 /* InfoPlist.strings */; };
@@ -255,9 +263,36 @@
 		BAAEA8481963E34B00747635 /* threadbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = threadbase.cpp; sourceTree = "<group>"; };
 		BAAEA8491963E34B00747635 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
 		BACA730B195ACE5F00784174 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		BADA5F281C3C9ECD00FAEC20 /* scci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scci.h; path = scci/scci.h; sourceTree = "<group>"; };
+		BADA5F291C3C9ECD00FAEC20 /* SCCIDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCCIDefines.h; path = scci/SCCIDefines.h; sourceTree = "<group>"; };
+		BADA5F2A1C3C9ECD00FAEC20 /* scciif.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scciif.cpp; path = scci/scciif.cpp; sourceTree = "<group>"; };
+		BADA5F2B1C3C9ECD00FAEC20 /* scciif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scciif.h; path = scci/scciif.h; sourceTree = "<group>"; };
+		BADA5F2C1C3C9ECD00FAEC20 /* sccisoundchip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sccisoundchip.cpp; path = scci/sccisoundchip.cpp; sourceTree = "<group>"; };
+		BADA5F2D1C3C9ECD00FAEC20 /* sccisoundchip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sccisoundchip.h; path = scci/sccisoundchip.h; sourceTree = "<group>"; };
+		BADA5F2E1C3C9ECD00FAEC20 /* sccisoundinterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sccisoundinterface.cpp; path = scci/sccisoundinterface.cpp; sourceTree = "<group>"; };
+		BADA5F2F1C3C9ECD00FAEC20 /* sccisoundinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sccisoundinterface.h; path = scci/sccisoundinterface.h; sourceTree = "<group>"; };
+		BADA5F301C3C9ECD00FAEC20 /* sccisoundinterfacemanager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sccisoundinterfacemanager.cpp; path = scci/sccisoundinterfacemanager.cpp; sourceTree = "<group>"; };
+		BADA5F311C3C9ECD00FAEC20 /* sccisoundinterfacemanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sccisoundinterfacemanager.h; path = scci/sccisoundinterfacemanager.h; sourceTree = "<group>"; };
+		BADA5F321C3C9ECD00FAEC20 /* sccispfmlight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sccispfmlight.cpp; path = scci/sccispfmlight.cpp; sourceTree = "<group>"; };
+		BADA5F331C3C9ECD00FAEC20 /* sccispfmlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sccispfmlight.h; path = scci/sccispfmlight.h; sourceTree = "<group>"; };
+		BADA5F3C1C3DE7E600FAEC20 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c86ctl.h; path = c86ctl/c86ctl.h; sourceTree = "<group>"; };
+		BADA5F3D1C3DE7E600FAEC20 /* c86ctlc86box.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = c86ctlc86box.cpp; path = c86ctl/c86ctlc86box.cpp; sourceTree = "<group>"; };
+		BADA5F3E1C3DE7E600FAEC20 /* c86ctlc86box.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c86ctlc86box.h; path = c86ctl/c86ctlc86box.h; sourceTree = "<group>"; };
+		BADA5F3F1C3DE7E600FAEC20 /* c86ctlgimic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = c86ctlgimic.cpp; path = c86ctl/c86ctlgimic.cpp; sourceTree = "<group>"; };
+		BADA5F401C3DE7E600FAEC20 /* c86ctlgimic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c86ctlgimic.h; path = c86ctl/c86ctlgimic.h; sourceTree = "<group>"; };
+		BADA5F411C3DE7E600FAEC20 /* c86ctlif.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = c86ctlif.cpp; path = c86ctl/c86ctlif.cpp; sourceTree = "<group>"; };
+		BADA5F421C3DE7E600FAEC20 /* c86ctlif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c86ctlif.h; path = c86ctl/c86ctlif.h; sourceTree = "<group>"; };
+		BADA5F431C3DE7E600FAEC20 /* c86ctlrealchipbase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = c86ctlrealchipbase.cpp; path = c86ctl/c86ctlrealchipbase.cpp; sourceTree = "<group>"; };
+		BADA5F441C3DE7E600FAEC20 /* c86ctlrealchipbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = c86ctlrealchipbase.h; path = c86ctl/c86ctlrealchipbase.h; sourceTree = "<group>"; };
+		BADA5F491C3DE84900FAEC20 /* externalopl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = externalopl3.cpp; sourceTree = "<group>"; };
+		BADA5F4A1C3DE84900FAEC20 /* externalopl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = externalopl3.h; sourceTree = "<group>"; };
+		BADA5F4B1C3DE84900FAEC20 /* externalopm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = externalopm.cpp; sourceTree = "<group>"; };
+		BADA5F4C1C3DE84900FAEC20 /* externalopm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = externalopm.h; sourceTree = "<group>"; };
+		BADA5F4F1C3DE86F00FAEC20 /* externalpsg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = externalpsg.cpp; sourceTree = "<group>"; };
+		BADA5F501C3DE86F00FAEC20 /* externalpsg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = externalpsg.h; sourceTree = "<group>"; };
+		BADA5F511C3DE86F00FAEC20 /* opl3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = opl3.cpp; sourceTree = "<group>"; };
 		BADADEB51BDF7F9B00137975 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
 		BADADEB61BDF7F9B00137975 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
-		BADADEB81BDF7FC700137975 /* opl3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = opl3.c; sourceTree = "<group>"; };
 		BADADEB91BDF7FC700137975 /* opl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opl3.h; sourceTree = "<group>"; };
 		BAE25E931AD3DB0F00814B76 /* guard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = guard.h; sourceTree = "<group>"; };
 		BAE349691B86CE43006EBD05 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
@@ -269,15 +304,6 @@
 		BAE484681B59BF18001D9E86 /* board118.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = board118.c; sourceTree = "<group>"; };
 		BAE76FEC1B50038300920E49 /* usbdev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = usbdev.cpp; sourceTree = "<group>"; };
 		BAE76FED1B50038300920E49 /* usbdev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbdev.h; sourceTree = "<group>"; };
-		BAE76FF21B5003A100920E49 /* c86boxusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = c86boxusb.cpp; sourceTree = "<group>"; };
-		BAE76FF31B5003A100920E49 /* c86boxusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86boxusb.h; sourceTree = "<group>"; };
-		BAE76FF41B5003A100920E49 /* c86ctl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = c86ctl.h; sourceTree = "<group>"; };
-		BAE76FF51B5003A100920E49 /* gimicusb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gimicusb.cpp; sourceTree = "<group>"; };
-		BAE76FF61B5003A100920E49 /* gimicusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimicusb.h; sourceTree = "<group>"; };
-		BAE76FFB1B52B64E00920E49 /* spfmlight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spfmlight.cpp; sourceTree = "<group>"; };
-		BAE76FFC1B52B64E00920E49 /* spfmlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spfmlight.h; sourceTree = "<group>"; };
-		BAE770061B52B69F00920E49 /* gimic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gimic.cpp; sourceTree = "<group>"; };
-		BAE770071B52B69F00920E49 /* gimic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gimic.h; sourceTree = "<group>"; };
 		BAE770091B52B91000920E49 /* tty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tty.cpp; sourceTree = "<group>"; };
 		BAE7700A1B52B91000920E49 /* tty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tty.h; sourceTree = "<group>"; };
 		BAF84B13195AA04F00183062 /* np2sdl2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = np2sdl2.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -699,6 +725,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BADA5F271C3C9EB200FAEC20 /* scci */ = {
+			isa = PBXGroup;
+			children = (
+				BADA5F281C3C9ECD00FAEC20 /* scci.h */,
+				BADA5F291C3C9ECD00FAEC20 /* SCCIDefines.h */,
+				BADA5F2A1C3C9ECD00FAEC20 /* scciif.cpp */,
+				BADA5F2B1C3C9ECD00FAEC20 /* scciif.h */,
+				BADA5F2C1C3C9ECD00FAEC20 /* sccisoundchip.cpp */,
+				BADA5F2D1C3C9ECD00FAEC20 /* sccisoundchip.h */,
+				BADA5F2E1C3C9ECD00FAEC20 /* sccisoundinterface.cpp */,
+				BADA5F2F1C3C9ECD00FAEC20 /* sccisoundinterface.h */,
+				BADA5F301C3C9ECD00FAEC20 /* sccisoundinterfacemanager.cpp */,
+				BADA5F311C3C9ECD00FAEC20 /* sccisoundinterfacemanager.h */,
+				BADA5F321C3C9ECD00FAEC20 /* sccispfmlight.cpp */,
+				BADA5F331C3C9ECD00FAEC20 /* sccispfmlight.h */,
+			);
+			name = scci;
+			sourceTree = "<group>";
+		};
+		BADA5F391C3DE7BE00FAEC20 /* c86ctl */ = {
+			isa = PBXGroup;
+			children = (
+				BADA5F3C1C3DE7E600FAEC20 /* c86ctl.h */,
+				BADA5F3D1C3DE7E600FAEC20 /* c86ctlc86box.cpp */,
+				BADA5F3E1C3DE7E600FAEC20 /* c86ctlc86box.h */,
+				BADA5F3F1C3DE7E600FAEC20 /* c86ctlgimic.cpp */,
+				BADA5F401C3DE7E600FAEC20 /* c86ctlgimic.h */,
+				BADA5F411C3DE7E600FAEC20 /* c86ctlif.cpp */,
+				BADA5F421C3DE7E600FAEC20 /* c86ctlif.h */,
+				BADA5F431C3DE7E600FAEC20 /* c86ctlrealchipbase.cpp */,
+				BADA5F441C3DE7E600FAEC20 /* c86ctlrealchipbase.h */,
+			);
+			name = c86ctl;
+			sourceTree = "<group>";
+		};
 		BAE25E921AD3D93D00814B76 /* misc */ = {
 			isa = PBXGroup;
 			children = (
@@ -716,39 +777,23 @@
 		BAE76FEF1B5003A100920E49 /* ext */ = {
 			isa = PBXGroup;
 			children = (
+				BADA5F391C3DE7BE00FAEC20 /* c86ctl */,
 				BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */,
 				BA99F2D41BD4DD1000B97E10 /* externalchipmanager.h */,
 				BAE484621B59BEDC001D9E86 /* externalchip.h */,
+				BADA5F491C3DE84900FAEC20 /* externalopl3.cpp */,
+				BADA5F4A1C3DE84900FAEC20 /* externalopl3.h */,
+				BADA5F4B1C3DE84900FAEC20 /* externalopm.cpp */,
+				BADA5F4C1C3DE84900FAEC20 /* externalopm.h */,
 				BAE484631B59BEDC001D9E86 /* externalopna.cpp */,
 				BAE484641B59BEDC001D9E86 /* externalopna.h */,
-				BAE76FF11B5003A100920E49 /* gimic */,
+				BADA5F4F1C3DE86F00FAEC20 /* externalpsg.cpp */,
+				BADA5F501C3DE86F00FAEC20 /* externalpsg.h */,
+				BADA5F511C3DE86F00FAEC20 /* opl3.cpp */,
 				BAE484651B59BEDC001D9E86 /* opna.cpp */,
-				BAE76FFA1B52B64E00920E49 /* spfm */,
+				BADA5F271C3C9EB200FAEC20 /* scci */,
 			);
 			path = ext;
-			sourceTree = "<group>";
-		};
-		BAE76FF11B5003A100920E49 /* gimic */ = {
-			isa = PBXGroup;
-			children = (
-				BAE76FF21B5003A100920E49 /* c86boxusb.cpp */,
-				BAE76FF31B5003A100920E49 /* c86boxusb.h */,
-				BAE76FF41B5003A100920E49 /* c86ctl.h */,
-				BAE770061B52B69F00920E49 /* gimic.cpp */,
-				BAE770071B52B69F00920E49 /* gimic.h */,
-				BAE76FF51B5003A100920E49 /* gimicusb.cpp */,
-				BAE76FF61B5003A100920E49 /* gimicusb.h */,
-			);
-			path = gimic;
-			sourceTree = "<group>";
-		};
-		BAE76FFA1B52B64E00920E49 /* spfm */ = {
-			isa = PBXGroup;
-			children = (
-				BAE76FFB1B52B64E00920E49 /* spfmlight.cpp */,
-				BAE76FFC1B52B64E00920E49 /* spfmlight.h */,
-			);
-			path = spfm;
 			sourceTree = "<group>";
 		};
 		BAF84B0A195AA04F00183062 = {
@@ -1307,7 +1352,6 @@
 				BAF84E56195AA38300183062 /* fmboard.c */,
 				BAF84E57195AA38300183062 /* fmboard.h */,
 				BAF84E5A195AA38300183062 /* getsnd */,
-				BADADEB81BDF7FC700137975 /* opl3.c */,
 				BADADEB91BDF7FC700137975 /* opl3.h */,
 				BA2CAE511C2E7EFE00288316 /* oplgen.h */,
 				BA2CAE521C2E7EFE00288316 /* oplgenc.c */,
@@ -1447,12 +1491,12 @@
 				BAF84D84195AA10500183062 /* bmpdata.c in Sources */,
 				BAF84DA9195AA10500183062 /* sxsicd.c in Sources */,
 				BAF84DB2195AA10500183062 /* fontv98.c in Sources */,
+				BADA5F461C3DE7E600FAEC20 /* c86ctlgimic.cpp in Sources */,
 				BAF84E94195AA38300183062 /* opngenc.c in Sources */,
 				BAF84D74195AA10500183062 /* scsicmd.c in Sources */,
 				BAF84EA3195AA38300183062 /* midiout.c in Sources */,
 				BAF84DBB195AA10500183062 /* hostdrv.c in Sources */,
 				BAF84E13195AA10500183062 /* commng.c in Sources */,
-				BAE76FF81B5003A100920E49 /* c86boxusb.cpp in Sources */,
 				BAF84DE5195AA10500183062 /* egc.c in Sources */,
 				BAF84D8F195AA10500183062 /* debugsub.c in Sources */,
 				BAF84DC9195AA10500183062 /* unasm.c in Sources */,
@@ -1462,19 +1506,21 @@
 				BAF84E86195AA38300183062 /* adpcmg.c in Sources */,
 				BAF84DD6195AA10500183062 /* i286c_fe.c in Sources */,
 				BAF84DB9195AA10500183062 /* dipswbmp.c in Sources */,
-				BAE76FFD1B52B64E00920E49 /* spfmlight.cpp in Sources */,
-				BADADEBA1BDF7FC700137975 /* opl3.c in Sources */,
 				BAF84E27195AA10500183062 /* np2.c in Sources */,
 				BAF84DEE195AA10500183062 /* iocore.c in Sources */,
+				BADA5F341C3C9ECD00FAEC20 /* scciif.cpp in Sources */,
 				BAF84E26195AA10500183062 /* mousemng.c in Sources */,
 				BAF84E2A195AA10500183062 /* soundmng.cpp in Sources */,
 				BAF84DDF195AA10500183062 /* artic.c in Sources */,
 				BAF84D81195AA10500183062 /* _memory.c in Sources */,
 				BAF84D78195AA10500183062 /* eucucs2.c in Sources */,
+				BADA5F4D1C3DE84900FAEC20 /* externalopl3.cpp in Sources */,
 				BAF84E24195AA10500183062 /* main.m in Sources */,
 				BAF84DAF195AA10500183062 /* fontmake.c in Sources */,
 				BAF84DA0195AA10500183062 /* diskdrv.c in Sources */,
+				BADA5F481C3DE7E600FAEC20 /* c86ctlrealchipbase.cpp in Sources */,
 				BAF84DD4195AA10500183062 /* i286c_ea.c in Sources */,
+				BADA5F361C3C9ECD00FAEC20 /* sccisoundinterface.cpp in Sources */,
 				BAF84D67195AA10500183062 /* boardpx.c in Sources */,
 				BAF84E85195AA38300183062 /* adpcmc.c in Sources */,
 				BAF84DE7195AA10500183062 /* epsonio.c in Sources */,
@@ -1485,6 +1531,7 @@
 				BAF84E8A195AA38300183062 /* cs4231g.c in Sources */,
 				BAAEA84C1963E34B00747635 /* threadbase.cpp in Sources */,
 				BAF84E40195AA10500183062 /* scrndraw.c in Sources */,
+				BADA5F351C3C9ECD00FAEC20 /* sccisoundchip.cpp in Sources */,
 				BAF84E8F195AA38300183062 /* getsmix.c in Sources */,
 				BAF84D57195AA10500183062 /* bios1a.c in Sources */,
 				BAF84D8D195AA10500183062 /* textfile.c in Sources */,
@@ -1524,11 +1571,11 @@
 				BAF84E8C195AA38300183062 /* opntimer.c in Sources */,
 				BAF84E16195AA10500183062 /* ini.c in Sources */,
 				BAF84D60195AA10500183062 /* calendar.c in Sources */,
+				BADA5F381C3C9ECD00FAEC20 /* sccispfmlight.cpp in Sources */,
 				BAF84DAE195AA10500183062 /* fontfm7.c in Sources */,
 				BA99F2D51BD4DD1000B97E10 /* externalchipmanager.cpp in Sources */,
 				BAF84E9C195AA38300183062 /* sndcsec.c in Sources */,
 				BAF84E15195AA10500183062 /* fontmng.c in Sources */,
-				BAE76FF91B5003A100920E49 /* gimicusb.cpp in Sources */,
 				BAF84DD8195AA10500183062 /* i286c_rp.c in Sources */,
 				BAF84DB3195AA10500183062 /* fontx1.c in Sources */,
 				BAF84E89195AA38300183062 /* cs4231c.c in Sources */,
@@ -1549,6 +1596,8 @@
 				BAF84E2F195AA10500183062 /* taskmng.c in Sources */,
 				BAF84DFF195AA10500183062 /* gline.c in Sources */,
 				BAF84D82195AA10500183062 /* arc.c in Sources */,
+				BADA5F521C3DE86F00FAEC20 /* externalpsg.cpp in Sources */,
+				BADA5F451C3DE7E600FAEC20 /* c86ctlc86box.cpp in Sources */,
 				BAF84EA4195AA38300183062 /* midtable.c in Sources */,
 				BAE484661B59BEDC001D9E86 /* externalopna.cpp in Sources */,
 				BAF84D50195AA10500183062 /* bios.c in Sources */,
@@ -1576,6 +1625,7 @@
 				BAE76FEE1B50038300920E49 /* usbdev.cpp in Sources */,
 				BAF84DB8195AA10500183062 /* cmver.c in Sources */,
 				BAF84E8B195AA38300183062 /* fmboard.c in Sources */,
+				BADA5F4E1C3DE84900FAEC20 /* externalopm.cpp in Sources */,
 				BAF84DF5195AA10500183062 /* pic.c in Sources */,
 				BAF84E09195AA10500183062 /* memepp.c in Sources */,
 				BAF84DF6195AA10500183062 /* pit.c in Sources */,
@@ -1586,9 +1636,11 @@
 				BAF84D64195AA10500183062 /* board14.c in Sources */,
 				BAF84DD5195AA10500183062 /* i286c_f6.c in Sources */,
 				BAF84D98195AA10500183062 /* menuicon.c in Sources */,
+				BADA5F531C3DE86F00FAEC20 /* opl3.cpp in Sources */,
 				BAF84E46195AA10500183062 /* vram.c in Sources */,
 				BAF84DAA195AA10500183062 /* sxsihdd.c in Sources */,
 				BAF84E90195AA38300183062 /* getsnd.c in Sources */,
+				BADA5F371C3C9ECD00FAEC20 /* sccisoundinterfacemanager.cpp in Sources */,
 				BAF84DF7195AA10500183062 /* printif.c in Sources */,
 				BAF84E14195AA10500183062 /* dosio.c in Sources */,
 				BAF84D8A195AA10500183062 /* rect.c in Sources */,
@@ -1628,6 +1680,7 @@
 				BAF84E99195AA38300183062 /* psggeng.c in Sources */,
 				BAF84E31195AA10500183062 /* trace.c in Sources */,
 				BAF84D56195AA10500183062 /* bios19.c in Sources */,
+				BADA5F471C3DE7E600FAEC20 /* c86ctlif.cpp in Sources */,
 				BAF84DBE195AA10500183062 /* keydisp.c in Sources */,
 				BAF84E0C195AA10500183062 /* memvram.c in Sources */,
 				BA2CAE561C2E7EFE00288316 /* oplgeng.c in Sources */,
@@ -1658,7 +1711,6 @@
 				BAF84E37195AA10500183062 /* timing.c in Sources */,
 				BAF84EA5195AA38300183062 /* midvoice.c in Sources */,
 				BAF84E9F195AA38300183062 /* tms3631c.c in Sources */,
-				BAE770081B52B69F00920E49 /* gimic.cpp in Sources */,
 				BAF84DE9195AA10500183062 /* fdd320.c in Sources */,
 				BAF84D62195AA10500183062 /* atapicmd.c in Sources */,
 				BAF84D68195AA10500183062 /* boardspb.c in Sources */,

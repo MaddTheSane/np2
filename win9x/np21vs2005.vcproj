@@ -1656,7 +1656,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ext\externalopm.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalpsg.cpp"
 						>
 					</File>
 					<File
@@ -2738,7 +2746,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ext\externalopm.h"
+						>
+					</File>
+					<File
 						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalpsg.h"
 						>
 					</File>
 					<File

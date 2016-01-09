@@ -31,14 +31,20 @@ CUsbDev::~CUsbDev()
  * USB オープン
  * @param[in] vid VID
  * @param[in] pid PID
+ * @param[in] nIndex インデックス
  * @retval true 成功
  * @retval false 失敗
  */
-bool CUsbDev::Open(unsigned int vid, unsigned int pid)
+bool CUsbDev::Open(unsigned int vid, unsigned int pid, unsigned int nIndex)
 {
 	// 探すデバイス
 	const SInt32 usbVendor = vid;
 	const SInt32 usbProduct = pid;
+
+	if (nIndex != 0)
+	{
+		return false;
+	}
 
 	// Set up matching dictionary for class IOUSBDevice and its subclasses
 	CFMutableDictionaryRef matchingDict = IOServiceMatching(kIOUSBDeviceClassName);

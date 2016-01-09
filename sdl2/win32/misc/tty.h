@@ -16,8 +16,8 @@ public:
 	bool Open(LPCTSTR lpDevName, UINT nSpeed = 0, LPCTSTR lpcszParam = NULL);
 	bool IsOpened() const;
 	void Close();
-	int Read(LPVOID lpcvData, int nDataSize);
-	int Write(LPCVOID lpcvData, int nDataSize);
+	ssize_t Read(LPVOID lpcvData, ssize_t nDataSize);
+	ssize_t Write(LPCVOID lpcvData, ssize_t nDataSize);
 
 private:
 	HANDLE m_hFile;				/*!< ファイル ハンドル */

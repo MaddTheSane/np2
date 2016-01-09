@@ -11,12 +11,15 @@ namespace c86ctl
 /**
  * Status code
  */
-#define C86CTL_ERR_NONE				0		/*!< Succeeded */
-#define C86CTL_ERR_UNKNOWN			-1		/*!< Unknown */
-#define C86CTL_ERR_INVALID_PARAM	-2		/*!< Invalid parameter */
-#define C86CTL_ERR_UNSUPPORTED		-3		/*!< Unspported */
-#define C86CTL_ERR_NODEVICE			-1000	/*!< No devices */
-#define C86CTL_ERR_NOT_IMPLEMENTED	-9999	/*!< Not implemented */
+enum C86CtlErr
+{
+	C86CTL_ERR_NONE				= 0,		/*!< Succeeded */
+	C86CTL_ERR_UNKNOWN			= -1,		/*!< Unknown */
+	C86CTL_ERR_INVALID_PARAM	= -2,		/*!< Invalid parameter */
+	C86CTL_ERR_UNSUPPORTED		= -3,		/*!< Unspported */
+	C86CTL_ERR_NODEVICE			= -1000,	/*!< No devices */
+	C86CTL_ERR_NOT_IMPLEMENTED	= -9999,	/*!< Not implemented */
+};
 
 /**
  * Chip type
@@ -113,79 +116,208 @@ struct Devinfo
 };
 
 /**
- * @brief The class of IRealChip3
+ * The interface ID
  */
-class IC86RealChip
+enum IID
+{
+	IID_IRealChipBase	= 0,
+	IID_IRealChip,
+	IID_IRealChip2,
+	IID_IRealChip3,
+	IID_IGimic,
+	IID_IGimic2,
+	IID_IC86Usb
+};
+
+/**
+ * @brief The class of IUnknown
+ */
+class IRealUnknown
 {
 public:
 	/**
-	 * Destructor
+	 * Increments the reference count
+	 * @return The new reference count
 	 */
-	virtual ~IC86RealChip()
-	{
-	}
+	virtual size_t AddRef() = 0;
 
-	/* IRealChipBase */
+	/**
+	 * Decrements the reference count
+	 * @return The new reference count
+	 */
+	virtual size_t Release() = 0;
+};
 
+/**
+ * @brief The class of IRealChipBase
+ */
+class IRealChipBase : public IRealUnknown
+{
+public:
 	/**
 	 * Initialize
 	 * @return C86CTL_ERR
 	 */
-	virtual int Initialize() = 0;
+	virtual C86CtlErr initialize() = 0;
 
 	/**
 	 * Deinitialize
 	 * @return C86CTL_ERR
 	 */
-	virtual int Deinitialize() = 0;
+	virtual C86CtlErr deinitialize() = 0;
 
-	/* IRealChip */
+	/**
+	 * Gets the count of chips
+	 * @return The chips
+	 */
+	virtual size_t getNumberOfChip() = 0;
 
+	/**
+	 * Gets interfaces
+	 * @param[in] id ID
+	 * @param[in] riid The interface ID
+	 * @param[out] ppi The pointer of the interface
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getChipInterface(size_t id, IID riid, void** ppi) = 0;
+};
+
+/**
+ * @brief The class of IRealChip
+ */
+class IRealChip : public IRealUnknown
+{
+public:
 	/**
 	 * Reset
 	 * @return C86CTL_ERR
 	 */
-	virtual int Reset() = 0;
+	virtual C86CtlErr reset() = 0;
 
 	/**
 	 * Output
 	 * @param[in] nAddr The address
 	 * @param[in] cData The data
 	 */
-	virtual void Out(UINT nAddr, UINT8 cData) = 0;
+	virtual void out(UINT nAddr, UINT8 cData) = 0;
 
 	/**
 	 * Input
 	 * @param[in] nAddr The address of registers
 	 * @return The data
 	 */
-	virtual UINT8 In(UINT nAddr) = 0;
+	virtual UINT8 in(UINT nAddr) = 0;
+};
 
-	/* IRealChip2 */
-
+/**
+ * @brief The class of IRealChip2
+ */
+class IRealChip2 : public IRealChip
+{
+public:
 	/**
 	 * Gets the current status
 	 * @param[in] nAddr The address
 	 * @param[out] pcStatus The status
 	 * @return C86CTL_ERR
 	 */
-	virtual int GetChipStatus(UINT nAddr, UINT8* pcStatus) = 0;
+	virtual C86CtlErr getChipStatus(UINT nAddr, UINT8* pcStatus) = 0;
 
 	/**
 	 * Output
 	 * @param[in] nAddr The address
 	 * @param[in] cData The data
 	 */
-	virtual void DirectOut(UINT nAddr, UINT8 cData) = 0;
+	virtual void directOut(UINT nAddr, UINT8 cData) = 0;
+};
 
-	/* IRealChip3 */
-
+/**
+ * @brief The class of IRealChip3
+ */
+class IRealChip3 : public IRealChip2
+{
+public:
 	/**
 	 * Gets the type of the chip
 	 * @param[out] pnType A pointer of type
 	 * @return C86CTL_ERR
 	 */
-	virtual int GetChipType(ChipType* pnType) = 0;
+	virtual C86CtlErr getChipType(ChipType* pnType) = 0;
 };
+
+/**
+ * @brief The class of IGimic
+ */
+class IGimic : public IRealUnknown
+{
+public:
+	/**
+	 * Gets the informations of firm
+	 * @param[out] pnMajor A pointer to the major
+	 * @param[out] pnMinor A pointer to the minor
+	 * @param[out] pnRev A pointer to the revision
+	 * @param[out] pnBuild A pointer to the number of build
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getFWVer(UINT* pnMajor, UINT* pnMinor, UINT* pnRev, UINT* pnBuild) = 0;
+
+	/**
+	 * Gets the informations of the mother
+	 * @param[out] pInfo A pointer to the informations
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getMBInfo(Devinfo* pInfo) = 0;
+
+	/**
+	 * Gets the informations of modules
+	 * @param[out] pInfo A pointer to the informations
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getModuleInfo(Devinfo* pInfo) = 0;
+
+	/**
+	 * Sets the volumes of SSG
+	 * @param[in] cVolume The volume
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr setSSGVolume(UINT8 cVolume) = 0;
+
+	/**
+	 * Gets the volume of SSG
+	 * @param[out] pcVolume A pointer of the volume
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getSSGVolume(UINT8* pcVolume) = 0;
+
+	/**
+	 * Sets the clock
+	 * @param[in] nClock The clock
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr setPLLClock(UINT nClock) = 0;
+
+	/**
+	 * Gets the clock
+	 * @param[out] pnClock A pointer to the clock
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getPLLClock(UINT* pnClock) = 0;
+};
+
+/**
+ * @brief The class of IGimic2
+ */
+class IGimic2 : public IGimic
+{
+public:
+	/**
+	 * Gets the type of the modules
+	 * @param[out] pnType The type
+	 * @return C86CTL_ERR
+	 */
+	virtual C86CtlErr getModuleType(ChipType* pnType) = 0;
+};
+
+C86CtlErr CreateInstance(IID riid, void** ppi);
 
 }

@@ -45,11 +45,17 @@ CUsbDev::~CUsbDev()
  * USB オープン
  * @param[in] vid ベンダー ID
  * @param[in] pid プロダクト ID
+ * @param[in] nIndex インデックス
  * @retval true 成功
  * @retval false 失敗
  */
-bool CUsbDev::Open(unsigned int vid, unsigned int pid)
+bool CUsbDev::Open(unsigned int vid, unsigned int pid, unsigned int nIndex)
 {
+	if (nIndex != 0)
+	{
+		return false;
+	}
+
 	if (vid == 0x16c0)
 	{
 		if (pid == 0x05e5)
@@ -261,8 +267,14 @@ int CUsbDev::WriteBulk(const void* lpBuffer, int cbBuffer)
 	}
 
 	DWORD dwLength = 0;
-	if (!::WinUsb_WritePipe(m_hWinUsb, m_cOutPipeId, static_cast<PUCHAR>(const_cast<void*>(lpBuffer)), static_cast<ULONG>(cbBuffer), &dwLength, 0))
+	while (!::WinUsb_WritePipe(m_hWinUsb, m_cOutPipeId, static_cast<PUCHAR>(const_cast<void*>(lpBuffer)), static_cast<ULONG>(cbBuffer), &dwLength, 0))
 	{
+		if (GetLastError() == ERROR_SEM_TIMEOUT)
+		{
+			::Sleep(1);
+			continue;
+		}
+
 		Close();
 		return -1;
 	}

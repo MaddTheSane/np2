@@ -1,13 +1,14 @@
 /**
- * @file	c86boxusb.cpp
- * @brief	Implementation of accessing C86BOX USB
+ * @file	c86ctlc86box.cpp
+ * @brief	Implementation of C86BOX
  */
 
 #include "compiler.h"
-#include "c86boxusb.h"
+#include "c86ctlc86box.h"
 #include <algorithm>
 
-using namespace c86ctl;
+namespace c86ctl
+{
 
 //! The maximum chips
 #define NMAXCHIPS	4
@@ -19,7 +20,7 @@ struct BOARD_INFO
 {
 	UINT type;						//!< The type of boards
 	UINT nchips;					//!< The numbers of chips
-	UINT chiptype[NMAXCHIPS];		//!< The type of chips
+	ChipType chiptype[NMAXCHIPS];	//!< The type of chips
 };
 
 /**
@@ -89,7 +90,7 @@ static const BoardName s_names[] =
 static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 {
 	const CBUS_BOARD_TYPE nId = static_cast<CBUS_BOARD_TYPE>(nType & 0xffff);
-	for (size_t i = 0; i < _countof(s_names); i++)
+	for (UINT i = 0; i < NELEMENTS(s_names); i++)
 	{
 		if (s_names[i].nId == nId)
 		{
@@ -101,35 +102,55 @@ static const char* GetBoardName(CBUS_BOARD_TYPE nType)
 
 /**
  * Constructor
+ * @param[in] nIndex The index
  */
-C86BoxUSB::C86BoxUSB()
-	: m_nChipType(CHIP_UNKNOWN)
-	, m_nDevId(0)
+CC86Box::CC86Box(UINT nIndex)
+	: m_nRef(1)
+	, m_nIndex(nIndex)
 	, m_nQueIndex(0)
 	, m_nQueCount(0)
 {
-	memset(m_sReg, 0, sizeof(m_sReg));
 }
 
 /**
  * Destructor
  */
-C86BoxUSB::~C86BoxUSB()
+CC86Box::~CC86Box()
 {
+}
+
+/**
+ * Increments the reference count
+ * @return The new reference count
+ */
+size_t CC86Box::AddRef()
+{
+	m_nRef++;
+	return m_nRef;
+}
+
+/**
+ * Decrements the reference count
+ * @return The new reference count
+ */
+size_t CC86Box::Release()
+{
+	m_nRef--;
+	return m_nRef;
 }
 
 /**
  * Initialize
  * @return C86CTL_ERR
  */
-int C86BoxUSB::Initialize()
+C86CtlErr CC86Box::initialize()
 {
-	if (!m_usb.Open(0x16c0, 0x27d8))
+	if (!m_usb.Open(0x16c0, 0x27d8, m_nIndex))
 	{
 		return C86CTL_ERR_NODEVICE;
 	}
 
-	for (int i = 0; i < 2; i++)
+	for (UINT i = 0; i < 2; i++)
 	{
 		BOARD_INFO info;
 		if (m_usb.CtrlXfer(0xc0, 0x81, 0, i, &info, sizeof(info)) != sizeof(info))
@@ -141,38 +162,89 @@ int C86BoxUSB::Initialize()
 
 		for (UINT j = 0; j < info.nchips; j++)
 		{
-			ChipType type = static_cast<ChipType>(info.chiptype[j] & 0xffff);
-			if ((type == CHIP_OPNA) || (type == CHIP_OPN3L))
-			{
-				printf("Found OPNA/OPN3L in #%d\n", j);
-				m_nChipType = static_cast<ChipType>(info.chiptype[j]);
-				m_nDevId = (i << 3) | j;
-
-				m_nQueIndex = 0;
-				m_nQueCount = 0;
-				Start();
-				return C86CTL_ERR_NONE;
-			}
+			const UINT nDevId = (i << 3) | j;
+			m_chips.push_back(new Chip3(this, nDevId, info.chiptype[j]));
 		}
 	}
 
-	m_usb.Close();
-	return C86CTL_ERR_NODEVICE;
+	if (m_chips.empty())
+	{
+		m_usb.Close();
+		return C86CTL_ERR_NODEVICE;
+	}
+
+	m_nQueIndex = 0;
+	m_nQueCount = 0;
+	Start();
+	return C86CTL_ERR_NONE;
 }
 
 /**
  * Deinitialize
  * @return C86CTL_ERR
  */
-int C86BoxUSB::Deinitialize()
+C86CtlErr CC86Box::deinitialize()
 {
 	Stop();
 	m_usb.Close();
 
-	m_nChipType = CHIP_UNKNOWN;
-	m_nDevId = 0;
-	memset(m_sReg, 0, sizeof(m_sReg));
+	for (std::vector<Chip3*>::iterator it = m_chips.begin(); it != m_chips.end(); ++it)
+	{
+		delete *it;
+	}
+	m_chips.clear();
 
+	return C86CTL_ERR_NONE;
+}
+
+/**
+ * Gets the count of chips
+ * @return The chips
+ */
+size_t CC86Box::getNumberOfChip()
+{
+	return m_chips.size();
+}
+
+/**
+ * Gets interfaces
+ * @param[in] id ID
+ * @param[in] riid The interface ID
+ * @param[out] ppi The pointer of the interface
+ * @return C86CTL_ERR
+ */
+C86CtlErr CC86Box::getChipInterface(size_t id, IID riid, void** ppi)
+{
+	if (ppi == NULL)
+	{
+		return C86CTL_ERR_INVALID_PARAM;
+	}
+
+	if (id >= m_chips.size())
+	{
+		return C86CTL_ERR_NODEVICE;
+	}
+
+	IRealUnknown* pUnknown = NULL;
+	switch (riid)
+	{
+		case IID_IRealChip:
+		case IID_IRealChip2:
+		case IID_IRealChip3:
+			pUnknown = m_chips[id];
+			break;
+
+		default:
+			break;
+	}
+
+	if (pUnknown == NULL)
+	{
+		return C86CTL_ERR_UNSUPPORTED;
+	}
+
+	pUnknown->AddRef();
+	*ppi = pUnknown;
 	return C86CTL_ERR_NONE;
 }
 
@@ -184,7 +256,7 @@ int C86BoxUSB::Deinitialize()
  * @param[in] cbInput The maximum number of bytes to be read
  * @return C86CTL_ERR
  */
-int C86BoxUSB::Transaction(const void* lpOutput, int cbOutput, void* lpInput, int cbInput)
+C86CtlErr CC86Box::Transaction(const void* lpOutput, int cbOutput, void* lpInput, int cbInput)
 {
 	if (!m_usb.IsOpened())
 	{
@@ -228,7 +300,7 @@ int C86BoxUSB::Transaction(const void* lpOutput, int cbOutput, void* lpInput, in
  * Reset
  * @return C86CTL_ERR
  */
-int C86BoxUSB::Reset()
+C86CtlErr CC86Box::Reset()
 {
 	m_queGuard.Enter();
 	m_nQueIndex = 0;
@@ -244,108 +316,41 @@ int C86BoxUSB::Reset()
 
 /**
  * Output
+ * @param[in] nDevId The id of chips
  * @param[in] nAddr The address of registers
  * @param[in] cData The data
  */
-void C86BoxUSB::Out(UINT nAddr, UINT8 cData)
+void CC86Box::Out(UINT nDevId, UINT nAddr, UINT8 cData)
 {
-	if (nAddr >= sizeof(m_sReg))
-	{
-		return;
-	}
-	m_sReg[nAddr] = cData;
-
 	m_queGuard.Enter();
-	while (m_nQueCount >= _countof(m_que))
+	while (m_nQueCount >= NELEMENTS(m_que))
 	{
 		m_queGuard.Leave();
 		Delay(1000);
 		m_queGuard.Enter();
 	}
 
-	m_que[(m_nQueIndex + m_nQueCount) % _countof(m_que)] = (m_nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
+	m_que[(m_nQueIndex + m_nQueCount) % NELEMENTS(m_que)] = (nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
 	m_nQueCount++;
 
 	m_queGuard.Leave();
 }
 
 /**
- * Input
- * @param[in] nAddr The address of registers
- * @return The data
- */
-UINT8 C86BoxUSB::In(UINT nAddr)
-{
-	if (nAddr < sizeof(m_sReg))
-	{
-		return m_sReg[nAddr];
-	}
-	return 0xff;
-}
-
-/**
- * Gets the current status
- * @param[in] nAddr The address
- * @param[out] pcStatus The status
- * @return C86CTL_ERR
- */
-int C86BoxUSB::GetChipStatus(UINT nAddr, UINT8* pcStatus)
-{
-	return C86CTL_ERR_NOT_IMPLEMENTED;
-}
-
-/**
- * Output
- * @param[in] nAddr The address
- * @param[in] cData The data
- */
-void C86BoxUSB::DirectOut(UINT nAddr, UINT8 cData)
-{
-	if (nAddr >= sizeof(m_sReg))
-	{
-		return;
-	}
-	m_sReg[nAddr] = cData;
-
-	const UINT data = (m_nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
-
-	UINT8 sData[4];
-	sData[0] = static_cast<UINT8>(data >> 0);
-	sData[1] = static_cast<UINT8>(data >> 8);
-	sData[2] = static_cast<UINT8>(data >> 16);
-	sData[3] = static_cast<UINT8>(data >> 24);
-	Transaction(sData, sizeof(sData));
-}
-
-/**
- * Gets the type of the chip
- * @param[out] pnType A pointer of type
- * @return C86CTL_ERR
- */
-int C86BoxUSB::GetChipType(ChipType* pnType)
-{
-	if (pnType != NULL)
-	{
-		*pnType = m_nChipType;
-	}
-	return C86CTL_ERR_NONE;
-}
-
-/**
  * Thread
  * @retval true Cont.
  */
-bool C86BoxUSB::Task()
+bool CC86Box::Task()
 {
 	/* builds data */
 	UINT8 sData[64];
 	int nIndex = 0;
 
 	m_queGuard.Enter();
-	while ((m_nQueCount) && ((nIndex + 8) < _countof(sData)))
+	while ((m_nQueCount) && ((nIndex + 8) < NELEMENTS(sData)))
 	{
 		const UINT data = m_que[m_nQueIndex];
-		m_nQueIndex = (m_nQueIndex + 1) % _countof(m_que);
+		m_nQueIndex = (m_nQueIndex + 1) % NELEMENTS(m_que);
 		m_nQueCount--;
 
 		sData[nIndex++] = static_cast<UINT8>(data >> 0);
@@ -366,3 +371,136 @@ bool C86BoxUSB::Task()
 	}
 	return true;
 }
+
+/* IRealChip3 */
+
+/**
+ * Constructor
+ * @param[in] pC86Box The instance of the device
+ * @param[in] nDevId The id of the chip
+ * @param[in] nChipType The type of the chip
+ */
+CC86Box::Chip3::Chip3(CC86Box* pC86Box, UINT nDevId, ChipType nChipType)
+	: m_pC86Box(pC86Box)
+	, m_nDevId(nDevId)
+	, m_nChipType(nChipType)
+{
+}
+
+/**
+ * Get the instance of the device
+ * @return The instance
+ */
+inline CC86Box* CC86Box::Chip3::GetDevice()
+{
+	return m_pC86Box;
+}
+
+
+/**
+ * Increments the reference count
+ * @return The new reference count
+ */
+size_t CC86Box::Chip3::AddRef()
+{
+	return GetDevice()->AddRef();
+}
+
+/**
+ * Decrements the reference count
+ * @return The new reference count
+ */
+size_t CC86Box::Chip3::Release()
+{
+	return GetDevice()->Release();
+}
+
+/**
+ * Reset
+ * @return C86CTL_ERR
+ */
+C86CtlErr CC86Box::Chip3::reset()
+{
+	memset(m_sReg, 0, sizeof(m_sReg));
+	return GetDevice()->Reset();
+}
+
+/**
+ * Output
+ * @param[in] nAddr The address of registers
+ * @param[in] cData The data
+ */
+void CC86Box::Chip3::out(UINT nAddr, UINT8 cData)
+{
+	if (nAddr >= sizeof(m_sReg))
+	{
+		return;
+	}
+	m_sReg[nAddr] = cData;
+
+	GetDevice()->Out(m_nDevId, nAddr, cData);
+}
+
+/**
+ * Input
+ * @param[in] nAddr The address of registers
+ * @return The data
+ */
+UINT8 CC86Box::Chip3::in(UINT nAddr)
+{
+	if (nAddr < sizeof(m_sReg))
+	{
+		return m_sReg[nAddr];
+	}
+	return 0xff;
+}
+
+/**
+ * Gets the current status
+ * @param[in] nAddr The address
+ * @param[out] pcStatus The status
+ * @return C86CTL_ERR
+ */
+C86CtlErr CC86Box::Chip3::getChipStatus(UINT nAddr, UINT8* pcStatus)
+{
+	return C86CTL_ERR_NOT_IMPLEMENTED;
+}
+
+/**
+ * Output
+ * @param[in] nAddr The address
+ * @param[in] cData The data
+ */
+void CC86Box::Chip3::directOut(UINT nAddr, UINT8 cData)
+{
+	if (nAddr >= sizeof(m_sReg))
+	{
+		return;
+	}
+	m_sReg[nAddr] = cData;
+
+	const UINT data = (m_nDevId << 17) | ((nAddr & 0x1ff) << 8) | cData;
+
+	UINT8 sData[4];
+	sData[0] = static_cast<UINT8>(data >> 0);
+	sData[1] = static_cast<UINT8>(data >> 8);
+	sData[2] = static_cast<UINT8>(data >> 16);
+	sData[3] = static_cast<UINT8>(data >> 24);
+	GetDevice()->Transaction(sData, sizeof(sData));
+}
+
+/**
+ * Gets the type of the chip
+ * @param[out] pnType A pointer of type
+ * @return C86CTL_ERR
+ */
+C86CtlErr CC86Box::Chip3::getChipType(ChipType* pnType)
+{
+	if (pnType != NULL)
+	{
+		*pnType = m_nChipType;
+	}
+	return C86CTL_ERR_NONE;
+}
+
+}	// namespace c86ctl

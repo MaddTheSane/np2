@@ -1,12 +1,13 @@
 /**
- * @file	externalopna.cpp
- * @brief	外部 OPNA 演奏クラスの動作の定義を行います
+ * @file	externalchipmanager.cpp
+ * @brief	外部チップ管理クラスの動作の定義を行います
  */
 
 #include "compiler.h"
 #include "externalchipmanager.h"
-#include "gimic/gimic.h"
-#include "spfm/spfmlight.h"
+#include <algorithm>
+#include "externalopl3.h"
+#include "externalopm.h"
 #include "externalopna.h"
 
 /*! 唯一のインスタンスです */
@@ -16,17 +17,7 @@ CExternalChipManager CExternalChipManager::sm_instance;
  * コンストラクタ
  */
 CExternalChipManager::CExternalChipManager()
-	: m_pGimic(NULL)
-	, m_pLight(NULL)
 {
-}
-
-/**
- * デストラクタ
- */
-CExternalChipManager::~CExternalChipManager()
-{
-	Deinitialize();
 }
 
 /**
@@ -41,8 +32,18 @@ void CExternalChipManager::Initialize()
  */
 void CExternalChipManager::Deinitialize()
 {
-	Release(m_pGimic);
-	Release(m_pLight);
+	std::vector<IExternalChip*>::iterator it = m_chips.begin();
+	while (it != m_chips.end())
+	{
+		IExternalChip* pChip = *it;
+		it = m_chips.erase(it);
+
+		pChip->Reset();
+		delete pChip;
+	}
+
+	m_c86ctl.Deinitialize();
+	m_scci.Deinitialize();
 }
 
 /**
@@ -56,13 +57,34 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
 	IExternalChip* pChip = GetInterfaceInner(nChipType, nClock);
 	if (pChip == NULL)
 	{
-		if (nChipType == IExternalChip::kYMF288)
+		switch (nChipType)
 		{
-			pChip = GetInterface(IExternalChip::kYM2608, nClock);
-		}
-		else if (nChipType == IExternalChip::kYM3438)
-		{
-			pChip = GetInterface(IExternalChip::kYMF288, nClock);
+			case IExternalChip::kAY8910:
+				pChip = GetInterface(IExternalChip::kYM2203, nClock);
+				break;
+
+			case IExternalChip::kYM2203:
+				pChip = GetInterface(IExternalChip::kYMF288, nClock * 2);
+				break;
+
+			case IExternalChip::kYMF288:
+				pChip = GetInterface(IExternalChip::kYM2608, nClock);
+				break;
+
+			case IExternalChip::kYM3438:
+				pChip = GetInterface(IExternalChip::kYMF288, nClock);
+				break;
+
+			case IExternalChip::kY8950:
+				pChip = GetInterface(IExternalChip::kYM3812, nClock);
+				break;
+
+			case IExternalChip::kYM3812:
+				pChip = GetInterface(IExternalChip::kYMF262, nClock * 4);
+				break;
+
+			default:
+				break;
 		}
 	}
 	return pChip;
@@ -76,36 +98,55 @@ IExternalChip* CExternalChipManager::GetInterface(IExternalChip::ChipType nChipT
  */
 IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType nChipType, UINT nClock)
 {
-	// G.I.M.I.C / C86BOX
-	if (m_pGimic == NULL)
+	IExternalChip* pChip = NULL;
+
+	/* G.I.M.I.C / C86BOX */
+	if (pChip == NULL)
 	{
-		CGimic* pModule = new CGimic;
-		if (pModule->Initialize(nChipType, nClock))
-		{
-			m_pGimic = new CExternalOpna(pModule);
-			return m_pGimic;
-		}
-		else
-		{
-			delete pModule;
-		}
+		pChip = m_c86ctl.GetInterface(nChipType, nClock);
 	}
 
-	// SPFM Light
-	if (m_pLight == NULL)
+	/* SPFM Light */
+	if (pChip == NULL)
 	{
-		CSpfmLight* pModule = new CSpfmLight;
-		if (pModule->Initialize(nChipType, nClock))
+		pChip = m_scci.GetInterface(nChipType, nClock);
+	}
+
+	/* ラッピング */
+	if (pChip)
+	{
+		switch (nChipType)
 		{
-			m_pLight = new CExternalOpna(pModule);
-			return m_pLight;
-		}
-		else
-		{
-			delete pModule;
+			case IExternalChip::kAY8910:
+				pChip = new CExternalPsg(pChip);
+				break;
+
+			case IExternalChip::kYM2203:
+			case IExternalChip::kYM2608:
+			case IExternalChip::kYM3438:
+			case IExternalChip::kYMF288:
+				pChip = new CExternalOpna(pChip);
+				break;
+
+			case IExternalChip::kYM3812:
+			case IExternalChip::kYMF262:
+			case IExternalChip::kY8950:
+				pChip = new CExternalOpl3(pChip);
+				break;
+
+			case IExternalChip::kYM2151:
+				pChip = new CExternalOpm(pChip);
+				break;
+
+			default:
+				break;
 		}
 	}
-	return NULL;
+	if (pChip)
+	{
+		m_chips.push_back(pChip);
+	}
+	return pChip;
 }
 
 /**
@@ -114,19 +155,10 @@ IExternalChip* CExternalChipManager::GetInterfaceInner(IExternalChip::ChipType n
  */
 void CExternalChipManager::Release(IExternalChip* pChip)
 {
-	if (pChip == NULL)
+	std::vector<IExternalChip*>::iterator it = std::find(m_chips.begin(), m_chips.end(), pChip);
+	if (it != m_chips.end())
 	{
-		return;
-	}
-	if (m_pGimic == pChip)
-	{
-		m_pGimic = NULL;
-		pChip->Reset();
-		delete pChip;
-	}
-	if (m_pLight == pChip)
-	{
-		m_pLight = NULL;
+		m_chips.erase(it);
 		pChip->Reset();
 		delete pChip;
 	}
@@ -137,13 +169,9 @@ void CExternalChipManager::Release(IExternalChip* pChip)
  */
 void CExternalChipManager::Reset()
 {
-	if (m_pGimic)
+	for (std::vector<IExternalChip*>::iterator it = m_chips.begin(); it != m_chips.end(); ++it)
 	{
-		m_pGimic->Reset();
-	}
-	if (m_pLight)
-	{
-		m_pLight->Reset();
+		(*it)->Reset();
 	}
 }
 
@@ -153,12 +181,8 @@ void CExternalChipManager::Reset()
  */
 void CExternalChipManager::Mute(bool bMute)
 {
-	if (m_pGimic)
+	for (std::vector<IExternalChip*>::iterator it = m_chips.begin(); it != m_chips.end(); ++it)
 	{
-		m_pGimic->Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
-	}
-	if (m_pLight)
-	{
-		m_pLight->Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
+		(*it)->Message(IExternalChip::kMute, static_cast<INTPTR>(bMute));
 	}
 }
