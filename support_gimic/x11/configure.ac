@@ -4,7 +4,7 @@ dnl
 
 AC_PREREQ(2.61)
 
-AC_INIT(Xnp2,0.84,nonakap@gmail.com,xnp2)
+AC_INIT(Xnp2,0.85,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
 AC_CONFIG_SRCDIR([../np2ver.h])
 AC_CONFIG_HEADERS(config.h)
