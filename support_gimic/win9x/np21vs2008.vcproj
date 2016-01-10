@@ -1423,6 +1423,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\commng\cmmidiin32.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\commng\cmmidiout32.cpp"
 						>
 					</File>
@@ -2646,6 +2650,10 @@
 					</File>
 					<File
 						RelativePath=".\commng\cmmidi.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiin32.h"
 						>
 					</File>
 					<File

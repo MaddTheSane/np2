@@ -17,8 +17,6 @@ extern const TCHAR cmmidi_mt32sound[];
 extern LPCTSTR cmmidi_mdlname[12];
 
 void cmmidi_initailize(void);
-void cmmidi_recvdata(HMIDIIN hdr, UINT32 data);
-void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data);
 
 struct _cmmidi;
 

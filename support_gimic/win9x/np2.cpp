@@ -21,7 +21,8 @@
 #include "np2arg.h"
 #include "dosio.h"
 #include "misc\tstring.h"
-#include "commng\cmmidi.h"
+#include "commng.h"
+#include "commng\cmmidiin32.h"
 #include "joymng.h"
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -1435,11 +1436,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case MM_MIM_DATA:
-			cmmidi_recvdata((HMIDIIN)wParam, (DWORD)lParam);
+			CComMidiIn32::RecvData(reinterpret_cast<HMIDIIN>(wParam), static_cast<UINT>(lParam));
 			break;
 
 		case MM_MIM_LONGDATA:
-			cmmidi_recvexcv((HMIDIIN)wParam, (MIDIHDR *)lParam);
+			CComMidiIn32::RecvExcv(reinterpret_cast<HMIDIIN>(wParam), reinterpret_cast<MIDIHDR*>(lParam));
 			break;
 
 		default:

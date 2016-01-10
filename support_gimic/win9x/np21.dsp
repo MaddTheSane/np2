@@ -1268,6 +1268,14 @@ SOURCE=.\commng\cmmidi.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\commng\cmmidiin32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiin32.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\commng\cmmidiout.h
 # End Source File
 # Begin Source File

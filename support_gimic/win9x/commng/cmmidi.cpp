@@ -8,6 +8,7 @@
 #include "np2.h"
 #include "mimpidef.h"
 
+#include "cmmidiin32.h"
 #include "cmmidiout32.h"
 #if defined(MT32SOUND_DLL)
 #include "cmmidioutmt32sound.h"
@@ -69,11 +70,6 @@ enum {
 
 enum {
 	MIDI_BUFFER			= (1 << 10),
-	MIDIIN_MAX			= 4,
-
-	CMMIDI_MIDIOUT		= 0x01,
-	CMMIDI_MIDIIN		= 0x02,
-	CMMIDI_MIDIINSTART	= 0x04,
 
 	MIDICTRL_READY		= 0,
 	MIDICTRL_2BYTES,
@@ -95,12 +91,9 @@ typedef struct {
 } _MIDICH, *MIDICH;
 
 struct _cmmidi {
-	UINT		opened;
-
+	CComMidiIn32* m_pMidiIn;
 	CComMidiOut* m_pMidiOut;
 
-	HMIDIIN		hmidiin;
-	MIDIHDR		hmidiinhdr;
 	UINT		midictrl;
 	UINT		midisyscnt;
 	UINT		mpos;
@@ -114,20 +107,7 @@ struct _cmmidi {
 
 	UINT8		def_en;
 	MIMPIDEF	def;
-
-	UINT		recvpos;
-	UINT		recvsize;
-	UINT8		recvbuf[MIDI_BUFFER];
-	UINT8		midiinbuf[MIDI_BUFFER];
 };
-
-typedef struct {
-	HMIDIIN		hmidiin;
-	CMMIDI		midi;
-} MIDIINHDL;
-
-static	UINT		midiinhdls;
-static	MIDIINHDL	midiinhdl[MIDIIN_MAX];
 
 static const UINT8 midictrltbl[] = { 0, 1, 5, 7, 10, 11, 64,
 									65, 66, 67, 84, 91, 93,
@@ -138,27 +118,6 @@ static	UINT8	midictrlindex[128];
 
 
 // ----
-
-static BRESULT getmidiinid(const OEMCHAR *midiin, UINT *ret) {
-
-	UINT		num;
-	UINT		i;
-	MIDIINCAPS	moc;
-
-	num = midiInGetNumDevs();
-	for (i=0; i<num; i++) {
-		if ((midiInGetDevCaps(i, &moc, sizeof(moc)) == MMSYSERR_NOERROR) &&
-			(!milstr_cmp(midiin, moc.szPname))) {
-			*ret = i;
-			return(SUCCESS);
-		}
-	}
-	if (!milstr_cmp(midiin, cmmidi_midimapper)) {
-		*ret = MIDI_MAPPER;
-		return(SUCCESS);
-	}
-	return(FAILURE);
-}
 
 static UINT module2number(const OEMCHAR *module) {
 
@@ -261,15 +220,13 @@ static void midisetparam(CMMIDI midi) {
 
 // ----
 
-static UINT midiread(CMMIDI midi, UINT8 *data) {
-
-	if (midi->recvsize) {
-		midi->recvsize--;
-		*data = midi->recvbuf[midi->recvpos];
-		midi->recvpos = (midi->recvpos + 1) & (MIDI_BUFFER - 1);
-		return(1);
+static UINT midiread(CMMIDI midi, UINT8 *data)
+{
+	if (midi->m_pMidiIn)
+	{
+		return midi->m_pMidiIn->Read(data);
 	}
-	return(0);
+	return 0;
 }
 
 static UINT midiwrite(CMMIDI midi, UINT8 data) {
@@ -486,62 +443,13 @@ static INTPTR midimsg(CMMIDI midi, UINT msg, INTPTR param) {
 	return(0);
 }
 
-static BRESULT midiinhdlreg(CMMIDI midi, HMIDIIN hmidiin) {
-
-	if (midiinhdls < MIDIIN_MAX) {
-		midiinhdl[midiinhdls].hmidiin = hmidiin;
-		midiinhdl[midiinhdls].midi = midi;
-		midiinhdls++;
-		return(SUCCESS);
-	}
-	else {
-		return(FAILURE);
-	}
-}
-
-static void midiinhdlunreg(CMMIDI midi) {
-
-	UINT	i;
-
-	for (i=0; i<midiinhdls; i++) {
-		if (midiinhdl[i].midi == midi) {
-			break;
-		}
-	}
-	if (i < midiinhdls) {
-		midiinhdls--;
-		while(i < midiinhdls) {
-			midiinhdl[i].hmidiin = midiinhdl[i+1].hmidiin;
-			midiinhdl[i].midi = midiinhdl[i+1].midi;
-		}
-	}
-}
-
-static CMMIDI midiinhdlget(HMIDIIN hmidiin) {
-
-	UINT	i;
-
-	for (i=0; i<midiinhdls; i++) {
-		if (midiinhdl[i].hmidiin == hmidiin) {
-			return(midiinhdl[i].midi);
-		}
-	}
-	return(NULL);
-}
-
 static void midirelease(CMMIDI midi) {
 
 	midiallnoteoff(midi);
 	delete midi->m_pMidiOut;
-	if (midi->opened & CMMIDI_MIDIIN) {
-		if (midi->opened & CMMIDI_MIDIINSTART) {
-			midiInStop(midi->hmidiin);
-			midiInUnprepareHeader(midi->hmidiin,
-										&midi->hmidiinhdr, sizeof(MIDIHDR));
-		}
-		midiInReset(midi->hmidiin);
-		midiInClose(midi->hmidiin);
-		midiinhdlunreg(midi);
+	if (midi->m_pMidiIn)
+	{
+		delete midi->m_pMidiIn;
 	}
 }
 
@@ -559,15 +467,8 @@ void cmmidi_initailize(void) {
 	midictrlindex[32] = 1;
 }
 
-CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
-
-	UINT		opened;
-	UINT		id;
-	HMIDIIN		hmidiin = NULL;
-	CMMIDI		midi;
-
-	opened = 0;
-
+CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module)
+{
 	CComMidiOut* pMidiOut = NULL;
 #if defined(VERMOUTH_LIB)
 	if ((pMidiOut == NULL) && (!milstr_cmp(midiout, cmmidi_vermouth)))
@@ -585,19 +486,10 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 	{
 		pMidiOut = CComMidiOut32::CreateInstance(midiout);
 	}
-	if (pMidiOut)
-	{
-		opened |= CMMIDI_MIDIOUT;
-	}
 
-	if (getmidiinid(midiin, &id) == SUCCESS) {
-		if (midiInOpen(&hmidiin, id, (DWORD_PTR)g_hWndMain, 0, CALLBACK_WINDOW)
-														== MMSYSERR_NOERROR) {
-			midiInReset(hmidiin);
-			opened |= CMMIDI_MIDIIN;
-		}
-	}
-	if (!opened)
+	CComMidiIn32* pMidiIn = CComMidiIn32::CreateInstance(midiin);
+
+	if ((!pMidiOut) && (!pMidiIn))
 	{
 		return NULL;
 	}
@@ -607,24 +499,11 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 		pMidiOut = new CComMidiOut;
 	}
 
-	midi = new _cmmidi;
+	CMMIDI midi = new _cmmidi;
 	ZeroMemory(midi, sizeof(*midi));
-	midi->opened = opened;
+	midi->m_pMidiIn = pMidiIn;
 	midi->m_pMidiOut = pMidiOut;
 	midi->midictrl = MIDICTRL_READY;
-#if 1
-	midi->hmidiin = hmidiin;
-	if (opened & CMMIDI_MIDIIN) {
-		if (midiinhdlreg(midi, hmidiin) == SUCCESS) {
-			midi->opened |= CMMIDI_MIDIINSTART;
-			midi->hmidiinhdr.lpData = (char *)midi->midiinbuf;
-			midi->hmidiinhdr.dwBufferLength = MIDI_BUFFER;
-			midiInPrepareHeader(hmidiin, &midi->hmidiinhdr, sizeof(MIDIHDR));
-			midiInAddBuffer(hmidiin, &midi->hmidiinhdr, sizeof(MIDIHDR));
-			midiInStart(hmidiin);
-		}
-	}
-#endif
 //	midi->midisyscnt = 0;
 //	midi->mpos = 0;
 
@@ -633,82 +512,6 @@ CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module) {
 	midi->midimodule = (UINT8)module2number(module);
 	FillMemory(midi->mch, sizeof(midi->mch), 0xff);
 	return midi;
-}
-
-
-// ---- midiin callback
-
-static void midiinrecv(CMMIDI midi, const UINT8 *data, UINT size) {
-
-	UINT	wpos;
-	UINT	wsize;
-
-	size = min(size, MIDI_BUFFER - midi->recvsize);
-	if (size) {
-		wpos = (midi->recvpos + midi->recvsize) & (MIDI_BUFFER - 1);
-		midi->recvsize += size;
-		wsize = min(size, MIDI_BUFFER - wpos);
-		CopyMemory(midi->recvbuf + wpos, data, wsize);
-		size -= wsize;
-		if (size) {
-			CopyMemory(midi->recvbuf, data + wsize, size);
-		}
-	}
-}
-
-void cmmidi_recvdata(HMIDIIN hdr, UINT32 data) {
-
-	CMMIDI	midi;
-	UINT	databytes;
-
-	midi = midiinhdlget(hdr);
-	if (midi) {
-		databytes = 0;
-		switch(data & 0xf0) {
-			case 0xc0:
-			case 0xd0:
-				databytes = 2;
-				break;
-
-			case 0x80:
-			case 0x90:
-			case 0xa0:
-			case 0xb0:
-			case 0xe0:
-				databytes = 3;
-				break;
-#if 0
-			case 0xf0:
-				switch(data & 0xff) {
-					case MIDI_TIMING:
-					case MIDI_START:
-					case MIDI_CONTINUE:
-					case MIDI_STOP:
-					case MIDI_ACTIVESENSE:
-					case MIDI_SYSTEMRESET:
-						databytes = 1;
-						break;
-				}
-				break;
-#endif
-		}
-		midiinrecv(midi, (UINT8 *)&data, databytes);
-	}
-}
-
-void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data) {
-
-	CMMIDI	midi;
-
-	midi = midiinhdlget(hdr);
-	if (midi) {
-		midiinrecv(midi, (UINT8 *)data->lpData, data->dwBytesRecorded);
-		midiInUnprepareHeader(midi->hmidiin,
-										&midi->hmidiinhdr, sizeof(MIDIHDR));
-		midiInPrepareHeader(midi->hmidiin,
-										&midi->hmidiinhdr, sizeof(MIDIHDR));
-		midiInAddBuffer(midi->hmidiin, &midi->hmidiinhdr, sizeof(MIDIHDR));
-	}
 }
 
 // ---- ƒNƒ‰ƒX
