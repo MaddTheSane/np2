@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "cmmidi.h"
 #include "np2.h"
-#include "mimpidef.h"
 
 #include "cmmidiin32.h"
 #include "cmmidiout32.h"
@@ -68,46 +67,8 @@ enum {
 	MIDI_SYSTEMRESET	= 0xff
 };
 
-enum {
-	MIDI_BUFFER			= (1 << 10),
 
-	MIDICTRL_READY		= 0,
-	MIDICTRL_2BYTES,
-	MIDICTRL_3BYTES,
-	MIDICTRL_EXCLUSIVE,
-	MIDICTRL_TIMECODE,
-	MIDICTRL_SYSTEM
-};
-
-struct _cmmidi;
-typedef struct _cmmidi	_CMMIDI;
-typedef struct _cmmidi	*CMMIDI;
-
-typedef struct {
-	UINT8	prog;
-	UINT8	press;
-	UINT16	bend;
-	UINT8	ctrl[28];
-} _MIDICH, *MIDICH;
-
-struct _cmmidi {
-	CComMidiIn32* m_pMidiIn;
-	CComMidiOut* m_pMidiOut;
-
-	UINT		midictrl;
-	UINT		midisyscnt;
-	UINT		mpos;
-
-	UINT8		midilast;
-	UINT8		midiexcvwait;
-	UINT8		midimodule;
-
-	UINT8		buffer[MIDI_BUFFER];
-	_MIDICH		mch[16];
-
-	UINT8		def_en;
-	MIMPIDEF	def;
-};
+typedef CComMidi *CMMIDI;
 
 static const UINT8 midictrltbl[] = { 0, 1, 5, 7, 10, 11, 64,
 									65, 66, 67, 84, 91, 93,
@@ -117,45 +78,57 @@ static const UINT8 midictrltbl[] = { 0, 1, 5, 7, 10, 11, 64,
 static	UINT8	midictrlindex[128];
 
 
-// ----
+/**
+ * モジュール番号を得る
+ * @param[in] lpModule モジュール名
+ * @return モジュール番号
+ */
+UINT CComMidi::module2number(LPCTSTR lpModule)
+{
+	UINT i;
 
-static UINT module2number(const OEMCHAR *module) {
-
-	UINT	i;
-
-	for (i=0; i<NELEMENTS(cmmidi_mdlname); i++) {
-		if (!milstr_extendcmp(module, cmmidi_mdlname[i])) {
+	for (i = 0; i < NELEMENTS(cmmidi_mdlname); i++)
+	{
+		if (!milstr_extendcmp(lpModule, cmmidi_mdlname[i]))
+		{
 			break;
 		}
 	}
-	return(i);
+	return i;
 }
 
-// ----
-
-static void midiallnoteoff(CMMIDI midi) {
-
-	UINT	i;
-	UINT8	msg[4];
-
-	for (i=0; i<0x10; i++) {
+/**
+ * オール ノート オフ
+ */
+void CComMidi::midiallnoteoff()
+{
+	for (UINT i = 0; i < 0x10; i++)
+	{
+		UINT8 msg[4];
 		msg[0] = (UINT8)(0xb0 + i);
 		msg[1] = 0x7b;
 		msg[2] = 0x00;
 		keydisp_midi(msg);
-		midi->m_pMidiOut->Short(MIDIOUTS3(msg));
+		if (m_pMidiOut)
+		{
+			m_pMidiOut->Short(MIDIOUTS3(msg));
+		}
 	}
 }
 
-static void midireset(CMMIDI midi) {
+/**
+ * MIDI リセット
+ */
+void CComMidi::midireset()
+{
+	const UINT8* lpExcv;
+	UINT cbExcv;
 
-const UINT8	*excv;
-	UINT	excvsize;
-
-	switch(midi->midimodule) {
+	switch (m_nModule)
+	{
 		case MIDI_GM:
-			excv = EXCV_GMRESET;
-			excvsize = sizeof(EXCV_GMRESET);
+			lpExcv = EXCV_GMRESET;
+			cbExcv = sizeof(EXCV_GMRESET);
 			break;
 
 		case MIDI_CM300:
@@ -163,13 +136,13 @@ const UINT8	*excv;
 		case MIDI_SC55:
 		case MIDI_SC88:
 		case MIDI_GS:
-			excv = EXCV_GSRESET;
-			excvsize = sizeof(EXCV_GSRESET);
+			lpExcv = EXCV_GSRESET;
+			cbExcv = sizeof(EXCV_GSRESET);
 			break;
 
 		case MIDI_XG:
-			excv = EXCV_XGRESET;
-			excvsize = sizeof(EXCV_XGRESET);
+			lpExcv = EXCV_XGRESET;
+			cbExcv = sizeof(EXCV_XGRESET);
 			break;
 
 		case MIDI_MT32:
@@ -177,344 +150,69 @@ const UINT8	*excv;
 		case MIDI_CM64:
 		case MIDI_CM500LA:
 		case MIDI_LA:
-			excv = EXCV_MTRESET;
-			excvsize = sizeof(EXCV_MTRESET);
+			lpExcv = EXCV_MTRESET;
+			cbExcv = sizeof(EXCV_MTRESET);
 			break;
 
 		default:
-			excv = NULL;
-			excvsize = 0;
+			lpExcv = NULL;
+			cbExcv = 0;
 			break;
 	}
-	if (excv) {
-		midi->m_pMidiOut->Long(excv, excvsize);
+	if ((lpExcv) && (m_pMidiOut))
+	{
+		m_pMidiOut->Long(lpExcv, cbExcv);
 	}
-	midiallnoteoff(midi);
+	midiallnoteoff();
 }
 
-static void midisetparam(CMMIDI midi) {
-
-	UINT8	i;
-	UINT	j;
-	MIDICH	mch;
-
-	mch = midi->mch;
-	for (i=0; i<16; i++, mch++) {
-		if (mch->press != 0xff) {
-			midi->m_pMidiOut->Short(MIDIOUTS(0xa0+i, mch->press, 0));
-		}
-		if (mch->bend != 0xffff) {
-			midi->m_pMidiOut->Short((mch->bend << 8) + 0xe0+i);
-		}
-		for (j=0; j<NELEMENTS(midictrltbl); j++) {
-			if (mch->ctrl[j+1] != 0xff) {
-				midi->m_pMidiOut->Short(MIDIOUTS(0xb0+i, midictrltbl[j], mch->ctrl[j+1]));
-			}
-		}
-		if (mch->prog != 0xff) {
-			midi->m_pMidiOut->Short(MIDIOUTS(0xc0+i, mch->prog, 0));
-		}
-	}
-}
-
-
-// ----
-
-static UINT midiread(CMMIDI midi, UINT8 *data)
+/**
+ * パラメータ設定
+ */
+void CComMidi::midisetparam()
 {
-	if (midi->m_pMidiIn)
+	if (m_pMidiOut == NULL)
 	{
-		return midi->m_pMidiIn->Read(data);
+		return;
 	}
-	return 0;
-}
 
-static UINT midiwrite(CMMIDI midi, UINT8 data) {
-
-	MIDICH	mch;
-	int		type;
-
-	switch(data) {
-		case MIDI_TIMING:
-		case MIDI_START:
-		case MIDI_CONTINUE:
-		case MIDI_STOP:
-		case MIDI_ACTIVESENSE:
-		case MIDI_SYSTEMRESET:
-			return(1);
-	}
-	if (midi->midictrl == MIDICTRL_READY) {
-		if (data & 0x80) {
-			midi->mpos = 0;
-			switch(data & 0xf0) {
-				case 0xc0:
-				case 0xd0:
-					midi->midictrl = MIDICTRL_2BYTES;
-					break;
-
-				case 0x80:
-				case 0x90:
-				case 0xa0:
-				case 0xb0:
-				case 0xe0:
-					midi->midictrl = MIDICTRL_3BYTES;
-					midi->midilast = data;
-					break;
-
-				default:
-					switch(data) {
-						case MIDI_EXCLUSIVE:
-							midi->midictrl = MIDICTRL_EXCLUSIVE;
-							break;
-
-						case MIDI_TIMECODE:
-							midi->midictrl = MIDICTRL_TIMECODE;
-							break;
-
-						case MIDI_SONGPOS:
-							midi->midictrl = MIDICTRL_SYSTEM;
-							midi->midisyscnt = 3;
-							break;
-
-						case MIDI_SONGSELECT:
-							midi->midictrl = MIDICTRL_SYSTEM;
-							midi->midisyscnt = 2;
-							break;
-
-						case MIDI_CABLESELECT:
-							midi->midictrl = MIDICTRL_SYSTEM;
-							midi->midisyscnt = 1;
-							break;
-
-//						case MIDI_TUNEREQUEST:
-//						case MIDI_EOX:
-						default:
-							return(1);
-					}
-					break;
+	for (UINT i = 0; i < 16; i++)
+	{
+		const MIDICH* mch = &m_midich[i];
+		if (mch->press != 0xff)
+		{
+			m_pMidiOut->Short(MIDIOUTS(0xa0 + i, mch->press, 0));
+		}
+		if (mch->bend != 0xffff)
+		{
+			m_pMidiOut->Short((mch->bend << 8) + 0xe0 + i);
+		}
+		for (UINT j = 0; j < NELEMENTS(midictrltbl); j++)
+		{
+			if (mch->ctrl[j+1] != 0xff)
+			{
+				m_pMidiOut->Short(MIDIOUTS(0xb0 + i, midictrltbl[j], mch->ctrl[j + 1]));
 			}
 		}
-		else {						// Key-onのみな気がしたんだけど忘れた…
-			// running status
-			midi->buffer[0] = midi->midilast;
-			midi->mpos = 1;
-			midi->midictrl = MIDICTRL_3BYTES;
+		if (mch->prog != 0xff)
+		{
+			m_pMidiOut->Short(MIDIOUTS(0xc0+i, mch->prog, 0));
 		}
 	}
-	midi->buffer[midi->mpos] = data;
-	midi->mpos++;
-
-	switch(midi->midictrl) {
-		case MIDICTRL_2BYTES:
-			if (midi->mpos >= 2) {
-				midi->buffer[1] &= 0x7f;
-				mch = midi->mch + (midi->buffer[0] & 0xf);
-				switch(midi->buffer[0] & 0xf0) {
-					case 0xa0:
-						mch->press = midi->buffer[1];
-						break;
-
-					case 0xc0:
-						if (midi->def_en) {
-							type = midi->def.ch[midi->buffer[0] & 0x0f];
-							if (type < MIMPI_RHYTHM) {
-								midi->buffer[1] = 
-										midi->def.map[type][midi->buffer[1]];
-							}
-						}
-						mch->prog = midi->buffer[1];
-						break;
-				}
-				keydisp_midi(midi->buffer);
-				midi->m_pMidiOut->Short(MIDIOUTS2(midi->buffer));
-				midi->midictrl = MIDICTRL_READY;
-				return(2);
-			}
-			break;
-
-		case MIDICTRL_3BYTES:
-			if (midi->mpos >= 3) {
-				*(UINT16 *)(midi->buffer + 1) &= 0x7f7f;
-				mch = midi->mch + (midi->buffer[0] & 0xf);
-				switch(midi->buffer[0] & 0xf0) {
-					case 0xb0:
-						if (midi->buffer[1] == 123) {
-							mch->press = 0;
-							mch->bend = 0x4000;
-							mch->ctrl[1+1] = 0;			// Modulation
-							mch->ctrl[5+1] = 127;		// Explession
-							mch->ctrl[6+1] = 0;			// Hold
-							mch->ctrl[7+1] = 0;			// Portament
-							mch->ctrl[8+1] = 0;			// Sostenute
-							mch->ctrl[9+1] = 0;			// Soft
-						}
-						else {
-							mch->ctrl[midictrlindex[midi->buffer[1]]]
-															= midi->buffer[2];
-						}
-						break;
-
-					case 0xe0:
-						mch->bend = *(UINT16 *)(midi->buffer + 1);
-						break;
-				}
-				keydisp_midi(midi->buffer);
-				midi->m_pMidiOut->Short(MIDIOUTS3(midi->buffer));
-				midi->midictrl = MIDICTRL_READY;
-				return(3);
-			}
-			break;
-
-		case MIDICTRL_EXCLUSIVE:
-			if (data == MIDI_EOX) {
-				midi->m_pMidiOut->Long(midi->buffer, midi->mpos);
-				midi->midictrl = MIDICTRL_READY;
-				return(midi->mpos);
-			}
-			else if (midi->mpos >= MIDI_BUFFER) {		// おーばーふろー
-				midi->midictrl = MIDICTRL_READY;
-			}
-			break;
-
-		case MIDICTRL_TIMECODE:
-			if (midi->mpos >= 2) {
-				if ((data == 0x7e) || (data == 0x7f)) {
-					// exclusiveと同じでいい筈…
-					midi->midictrl = MIDICTRL_EXCLUSIVE;
-				}
-				else {
-					midi->midictrl = MIDICTRL_READY;
-					return(2);
-				}
-			}
-			break;
-
-		case MIDICTRL_SYSTEM:
-			if (midi->mpos >= midi->midisyscnt) {
-				midi->midictrl = MIDICTRL_READY;
-				return(midi->midisyscnt);
-			}
-			break;
-	}
-	return(0);
 }
 
-static INTPTR midimsg(CMMIDI midi, UINT msg, INTPTR param) {
-
-	COMFLAG	flag;
-
-	switch(msg) {
-		case COMMSG_MIDIRESET:
-			midireset(midi);
-			return(1);
-
-		case COMMSG_SETFLAG:
-			flag = (COMFLAG)param;
-			if ((flag) &&
-				(flag->size == sizeof(_COMFLAG) + sizeof(midi->mch)) &&
-				(flag->sig == COMSIG_MIDI)) {
-				CopyMemory(midi->mch, flag + 1, sizeof(midi->mch));
-				midisetparam(midi);
-				return(1);
-			}
-			break;
-
-		case COMMSG_GETFLAG:
-			flag = (COMFLAG)_MALLOC(sizeof(_COMFLAG) + sizeof(midi->mch),
-																"MIDI FLAG");
-			if (flag) {
-				flag->size = sizeof(_COMFLAG) + sizeof(midi->mch);
-				flag->sig = COMSIG_MIDI;
-				flag->ver = 0;
-				flag->param = 0;
-				CopyMemory(flag + 1, midi->mch, sizeof(midi->mch));
-				return((INTPTR)flag);
-			}
-			break;
-
-		case COMMSG_MIMPIDEFFILE:
-			mimpidef_load(&midi->def, (OEMCHAR *)param);
-			return(1);
-
-		case COMMSG_MIMPIDEFEN:
-			midi->def_en = (param)?TRUE:FALSE;
-			return(1);
-	}
-	return(0);
-}
-
-static void midirelease(CMMIDI midi) {
-
-	midiallnoteoff(midi);
-	delete midi->m_pMidiOut;
-	if (midi->m_pMidiIn)
-	{
-		delete midi->m_pMidiIn;
-	}
-}
-
-
-// ----
-
-void cmmidi_initailize(void) {
-
-	UINT	i;
-
+/**
+ * 初期化
+ */
+void cmmidi_initailize(void)
+{
 	ZeroMemory(midictrlindex, sizeof(midictrlindex));
-	for (i=0; i<NELEMENTS(midictrltbl); i++) {
+	for (UINT i = 0; i < NELEMENTS(midictrltbl); i++)
+	{
 		midictrlindex[midictrltbl[i]] = (UINT8)(i + 1);
 	}
 	midictrlindex[32] = 1;
 }
-
-CMMIDI cmmidi_create(LPCTSTR midiout, LPCTSTR midiin, LPCTSTR module)
-{
-	CComMidiOut* pMidiOut = NULL;
-#if defined(VERMOUTH_LIB)
-	if ((pMidiOut == NULL) && (!milstr_cmp(midiout, cmmidi_vermouth)))
-	{
-		pMidiOut = CComMidiOutVermouth::CreateInstance();
-	}
-#endif	// defined(VERMOUTH_LIB)
-#if defined(MT32SOUND_DLL)
-	if ((pMidiOut == NULL) && (!milstr_cmp(midiout, cmmidi_mt32sound)))
-	{
-		pMidiOut = CComMidiOutMT32Sound::CreateInstance();
-	}
-#endif	// defined(MT32SOUND_DLL)
-	if (pMidiOut == NULL)
-	{
-		pMidiOut = CComMidiOut32::CreateInstance(midiout);
-	}
-
-	CComMidiIn32* pMidiIn = CComMidiIn32::CreateInstance(midiin);
-
-	if ((!pMidiOut) && (!pMidiIn))
-	{
-		return NULL;
-	}
-
-	if (pMidiOut == NULL)
-	{
-		pMidiOut = new CComMidiOut;
-	}
-
-	CMMIDI midi = new _cmmidi;
-	ZeroMemory(midi, sizeof(*midi));
-	midi->m_pMidiIn = pMidiIn;
-	midi->m_pMidiOut = pMidiOut;
-	midi->midictrl = MIDICTRL_READY;
-//	midi->midisyscnt = 0;
-//	midi->mpos = 0;
-
-	midi->midilast = 0x80;
-//	midi->midiexcvwait = 0;
-	midi->midimodule = (UINT8)module2number(module);
-	FillMemory(midi->mch, sizeof(midi->mch), 0xff);
-	return midi;
-}
-
-// ---- クラス
 
 /**
  * インスタンス作成
@@ -539,8 +237,18 @@ CComMidi* CComMidi::CreateInstance(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR 
  */
 CComMidi::CComMidi()
 	: CComBase(COMCONNECT_MIDI)
-	, m_pMidi(NULL)
+	, m_pMidiIn(NULL)
+	, m_pMidiOut(NULL)
+	, m_nModule(MIDI_OTHER)
+	, m_nMidiCtrl(MIDICTRL_READY)
+	, m_nIndex(0)
+	, m_nRecvSize(0)
+	, m_cLastData(0)
+	, m_bMimpiDef(false)
 {
+	ZeroMemory(&m_mimpiDef, sizeof(m_mimpiDef));
+	FillMemory(m_midich, sizeof(m_midich), 0xff);
+	ZeroMemory(m_sBuffer, sizeof(m_sBuffer));
 }
 
 /**
@@ -548,10 +256,14 @@ CComMidi::CComMidi()
  */
 CComMidi::~CComMidi()
 {
-	if (m_pMidi)
+	midiallnoteoff();
+	if (m_pMidiOut)
 	{
-		midirelease(m_pMidi);
-		delete m_pMidi;
+		delete m_pMidiOut;
+	}
+	if (m_pMidiIn)
+	{
+		delete m_pMidiIn;
 	}
 }
 
@@ -565,8 +277,37 @@ CComMidi::~CComMidi()
  */
 bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
 {
-	m_pMidi = cmmidi_create(lpMidiOut, lpMidiIn, lpModule);
-	return (m_pMidi != NULL);
+#if defined(VERMOUTH_LIB)
+	if ((m_pMidiOut == NULL) && (!milstr_cmp(lpMidiOut, cmmidi_vermouth)))
+	{
+		m_pMidiOut = CComMidiOutVermouth::CreateInstance();
+	}
+#endif	// defined(VERMOUTH_LIB)
+#if defined(MT32SOUND_DLL)
+	if ((m_pMidiOut == NULL) && (!milstr_cmp(lpMidiOut, cmmidi_mt32sound)))
+	{
+		m_pMidiOut = CComMidiOutMT32Sound::CreateInstance();
+	}
+#endif	// defined(MT32SOUND_DLL)
+	if (m_pMidiOut == NULL)
+	{
+		m_pMidiOut = CComMidiOut32::CreateInstance(lpMidiOut);
+	}
+
+	m_pMidiIn = CComMidiIn32::CreateInstance(lpMidiIn);
+
+	if ((!m_pMidiOut) && (!m_pMidiIn))
+	{
+		return false;
+	}
+
+	if (m_pMidiOut == NULL)
+	{
+		m_pMidiOut = new CComMidiOut;
+	}
+
+	m_nModule = module2number(lpModule);
+	return true;
 }
 
 /**
@@ -576,7 +317,11 @@ bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
  */
 UINT CComMidi::Read(UINT8* pData)
 {
-	return midiread(m_pMidi, pData);
+	if (m_pMidiIn)
+	{
+		return m_pMidiIn->Read(pData);
+	}
+	return 0;
 }
 
 /**
@@ -586,7 +331,199 @@ UINT CComMidi::Read(UINT8* pData)
  */
 UINT CComMidi::Write(UINT8 cData)
 {
-	return midiwrite(m_pMidi, cData);
+	CMMIDI midi = this;
+
+	switch (cData)
+	{
+		case MIDI_TIMING:
+		case MIDI_START:
+		case MIDI_CONTINUE:
+		case MIDI_STOP:
+		case MIDI_ACTIVESENSE:
+		case MIDI_SYSTEMRESET:
+			return 1;
+	}
+	if (m_nMidiCtrl == MIDICTRL_READY)
+	{
+		if (cData & 0x80)
+		{
+			m_nIndex = 0;
+			switch (cData & 0xf0)
+			{
+				case 0xc0:
+				case 0xd0:
+					m_nMidiCtrl = MIDICTRL_2BYTES;
+					break;
+
+				case 0x80:
+				case 0x90:
+				case 0xa0:
+				case 0xb0:
+				case 0xe0:
+					m_nMidiCtrl = MIDICTRL_3BYTES;
+					m_cLastData = cData;
+					break;
+
+				default:
+					switch (cData)
+					{
+						case MIDI_EXCLUSIVE:
+							m_nMidiCtrl = MIDICTRL_EXCLUSIVE;
+							break;
+
+						case MIDI_TIMECODE:
+							m_nMidiCtrl = MIDICTRL_TIMECODE;
+							break;
+
+						case MIDI_SONGPOS:
+							m_nMidiCtrl = MIDICTRL_SYSTEM;
+							m_nRecvSize = 3;
+							break;
+
+						case MIDI_SONGSELECT:
+							m_nMidiCtrl = MIDICTRL_SYSTEM;
+							m_nRecvSize = 2;
+							break;
+
+						case MIDI_CABLESELECT:
+							m_nMidiCtrl = MIDICTRL_SYSTEM;
+							m_nRecvSize = 1;
+							break;
+
+//						case MIDI_TUNEREQUEST:
+//						case MIDI_EOX:
+						default:
+							return 1;
+					}
+					break;
+			}
+		}
+		else						// Key-onのみな気がしたんだけど忘れた…
+		{
+			// running status
+			m_sBuffer[0] = m_cLastData;
+			m_nIndex = 1;
+			m_nMidiCtrl = MIDICTRL_3BYTES;
+		}
+	}
+	m_sBuffer[m_nIndex] = cData;
+	m_nIndex++;
+
+	switch (m_nMidiCtrl)
+	{
+		case MIDICTRL_2BYTES:
+			if (m_nIndex >= 2)
+			{
+				m_sBuffer[1] &= 0x7f;
+				MIDICH* mch = m_midich + (m_sBuffer[0] & 0xf);
+				switch (m_sBuffer[0] & 0xf0)
+				{
+					case 0xa0:
+						mch->press = m_sBuffer[1];
+						break;
+
+					case 0xc0:
+						if (m_bMimpiDef)
+						{
+							const UINT type = m_mimpiDef.ch[m_sBuffer[0] & 0x0f];
+							if (type < MIMPI_RHYTHM)
+							{
+								m_sBuffer[1] = m_mimpiDef.map[type][m_sBuffer[1]];
+							}
+						}
+						mch->prog = m_sBuffer[1];
+						break;
+				}
+				keydisp_midi(m_sBuffer);
+				if (m_pMidiOut)
+				{
+					m_pMidiOut->Short(MIDIOUTS2(m_sBuffer));
+				}
+				m_nMidiCtrl = MIDICTRL_READY;
+				return 2;
+			}
+			break;
+
+		case MIDICTRL_3BYTES:
+			if (m_nIndex >= 3)
+			{
+				*(UINT16 *)(m_sBuffer + 1) &= 0x7f7f;
+				MIDICH* mch = m_midich + (m_sBuffer[0] & 0xf);
+				switch (m_sBuffer[0] & 0xf0)
+				{
+					case 0xb0:
+						if (m_sBuffer[1] == 123)
+						{
+							mch->press = 0;
+							mch->bend = 0x4000;
+							mch->ctrl[1+1] = 0;			// Modulation
+							mch->ctrl[5+1] = 127;		// Explession
+							mch->ctrl[6+1] = 0;			// Hold
+							mch->ctrl[7+1] = 0;			// Portament
+							mch->ctrl[8+1] = 0;			// Sostenute
+							mch->ctrl[9+1] = 0;			// Soft
+						}
+						else
+						{
+							mch->ctrl[midictrlindex[m_sBuffer[1]]] = m_sBuffer[2];
+						}
+						break;
+
+					case 0xe0:
+						mch->bend = *(UINT16 *)(m_sBuffer + 1);
+						break;
+				}
+				keydisp_midi(m_sBuffer);
+				if (m_pMidiOut)
+				{
+					m_pMidiOut->Short(MIDIOUTS3(m_sBuffer));
+				}
+				m_nMidiCtrl = MIDICTRL_READY;
+				return 3;
+			}
+			break;
+
+		case MIDICTRL_EXCLUSIVE:
+			if (cData == MIDI_EOX)
+			{
+				if (m_pMidiOut)
+				{
+					m_pMidiOut->Long(m_sBuffer, m_nIndex);
+				}
+				m_nMidiCtrl = MIDICTRL_READY;
+				return m_nIndex;
+			}
+			else if (m_nIndex >= sizeof(m_sBuffer))		// おーばーふろー
+			{
+				m_nMidiCtrl = MIDICTRL_READY;
+			}
+			break;
+
+		case MIDICTRL_TIMECODE:
+			if (m_nIndex >= 2)
+			{
+				if ((cData == 0x7e) || (cData == 0x7f))
+				{
+					// exclusiveと同じでいい筈…
+					m_nMidiCtrl = MIDICTRL_EXCLUSIVE;
+				}
+				else
+				{
+					m_nMidiCtrl = MIDICTRL_READY;
+					return 2;
+				}
+			}
+			break;
+
+		case MIDICTRL_SYSTEM:
+			if (m_nIndex >= m_nRecvSize)
+			{
+				m_nMidiCtrl = MIDICTRL_READY;
+				return m_nRecvSize;
+			}
+			break;
+	}
+	return 0;
 }
 
 /**
@@ -606,5 +543,49 @@ UINT8 CComMidi::GetStat()
  */
 INTPTR CComMidi::Message(UINT nMessage, INTPTR nParam)
 {
-	return midimsg(m_pMidi, nMessage, nParam);
+	switch (nMessage)
+	{
+		case COMMSG_MIDIRESET:
+			midireset();
+			return 1;
+
+		case COMMSG_SETFLAG:
+			{
+				COMFLAG flag = reinterpret_cast<COMFLAG>(nParam);
+				if ((flag) && (flag->size == sizeof(_COMFLAG) + sizeof(m_midich)) && (flag->sig == COMSIG_MIDI))
+				{
+					CopyMemory(m_midich, flag + 1, sizeof(m_midich));
+					midisetparam();
+					return 1;
+				}
+			}
+			break;
+
+		case COMMSG_GETFLAG:
+			{
+				COMFLAG flag = (COMFLAG)_MALLOC(sizeof(_COMFLAG) + sizeof(m_midich), "MIDI FLAG");
+				if (flag)
+				{
+					flag->size = sizeof(_COMFLAG) + sizeof(m_midich);
+					flag->sig = COMSIG_MIDI;
+					flag->ver = 0;
+					flag->param = 0;
+					CopyMemory(flag + 1, m_midich, sizeof(m_midich));
+					return reinterpret_cast<INTPTR>(flag);
+				}
+			}
+			break;
+
+		case COMMSG_MIMPIDEFFILE:
+			::mimpidef_load(&m_mimpiDef, reinterpret_cast<LPCTSTR>(nParam));
+			return 1;
+
+		case COMMSG_MIMPIDEFEN:
+			m_bMimpiDef = (nParam != 0);
+			return 1;
+
+		default:
+			break;
+	}
+	return 0;
 }

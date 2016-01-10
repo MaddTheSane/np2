@@ -55,7 +55,8 @@ typedef struct {
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 COMMNG commng_create(UINT device);
