@@ -15,6 +15,7 @@
 #if defined(VERMOUTH_LIB)
 #include "cmmidioutvermouth.h"
 #endif	// defined(VERMOUTH_LIB)
+#include "cmmidioutvst.h"
 #include "keydisp.h"
 
 #define MIDIOUTS(a, b, c)	(((c) << 16) + (b << 8) + (a))
@@ -277,6 +278,8 @@ CComMidi::~CComMidi()
  */
 bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
 {
+//	m_pMidiOut = CComMidiOutVst::CreateInstance();
+
 #if defined(VERMOUTH_LIB)
 	if ((m_pMidiOut == NULL) && (!milstr_cmp(lpMidiOut, cmmidi_vermouth)))
 	{
