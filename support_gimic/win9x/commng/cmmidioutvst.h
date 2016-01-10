@@ -18,6 +18,7 @@
 class CComMidiOutVst : public CComMidiOut
 {
 public:
+	static bool IsEnabled();
 	static CComMidiOutVst* CreateInstance();
 
 	CComMidiOutVst();

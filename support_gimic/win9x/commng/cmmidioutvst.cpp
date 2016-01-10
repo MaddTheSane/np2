@@ -5,7 +5,25 @@
 
 #include "compiler.h"
 #include "cmmidioutvst.h"
+#include <shlwapi.h>
 #include "pccore.h"
+
+#pragma comment(lib, "shlwapi.lib")
+
+static void GetPath(LPTSTR lpModule, UINT cbModule)
+{
+	::ExpandEnvironmentStrings(TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll"), lpModule, cbModule);
+}
+
+/**
+ * IsEnabled?
+ */
+bool CComMidiOutVst::IsEnabled()
+{
+	TCHAR szModule[MAX_PATH];
+	GetPath(szModule, _countof(szModule));
+	return (::PathFileExists(szModule) != FALSE);
+}
 
 /**
  * インスタンスを作成
@@ -14,7 +32,10 @@
 CComMidiOutVst* CComMidiOutVst::CreateInstance()
 {
 	CComMidiOutVst* pVst = new CComMidiOutVst;
-	if (!pVst->Initialize(TEXT("C:\\Program Files (x86)\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll")))
+
+	TCHAR szModule[MAX_PATH];
+	GetPath(szModule, _countof(szModule));
+	if (!pVst->Initialize(szModule))
 	{
 		delete pVst;
 		pVst = NULL;

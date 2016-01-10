@@ -18,6 +18,7 @@
 #if defined(MT32SOUND_DLL)
 #include "..\ext\mt32snd.h"
 #endif
+#include "commng\cmmidioutvst.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "winmm.lib")
@@ -340,6 +341,15 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname) {
 		num++;
 	}
 #endif
+	if (CComMidiOutVst::IsEnabled())
+	{
+		SendMessage(wnd, CB_INSERTSTRING, (WPARAM)num, (LPARAM)cmmidi_midivst);
+		if (!milstr_cmp(defname, cmmidi_midivst))
+		{
+			defcur = num;
+		}
+		num++;
+	}
 	for (i=0; i<devs; i++) {
 		if (midiOutGetDevCaps(i, &moc, sizeof(moc)) == MMSYSERR_NOERROR) {
 			SendMessage(wnd, CB_INSERTSTRING,

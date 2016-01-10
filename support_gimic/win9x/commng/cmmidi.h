@@ -9,6 +9,7 @@
 #include "mimpidef.h"
 
 extern const TCHAR cmmidi_midimapper[];
+extern const TCHAR cmmidi_midivst[];
 #if defined(VERMOUTH_LIB)
 extern const TCHAR cmmidi_vermouth[];
 #endif
