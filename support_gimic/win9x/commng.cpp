@@ -1,5 +1,5 @@
 /**
- * @file	commng.h
+ * @file	commng.cpp
  * @brief	COM マネージャの動作の定義を行います
  */
 
@@ -12,6 +12,9 @@
 #include "commng/cmserial.h"
 #include "generic/cmjasts.h"
 
+/**
+ * 初期化
+ */
 void commng_initialize(void)
 {
 	cmmidi_initailize();

@@ -6,9 +6,19 @@
 #include "compiler.h"
 #include "cmserial.h"
 
+/**
+ * 速度テーブル
+ */
 const UINT32 cmserial_speed[10] = {110, 300, 1200, 2400, 4800,
 							9600, 19200, 38400, 57600, 115200};
 
+/**
+ * インスタンス作成
+ * @param[in] nPort ポート番号
+ * @param[in] cParam パラメタ
+ * @param[in] nSpeed スピード
+ * @return インスタンス
+ */
 CComSerial* CComSerial::CreateInstance(UINT nPort, UINT8 cParam, UINT32 nSpeed)
 {
 	CComSerial* pSerial = new CComSerial;
@@ -40,6 +50,14 @@ CComSerial::~CComSerial()
 	}
 }
 
+/**
+ * 初期化
+ * @param[in] nPort ポート番号
+ * @param[in] cParam パラメタ
+ * @param[in] nSpeed スピード
+ * @retval true 成功
+ * @retval false 失敗
+ */
 bool CComSerial::Initialize(UINT nPort, UINT8 cParam, UINT32 nSpeed)
 {
 	TCHAR szName[16];
@@ -93,6 +111,11 @@ bool CComSerial::Initialize(UINT nPort, UINT8 cParam, UINT32 nSpeed)
 	return true;
 }
 
+/**
+ * 読み込み
+ * @param[out] pData バッファ
+ * @return サイズ
+ */
 UINT CComSerial::Read(UINT8* pData)
 {
 	DWORD err;
@@ -109,12 +132,21 @@ UINT CComSerial::Read(UINT8* pData)
 	return 0;
 }
 
+/**
+ * 書き込み
+ * @param[out] cData データ
+ * @return サイズ
+ */
 UINT CComSerial::Write(UINT8 cData)
 {
 	DWORD dwWrittenSize;
 	return (::WriteFile(m_hSerial, &cData, 1, &dwWrittenSize, NULL)) ? 1 : 0;
 }
 
+/**
+ * ステータスを得る
+ * @return ステータス
+ */
 UINT8 CComSerial::GetStat()
 {
 	DCB dcb;
@@ -129,7 +161,13 @@ UINT8 CComSerial::GetStat()
 	}
 }
 
-INTPTR CComSerial::Message(UINT msg, INTPTR param)
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParam パラメタ
+ * @return リザルト コード
+ */
+INTPTR CComSerial::Message(UINT nMessage, INTPTR nParam)
 {
 	return 0;
 }

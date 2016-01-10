@@ -713,6 +713,13 @@ void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data) {
 
 // ---- クラス
 
+/**
+ * インスタンス作成
+ * @param[in] lpMidiOut MIDIOUT デバイス
+ * @param[in] lpMidiIn MIDIIN デバイス
+ * @param[in] lpModule モジュール
+ * @return インスタンス
+ */
 CComMidi* CComMidi::CreateInstance(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
 {
 	CComMidi* pMidi = new CComMidi;
@@ -745,28 +752,56 @@ CComMidi::~CComMidi()
 	}
 }
 
+/**
+ * 初期化
+ * @param[in] lpMidiOut MIDIOUT デバイス
+ * @param[in] lpMidiIn MIDIIN デバイス
+ * @param[in] lpModule モジュール
+ * @retval true 成功
+ * @retval false 失敗
+ */
 bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
 {
 	m_pMidi = cmmidi_create(lpMidiOut, lpMidiIn, lpModule);
 	return (m_pMidi != NULL);
 }
 
+/**
+ * 読み込み
+ * @param[out] pData バッファ
+ * @return サイズ
+ */
 UINT CComMidi::Read(UINT8* pData)
 {
 	return midiread(m_pMidi, pData);
 }
 
+/**
+ * 書き込み
+ * @param[out] cData データ
+ * @return サイズ
+ */
 UINT CComMidi::Write(UINT8 cData)
 {
 	return midiwrite(m_pMidi, cData);
 }
 
+/**
+ * ステータスを得る
+ * @return ステータス
+ */
 UINT8 CComMidi::GetStat()
 {
 	return 0x00;
 }
 
-INTPTR CComMidi::Message(UINT msg, INTPTR param)
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParam パラメタ
+ * @return リザルト コード
+ */
+INTPTR CComMidi::Message(UINT nMessage, INTPTR nParam)
 {
-	return midimsg(m_pMidi, msg, param);
+	return midimsg(m_pMidi, nMessage, nParam);
 }

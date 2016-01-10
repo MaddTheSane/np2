@@ -23,10 +23,10 @@ public:
 	static bool GetId(LPCTSTR lpMidiOut, UINT* pId);
 
 private:
-	HMIDIOUT m_hMidiOut;
-	bool m_bWaitingSentExclusive;
-	MIDIHDR m_midihdr;
-	std::vector<char> m_excvbuf;
+	HMIDIOUT m_hMidiOut;					/*!< MIDIOUT ハンドル */
+	MIDIHDR m_midihdr;						/*!< MIDIHDR */
+	bool m_bWaitingSentExclusive;			/*!< エクスクルーシヴ送信中 */
+	std::vector<char> m_excvbuf;			/*!< エクスクルーシヴ バッファ */
 
 	void WaitSentExclusive();
 };

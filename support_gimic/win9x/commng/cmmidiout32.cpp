@@ -13,6 +13,8 @@
 
 /**
  * インスタンスを作成
+ * @param[in] lpMidiOut デバイス名
+ * @return インスタンス
  */
 CComMidiOut32* CComMidiOut32::CreateInstance(LPCTSTR lpMidiOut)
 {
@@ -32,6 +34,7 @@ CComMidiOut32* CComMidiOut32::CreateInstance(LPCTSTR lpMidiOut)
 
 /**
  * コンストラクタ
+ * @param[in] hMidiOut ハンドル
  */
 CComMidiOut32::CComMidiOut32(HMIDIOUT hMidiOut)
 	: m_hMidiOut(hMidiOut)
@@ -65,12 +68,21 @@ void CComMidiOut32::WaitSentExclusive()
 	}
 }
 
+/**
+ * ショート メッセージ
+ * @param[in] nMessage メッセージ
+ */
 void CComMidiOut32::Short(UINT32 nMessage)
 {
 	WaitSentExclusive();
 	::midiOutShortMsg(m_hMidiOut, nMessage);
 }
 
+/**
+ * ロング メッセージ
+ * @param[in] lpMessage メッセージ ポインタ
+ * @param[in] cbMessage メッセージ サイズ
+ */
 void CComMidiOut32::Long(const UINT8* lpMessage, UINT cbMessage)
 {
 	if (cbMessage == 0)
@@ -91,6 +103,13 @@ void CComMidiOut32::Long(const UINT8* lpMessage, UINT cbMessage)
 	m_bWaitingSentExclusive = true;
 }
 
+/**
+ * ID を得る
+ * @param[in] lpMidiOut デバイス名
+ * @param[out] pId ID
+ * @retval true 成功
+ * @retval false 失敗
+ */
 bool CComMidiOut32::GetId(LPCTSTR lpMidiOut, UINT* pId)
 {
 	const UINT nNum = ::midiOutGetNumDevs();

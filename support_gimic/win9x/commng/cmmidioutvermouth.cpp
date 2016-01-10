@@ -8,10 +8,12 @@
 
 #if defined(VERMOUTH_LIB)
 
+//! ハンドル
 extern MIDIMOD vermouth_module;
 
 /**
  * インスタンスを作成
+ * @return インスタンス
  */
 CComMidiOutVermouth* CComMidiOutVermouth::CreateInstance()
 {
@@ -25,6 +27,7 @@ CComMidiOutVermouth* CComMidiOutVermouth::CreateInstance()
 
 /**
  * コンストラクタ
+ * @param[in] vermouth ハンドル
  */
 CComMidiOutVermouth::CComMidiOutVermouth(MIDIHDL vermouth)
 	: m_vermouth(vermouth)
@@ -32,23 +35,41 @@ CComMidiOutVermouth::CComMidiOutVermouth(MIDIHDL vermouth)
 	::sound_streamregist(m_vermouth, reinterpret_cast<SOUNDCB>(GetPcm));
 }
 
+/**
+ * デストラクタ
+ */
 CComMidiOutVermouth::~CComMidiOutVermouth()
 {
 	::midiout_destroy(m_vermouth);
 }
 
+/**
+ * ショート メッセージ
+ * @param[in] nMessage メッセージ
+ */
 void CComMidiOutVermouth::Short(UINT32 nMessage)
 {
 	sound_sync();
 	::midiout_shortmsg(m_vermouth, nMessage);
 }
 
+/**
+ * ロング メッセージ
+ * @param[in] lpMessage メッセージ ポインタ
+ * @param[in] cbMessage メッセージ サイズ
+ */
 void CComMidiOutVermouth::Long(const UINT8* lpMessage, UINT cbMessage)
 {
 	sound_sync();
 	::midiout_longmsg(m_vermouth, lpMessage, cbMessage);
 }
 
+/**
+ * プロセス
+ * @param[in] vermouth ハンドル
+ * @param[out] lpBuffer バッファ
+ * @param[in] nBufferCount サンプル数
+ */
 void SOUNDCALL CComMidiOutVermouth::GetPcm(MIDIHDL vermouth, SINT32* lpBuffer, UINT nBufferCount)
 {
 	while (nBufferCount)

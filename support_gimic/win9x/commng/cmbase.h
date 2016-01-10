@@ -13,12 +13,12 @@
 class CComBase : public _commng
 {
 protected:
-	CComBase(UINT cConnect);
+	CComBase(UINT nConnect);
 	virtual ~CComBase();
 
 	/**
 	 * Read
-	 * @param[out] pcData
+	 * @param[out] pData
 	 * @return result
 	 */
 	virtual UINT Read(UINT8* pData) = 0;
@@ -38,13 +38,16 @@ protected:
 
 	/**
 	 * メッセージ
+	 * @param[in] nMessage メッセージ
+	 * @param[in] nParam パラメタ
+	 * @return リザルト コード
 	 */
-	virtual INTPTR Message(UINT msg, INTPTR param) = 0;
+	virtual INTPTR Message(UINT nMessage, INTPTR nParam) = 0;
 
 private:
 	static UINT cRead(COMMNG cm, UINT8* pData);
 	static UINT cWrite(COMMNG cm, UINT8 cData);
 	static UINT8 cGetStat(COMMNG cm);
-	static INTPTR cMessage(COMMNG cm, UINT msg, INTPTR param);
+	static INTPTR cMessage(COMMNG cm, UINT nMessage, INTPTR nParam);
 	static void cRelease(COMMNG cm);
 };

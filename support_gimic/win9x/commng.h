@@ -30,16 +30,20 @@ enum {
 };
 
 struct _commng;
-typedef struct _commng	_COMMNG;
-typedef struct _commng	*COMMNG;
+typedef struct _commng	_COMMNG;		/*!< defines the instance of COMMNG */
+typedef struct _commng	*COMMNG;		/*!< defines the instance of COMMNG */
 
-struct _commng {
-	UINT	connect;
-	UINT	(*read)(COMMNG self, UINT8 *data);
-	UINT	(*write)(COMMNG self, UINT8 data);
-	UINT8	(*getstat)(COMMNG self);
-	INTPTR	(*msg)(COMMNG self, UINT msg, INTPTR param);
-	void	(*release)(COMMNG self);
+/**
+ * @brief COMMNG
+ */
+struct _commng
+{
+	UINT	connect;											/*!< flags */
+	UINT	(*read)(COMMNG self, UINT8 *data);					/*!< read */
+	UINT	(*write)(COMMNG self, UINT8 data);					/*!< write */
+	UINT8	(*getstat)(COMMNG self);							/*!< get status */
+	INTPTR	(*msg)(COMMNG self, UINT msg, INTPTR param);		/*!< message */
+	void	(*release)(COMMNG self);							/*!< release */
 };
 
 typedef struct {

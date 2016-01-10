@@ -45,8 +45,11 @@ UINT8 CComNull::GetStat()
 
 /**
  * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParam パラメタ
+ * @return リザルト コード
  */
-INTPTR CComNull::Message(UINT msg, INTPTR param)
+INTPTR CComNull::Message(UINT nMessage, INTPTR nParam)
 {
 	return 0;
 }

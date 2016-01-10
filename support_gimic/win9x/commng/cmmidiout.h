@@ -20,6 +20,7 @@ public:
 
 	/**
 	 * ショート メッセージ
+	 * @param[in] nMessage メッセージ
 	 */
 	virtual void Short(UINT32 nMessage)
 	{
@@ -27,6 +28,8 @@ public:
 
 	/**
 	 * ロング メッセージ
+	 * @param[in] lpMessage メッセージ ポインタ
+	 * @param[in] cbMessage メッセージ サイズ
 	 */
 	virtual void Long(const UINT8* lpMessage, UINT cbMessage)
 	{

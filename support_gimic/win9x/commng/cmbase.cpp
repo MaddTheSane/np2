@@ -8,10 +8,11 @@
 
 /**
  * コンストラクタ
+ * @param[in] nConnect 接続フラグ
  */
-CComBase::CComBase(UINT cConnect)
+CComBase::CComBase(UINT nConnect)
 {
-	this->connect = cConnect;
+	this->connect = nConnect;
 	this->read = cRead;
 	this->write = cWrite;
 	this->getstat = cGetStat;
@@ -28,6 +29,7 @@ CComBase::~CComBase()
 
 /**
  * Read
+ * @param[in] cm COMMNG インスタンス
  * @param[out] pData
  * @return result
  */
@@ -38,6 +40,7 @@ UINT CComBase::cRead(COMMNG cm, UINT8* pData)
 
 /**
  * Write
+ * @param[in] cm COMMNG インスタンス
  * @param[in] cData
  * @return result
  */
@@ -48,6 +51,7 @@ UINT CComBase::cWrite(COMMNG cm, UINT8 cData)
 
 /**
  * ステータスを得る
+ * @param[in] cm COMMNG インスタンス
  * @return ステータス
  */
 UINT8 CComBase::cGetStat(COMMNG cm)
@@ -57,14 +61,19 @@ UINT8 CComBase::cGetStat(COMMNG cm)
 
 /**
  * メッセージ
+ * @param[in] cm COMMNG インスタンス
+ * @param[in] nMessage メッセージ
+ * @param[in] nParam パラメタ
+ * @return リザルト コード
  */
-INTPTR CComBase::cMessage(COMMNG cm, UINT msg, INTPTR param)
+INTPTR CComBase::cMessage(COMMNG cm, UINT nMessage, INTPTR nParam)
 {
-	return static_cast<CComBase*>(cm)->Message(msg, param);
+	return static_cast<CComBase*>(cm)->Message(nMessage, nParam);
 }
 
 /**
  * リリース
+ * @param[in] cm COMMNG インスタンス
  */
 void CComBase::cRelease(COMMNG cm)
 {

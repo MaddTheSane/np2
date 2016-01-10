@@ -21,7 +21,6 @@ void cmmidi_recvdata(HMIDIIN hdr, UINT32 data);
 void cmmidi_recvexcv(HMIDIIN hdr, MIDIHDR *data);
 
 struct _cmmidi;
-class CComMidiOut;
 
 /**
  * @brief commng MIDI デバイス クラス

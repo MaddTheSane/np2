@@ -6,6 +6,11 @@
 #include "compiler.h"
 #include "cmpara.h"
 
+/**
+ * インスタンス作成
+ * @param[in] nPort ポート番号
+ * @return インスタンス
+ */
 CComPara* CComPara::CreateInstance(UINT nPort)
 {
 	CComPara* pPara = new CComPara;
@@ -37,6 +42,12 @@ CComPara::~CComPara()
 	}
 }
 
+/**
+ * 初期化
+ * @param[in] nPort ポート番号
+ * @retval true 成功
+ * @retval false 失敗
+ */
 bool CComPara::Initialize(UINT nPort)
 {
 	TCHAR szName[16];
@@ -45,23 +56,43 @@ bool CComPara::Initialize(UINT nPort)
 	return (m_hParallel != INVALID_HANDLE_VALUE);
 }
 
+/**
+ * 読み込み
+ * @param[out] pData バッファ
+ * @return サイズ
+ */
 UINT CComPara::Read(UINT8* pData)
 {
 	return 0;
 }
 
+/**
+ * 書き込み
+ * @param[out] cData データ
+ * @return サイズ
+ */
 UINT CComPara::Write(UINT8 cData)
 {
 	DWORD dwWrittenSize;
 	return (::WriteFile(m_hParallel, &cData, 1, &dwWrittenSize, NULL)) ? 1 : 0;
 }
 
+/**
+ * ステータスを得る
+ * @return ステータス
+ */
 UINT8 CComPara::GetStat()
 {
 	return 0x00;
 }
 
-INTPTR CComPara::Message(UINT msg, INTPTR param)
+/**
+ * メッセージ
+ * @param[in] nMessage メッセージ
+ * @param[in] nParam パラメタ
+ * @return リザルト コード
+ */
+INTPTR CComPara::Message(UINT nMessage, INTPTR nParam)
 {
 	return 0;
 }
