@@ -2,7 +2,7 @@ dnl
 dnl Configure for Xnp2
 dnl
 
-AC_PREREQ(2.61)
+AC_PREREQ(2.69)
 
 AC_INIT(Xnp2,0.85,nonakap@gmail.com,xnp2)
 AM_INIT_AUTOMAKE([no-define no-dist no-installinfo subdir-objects])
@@ -15,6 +15,7 @@ dnl Checks for programs.
 dnl
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_CXX
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_INSTALL
@@ -66,6 +67,14 @@ AC_CHECK_FUNCS(pow,,AC_CHECK_LIB(m,pow))
 AC_CHECK_FUNCS(sqrt,,AC_CHECK_LIB(m,sqrt))
 
 dnl
+dnl Checks for pthread
+dnl
+ACX_PTHREAD
+LIBS="$LIBS $PTHREAD_LIBS"
+CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+
+dnl
 dnl Checks for X
 dnl
 AC_PATH_X
@@ -87,6 +96,9 @@ AC_ARG_ENABLE(sdl2,
 AC_ARG_ENABLE(sdlmixer,
   AC_HELP_STRING([--enable-sdlmixer],[Use SDL_mixer library [default=yes]]),,
   [enable_sdlmixer="yes"])
+AC_ARG_ENABLE(libusb1,
+  AC_HELP_STRING([--enable-libusb1],[Use libusb-1.0 library [default=yes]]),,
+  [enable_libusb1="yes"])
 AC_ARG_ENABLE(xf86vidmode,
   AC_HELP_STRING([--enable-xf86vidmode],[Use XF86VidMode extension [default=yes]]),,
   [enable_xf86vidmode="yes"])
@@ -167,6 +179,16 @@ if test x"$no_sdl" = "xyes" -a x"$enable_sdl" = "xyes"; then
   fi
 fi
 
+dnl
+dnl Checks for libusb-1.0
+dnl
+if test x"$enable_libusb1" = "xyes"; then
+  PKG_CHECK_MODULES([LIBUSB1], [libusb-1.0],
+    [AC_DEFINE(USE_LIBUSB1,1,[Define to 1 if you have the libusb-1.0 library.])]
+  )
+fi
+AC_SUBST(LIBUSB1_CFLAGS)
+AC_SUBST(LIBUSB1_LIBS)
 
 dnl
 dnl Checks for XF86VidMode extension
@@ -215,11 +237,12 @@ dnl Checks for debug mode
 dnl
 AC_MSG_CHECKING([whether to enable debugging])
 if test x"$enable_debug" = "xyes"; then
-  CFLAGS="$CFLAGS -g -DDEBUG -DTRACE"
+  CPPFLAGS="$CPPFLAGS -g -DDEBUG -DTRACE"
   CFLAGS="$CFLAGS -Wstack-protector -fstack-protector --param ssp-buffer-size=1"
+  CXXFLAGS="$CXXFLAGS -Wstack-protector -fstack-protector --param ssp-buffer-size=1"
   enable_warning=yes
 else
-  CFLAGS="$CFLAGS -DNDEBUG"
+  CPPFLAGS="$CPPFLAGS -DNDEBUG"
 fi
 AC_MSG_RESULT($enable_debug)
 
@@ -234,6 +257,12 @@ if test x"$enable_warning" = "xyes"; then
   CFLAGS="$CFLAGS -Wcast-qual -Wwrite-strings"
   CFLAGS="$CFLAGS -Wno-unused-parameter -Wno-missing-field-initializers"
   CFLAGS="$CFLAGS -Wformat=2"
+  CXXFLAGS="$CXXFLAGS -Wall -Wextra"
+  CXXFLAGS="$CXXFLAGS -Wpointer-arith"
+  CXXFLAGS="$CXXFLAGS -Wreturn-type -Wswitch -Wshadow"
+  CXXFLAGS="$CXXFLAGS -Wcast-qual -Wwrite-strings"
+  CXXFLAGS="$CXXFLAGS -Wno-unused-parameter -Wno-missing-field-initializers"
+  CXXFLAGS="$CXXFLAGS -Wformat=2"
 fi
 AC_MSG_RESULT($enable_warning)
 
