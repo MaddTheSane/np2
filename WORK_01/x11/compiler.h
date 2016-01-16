@@ -160,7 +160,9 @@ typedef	gboolean	BOOL;
 #endif
 #endif /* __GNUC__ */
 
+G_BEGIN_DECLS
 UINT32 gettick(void);
+G_END_DECLS
 #define	GETTICK()	gettick()
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
@@ -236,6 +238,7 @@ UINT32 gettick(void);
 
 #undef	SOUND_CRITICAL
 #undef	SOUNDRESERVE
+#define	SUPPORT_EXTERNALCHIP
 
 #define	SUPPORT_PC9861K
 #define	SUPPORT_HOSTDRV
