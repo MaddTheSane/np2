@@ -1,17 +1,13 @@
-/**
- * @file	dlgabout.c
- * @brief	Implementation of the about dialog
- */
+#include	"compiler.h"
+#include	"strres.h"
+#include	"np2ver.h"
+#include	"pccore.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"menustr.h"
+#include	"sysmenu.res"
+#include	"dlgabout.h"
 
-#include "compiler.h"
-#include "dlgabout.h"
-#include "../menubase/menudlg.h"
-#include "../menubase/menures.h"
-#include "../menubase/menuicon.h"
-#include "strres.h"
-#include "np2ver.h"
-#include "pccore.h"
-#include "sysmenu.res"
 
 enum {
 	DID_ICON	= DID_USER,

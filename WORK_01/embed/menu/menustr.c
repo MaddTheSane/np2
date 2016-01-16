@@ -1,10 +1,8 @@
-/**
- * @file	menustr.c
- * @brief	Implementation of the resources
- */
+#include	"compiler.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"menustr.h"
 
-#include "compiler.h"
-#include "menustr.h"
 
 const OEMCHAR mstr_cfg[] = OEMTEXT("Configure");
 const OEMCHAR mstr_scropt[] = OEMTEXT("Screen Option");

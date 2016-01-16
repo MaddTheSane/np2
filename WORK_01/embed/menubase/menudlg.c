@@ -1,16 +1,11 @@
-/**
- * @file	menudlg.c
- * @brief	Implementation of the base of the dialog
- */
+#include	"compiler.h"
+#include	"strres.h"
+#include	"fontmng.h"
+#include	"vramhdl.h"
+#include	"vrammix.h"
+#include	"menudeco.inc"
+#include	"menubase.h"
 
-#include "compiler.h"
-#include "menudlg.h"
-#include "menudeco.inc"
-#include "menuicon.h"
-#include "menures.h"
-#include "../vrammix.h"
-#include "strres.h"
-#include "fontmng.h"
 
 typedef struct _dprm {
 struct _dprm	*next;

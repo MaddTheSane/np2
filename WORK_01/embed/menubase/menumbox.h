@@ -1,9 +1,3 @@
-/**
- * @file	menumbox.h
- * @brief	Interface of the message box
- */
-
-#pragma once
 
 enum {
 	MBOX_OK				= 0x0000,

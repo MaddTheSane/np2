@@ -1,11 +1,3 @@
-/**
- * @file	menudlg.h
- * @brief	Interface of the base of the dialog
- */
-
-#pragma once
-
-#include "menubase.h"
 
 enum {
 	DLGMSG_CREATE	= 0,

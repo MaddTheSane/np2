@@ -19,8 +19,8 @@
 #include	"fdd/diskdrv.h"
 #include	"timing.h"
 #include	"keystat.h"
-#include "embed/menubase/menubase.h"
-#include "embed/menubase/menumbox.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
 #include	"sysmenu.h"
 
 

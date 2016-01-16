@@ -4,7 +4,8 @@
 // #include	<unistd.h>
 #include	"scrnmng.h"
 #include	"scrndraw.h"
-#include "embed/menubase/menubase.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
 
 static SDL_Window *s_sdlWindow;
 static SDL_Renderer *s_renderer;

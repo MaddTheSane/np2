@@ -1,11 +1,8 @@
-/**
- * @file	vrammix.c
- * @brief	Implementation of mixing vram
- */
+#include	"compiler.h"
+#include	"fontmng.h"
+#include	"vramhdl.h"
+#include	"vrammix.h"
 
-#include "compiler.h"
-#include "vrammix.h"
-#include "fontmng.h"
 
 enum {
 	VRAMALPHABASE	= (1 << VRAMALPHABIT) - VRAMALPHA,

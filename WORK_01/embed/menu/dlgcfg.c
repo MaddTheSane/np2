@@ -1,16 +1,14 @@
-/**
- * @file	dlgcfg.c
- * @brief	Implementation of the configure dialog
- */
+#include	"compiler.h"
+#include	"strres.h"
+#include	"np2.h"
+#include	"sysmng.h"
+#include	"pccore.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"menustr.h"
+#include	"sysmenu.res"
+#include	"dlgcfg.h"
 
-#include "compiler.h"
-#include "dlgcfg.h"
-#include "../menubase/menudlg.h"
-#include "../menubase/menures.h"
-#include "strres.h"
-#include "pccore.h"
-#include "np2.h"
-#include "sysmng.h"
 
 enum {
 	DID_CLOCK1	= DID_USER,

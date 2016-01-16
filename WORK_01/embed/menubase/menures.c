@@ -1,10 +1,7 @@
-/**
- * @file	menures.c
- * @brief	Implementation of the resources of the menu
- */
+#include	"compiler.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
 
-#include "compiler.h"
-#include "menures.h"
 
 #if defined(OSLANG_SJIS) && !defined(RESOURCE_US)
 const OEMCHAR mstr_fontcheck[] = " ";

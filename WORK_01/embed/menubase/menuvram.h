@@ -1,11 +1,3 @@
-/**
- * @file	menuvram.h
- * @brief	Interface of the vram of the menu
- */
-
-#pragma once
-
-#include "../vramhdl.h"
 
 enum {
 	MVC_BACK,
@@ -67,3 +59,4 @@ void menuvram_closebtn(VRAMHDL vram, const RECT_T *rect, BOOL focus);
 #ifdef __cplusplus
 }
 #endif
+

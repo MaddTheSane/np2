@@ -2,8 +2,9 @@
 #include	"inputmng.h"
 #include	"taskmng.h"
 #include	"sdlkbd.h"
-#include "sysmenu.h"
-#include "embed/menubase/menubase.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"sysmenu.h"
 
 
 	BOOL	task_avail;

@@ -1,11 +1,3 @@
-/**
- * @file	menuicon.h
- * @brief	Interface of the icons of the menu
- */
-
-#pragma once
-
-#include "menuvram.h"
 
 enum {
 	MICON_NULL			= 0,

@@ -1,10 +1,7 @@
-/**
- * @file	menuicon.c
- * @brief	Implementation of the icons of the menu
- */
+#include	"compiler.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
 
-#include "compiler.h"
-#include "menuicon.h"
 
 #define	MICON_MAX			16
 #define	MICON_CACHE			8

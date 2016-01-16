@@ -1,17 +1,11 @@
-/**
- * @file	menusys.c
- * @brief	Implementation of the menu of the system
- */
+#include	"compiler.h"
+#include	"fontmng.h"
+#include	"inputmng.h"
+#include	"vramhdl.h"
+#include	"vrammix.h"
+#include	"menudeco.inc"
+#include	"menubase.h"
 
-#include "compiler.h"
-#include "menusys.h"
-#include "menubase.h"
-#include "menudeco.inc"
-#include "menures.h"
-#include "menuvram.h"
-#include "../vrammix.h"
-#include "fontmng.h"
-#include "inputmng.h"
 
 typedef struct _mhdl {
 struct _mhdl	*chain;

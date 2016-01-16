@@ -1,19 +1,14 @@
-/**
- * @file	filesel.c
- * @brief	Implementation of the selection of files
- */
-
-#include "compiler.h"
-#include "filesel.h"
-#include "../menubase/menudlg.h"
-#include "../menubase/menures.h"
-#include "../menubase/menuicon.h"
-#include "strres.h"
-#include "dosio.h"
-#include "soundmng.h"
-#include "pccore.h"
-#include "fdd/diskdrv.h"
-#include "fdd/fddfile.h"
+#include	"compiler.h"
+#include	"strres.h"
+#include	"dosio.h"
+#include	"soundmng.h"
+#include	"pccore.h"
+#include	"fdd/diskdrv.h"
+#include	"fdd/fddfile.h"
+#include	"filesel.h"
+#include	"vramhdl.h"
+#include	"menubase.h"
+#include	"menustr.h"
 
 enum {
 	DID_FOLDER	= DID_USER,
