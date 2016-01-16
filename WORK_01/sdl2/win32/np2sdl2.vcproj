@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
+				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
