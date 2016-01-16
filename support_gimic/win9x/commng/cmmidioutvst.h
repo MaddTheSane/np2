@@ -8,8 +8,8 @@
 #include "cmmidiout.h"
 #include "sound.h"
 #include "vsthost\vstbuffer.h"
+#include "vsthost\vsteditwnd.h"
 #include "vsthost\vsteffect.h"
-#include "vsthost\vsteffectwnd.h"
 #include "vsthost\vstmidievent.h"
 
 /**
@@ -27,15 +27,15 @@ public:
 	virtual void Long(const UINT8* lpMessage, UINT cbMessage);
 
 private:
-	UINT m_nBlockSize;
-	UINT m_nIndex;
-	CVstEffect m_effect;
-	CVstEffectWnd m_wnd;
-	CVstMidiEvent m_event;
-	CVstBuffer m_input;
-	CVstBuffer m_output;
+	UINT m_nBlockSize;			/*!< ブロック サイズ */
+	UINT m_nIndex;				/*!< 読み取りインデックス */
+	CVstEffect m_effect;		/*!< エフェクト */
+	CVstEditWnd m_wnd;			/*!< ウィンドウ */
+	CVstMidiEvent m_event;		/*!< イベント */
+	CVstBuffer m_input;			/*!< 入力バッファ */
+	CVstBuffer m_output;		/*!< 出力バッファ */
 
 	bool Initialize(LPCTSTR lpPath);
 	static void SOUNDCALL GetPcm(CComMidiOutVst*, SINT32* lpBuffer, UINT nBufferCount);
-	void Process(SINT32* lpBuffer, UINT nBufferCount);
+	void Process32(SINT32* lpBuffer, UINT nBufferCount);
 };

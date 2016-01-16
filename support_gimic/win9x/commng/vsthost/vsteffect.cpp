@@ -5,11 +5,15 @@
 
 #include "compiler.h"
 #include "vsteffect.h"
+#include "vsteditwndbase.h"
+
+#ifdef _WIN32
 #include <shlwapi.h>
 #include <atlbase.h>
-#include "vsteffectwnd.h"
-
 #pragma comment(lib, "shlwapi.lib")
+#else	// _WIN32
+#include <dlfcn.h>
+#endif	// _WIN32
 
 /*! エフェクト ハンドラー */
 std::map<AEffect*, CVstEffect*> CVstEffect::sm_effects;
@@ -43,6 +47,7 @@ bool CVstEffect::Load(LPCTSTR lpVst)
 {
 	Unload();
 
+#ifdef _WIN32
 	/* VSTi読み込み */
 	HMODULE hModule = ::LoadLibrary(lpVst);
 	if (hModule == NULL)
@@ -68,10 +73,11 @@ bool CVstEffect::Load(LPCTSTR lpVst)
 		::FreeLibrary(hModule);
 		return false;
 	}
-
-	sm_effects[effect] = this;
-	m_effect = effect;
-	m_hModule = hModule;
+	if (effect->magic != kEffectMagic)
+	{
+		::FreeLibrary(hModule);
+		return false;
+	}
 
 	TCHAR szDir[MAX_PATH];
 	::lstrcpyn(szDir, lpVst, _countof(szDir));
@@ -79,6 +85,58 @@ bool CVstEffect::Load(LPCTSTR lpVst)
 
 	USES_CONVERSION;
 	m_lpDir = ::strdup(T2A(szDir));
+
+#else	// _WIN32
+
+	/* VSTi読み込み */
+	void* hModule = ::dlopen(lpVst, 262);
+	if (hModule == NULL)
+	{
+		return false;
+	}
+	typedef AEffect* (*FnMain)(::audioMasterCallback audioMaster);
+	FnMain fnMain = reinterpret_cast<FnMain>(::dlsym(hModule, "VSTPluginMain"));
+	if (fnMain == NULL)
+	{
+		fnMain = reinterpret_cast<FnMain>(::dlsym(hModule, "main"));
+	}
+	if (fnMain == NULL)
+	{
+		::dlclose(hModule);
+		return false;
+	}
+
+	// 初期化
+	AEffect* effect = (*fnMain)(cAudioMasterCallback);
+	if (effect == NULL)
+	{
+		::dlclose(hModule);
+		return false;
+	}
+	if (effect->magic != kEffectMagic)
+	{
+		::dlclose(hModule);
+		return false;
+	}
+
+	m_lpDir = ::strdup(lpVst);
+	char* pSlash = strrchr(m_lpDir, '/');
+	if (pSlash)
+	{
+		*(pSlash + 1) = 0;
+	}
+	else
+	{
+		free(m_lpDir);
+		m_lpDir = NULL;
+	}
+#endif
+
+	printf("%d input(s), %d output(s)\n", effect->numInputs, effect->numOutputs);
+
+	sm_effects[effect] = this;
+	m_effect = effect;
+	m_hModule = hModule;
 
 	return true;
 }
@@ -90,16 +148,16 @@ void CVstEffect::Unload()
 {
 	if (m_effect)
 	{
-		std::map<AEffect*, CVstEffect*>::iterator it = sm_effects.find(m_effect);
-		if (it != sm_effects.end())
-		{
-			sm_effects.erase(it);
-		}
+		sm_effects.erase(m_effect);
 		m_effect = NULL;
 	}
 	if (m_hModule)
 	{
+#ifdef _WIN32
 		::FreeLibrary(m_hModule);
+#else	// _WIN32
+		::dlclose(m_hModule);
+#endif	// _WIN32
 		m_hModule = NULL;
 	}
 	if (m_lpDir)
@@ -114,9 +172,9 @@ void CVstEffect::Unload()
  * @param[in] pWnd ハンドル
  * @return 以前のハンドル
  */
-CVstEffectWnd* CVstEffect::Attach(CVstEffectWnd* pWnd)
+IVstEditWnd* CVstEffect::Attach(IVstEditWnd* pWnd)
 {
-	CVstEffectWnd* pRet = m_pWnd;
+	IVstEditWnd* pRet = m_pWnd;
 	m_pWnd = pWnd;
 	return pRet;
 }
@@ -207,7 +265,7 @@ VstIntPtr CVstEffect::audioMasterCallback(VstInt32 opcode, VstInt32 index, VstIn
 		case audioMasterSizeWindow:
 			if (m_pWnd)
 			{
-				ret = m_pWnd->OnResize(index, value);
+				ret = m_pWnd->OnResize(index, static_cast<VstInt32>(value));
 			}
 			break;
 

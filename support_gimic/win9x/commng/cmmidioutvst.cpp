@@ -45,7 +45,8 @@ CComMidiOutVst* CComMidiOutVst::CreateInstance()
 
 /**
  * コンストラクタ
- * @param[in] vermouth ハンドル */
+ * @param[in] vermouth ハンドル
+ */
 CComMidiOutVst::CComMidiOutVst()
 	: m_nBlockSize(128)
 	, m_nIndex(0)
@@ -126,10 +127,15 @@ void CComMidiOutVst::Long(const UINT8* lpMessage, UINT cbMessage)
  */
 void SOUNDCALL CComMidiOutVst::GetPcm(CComMidiOutVst* pVst, SINT32* lpBuffer, UINT nBufferCount)
 {
-	pVst->Process(lpBuffer, nBufferCount);
+	pVst->Process32(lpBuffer, nBufferCount);
 }
 
-void CComMidiOutVst::Process(SINT32* lpBuffer, UINT nBufferCount)
+/**
+ * プロセス (32bit)
+ * @param[out] lpBuffer バッファ
+ * @param[in] nBufferCount サンプル数
+ */
+void CComMidiOutVst::Process32(SINT32* lpBuffer, UINT nBufferCount)
 {
 	while (nBufferCount)
 	{

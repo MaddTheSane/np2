@@ -1410,19 +1410,19 @@ SOURCE=.\commng\vsthost\vstbuffer.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\commng\vsthost\vsteditwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteditwnd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\commng\vsthost\vsteffect.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\commng\vsthost\vsteffect.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\commng\vsthost\vsteffectwnd.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\commng\vsthost\vsteffectwnd.h
 # End Source File
 # Begin Source File
 

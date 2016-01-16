@@ -23,7 +23,7 @@
 #include "misc\tstring.h"
 #include "commng.h"
 #include "commng\cmmidiin32.h"
-#include "commng\vsthost\vsteffectwnd.h"
+#include "commng\vsthost\vsteditwnd.h"
 #include "joymng.h"
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -1468,7 +1468,7 @@ static void ExecuteOneFrame(BOOL bDraw)
 #if defined(SUPPORT_DCLOCK)
 	DispClock::GetInstance()->Update();
 #endif
-	CVstEffectWnd::OnIdle();
+	CVstEditWnd::OnIdle();
 }
 
 static void framereset(UINT cnt) {
@@ -1515,7 +1515,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	_MEM_INIT();
 	CWndProc::Initialize(hInstance);
-	CVstEffectWnd::Initialize(hInstance);
+	CVstEditWnd::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();

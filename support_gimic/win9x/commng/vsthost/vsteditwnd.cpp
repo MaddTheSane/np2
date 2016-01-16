@@ -1,20 +1,20 @@
 /**
- * @file	vsteffectwnd.cpp
- * @brief	VST effect ウィンドウ クラスの動作の定義を行います
+ * @file	vsteditwnd.cpp
+ * @brief	VST edit ウィンドウ クラスの動作の定義を行います
  */
 
 #include "compiler.h"
-#include "vsteffectwnd.h"
+#include "vsteditwnd.h"
 #include "vsteffect.h"
 
 //! ウィンドウ クラス名
 static const TCHAR s_szClassName[] = TEXT("VstEffectWnd");
 
 //! インスタンス
-HINSTANCE CVstEffectWnd::sm_hInstance;
+HINSTANCE CVstEditWnd::sm_hInstance;
 
 //! ウィンドウ マップ
-std::map<HWND, CVstEffectWnd*> CVstEffectWnd::sm_wndMap;
+std::map<HWND, CVstEditWnd*> CVstEditWnd::sm_wndMap;
 
 /**
  * 初期化
@@ -22,7 +22,7 @@ std::map<HWND, CVstEffectWnd*> CVstEffectWnd::sm_wndMap;
  * @retval true 成功
  * @retval false 失敗
  */
-bool CVstEffectWnd::Initialize(HINSTANCE hInstance)
+bool CVstEditWnd::Initialize(HINSTANCE hInstance)
 {
 	sm_hInstance = hInstance;
 
@@ -45,9 +45,9 @@ bool CVstEffectWnd::Initialize(HINSTANCE hInstance)
 /**
  * アイドリング
  */
-void CVstEffectWnd::OnIdle()
+void CVstEditWnd::OnIdle()
 {
-	for (std::map<HWND, CVstEffectWnd*>::iterator it = sm_wndMap.begin(); it != sm_wndMap.end(); ++it)
+	for (std::map<HWND, CVstEditWnd*>::iterator it = sm_wndMap.begin(); it != sm_wndMap.end(); ++it)
 	{
 		it->second->m_pEffect->idle();
 	}
@@ -56,7 +56,7 @@ void CVstEffectWnd::OnIdle()
 /**
  * コンストラクタ
  */
-CVstEffectWnd::CVstEffectWnd()
+CVstEditWnd::CVstEditWnd()
 	: m_hWnd(NULL)
 	, m_pEffect(NULL)
 {
@@ -65,7 +65,7 @@ CVstEffectWnd::CVstEffectWnd()
 /**
  * デストラクタ
  */
-CVstEffectWnd::~CVstEffectWnd()
+CVstEditWnd::~CVstEditWnd()
 {
 }
 
@@ -79,7 +79,7 @@ CVstEffectWnd::~CVstEffectWnd()
  * @retval true 成功
  * @retval false 失敗
  */
-bool CVstEffectWnd::Create(CVstEffect* pEffect, LPCTSTR lpszWindowName, DWORD dwStyle, LONG x, LONG y)
+bool CVstEditWnd::Create(CVstEffect* pEffect, LPCTSTR lpszWindowName, DWORD dwStyle, LONG x, LONG y)
 {
 	if (pEffect == NULL)
 	{
@@ -115,12 +115,13 @@ bool CVstEffectWnd::Create(CVstEffect* pEffect, LPCTSTR lpszWindowName, DWORD dw
 /**
  * 破棄
  */
-void CVstEffectWnd::Destroy()
+void CVstEditWnd::Destroy()
 {
 	if (m_pEffect)
 	{
 		m_pEffect->editClose();
 		m_pEffect->Attach();
+		m_pEffect = NULL;
 	}
 	if (m_hWnd)
 	{
@@ -136,20 +137,20 @@ void CVstEffectWnd::Destroy()
  * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
  * @return メッセージに依存する値を返します
  */
-LRESULT CALLBACK CVstEffectWnd::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CVstEditWnd::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	CVstEffectWnd* pWnd = NULL;
+	CVstEditWnd* pWnd = NULL;
 	if (message == WM_CREATE)
 	{
 		LPCREATESTRUCT pCreate = reinterpret_cast<LPCREATESTRUCT>(lParam);
-		pWnd = static_cast<CVstEffectWnd*>(pCreate->lpCreateParams);
+		pWnd = static_cast<CVstEditWnd*>(pCreate->lpCreateParams);
 		pWnd->m_hWnd = hWnd;
 		sm_wndMap[hWnd] = pWnd;
 		::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 	}
 	else
 	{
-		pWnd = reinterpret_cast<CVstEffectWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		pWnd = reinterpret_cast<CVstEditWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	}
 
 	if (pWnd == NULL)
@@ -176,7 +177,7 @@ LRESULT CALLBACK CVstEffectWnd::WndProc(HWND hWnd, UINT message, WPARAM wParam, 
  * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
  * @return メッセージに依存する値を返します
  */
-LRESULT CVstEffectWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CVstEditWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -196,7 +197,7 @@ LRESULT CVstEffectWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
  * @retval 0 継続
  * @retval -1 破棄
  */
-int CVstEffectWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CVstEditWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	HMENU hMenu = ::GetSystemMenu(m_hWnd, FALSE);
 	if (hMenu)
@@ -213,7 +214,7 @@ int CVstEffectWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
  * @retval true 成功
  * @retval false 失敗
  */
-bool CVstEffectWnd::OnResize(int nWidth, int nHeight)
+bool CVstEditWnd::OnResize(int nWidth, int nHeight)
 {
 	if (m_hWnd == NULL)
 	{
@@ -241,7 +242,7 @@ bool CVstEffectWnd::OnResize(int nWidth, int nHeight)
  * @retval true 成功
  * @retval false 失敗
  */
-bool CVstEffectWnd::OnUpdateDisplay()
+bool CVstEditWnd::OnUpdateDisplay()
 {
 	return (m_hWnd != NULL);
 }

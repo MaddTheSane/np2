@@ -6,9 +6,9 @@
 #pragma once
 
 #include <map>
-#include <pluginterfaces\vst2.x\aeffectx.h>
+#include <pluginterfaces/vst2.x/aeffectx.h>
 
-class CVstEffectWnd;
+class IVstEditWnd;
 
 /**
  * @brief VST effect クラス
@@ -23,9 +23,10 @@ public:
 	~CVstEffect();
 	bool Load(LPCTSTR lpVst);
 	void Unload();
-	CVstEffectWnd* Attach(CVstEffectWnd* pWnd = NULL);
+	IVstEditWnd* Attach(IVstEditWnd* pWnd = NULL);
 
 	void open();
+	void close();
 	void setProgram(VstInt32 program);
 	void setSampleRate(float sampleRate);
 	void setBlockSize(VstInt32 blockSize);
@@ -35,7 +36,7 @@ public:
 	bool editOpen(void *ptr);
 	void editClose();
 	void idle();
-	VstInt32 processEvents(const VstEvents* events);
+	VstIntPtr processEvents(const VstEvents* events);
 	bool beginSetProgram();
 	bool endSetProgram();
 	VstIntPtr dispatcher(VstInt32 opcode, VstInt32 index = 0, VstIntPtr value = 0, void* ptr = NULL, float opt = 0.0f);
@@ -46,9 +47,13 @@ protected:
 	virtual VstIntPtr audioMasterCallback(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt);
 
 private:
+#if _WIN32
 	HMODULE m_hModule;			/*!< モジュール */
+#else	// _WIN32
+	void* m_hModule;			/*!< モジュール */
+#endif
 	char* m_lpDir;				/*!< ディレクトリ */
-	CVstEffectWnd* m_pWnd;		/*!< Window */
+	IVstEditWnd* m_pWnd;		/*!< Window */
 
 	static std::map<AEffect*, CVstEffect*> sm_effects;		/*!< エフェクト ハンドラー */
 };
@@ -59,6 +64,14 @@ private:
 inline void CVstEffect::open()
 {
 	dispatcher(effOpen);
+}
+
+/**
+ * Deinitialize this plugin instance
+ */
+inline void CVstEffect::close()
+{
+	dispatcher(effClose);
 }
 
 /**
@@ -147,7 +160,7 @@ inline void CVstEffect::idle()
  * @param[in] events The pointer to VstEvents
  * @retval 0 wants no more
  */
-inline VstInt32 CVstEffect::processEvents(const VstEvents* events)
+inline VstIntPtr CVstEffect::processEvents(const VstEvents* events)
 {
 	return dispatcher(effProcessEvents, 0, 0, const_cast<VstEvents*>(events));
 }

@@ -1,29 +1,30 @@
 /**
- * @file	vsteffectwnd.h
- * @brief	VST effect ウィンドウ クラスの宣言およびインターフェイスの定義をします
+ * @file	vsteditwnd.h
+ * @brief	VST edit ウィンドウ クラスの宣言およびインターフェイスの定義をします
  */
 
 #pragma once
 
 #include <map>
+#include "vsteditwndbase.h"
 
 class CVstEffect;
 
 /**
  * @brief VST effect ウィンドウ クラス
  */
-class CVstEffectWnd
+class CVstEditWnd : public IVstEditWnd
 {
 public:
 	static bool Initialize(HINSTANCE hInstance);
 	static void OnIdle();
 
-	CVstEffectWnd();
-	virtual ~CVstEffectWnd();
+	CVstEditWnd();
+	virtual ~CVstEditWnd();
 	bool Create(CVstEffect* pEffect, LPCTSTR lpszWindowName, DWORD dwStyle, LONG x = CW_USEDEFAULT, LONG y = CW_USEDEFAULT);
 	void Destroy();
-	bool OnResize(int nWidth, int nHeight);
-	bool OnUpdateDisplay();
+	virtual bool OnResize(int nWidth, int nHeight);
+	virtual bool OnUpdateDisplay();
 
 	HWND GetHWnd();
 	CVstEffect* GetEffect();
@@ -34,7 +35,7 @@ protected:
 
 private:
 	static HINSTANCE sm_hInstance;						/*!< The instance */
-	static std::map<HWND, CVstEffectWnd*> sm_wndMap;	/*!< Wnd map */
+	static std::map<HWND, CVstEditWnd*> sm_wndMap;	/*!< Wnd map */
 	HWND m_hWnd;										/*!< The handle of window */
 	CVstEffect* m_pEffect;								/*!< Effect */
 
@@ -45,7 +46,7 @@ private:
  * ウィンドウ ハンドルを得る
  * @return ウィンドウ ハンドル
  */
-inline HWND CVstEffectWnd::GetHWnd()
+inline HWND CVstEditWnd::GetHWnd()
 {
 	return m_hWnd;
 }
@@ -54,7 +55,7 @@ inline HWND CVstEffectWnd::GetHWnd()
  * エフェクトを得る
  * @return エフェクト
  */
-inline CVstEffect* CVstEffectWnd::GetEffect()
+inline CVstEffect* CVstEditWnd::GetEffect()
 {
 	return m_pEffect;
 }
