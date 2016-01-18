@@ -1539,6 +1539,18 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
+# Begin Group "subwnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP
@@ -1621,10 +1633,6 @@ InputName=CPUTYPE
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=.\DCLOCK.CPP
 # End Source File
 # Begin Source File
 

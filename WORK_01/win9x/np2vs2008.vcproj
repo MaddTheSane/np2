@@ -1698,10 +1698,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\dd2.cpp"
 					>
 				</File>
@@ -2106,6 +2102,14 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="subwnd"
+					>
+					<File
+						RelativePath=".\subwnd\dclock.cpp"
 						>
 					</File>
 				</Filter>
@@ -2868,10 +2872,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.h"
-					>
-				</File>
-				<File
 					RelativePath=".\dd2.h"
 					>
 				</File>
@@ -3124,6 +3124,14 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="subwnd"
+					>
+					<File
+						RelativePath=".\subwnd\dclock.h"
 						>
 					</File>
 				</Filter>
