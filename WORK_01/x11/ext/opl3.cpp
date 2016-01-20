@@ -12,12 +12,12 @@
 #include "externalchipmanager.h"
 #include "externalopl3.h"
 
-static void writeRegister(POPL3 opna, UINT nAddress, REG8 cData);
-static void writeExtendedRegister(POPL3 opna, UINT nAddress, REG8 cData);
+static void writeRegister(POPL3 opl3, UINT nAddress, REG8 cData);
+static void writeExtendedRegister(POPL3 opl3, UINT nAddress, REG8 cData);
 
 /**
  * Initialize instance
- * @param[in] opna The instance
+ * @param[in] opl3 The instance
  */
 void opl3_construct(POPL3 opl3)
 {
@@ -335,7 +335,7 @@ REG8 opl3_readRegister(POPL3 opl3, UINT nAddress)
 
 /**
  * Reads extended register
- * @param[in] opna The instance
+ * @param[in] opl3 The instance
  * @param[in] nAddress The address
  * @return data
  */
