@@ -48,6 +48,10 @@ public:
 	BOOL GetWindowRect(LPRECT lpRect) const;
 	BOOL GetClientRect(LPRECT lpRect) const;
 
+	// Coordinate Mapping Functions
+	BOOL ClientToScreen(LPPOINT lpPoint) const;
+	int MapWindowPoints(HWND hWndTo, LPPOINT lpPoint, UINT nCount) const;
+
 	// Update and Painting Functions
 	HDC BeginPaint(LPPAINTSTRUCT lpPaint);
 	void EndPaint(LPPAINTSTRUCT lpPaint);
@@ -57,7 +61,23 @@ public:
 	BOOL ShowWindow(int nCmdShow);
 
 	// Window State Functions
+	BOOL EnableWindow(BOOL bEnable = TRUE);
 	HWND SetFocus();
+
+	// Dialog-Box Item Functions
+	BOOL CheckDlgButton(int nIDButton, UINT nCheck);
+	UINT GetDlgItemInt(int nID, BOOL* lpTrans = NULL, BOOL bSigned = TRUE) const;
+	UINT GetDlgItemText(int nID, LPTSTR lpStr, int nMaxCount) const;
+	UINT IsDlgButtonChecked(int nIDButton) const;
+	LRESULT SendDlgItemMessage(int nID, UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
+	BOOL SetDlgItemInt(int nID, UINT nValue, BOOL bSigned = TRUE);
+	BOOL SetDlgItemText(int nID, LPCTSTR lpszString);
+
+	// Window Access Functions
+	CWndBase GetParent() const;
+
+	// Window Tree Access
+	CWndBase GetDlgItem(int nID) const;
 
 	// Misc. Operations
 	int SetScrollInfo(int nBar, LPSCROLLINFO lpScrollInfo, BOOL bRedraw = TRUE);
@@ -254,6 +274,29 @@ inline BOOL CWndBase::GetClientRect(LPRECT lpRect) const
 }
 
 /**
+ * 指定された点を、クライアント座標からスクリーン座標へ変換します
+ * @param[in,out] lpPoint 変換対象のクライアント座標を保持している、1 個の 構造体へのポインタを指定します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::ClientToScreen(LPPOINT lpPoint) const
+{
+	return ::ClientToScreen(m_hWnd, lpPoint);
+}
+
+/**
+ * 複数の点を、あるウィンドウを基準とする座標空間から、他のウィンドウを基準とする座標空間へ変換（マップ）します
+ * @param[in] hWndTo 変換後の点を保持する（変換先）ウィンドウのハンドルを指定します
+ * @param[in,out] lpPoint 変換対象の点の座標を保持している 構造体からなる 1 つの配列へのポインタを指定します
+ * @param[in] nCount lpPoint パラメータで、複数の POINT 構造体からなる 1 つの配列へのポインタを指定した場合、配列内の POINT 構造体の数を指定します
+ * @return 関数が成功すると、各点の移動距離を示す 32 ビット値が返ります
+ */
+inline int CWndBase::MapWindowPoints(HWND hWndTo, LPPOINT lpPoint, UINT nCount) const
+{
+	return ::MapWindowPoints(m_hWnd, hWndTo, lpPoint, nCount);
+}
+
+/**
  * 描画を開始します
  * @param[out] lpPaint 描画情報へのポインタを指定します
  * @return デバイス コンテキスト
@@ -317,12 +360,126 @@ inline BOOL CWndBase::ShowWindow(int nCmdShow)
 }
 
 /**
+ * 指定されたウィンドウまたはコントロールで、マウス入力とキーボード入力を有効または無効にします
+ * @param[in] bEnable ウィンドウを有効にするか無効にするかを指定します
+ * @retval TRUE ウィンドウが既に無効になっている
+ * @retval FALSE ウィンドウが無効になっていなかった
+ */
+inline BOOL CWndBase::EnableWindow(BOOL bEnable)
+{
+	return ::EnableWindow(m_hWnd, bEnable);
+}
+
+/**
  * 入力フォーカスを要求します
  * @return 直前に入力フォーカスを持っていたウィンドウ ハンドル
  */
 inline HWND CWndBase::SetFocus()
 {
 	return ::SetFocus(m_hWnd);
+}
+
+/**
+ * ボタンコントロールのチェック状態を変更します
+ * @param[in] nIDButton 状態を変更したいボタンの識別子を指定します
+ * @param[in] nCheck ボタンのチェック状態を指定します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::CheckDlgButton(int nIDButton, UINT nCheck)
+{
+	return ::CheckDlgButton(m_hWnd, nIDButton, nCheck);
+}
+
+/**
+ * ダイアログボックス内の指定されたコントロールのテキストを、整数値へ変換します
+ * @param[in] nID 変換したいテキストを持つコントロールの識別子を指定します
+ * @param[in] lpTrans 成功か失敗の値を受け取る変数へのポインタを指定します
+ * @param[in] bSigned テキストを符号付きとして扱って符号付きの値を返すかどうかを指定します
+ * @return コントロールテキストに相当する整数値が返ります
+ */
+inline UINT CWndBase::GetDlgItemInt(int nID, BOOL* lpTrans, BOOL bSigned) const
+{
+	return ::GetDlgItemInt(m_hWnd, nID, lpTrans, bSigned);
+}
+
+/**
+ * ダイアログボックス内の指定されたコントロールに関連付けられているタイトルまたはテキストを取得します
+ * @param[in] nID 取得したいタイトルまたはテキストを保持しているコントロールの識別子を指定します
+ * @param[out] lpStr タイトルまたはテキストを受け取るバッファへのポインタを指定します
+ * @param[in] nMaxCount lpStr パラメータが指すバッファへコピーされる文字列の最大の長さを TCHAR 単位で指定します
+ * @return バッファへコピーされた文字列の長さ（ 終端の NULL を含まない）が TCHAR 単位で返ります
+ */
+inline UINT CWndBase::GetDlgItemText(int nID, LPTSTR lpStr, int nMaxCount) const
+{
+	return ::GetDlgItemText(m_hWnd, nID, lpStr, nMaxCount);
+}
+
+/**
+ * ボタンコントロールのチェック状態を取得します
+ * @param[in] nIDButton ボタンコントロールの識別子を指定します
+ * @return チェック状態
+ */
+inline UINT CWndBase::IsDlgButtonChecked(int nIDButton) const
+{
+	return ::IsDlgButtonChecked(m_hWnd, nIDButton);
+}
+
+/**
+ * ダイアログボックス内の指定されたコントロールへメッセージを送信します。
+ * @param[in] nID メッセージを受け取るコントロールの識別子を指定します
+ * @param[in] message 送信したいメッセージを指定します
+ * @param[in] wParam メッセージの追加情報を指定します
+ * @param[in] lParam メッセージの追加情報を指定します
+ * @return メッセージ処理の結果が返ります
+ */
+inline LRESULT CWndBase::SendDlgItemMessage(int nID, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	return ::SendDlgItemMessage(m_hWnd, nID, message, wParam, lParam);
+}
+
+/**
+ * 指定された整数値を文字列へ変換し、ダイアログボックス内のコントロールにテキストとして設定します
+ * @param[in] nID 変更を加えたいコントロールの識別子を指定します
+ * @param[in] nValue 整数値を指定します
+ * @param[in] bSigned nValue パラメータの値が符号付きかどうかを指定します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::SetDlgItemInt(int nID, UINT nValue, BOOL bSigned)
+{
+	return ::SetDlgItemInt(m_hWnd, nID, nValue, bSigned);
+}
+
+/**
+ * ダイアログボックス内のコントロールのタイトルまたはテキストを設定します
+ * @param[in] nID テキストを設定したいコントロールの識別子を指定します
+ * @param[in] lpszString コントロールへコピーしたいテキストを保持する、NULL で終わる文字列へのポインタを指定します
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
+ */
+inline BOOL CWndBase::SetDlgItemText(int nID, LPCTSTR lpszString)
+{
+	return ::SetDlgItemText(m_hWnd, nID, lpszString);
+}
+
+/**
+ * 指定された子ウィンドウの親ウィンドウまたはオーナーウィンドウのハンドルを返します
+ * @return 親ウィンドウのハンドル
+ */
+inline CWndBase CWndBase::GetParent() const
+{
+	return CWndBase(::GetParent(m_hWnd));
+}
+
+/**
+ * 指定されたダイアログボックス内のコントロールのハンドルを取得します
+ * @param[in] nID ハンドルを取得したいコントロールの識別子を指定します
+ * @return ウィンドウ
+ */
+inline CWndBase CWndBase::GetDlgItem(int nID) const
+{
+	return CWndBase(::GetDlgItem(m_hWnd, nID));
 }
 
 /**
