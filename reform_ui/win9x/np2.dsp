@@ -1663,14 +1663,6 @@ SOURCE=.\misc\PropProc.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\subwnd\subwnd.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\subwnd\subwnd.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\misc\threadbase.cpp
 # End Source File
 # Begin Source File
@@ -1752,6 +1744,14 @@ SOURCE=.\subwnd\skbdwnd.cpp
 # Begin Source File
 
 SOURCE=.\subwnd\skbdwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.h
 # End Source File
 # Begin Source File
 
