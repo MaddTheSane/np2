@@ -30,10 +30,10 @@ protected:
 	void OnPaint();
 
 private:
-	static CSoftKeyboardWnd sm_instance;		//!< インスタンス
-	DD2Surface m_dd2;
-	int m_nWidth;
-	int m_nHeight;
+	static CSoftKeyboardWnd sm_instance;	//!< インスタンス
+	DD2Surface m_dd2;						//!< DirectDraw2 インスタンス
+	int m_nWidth;							//!< 幅
+	int m_nHeight;							//!< 高さ
 	void OnDraw(BOOL redraw);
 	static void skpalcnv(CMNPAL *dst, const RGB32 *src, UINT pals, UINT bpp);
 };

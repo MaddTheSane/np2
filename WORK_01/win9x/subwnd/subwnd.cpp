@@ -53,6 +53,16 @@ CSubWndBase::~CSubWndBase()
 
 /**
  * ウィンドウ作成
+ * @param[in] nCaptionID キャプション ID
+ * @param[in] dwStyle スタイル
+ * @param[in] x X座標
+ * @param[in] y Y座標
+ * @param[in] nWidth 幅
+ * @param[in] nHeight 高さ
+ * @param[in] hwndParent 親ウィンドウ
+ * @param[in] nIDorHMenu ID もしくは メニュー
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
  */
 BOOL CSubWndBase::Create(UINT nCaptionID, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
 {
@@ -62,6 +72,16 @@ BOOL CSubWndBase::Create(UINT nCaptionID, DWORD dwStyle, int x, int y, int nWidt
 
 /**
  * ウィンドウ作成
+ * @param[in] lpCaption キャプション
+ * @param[in] dwStyle スタイル
+ * @param[in] x X座標
+ * @param[in] y Y座標
+ * @param[in] nWidth 幅
+ * @param[in] nHeight 高さ
+ * @param[in] hwndParent 親ウィンドウ
+ * @param[in] nIDorHMenu ID もしくは メニュー
+ * @retval TRUE 成功
+ * @retval FALSE 失敗
  */
 BOOL CSubWndBase::Create(LPCTSTR lpCaption, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hwndParent, HMENU nIDorHMenu)
 {
