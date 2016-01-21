@@ -465,7 +465,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\board118.cpp"
+					RelativePath="..\cbus\board118.c"
 					>
 				</File>
 				<File
@@ -482,6 +482,10 @@
 				</File>
 				<File
 					RelativePath="..\cbus\boardpx.c"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardso.c"
 					>
 				</File>
 				<File
@@ -1101,7 +1105,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\fmtimer.c"
+					RelativePath=".\ext\opl3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgenc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgeng.c"
+					>
+				</File>
+				<File
+					RelativePath=".\ext\opna.cpp"
 					>
 				</File>
 				<File
@@ -1127,6 +1143,10 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\sound\opntimer.c"
+					>
 				</File>
 				<File
 					RelativePath="..\sound\pcm86c.c"
@@ -1616,7 +1636,23 @@
 					Name="ext"
 					>
 					<File
+						RelativePath=".\ext\externalchipmanager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopl3.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopm.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalpsg.cpp"
 						>
 					</File>
 					<File
@@ -1640,10 +1676,10 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="rebirth"
+						Name="scci"
 						>
 						<File
-							RelativePath=".\ext\rebirth\rebirth.cpp"
+							RelativePath=".\ext\scci\scciif.cpp"
 							>
 						</File>
 					</Filter>
@@ -1672,48 +1708,16 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\threadbase.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\misc\trace.cpp"
 						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\$(InputName)1.obj"
-								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\$(InputName)1.obj"
-								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\$(InputName)1.obj"
-								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)\$(InputName)1.obj"
-								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\misc\tstring.cpp"
@@ -1872,6 +1876,10 @@
 				</File>
 				<File
 					RelativePath="..\cbus\boardpx.h"
+					>
+				</File>
+				<File
+					RelativePath="..\cbus\boardso.h"
 					>
 				</File>
 				<File
@@ -2391,11 +2399,31 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sound\fmtimer.h"
+					RelativePath="..\sound\opl3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\oplgencfg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opna.h"
 					>
 				</File>
 				<File
 					RelativePath="..\sound\opngen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opngencfg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sound\opntimer.h"
 					>
 				</File>
 				<File
@@ -2686,11 +2714,27 @@
 					Name="ext"
 					>
 					<File
-						RelativePath=".\ext\extendmodule.h"
+						RelativePath=".\ext\externalchip.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalchipmanager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopl3.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopm.h"
 						>
 					</File>
 					<File
 						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalpsg.h"
 						>
 					</File>
 					<File
@@ -2708,6 +2752,10 @@
 							RelativePath=".\ext\c86ctl\c86ctlif.h"
 							>
 						</File>
+						<File
+							RelativePath=".\ext\c86ctl\cbus_boardtype.h"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="romeo"
@@ -2722,18 +2770,18 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="rebirth"
+						Name="scci"
 						>
 						<File
-							RelativePath=".\ext\rebirth\rebirth.h"
+							RelativePath=".\ext\scci\scci.h"
 							>
 						</File>
 						<File
-							RelativePath=".\ext\rebirth\scci.h"
+							RelativePath=".\ext\scci\SCCIDefines.h"
 							>
 						</File>
 						<File
-							RelativePath=".\ext\rebirth\SCCIDefines.h"
+							RelativePath=".\ext\scci\scciif.h"
 							>
 						</File>
 					</Filter>
@@ -2750,11 +2798,19 @@
 						>
 					</File>
 					<File
+						RelativePath=".\misc\guard.h"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\monitorapi.h"
 						>
 					</File>
 					<File
 						RelativePath=".\misc\PropProc.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\threadbase.h"
 						>
 					</File>
 					<File

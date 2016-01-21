@@ -768,15 +768,29 @@ static REG8 IOINPCALL fdc_i92(UINT port) {
 
 static REG8 IOINPCALL fdc_i94(UINT port) {
 
+	REG8 ret;
+
 	if (((port >> 4) ^ fdc.chgreg) & 1) {
 		return(0xff);
 	}
-	if (port & 0x10) {		// 94
-		return(0x40);
+
+	ret = 0x40;
+	if (!(port & 0x10))		/* CC */
+	{
+		ret |= 0x20;		/* DMA */
+		ret |= 0x10;		/* ready‚ğ—§‚Ä‚é‚é‚é */
 	}
-	else {					// CC
-		return(0x70);		// ready‚ğ—§‚Ä‚é‚é‚é
+
+	if (pccore.dipsw[0] & 8)
+	{
+		ret |= 0x04;		/* “à‘ —Dæ */
 	}
+	else
+	{
+		ret |= 0x08;		/* ŠO•t‚¯—Dæ */
+	}
+
+	return ret;
 }
 
 

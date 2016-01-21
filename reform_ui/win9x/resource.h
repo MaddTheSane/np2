@@ -506,6 +506,8 @@
 #define IDM_AMD98                       40652
 #define IDM_JASTSOUND                   40653
 #define IDM_SEEKSND                     40654
+#define IDM_SOUNDORCHESTRA              40655
+#define IDM_SOUNDORCHESTRAV             40656
 #define IDM_MEM640                      40661
 #define IDM_MEM16                       40662
 #define IDM_MEM36                       40663

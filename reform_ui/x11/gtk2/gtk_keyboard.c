@@ -32,8 +32,6 @@
 #include "gtk2/xnp2.h"
 #include "gtk2/gtk_keyboard.h"
 
-#include <gdk/gdkkeysyms.h>
-
 
 #define	NC	KEYBOARD_KC_NC
 
@@ -262,7 +260,7 @@ get_data(guint keysym, UINT8 down)
 	if (keysym & ~0xff) {
 		if (keysym == GDK_VoidSymbol) {
 			data = NC;
-		} else if (keysym == GDK_F12) {
+		} else if (keysym == GDK_KEY_F12) {
 			data = kbdmng_getf12key();
 		} else if ((keysym & 0xff00) == 0xff00) {
 			data = xkeyconv_misc[keysym & 0xff];

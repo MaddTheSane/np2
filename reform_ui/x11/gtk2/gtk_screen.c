@@ -62,7 +62,7 @@ typedef struct {
 	double		ratio_w, ratio_h;
 	int		interp;
 
-	GdkColor	pal[NP2PAL_EXTEND];
+	GdkColor	pal[NP2PAL_MAX];
 } DRAWMNG;
 
 typedef struct {

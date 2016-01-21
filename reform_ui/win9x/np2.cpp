@@ -59,9 +59,6 @@
 #if defined(SUPPORT_DCLOCK)
 #include "dclock.h"
 #endif
-#if defined(SUPPORT_ROMEO)
-#include "ext\externalopna.h"
-#endif
 #include "recvideo.h"
 
 #ifdef BETA_RELEASE
@@ -94,7 +91,13 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						{0, 0, 0x3e, 19200,
 						 OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 						0xffffff, 0xffbf6a, 0, 0,
-						0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+						0, 1,
+						0, 0,
+#if !defined(_WIN64)
+						0,
+#endif
+						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -819,11 +822,6 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 
-		case IDM_AMD98:
-			np2cfg.SOUND_SW = 0x80;
-			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
-			break;
-
 #if defined(SUPPORT_PX)
 		case IDM_PX1:
 			np2cfg.SOUND_SW = 0x30;
@@ -835,6 +833,21 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
 			break;
 #endif	// defined(SUPPORT_PX)
+
+		case IDM_SOUNDORCHESTRA:
+			np2cfg.SOUND_SW = 0x32;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
+		case IDM_SOUNDORCHESTRAV:
+			np2cfg.SOUND_SW = 0x82;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
+
+		case IDM_AMD98:
+			np2cfg.SOUND_SW = 0x80;
+			update |= SYS_UPDATECFG | SYS_UPDATESBOARD;
+			break;
 
 		case IDM_JASTSOUND:
 			np2oscfg.jastsnd = !np2oscfg.jastsnd;
@@ -1631,13 +1644,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
 
-#if defined(SUPPORT_ROMEO)
-	if (np2oscfg.useromeo)
-	{
-		CExternalOpna::GetInstance()->Initialize();
-	}
-#endif
-
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
 		mousemng_enable(MOUSEPROC_SYSTEM);
 	}
@@ -1804,10 +1810,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 #endif
 
-#if defined(SUPPORT_ROMEO)
-	CExternalOpna::GetInstance()->Reset();
-	CExternalOpna::GetInstance()->Deinitialize();
-#endif
 	pccore_term();
 
 	soundmng_deinitialize();
@@ -1826,7 +1828,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	unloadextinst();
 
 	TRACETERM();
-	_MEM_USED("report.txt");
+	_MEM_USED(TEXT("report.txt"));
 	dosio_term();
 
 	return((int)msg.wParam);

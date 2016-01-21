@@ -4,10 +4,6 @@ enum {
 	FAILURE		= 1
 };
 
-#ifndef PI
-#define PI 3.14159265357989
-#endif
-
 #ifndef BRESULT
 #define	BRESULT		UINT
 #endif

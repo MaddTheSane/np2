@@ -89,9 +89,9 @@ void rhythm_setvol(UINT vol) {
 	rhythmcfg.vol = vol;
 }
 
-void rhythm_reset(RHYTHM rhy) {
-
-	ZeroMemory(rhy, sizeof(_RHYTHM));
+void rhythm_reset(RHYTHM rhy)
+{
+	memset(rhy, 0, sizeof(*rhy));
 }
 
 void rhythm_bind(RHYTHM rhy) {

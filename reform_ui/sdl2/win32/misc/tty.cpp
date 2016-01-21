@@ -89,11 +89,11 @@ void CTty::Close()
  * @param[in] nDataSize 送信データのサイズ
  * @return 送信バイト数
  */
-int CTty::Read(LPVOID lpcvData, int nDataSize)
+ssize_t CTty::Read(LPVOID lpcvData, ssize_t nDataSize)
 {
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
-		return 0;
+		return -1;
 	}
 	if ((lpcvData == NULL) || (nDataSize <= 0))
 	{
@@ -104,7 +104,7 @@ int CTty::Read(LPVOID lpcvData, int nDataSize)
 	COMSTAT stat;
 	if (!::ClearCommError(m_hFile, &dwErrors, &stat))
 	{
-		return 0;
+		return -1;
 	}
 
 	DWORD dwReadLength = (std::min)(stat.cbInQue, static_cast<DWORD>(nDataSize));
@@ -116,9 +116,9 @@ int CTty::Read(LPVOID lpcvData, int nDataSize)
 	DWORD dwReadSize = 0;
 	if (!::ReadFile(m_hFile, lpcvData, dwReadLength, &dwReadSize, NULL))
 	{
-		return 0;
+		return -1;
 	}
-	return static_cast<int>(dwReadSize);
+	return static_cast<ssize_t>(dwReadSize);
 }
 
 /**
@@ -127,11 +127,11 @@ int CTty::Read(LPVOID lpcvData, int nDataSize)
  * @param[in] nDataSize 送信データのサイズ
  * @return 送信バイト数
  */
-int CTty::Write(LPCVOID lpcvData, int nDataSize)
+ssize_t CTty::Write(LPCVOID lpcvData, ssize_t nDataSize)
 {
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
-		return 0;
+		return -1;
 	}
 	if ((lpcvData == NULL) || (nDataSize <= 0))
 	{
@@ -142,9 +142,9 @@ int CTty::Write(LPCVOID lpcvData, int nDataSize)
 	if (!::WriteFile(m_hFile, lpcvData, nDataSize, &dwWrittenSize, NULL))
 	{
 		// DEBUGLOG(_T("Failed to write."));
-		return 0;
+		return -1;
 	}
-	return static_cast<int>(dwWrittenSize);
+	return static_cast<ssize_t>(dwWrittenSize);
 }
 
 /**

@@ -615,6 +615,10 @@ SOURCE=..\CBUS\ATAPICMD.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\CBUS\BOARD118.C
+# End Source File
+# Begin Source File
+
 SOURCE=..\CBUS\BOARD14.C
 # End Source File
 # Begin Source File
@@ -624,6 +628,14 @@ SOURCE=..\CBUS\BOARD26K.C
 # Begin Source File
 
 SOURCE=..\CBUS\BOARD86.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.h
 # End Source File
 # Begin Source File
 
@@ -930,22 +942,58 @@ SOURCE=..\SOUND\FMBOARD.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\FMTIMER.C
+SOURCE=.\ext\opl3.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\OPNGENC.C
+SOURCE=..\sound\opl3.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\x86\OPNGENG.X86
+SOURCE=..\sound\oplgen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgeng.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\opna.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opna.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\x86\opngeng.x86
 
 !IF  "$(CFG)" == "np21 - Win32 Release"
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\rel21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -956,8 +1004,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\relnt21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -968,8 +1016,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trc21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -980,8 +1028,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\trap21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -992,8 +1040,8 @@ InputName=OPNGENG
 
 # Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
 IntDir=.\..\obj\dbg21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
@@ -1002,6 +1050,14 @@ InputName=OPNGENG
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.h
 # End Source File
 # Begin Source File
 
@@ -1325,6 +1381,10 @@ SOURCE=.\ext\c86ctl\c86ctlif.cpp
 
 SOURCE=.\ext\c86ctl\c86ctlif.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\cbus_boardtype.h
+# End Source File
 # End Group
 # Begin Group "romeo"
 
@@ -1342,29 +1402,53 @@ SOURCE=.\ext\romeo\juliet.h
 SOURCE=.\ext\romeo\romeo.h
 # End Source File
 # End Group
-# Begin Group "rebirth"
+# Begin Group "scci"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.cpp
+SOURCE=.\ext\scci\scci.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.h
+SOURCE=.\ext\scci\SCCIDefines.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\scci.h
+SOURCE=.\ext\scci\scciif.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\SCCIDefines.h
+SOURCE=.\ext\scci\scciif.h
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\ext\extendmodule.h
+SOURCE=.\ext\externalchip.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.h
 # End Source File
 # Begin Source File
 
@@ -1373,6 +1457,14 @@ SOURCE=.\ext\externalopna.cpp
 # Begin Source File
 
 SOURCE=.\ext\externalopna.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.h
 # End Source File
 # Begin Source File
 
@@ -1404,6 +1496,10 @@ SOURCE=.\misc\extrom.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\guard.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\monitorapi.cpp
 # End Source File
 # Begin Source File
@@ -1417,6 +1513,14 @@ SOURCE=.\misc\PropProc.cpp
 # Begin Source File
 
 SOURCE=.\misc\PropProc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.h
 # End Source File
 # Begin Source File
 
@@ -1511,10 +1615,6 @@ SOURCE=.\subwnd\toolwnd.cpp
 SOURCE=.\subwnd\toolwnd.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\BOARD118.CPP
-# End Source File
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP

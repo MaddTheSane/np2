@@ -8,11 +8,13 @@
 #if defined(SUPPORT_KEYDISP)
 
 #include "keydisp.h"
+#include <math.h>
 #include "pccore.h"
 #include "iocore.h"
-#include "fmboard.h"
+#include "sound/psggen.h"
 
-typedef struct {
+typedef struct
+{
 	UINT8	k[KEYDISP_NOTEMAX];
 	UINT8	r[KEYDISP_NOTEMAX];
 	UINT	remain;
@@ -20,48 +22,86 @@ typedef struct {
 	UINT8	padding[3];
 } KDCHANNEL;
 
-typedef struct {
+typedef struct
+{
 	UINT8	ch;
 	UINT8	key;
 } KDDELAYE;
 
-typedef struct {
+typedef struct
+{
 	UINT	pos;
 	UINT	rem;
 	UINT8	warm;
 	UINT8	warmbase;
 } KDDELAY;
 
-typedef struct
+/**
+ * @brief Channel
+ */
+struct tagFmChannel
+{
+	UINT16 nFNumber;				/*!< F-Number */
+	UINT8 cLastNote;				/*!< The last note */
+	UINT8 cKeyOn;					/*!< KeyOn */
+};
+typedef struct tagFmChannel		FMCHANNEL;
+
+/**
+ * @brief OPNA
+ */
+struct tagOpnaControl
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
-	UINT16	fnum[4];
-	UINT8 cLastNote[4];
 	UINT8 cChannelNum;				/*!< The number of the channel */
-	UINT8	flag;
-} KDFMCTRL;
+	UINT8 cFMChannels;				/*!< The channels of FM */
+	UINT16 wFNumber[13];			/*!< The list of F-number */
+	FMCHANNEL ch[6];				/*!< The information of FM */
+};
+typedef struct tagOpnaControl	OPNACTL;
 
-typedef struct
+/**
+ * @brief PSG
+ */
+struct tagPsgControl
 {
 	const UINT8 *pcRegister;		/*!< The pointer of the register */
 	REG16 nLastTone[4];
 	UINT8 cLastNote[4];
+	UINT16 wTone[13];				/*!< The list of Tone */
 	UINT8 cChannelNum;				/*!< The number of the channel */
 	UINT8 cPsgOn;
 	UINT8 cLastMixer;
-} KDPSGCTRL;
+};
+typedef struct tagPsgControl	PSGCTL;
 
-typedef struct {
+/**
+ * @brief OPL3
+ */
+struct tagOpl3Control
+{
+	const UINT8 *pcRegister;		/*!< The pointer of the register */
+	UINT8 cChannelNum;				/*!< The number of the channel */
+	UINT8 cFMChannels;				/*!< The channels of FM */
+	UINT16 wFNumber[13];			/*!< The list of F-number */
+	FMCHANNEL ch[18];				/*!< The information of FM */
+};
+typedef struct tagOpl3Control	OPL3CTL;
+
+typedef struct
+{
 	UINT8		mode;
 	UINT8		dispflag;
 	UINT8		framepast;
 	UINT8		keymax;
-	UINT8		fmmax;
+	UINT8		opnamax;
 	UINT8		psgmax;
+	UINT8		opl3max;
 	KDDELAY		delay;
 	KDCHANNEL	ch[KEYDISP_CHMAX];
-	KDFMCTRL	fmctl[KEYDISP_FMCHMAX];
-	KDPSGCTRL	psgctl[KEYDISP_PSGMAX];
+	OPNACTL		opnactl[5];			/*!< OPNA */
+	PSGCTL		psgctl[3];			/*!< PSG */
+	OPL3CTL		opl3ctl[1];			/*!< OPL3 */
 	KDDELAYE	delaye[KEYDISP_DELAYEVENTS];
 } KEYDISP;
 
@@ -95,7 +135,7 @@ static struct KeyDispConstData s_constData;
 #include "keydisp.res"
 
 
-// ---- event
+/* ---- event */
 
 static void keyon(KEYDISP *keydisp, UINT ch, UINT8 note)
 {
@@ -191,7 +231,7 @@ static void keyallclear(KEYDISP *keydisp)
 }
 
 
-// ---- delay event
+/* ---- delay event */
 
 static void ClearDelayList(KEYDISP *keydisp)
 {
@@ -267,7 +307,7 @@ static void delayexecevent(KEYDISP *keydisp, UINT8 framepast)
 	keydisp->delay.rem = rem;
 }
 
-static void delaysetevent(KEYDISP *keydisp, UINT8 ch, UINT8 key)
+static void delaysetevent(KEYDISP *keydisp, REG8 ch, REG8 key)
 {
 	KDDELAYE	*e;
 
@@ -301,123 +341,138 @@ static void delaysetevent(KEYDISP *keydisp, UINT8 ch, UINT8 key)
 }
 
 
-// ---- FM
+/* ---- OPNA */
 
-static UINT8 GetFMNote(UINT16 fnum)
+static UINT8 GetOpnaNote(const OPNACTL *k, UINT16 wFNum)
 {
-	UINT8	ret;
-	int		i;
+	UINT nOct;
+	UINT nKey;
 
-	ret = (fnum >> 11) & 7;
-	ret *= 12;
-	ret += 24;
-	fnum &= 0x7ff;
+	nOct = ((wFNum >> 11) & 7) + 2;
+	wFNum &= 0x7ff;
 
-	while (fnum < FNUM_MIN)
+	while (wFNum < k->wFNumber[0])
 	{
-		if (!ret)
+		if (!nOct)
 		{
 			return 0;
 		}
-		ret -= 12;
-		fnum <<= 1;
+		nOct--;
+		wFNum <<= 1;
 	}
-	while (fnum > FNUM_MAX)
+	while (wFNum > k->wFNumber[12])
 	{
-		fnum >>= 1;
-		ret += 12;
+		wFNum >>= 1;
+		nOct++;
 	}
-	for (i = 0; fnum >= fnumtbl[i]; i++)
+
+	for (nKey = 0; wFNum > k->wFNumber[nKey + 1]; nKey++)
 	{
-		ret++;
 	}
-	return min(ret, 127);
+
+	nKey += nOct * 12;
+	return (int)(min(nKey, 127));
 }
 
-static void fmkeyoff(KEYDISP *keydisp, KDFMCTRL *k)
+static void opnakeyoff(KEYDISP *keydisp, OPNACTL *k, UINT nChannel)
 {
-	delaysetevent(keydisp, k->cChannelNum, k->cLastNote[0]);
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), k->ch[nChannel].cLastNote);
 }
 
-static void fmkeyon(KEYDISP *keydisp, KDFMCTRL *k)
+static void opnakeyon(KEYDISP *keydisp, OPNACTL *k, UINT nChannelNum)
 {
 	const UINT8 *pReg;
 
-	fmkeyoff(keydisp, k);
-	pReg = k->pcRegister;
-	if (pReg)
-	{
-		pReg = pReg + 0xa0;
-		k->fnum[0] = ((pReg[4] & 0x3f) << 8) + pReg[0];
-		k->cLastNote[0] = GetFMNote(k->fnum[0]);
-		delaysetevent(keydisp, k->cChannelNum, (UINT8)(k->cLastNote[0] | 0x80));
-	}
+	opnakeyoff(keydisp, k, nChannelNum);
+
+	pReg = k->pcRegister + ((nChannelNum / 3) << 8) + 0xa0 + (nChannelNum % 3);
+	k->ch[nChannelNum].nFNumber = ((pReg[4] & 0x3f) << 8) + pReg[0];
+	k->ch[nChannelNum].cLastNote = GetOpnaNote(k, k->ch[nChannelNum].nFNumber);
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannelNum), (REG8)(k->ch[nChannelNum].cLastNote | 0x80));
 }
 
-static void fmkeyreset(KEYDISP *keydisp)
+static void opnakeyreset(KEYDISP *keydisp)
 {
 	UINT i;
 
-	for (i = 0; i < KEYDISP_FMCHMAX; i++)
+	for (i = 0; i < NELEMENTS(keydisp->opnactl); i++)
 	{
-		keydisp->fmctl[i].flag = 0;
+		memset(keydisp->opnactl[i].ch, 0, sizeof(keydisp->opnactl[i].ch));
 	}
 }
 
-void keydisp_fmkeyon(UINT8 ch, UINT8 value)
+void keydisp_opnakeyon(const UINT8 *pcRegister, REG8 cData)
 {
-	KDFMCTRL	*k;
+	UINT i;
+	OPNACTL *k;
+	UINT nChannelNum;
 
 	if (s_keydisp.mode != KEYDISP_MODEFM)
 	{
 		return;
 	}
-	if (ch < s_keydisp.fmmax)
+
+	if ((cData & 3) == 3)
 	{
-		k = s_keydisp.fmctl + ch;
-		value &= 0xf0;
-		if (k->flag != value)
+		return;
+	}
+
+	for (i = 0; i < s_keydisp.opnamax; i++)
+	{
+		k = &s_keydisp.opnactl[i];
+		if (k->pcRegister == pcRegister)
 		{
-			if (value)
+			nChannelNum = cData & 7;
+			cData &= 0xf0;
+			if (nChannelNum >= 4)
 			{
-				fmkeyon(&s_keydisp, k);
+				nChannelNum--;
 			}
-			else
+			if ((nChannelNum < k->cFMChannels) && (k->ch[nChannelNum].cKeyOn != cData))
 			{
-				fmkeyoff(&s_keydisp, k);
+				if (cData)
+				{
+					opnakeyon(&s_keydisp, k, nChannelNum);
+				}
+				else
+				{
+					opnakeyoff(&s_keydisp, k, nChannelNum);
+				}
+				k->ch[nChannelNum].cKeyOn = cData;
 			}
-			k->flag = value;
+			break;
 		}
 	}
 }
 
-static void fmkeysync(KEYDISP *keydisp)
+static void opnakeysync(KEYDISP *keydisp)
 {
-	UINT8		ch;
-	KDFMCTRL	*k;
+	UINT i;
+	OPNACTL *k;
 	const UINT8 *pReg;
-	UINT16		fnum;
+	UINT j;
+	UINT8 n;
+	UINT16 fnum;
 
-	for (ch = 0, k = keydisp->fmctl; ch < keydisp->fmmax; ch++, k++)
+	for (i = 0; i < keydisp->opnamax; i++)
 	{
-		if (k->flag)
+		k = &keydisp->opnactl[i];
+		for (j = 0; j < k->cFMChannels; j++)
 		{
-			pReg = k->pcRegister;
-			if (pReg)
+			if (k->ch[j].cKeyOn)
 			{
-				pReg = pReg + 0xa0;
+				pReg = k->pcRegister + ((j / 3) << 8) + 0xa0 + (j % 3);
 				fnum = ((pReg[4] & 0x3f) << 8) + pReg[0];
-				if (k->fnum[0] != fnum)
+				if (k->ch[j].nFNumber != fnum)
 				{
-					UINT8 n;
-					k->fnum[0] = fnum;
-					n = GetFMNote(fnum);
-					if (k->cLastNote[0] != n)
+					k->ch[j].nFNumber = fnum;
+					n = GetOpnaNote(k, fnum);
+					if (k->ch[j].cLastNote != n)
 					{
-						fmkeyoff(keydisp, k);
+						opnakeyoff(keydisp, k, j);
 					}
-					k->cLastNote[0] = n;
-					delaysetevent(keydisp, k->cChannelNum, (UINT8)(k->cLastNote[0] | 0x80));
+					k->ch[j].cLastNote = n;
+					delaysetevent(keydisp, (REG8)(k->cChannelNum + j), (REG8)(n | 0x80));
 				}
 			}
 		}
@@ -425,16 +480,17 @@ static void fmkeysync(KEYDISP *keydisp)
 }
 
 
-// ---- PSG
+/* ---- PSG */
 
 /**
  * Get pointer of controller
- * @param[in] psg The instance of PSG
+ * @param[in] pcRegister The instance of PSG
  * @return The pointer of controller
  */
-static KDPSGCTRL *GetController(KEYDISP *keydisp, PSGGEN psg)
+static PSGCTL *GetController(KEYDISP *keydisp, const UINT8 *pcRegister)
 {
 	UINT i;
+	PSGCTL *k;
 
 	if (keydisp->mode != KEYDISP_MODEFM)
 	{
@@ -443,8 +499,8 @@ static KDPSGCTRL *GetController(KEYDISP *keydisp, PSGGEN psg)
 
 	for (i = 0; i < keydisp->psgmax; i++)
 	{
-		KDPSGCTRL *k = &keydisp->psgctl[i];
-		if (k->pcRegister == (const UINT8 *)&psg->reg)
+		k = &keydisp->psgctl[i];
+		if (k->pcRegister == pcRegister)
 		{
 			return k;
 		}
@@ -452,40 +508,42 @@ static KDPSGCTRL *GetController(KEYDISP *keydisp, PSGGEN psg)
 	return NULL;
 }
 
-static UINT8 GetPSGNote(UINT16 tone)
+static UINT8 GetPSGNote(const PSGCTL *k, UINT16 nTone)
 {
-	UINT8	ret;
-	int		i;
+	UINT nOct;
+	UINT nKey;
 
-	ret = 60;
-	tone &= 0xfff;
+	nOct = 5;
+	nTone &= 0xfff;
 
-	while (tone < FTO_MIN)
+	while (nTone > k->wTone[0])
 	{
-		tone <<= 1;
-		ret += 12;
-		if (ret > 127)
-		{
-			return 127;
-		}
-	}
-	while (tone > FTO_MAX)
-	{
-		if (!ret)
+		if (!nOct)
 		{
 			return 0;
 		}
-		tone >>= 1;
-		ret -= 12;
+		nTone >>= 1;
+		nOct--;
 	}
-	for (i = 0; tone < ftotbl[i]; i++)
+
+	if (!nTone)
 	{
-		ret++;
+		return 127;
 	}
-	return min(ret, 127);
+
+	while (nTone < k->wTone[12])
+	{
+		nTone <<= 1;
+		nOct++;
+	}
+	for (nKey = 0; nTone < k->wTone[nKey + 1]; nKey++)
+	{
+	}
+	nKey += nOct * 12;
+	return (int)(min(nKey, 127));
 }
 
-static void psgmix(KEYDISP *keydisp, KDPSGCTRL *k)
+static void psgmix(KEYDISP *keydisp, PSGCTL *k)
 {
 	const PSGREG *pReg;
 
@@ -506,14 +564,14 @@ static void psgmix(KEYDISP *keydisp, KDPSGCTRL *k)
 			{
 				k->cPsgOn |= bit;
 				k->nLastTone[i] = LOADINTELWORD(pReg->tune[i]) & 0xfff;
-				k->cLastNote[i] = GetPSGNote(k->nLastTone[i]);
+				k->cLastNote[i] = GetPSGNote(k, k->nLastTone[i]);
 				delaysetevent(keydisp, pos, (UINT8)(k->cLastNote[i] | 0x80));
 			}
 		}
 	}
 }
 
-static void psgvol(KEYDISP *keydisp, KDPSGCTRL *k, UINT ch)
+static void psgvol(KEYDISP *keydisp, PSGCTL *k, UINT ch)
 {
 	const PSGREG *pReg;
 	UINT8		bit;
@@ -531,7 +589,7 @@ static void psgvol(KEYDISP *keydisp, KDPSGCTRL *k, UINT ch)
 			tune = LOADINTELWORD(pReg->tune[ch]);
 			tune &= 0xfff;
 			k->nLastTone[ch] = tune;
-			k->cLastNote[ch] = GetPSGNote(tune);
+			k->cLastNote[ch] = GetPSGNote(k, tune);
 			delaysetevent(keydisp, pos, (UINT8)(k->cLastNote[ch] | 0x80));
 		}
 	}
@@ -546,7 +604,7 @@ static void psgkeyreset(KEYDISP *keydisp)
 {
 	UINT i;
 
-	for (i = 0; i < KEYDISP_PSGMAX; i++)
+	for (i = 0; i < NELEMENTS(keydisp->psgctl); i++)
 	{
 		keydisp->psgctl[i].cPsgOn = 0;
 	}
@@ -554,12 +612,12 @@ static void psgkeyreset(KEYDISP *keydisp)
 
 /**
  * Update keyboard
- * @param[in] psg The instance
+ * @param[in] pcRegister The instance
  * @param[in] nAddress The written register
  */
-void keydisp_psg(PSGGEN psg, UINT nAddress)
+void keydisp_psg(const UINT8 *pcRegister, UINT nAddress)
 {
-	KDPSGCTRL *k = GetController(&s_keydisp, psg);
+	PSGCTL *k = GetController(&s_keydisp, pcRegister);
 	if (k != NULL)
 	{
 		switch (nAddress)
@@ -581,7 +639,7 @@ static void psgkeysync(KEYDISP *keydisp)
 {
 	UINT8		ch;
 	const PSGREG *pReg;
-	KDPSGCTRL	*k;
+	PSGCTL		*k;
 	UINT8		bit;
 	UINT8		i;
 	UINT8		pos;
@@ -601,7 +659,7 @@ static void psgkeysync(KEYDISP *keydisp)
 				if (k->nLastTone[i] != tune)
 				{
 					k->nLastTone[i] = tune;
-					n = GetPSGNote(tune);
+					n = GetPSGNote(k, tune);
 					if (k->cLastNote[i] != n)
 					{
 						delaysetevent(keydisp, pos, k->cLastNote[i]);
@@ -615,108 +673,233 @@ static void psgkeysync(KEYDISP *keydisp)
 }
 
 
-// ---- BOARD change...
 
-static void setfmhdl(KEYDISP *keydisp, const OPN_T *pOpn, UINT nItems, UINT nBase)
+/* ---- OPL3 */
+
+static UINT8 GetOpl3Note(const OPL3CTL *k, UINT16 wFNum)
 {
-	while (nItems--)
+	UINT nOct;
+	UINT nKey;
+
+	nOct = ((wFNum >> 10) & 7) + 2;
+	wFNum &= 0x3ff;
+
+	while (wFNum < k->wFNumber[0])
 	{
-		if ((keydisp->keymax < KEYDISP_CHMAX) && (keydisp->fmmax < KEYDISP_FMCHMAX))
+		if (!nOct)
 		{
-			keydisp->fmctl[keydisp->fmmax].cChannelNum = keydisp->keymax++;
-			keydisp->fmctl[keydisp->fmmax].pcRegister = pOpn->reg + nBase;
-			keydisp->fmmax++;
-			nBase++;
-			if ((nBase & 3) == 3)
+			return 0;
+		}
+		nOct--;
+		wFNum <<= 1;
+	}
+	while (wFNum > k->wFNumber[12])
+	{
+		wFNum >>= 1;
+		nOct++;
+	}
+
+	for (nKey = 0; wFNum > k->wFNumber[nKey + 1]; nKey++)
+	{
+	}
+
+	nKey += nOct * 12;
+	return (int)(min(nKey, 127));
+}
+
+static void opl3keyoff(KEYDISP *keydisp, OPL3CTL *k, UINT nChannel)
+{
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannel), k->ch[nChannel].cLastNote);
+}
+
+static void opl3keyon(KEYDISP *keydisp, OPL3CTL *k, UINT nChannelNum)
+{
+	const UINT8 *pReg;
+
+	opl3keyoff(keydisp, k, nChannelNum);
+
+	pReg = k->pcRegister + ((nChannelNum / 9) << 8) + 0xa0 + (nChannelNum % 9);
+	k->ch[nChannelNum].nFNumber = ((pReg[0x10] & 0x1f) << 8) + pReg[0x00];
+	k->ch[nChannelNum].cLastNote = GetOpl3Note(k, k->ch[nChannelNum].nFNumber);
+	delaysetevent(keydisp, (REG8)(k->cChannelNum + nChannelNum), (REG8)(k->ch[nChannelNum].cLastNote | 0x80));
+}
+
+static void opl3keyreset(KEYDISP *keydisp)
+{
+	UINT i;
+
+	for (i = 0; i < NELEMENTS(keydisp->opl3ctl); i++)
+	{
+		memset(keydisp->opl3ctl[i].ch, 0, sizeof(keydisp->opl3ctl[i].ch));
+	}
+}
+
+void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, REG8 cData)
+{
+	UINT i;
+	OPL3CTL *k;
+
+	if (s_keydisp.mode != KEYDISP_MODEFM)
+	{
+		return;
+	}
+
+	for (i = 0; i < s_keydisp.opnamax; i++)
+	{
+		k = &s_keydisp.opl3ctl[i];
+		if (k->pcRegister == pcRegister)
+		{
+			cData &= 0x20;
+			if (k->ch[nChannelNum].cKeyOn != cData)
 			{
-				nBase += 0x100 - 3;
+				if (cData)
+				{
+					opl3keyon(&s_keydisp, k, nChannelNum);
+				}
+				else
+				{
+					opl3keyoff(&s_keydisp, k, nChannelNum);
+				}
+				k->ch[nChannelNum].cKeyOn = cData;
+			}
+			break;
+		}
+	}
+}
+
+static void opl3keysync(KEYDISP *keydisp)
+{
+	UINT i;
+	OPL3CTL *k;
+	const UINT8 *pReg;
+	UINT j;
+	UINT8 n;
+	UINT16 fnum;
+
+	for (i = 0; i < keydisp->opl3max; i++)
+	{
+		k = &keydisp->opl3ctl[i];
+		for (j = 0; j < k->cFMChannels; j++)
+		{
+			if (k->ch[j].cKeyOn)
+			{
+				pReg = k->pcRegister + ((j / 9) << 8) + 0xa0 + (j % 9);
+				fnum = ((pReg[0x10] & 0x1f) << 8) + pReg[0x00];
+				if (k->ch[j].nFNumber != fnum)
+				{
+					k->ch[j].nFNumber = fnum;
+					n = GetOpl3Note(k, fnum);
+					if (k->ch[j].cLastNote != n)
+					{
+						opl3keyoff(keydisp, k, j);
+					}
+					k->ch[j].cLastNote = n;
+					delaysetevent(keydisp, (REG8)(k->cChannelNum + j), (REG8)(n | 0x80));
+				}
 			}
 		}
 	}
 }
 
-static void setpsghdl(KEYDISP *keydisp, PSGGEN psg)
+
+
+/* ---- BOARD change... */
+
+/**
+ * Reset
+ */
+void keydisp_reset(void)
 {
-	if ((keydisp->keymax <= (KEYDISP_CHMAX - 3)) && (keydisp->psgmax < KEYDISP_PSGMAX))
+	s_keydisp.keymax = 0;
+	s_keydisp.opnamax = 0;
+	s_keydisp.psgmax = 0;
+	s_keydisp.opl3max = 0;
+
+	ClearDelayList(&s_keydisp);
+	memset(&s_keydisp.opnactl, 0, sizeof(s_keydisp.opnactl));
+	memset(&s_keydisp.psgctl, 0, sizeof(s_keydisp.psgctl));
+
+	if (s_keydisp.mode == KEYDISP_MODEFM)
 	{
-		keydisp->psgctl[keydisp->psgmax].cChannelNum = keydisp->keymax;
-		keydisp->psgctl[keydisp->psgmax].pcRegister = (const UINT8*)&psg->reg;
-		keydisp->psgmax++;
-		keydisp->keymax += 3;
+		s_keydisp.dispflag |= KEYDISP_FLAGSIZING;
 	}
 }
 
-void keydisp_setfmboard(UINT b)
+/**
+ * bind
+ */
+void keydisp_bindopna(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock)
 {
-	s_keydisp.keymax = 0;
-	s_keydisp.fmmax = 0;
-	s_keydisp.psgmax = 0;
+	OPNACTL *k;
+	UINT i;
 
-	ClearDelayList(&s_keydisp);
-	memset(&s_keydisp.fmctl, 0, sizeof(s_keydisp.fmctl));
-	memset(&s_keydisp.psgctl, 0, sizeof(s_keydisp.psgctl));
-
-#if defined(SUPPORT_PX)
-	if (b == 0x30)
+	if (((s_keydisp.keymax + nChannels) <= KEYDISP_CHMAX) && (s_keydisp.opnamax < NELEMENTS(s_keydisp.opnactl)))
 	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
-		setpsghdl(&s_keydisp, &g_psg1);
-		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
-		setpsghdl(&s_keydisp, &g_psg2);
-		b = 0;
-	}
-	if (b == 0x50)
-	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
-		setpsghdl(&s_keydisp, &g_psg1);
-		setfmhdl(&s_keydisp, &g_opn2, 12, 0);
-		setpsghdl(&s_keydisp, &g_psg2);
-		setfmhdl(&s_keydisp, &g_opn3, 6, 0);
-		setpsghdl(&s_keydisp, &g_psg3);
-		b = 0;
+		k = &s_keydisp.opnactl[s_keydisp.opnamax];
+		k->cChannelNum = s_keydisp.keymax;
+		k->pcRegister = pcRegister;
+		k->cFMChannels = nChannels;
+		for (i = 0; i < NELEMENTS(k->wFNumber); i++)
+		{
+			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 17.0) * 72.0 / (double)nBaseClock);
+		}
+		s_keydisp.opnamax++;
+		s_keydisp.keymax += nChannels;
 	}
 
-#endif	// defined(SUPPORT_PX)
+	if (s_keydisp.mode == KEYDISP_MODEFM)
+	{
+		s_keydisp.dispflag |= KEYDISP_FLAGSIZING;
+	}
+}
 
-	switch (b & 0x06)
-	{
-		case 0x02:
-			setfmhdl(&s_keydisp, &g_opn, 3, 0);
-			setpsghdl(&s_keydisp, &g_psg1);
-			break;
+/**
+ * bind
+ */
+void keydisp_bindpsg(const UINT8 *pcRegister, UINT nBaseClock)
+{
+	PSGCTL *k;
+	UINT i;
 
-		case 0x04:
-			setfmhdl(&s_keydisp, &g_opn, 6, 0);
-			setpsghdl(&s_keydisp, &g_psg1);
-			break;
+	if (((s_keydisp.keymax + 3) <= KEYDISP_CHMAX) && (s_keydisp.psgmax < NELEMENTS(s_keydisp.psgctl)))
+	{
+		k = &s_keydisp.psgctl[s_keydisp.psgmax];
+		k->cChannelNum = s_keydisp.keymax;
+		k->pcRegister = pcRegister;	
+		for (i = 0; i < NELEMENTS(k->wTone); i++)
+		{
+			k->wTone[i] = (UINT16)((double)nBaseClock / 32.0 / (440.0 * pow(2.0, ((double)i - 9.5) / 12.0)));
+		}
+		s_keydisp.psgmax++;
+		s_keydisp.keymax += 3;
+	}
 
-		case 0x06:
-			setfmhdl(&s_keydisp, &g_opn, 3, 0x200);
-			setpsghdl(&s_keydisp, &g_psg1);
-			setfmhdl(&s_keydisp, &g_opn, 6, 0);
-			setpsghdl(&s_keydisp, &g_psg2);
-			break;
-	}
-	if (b & 0x08)
+	if (s_keydisp.mode == KEYDISP_MODEFM)
 	{
-		setfmhdl(&s_keydisp, &g_opn, 6, 0);
-		setpsghdl(&s_keydisp, &g_psg1);
+		s_keydisp.dispflag |= KEYDISP_FLAGSIZING;
 	}
-	if (b & 0x20)
+}
+
+/**
+ * bind
+ */
+void keydisp_bindopl3(const UINT8 *pcRegister, UINT nChannels, UINT nBaseClock)
+{
+	OPL3CTL *k;
+	UINT i;
+
+	if (((s_keydisp.keymax + nChannels) <= KEYDISP_CHMAX) && (s_keydisp.opl3max < NELEMENTS(s_keydisp.opl3ctl)))
 	{
-		setfmhdl(&s_keydisp, &g_opn, 6, 0);
-		setpsghdl(&s_keydisp, &g_psg1);
-	}
-	if (b & 0x40)
-	{
-		setfmhdl(&s_keydisp, &g_opn, 12, 0);
-		setpsghdl(&s_keydisp, &g_psg1);
-	}
-	if (b & 0x80)
-	{
-		setpsghdl(&s_keydisp, &g_psg1);
-		setpsghdl(&s_keydisp, &g_psg2);
-		setpsghdl(&s_keydisp, &g_psg3);
+		k = &s_keydisp.opl3ctl[s_keydisp.opl3max];
+		k->cChannelNum = s_keydisp.keymax;
+		k->pcRegister = pcRegister;
+		k->cFMChannels = nChannels;
+		for (i = 0; i < NELEMENTS(k->wFNumber); i++)
+		{
+			k->wFNumber[i] = (UINT16)(440.0 * pow(2.0, (((double)i - 9.5) / 12.0) + 16.0) * 72.0 / (double)nBaseClock);
+		}
+		s_keydisp.opl3max++;
+		s_keydisp.keymax += nChannels;
 	}
 
 	if (s_keydisp.mode == KEYDISP_MODEFM)
@@ -726,7 +909,8 @@ void keydisp_setfmboard(UINT b)
 }
 
 
-// ---- MIDI
+
+/* ---- MIDI */
 
 void keydisp_midi(const UINT8 *cmd)
 {
@@ -765,7 +949,7 @@ void keydisp_midi(const UINT8 *cmd)
 }
 
 
-// ---- draw
+/* ---- draw */
 
 static UINT getdispkeys(const KEYDISP *keydisp)
 {
@@ -958,7 +1142,7 @@ static BOOL draw1ch(CMNVRAM *vram, UINT8 framepast, KDCHANNEL *kdch)
 }
 
 
-// ----
+/* ---- */
 
 void keydisp_initialize(void)
 {
@@ -1027,8 +1211,9 @@ void keydisp_setmode(UINT8 mode)
 		if (mode == KEYDISP_MODEFM)
 		{
 			ClearDelayList(&s_keydisp);
-			fmkeyreset(&s_keydisp);
+			opnakeyreset(&s_keydisp);
 			psgkeyreset(&s_keydisp);
+			opl3keyreset(&s_keydisp);
 		}
 	}
 	else
@@ -1052,8 +1237,9 @@ UINT8 keydisp_process(UINT8 framepast)
 	{
 		if (s_keydisp.mode == KEYDISP_MODEFM)
 		{
-			fmkeysync(&s_keydisp);
+			opnakeysync(&s_keydisp);
 			psgkeysync(&s_keydisp);
+			opl3keysync(&s_keydisp);
 			delayexecevent(&s_keydisp, framepast);
 		}
 		s_keydisp.framepast += framepast;
@@ -1107,7 +1293,7 @@ BOOL keydisp_paint(CMNVRAM *vram, BOOL redraw)
 		clearrect(vram, 0, 0, 1, vram->height);
 		draw = TRUE;
 	}
-	vram->ptr += vram->xalign + vram->yalign;		// ptr (1, 1)
+	vram->ptr += vram->xalign + vram->yalign;
 	keys = (vram->height - 1) / KEYDISP_KEYCY;
 	keys = min(keys, getdispkeys(&s_keydisp));
 	for (i = 0, p = s_keydisp.ch; i < keys; i++, p++)

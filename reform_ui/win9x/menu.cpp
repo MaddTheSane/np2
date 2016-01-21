@@ -12,6 +12,12 @@
 #include "misc\tstring.h"
 #include "dialog\np2class.h"
 #include "pccore.h"
+#if defined(SUPPORT_S98)
+#include "sound\s98.h"
+#endif
+#if defined(SUPPORT_WAVEREC)
+#include "sound\sound.h"
+#endif
 
 /**
  * åüçı
@@ -347,11 +353,13 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_PC9801_118, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x08));
 	CheckMenuItem(hMenu, IDM_SPEAKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x20));
 	CheckMenuItem(hMenu, IDM_SPARKBOARD, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x40));
-	CheckMenuItem(hMenu, IDM_AMD98, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x80));
 #if defined(SUPPORT_PX)
 	CheckMenuItem(hMenu, IDM_PX1, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x30));
 	CheckMenuItem(hMenu, IDM_PX2, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x50));
 #endif	// defined(SUPPORT_PX)
+	CheckMenuItem(hMenu, IDM_SOUNDORCHESTRA, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x32));
+	CheckMenuItem(hMenu, IDM_SOUNDORCHESTRAV, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x82));
+	CheckMenuItem(hMenu, IDM_AMD98, MF_BYCOMMAND | MFCHECK(SOUND_SW == 0x80));
 	CheckMenuItem(hMenu, IDM_JASTSOUND, MF_BYCOMMAND | MFCHECK(np2oscfg.jastsnd));
 	CheckMenuItem(hMenu, IDM_SEEKSND, MF_BYCOMMAND | MFCHECK(np2cfg.MOTOR));
 
@@ -373,6 +381,12 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_ALTF4, MF_BYCOMMAND | MFCHECK(shortcut & 2));
 
 	// Other
+#if defined(SUPPORT_S98)
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_S98LOGGING, MFCHECK(S98_isopened()));
+#endif
+#if defined(SUPPORT_WAVEREC)
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_WAVEREC, MFCHECK(sound_isrecording()));
+#endif
 	const UINT8 DISPCLK = np2oscfg.DISPCLK;
 	CheckMenuItem(hMenu, IDM_DISPCLOCK, MF_BYCOMMAND | MFCHECK(DISPCLK & 1));
 	CheckMenuItem(hMenu, IDM_DISPFRAME, MF_BYCOMMAND | MFCHECK(DISPCLK & 2));
@@ -380,17 +394,3 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_RAPID, MF_BYCOMMAND | MFCHECK(np2cfg.BTN_RAPID));
 	CheckMenuItem(hMenu, IDM_MSRAPID, MF_BYCOMMAND | MFCHECK(np2cfg.MOUSERAPID));
 }
-
-#if defined(SUPPORT_S98)
-void xmenu_sets98logging(UINT8 value)
-{
-	CheckMenuItem(np2class_gethmenu(g_hWndMain), IDM_S98LOGGING, MF_BYCOMMAND | MFCHECK(value));
-}
-#endif
-
-#if defined(SUPPORT_WAVEREC)
-void xmenu_setwaverec(UINT8 value)
-{
-	CheckMenuItem(np2class_gethmenu(g_hWndMain), IDM_WAVEREC, MF_BYCOMMAND | MFCHECK(value));
-}
-#endif

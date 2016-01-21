@@ -68,7 +68,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 				OEMTEXT("VX"), PCBASECLOCK25, PCBASEMULTIPLE,
 				{0x48, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x6e},
 				1, 1, 2, 1, 0x000000, 0xffffff,
-				22050, 500, 4, 0,
+				44100, 250, 4, 0,
 				{0, 0, 0}, 0xd1, 0x7f, 0xd1, 0, 0, 1,
 				3, {0x0c, 0x0c, 0x08, 0x06, 0x03, 0x0c}, 64, 64, 64, 64, 64,
 				1, 0x82,
@@ -82,7 +82,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 
 	PCCORE	pccore = {	PCBASECLOCK25, PCBASEMULTIPLE,
 						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,
-						0, 0,
+						SOUNDID_NONE, 0,
 						PCBASECLOCK25 * PCBASEMULTIPLE};
 	PCSTAT	pcstat = {3, TRUE, FALSE, FALSE};
 
@@ -180,7 +180,7 @@ static void pccore_set(const NP2CFG *pConfig)
 	CopyMemory(pccore.dipsw, pConfig->dipsw, 3);
 
 	// サウンドボードの接続
-	pccore.sound = pConfig->SOUND_SW;
+	pccore.sound = (SOUNDID)pConfig->SOUND_SW;
 
 	// その他CBUSの接続
 	pccore.device = 0;
@@ -203,7 +203,7 @@ static void sound_init(void)
 	UINT	rate;
 
 	rate = np2cfg.samplingrate;
-	if ((rate != 11025) && (rate != 22050) && (rate != 44100))
+	if ((rate != 11025) && (rate != 22050) && (rate != 44100) && (rate != 48000))
 	{
 		rate = 0;
 	}
@@ -225,6 +225,8 @@ static void sound_init(void)
 	pcm86gen_setvol(np2cfg.vol_pcm);
 	cs4231_initialize(rate);
 	amd98_initialize(rate);
+	oplgen_initialize(rate);
+	oplgen_setvol(np2cfg.vol_fm);
 }
 
 static void sound_term(void) {
@@ -256,6 +258,7 @@ void pccore_init(void) {
 	fddfile_initialize();
 
 #if !defined(DISABLE_SOUND)
+	fmboard_construct();
 	sound_init();
 #endif
 
@@ -278,6 +281,7 @@ void pccore_term(void) {
 
 #if !defined(DISABLE_SOUND)
 	sound_term();
+	fmboard_destruct();
 #endif
 
 	fdd_eject(0);

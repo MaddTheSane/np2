@@ -98,7 +98,7 @@ typedef struct {
 
 typedef struct {
 	UINT32	id;
-	int		num;
+	NEVENTID num;
 } ENUMTBL;
 
 #define	PROCID(a, b, c, d)	(((d) << 24) + ((c) << 16) + ((b) << 8) + (a))
@@ -595,7 +595,7 @@ typedef struct {
 	NEVENTCB	proc;
 } NEVTITEM;
 
-static int nevent_write(STFLAGH sfh, int num) {
+static int nevent_write(STFLAGH sfh, NEVENTID num) {
 
 	NEVTITEM	nit;
 	UINT		i;
@@ -636,12 +636,12 @@ static int flagsave_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	return(ret);
 }
 
-static int nevent_read(STFLAGH sfh, UINT *tbl, UINT *pos) {
+static int nevent_read(STFLAGH sfh, NEVENTID *tbl, UINT *pos) {
 
 	int			ret;
 	NEVTITEM	nit;
 	UINT		i;
-	UINT		num;
+	NEVENTID	num;
 
 	ret = statflag_read(sfh, &nit, sizeof(nit));
 
@@ -763,213 +763,167 @@ static int flagload_gij(STFLAGH sfh, const SFENTRY *tbl) {
 
 #if !defined(DISABLE_SOUND)
 
-enum {
+/**
+ * chip flags
+ */
+enum
+{
 	FLAG_MG			= 0x0001,
-	FLAG_FM1A		= 0x0002,
-	FLAG_FM1B		= 0x0004,
-	FLAG_FM2A		= 0x0008,
-	FLAG_FM2B		= 0x0010,
-	FLAG_PSG1		= 0x0020,
-	FLAG_PSG2		= 0x0040,
-	FLAG_PSG3		= 0x0080,
-	FLAG_RHYTHM		= 0x0100,
-	FLAG_ADPCM		= 0x0200,
-	FLAG_PCM86		= 0x0400,
-	FLAG_CS4231		= 0x0800
+	FLAG_OPNA1		= 0x0002,
+	FLAG_OPNA2		= 0x0004,
+#if defined(SUPPORT_PX)
+	FLAG_OPNA3		= 0x0008,
+	FLAG_OPNA4		= 0x0010,
+	FLAG_OPNA5		= 0x0020,
+#endif	/* defined(SUPPORT_PX) */
+	FLAG_AMD98		= 0x0040,
+	FLAG_PCM86		= 0x0080,
+	FLAG_CS4231		= 0x0100,
+	FLAG_OPL3		= 0x0200
 };
 
-typedef struct {
-	UINT8	keyreg[OPNCH_MAX];
-	UINT8	extop[4];
-} OPNKEY;
+/**
+ * Gets flags
+ * @param[in] nSoundID The sound ID
+ * @return The flags
+ */
+static UINT GetSoundFlags(SOUNDID nSoundID)
+{
+	switch (nSoundID)
+	{
+		case SOUNDID_PC_9801_14:
+			return FLAG_MG;
 
-static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl) {
+		case SOUNDID_PC_9801_26K:
+			return FLAG_OPNA1;
 
-	int		ret;
-	UINT	saveflg;
-	OPNKEY	opnkey;
-	UINT	i;
+		case SOUNDID_PC_9801_86:
+			return FLAG_OPNA1 | FLAG_PCM86;
 
-	switch(g_usesound) {
-		case 0x01:
-			saveflg = FLAG_MG;
-			break;
+		case SOUNDID_PC_9801_86_26K:
+			return FLAG_OPNA1 | FLAG_OPNA2 | FLAG_PCM86;
 
-		case 0x02:
-			saveflg = FLAG_FM1A;
-			break;
+		case SOUNDID_PC_9801_118:
+			return FLAG_OPNA1 | FLAG_CS4231;
 
-		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
-			break;
+		case SOUNDID_PC_9801_86_ADPCM:
+			return FLAG_OPNA1 | FLAG_PCM86;
 
-		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
-			break;
+		case SOUNDID_SPEAKBOARD:
+			return FLAG_OPNA1;
 
-		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
-			break;
+		case SOUNDID_SPARKBOARD:
+			return FLAG_OPNA1 | FLAG_OPNA2;
 
-		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
-			break;
+		case SOUNDID_AMD98:
+			return FLAG_AMD98;
 
-		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
-			break;
+		case SOUNDID_SOUNDORCHESTRA:
+		case SOUNDID_SOUNDORCHESTRAV:
+			return FLAG_OPNA1 | FLAG_OPL3;
 
-		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
-			break;
+#if defined(SUPPORT_PX)
+		case SOUNDID_PX1:
+			return FLAG_OPNA1 | FLAG_OPNA2 | FLAG_OPNA3 | FLAG_OPNA4;
 
-		case 0x80:
-			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
-			break;
+		case SOUNDID_PX2:
+			return FLAG_OPNA1 | FLAG_OPNA2 | FLAG_OPNA3 | FLAG_OPNA4 | FLAG_OPNA5 | FLAG_PCM86;
+#endif	/* defined(SUPPORT_PX) */
 
 		default:
-			saveflg = 0;
-			break;
+			return 0;
 	}
-
-	ret = statflag_write(sfh, &g_usesound, sizeof(g_usesound));
-	if (saveflg & FLAG_MG) {
-		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
-	}
-	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_write(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_write(sfh, &g_opn, sizeof(g_opn));
-		for (i = 0; i < OPNCH_MAX; i++)
-		{
-			opnkey.keyreg[i] = g_opngen.opnch[i].keyreg;
-		}
-		opnkey.extop[0] = g_opngen.opnch[2].extop;
-		opnkey.extop[1] = g_opngen.opnch[5].extop;
-		opnkey.extop[2] = g_opngen.opnch[8].extop;
-		opnkey.extop[3] = g_opngen.opnch[11].extop;
-		ret |= statflag_write(sfh, &opnkey, sizeof(opnkey));
-	}
-	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_write(sfh, &g_psg1.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_write(sfh, &g_psg2.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_write(sfh, &g_psg3.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_write(sfh, &g_adpcm, sizeof(g_adpcm));
-	}
-	if (saveflg & FLAG_PCM86) {
-		ret |= statflag_write(sfh, &pcm86, sizeof(pcm86));
-	}
-	if (saveflg & FLAG_CS4231) {
-		ret |= statflag_write(sfh, &cs4231, sizeof(cs4231));
-	}
-	(void)tbl;
-	return(ret);
 }
 
-static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
+static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	UINT nSaveFlags;
+	UINT i;
 
-	int		ret;
-	UINT	saveflg;
-	OPNKEY	opnkey;
-	UINT	i;
+	ret = statflag_write(sfh, &g_nSoundID, sizeof(g_nSoundID));
 
-	ret = statflag_read(sfh, &g_usesound, sizeof(g_usesound));
-	fmboard_reset(&np2cfg, g_usesound);
-
-	switch(g_usesound) {
-		case 0x01:
-			saveflg = FLAG_MG;
-			break;
-
-		case 0x02:
-			saveflg = FLAG_FM1A;
-			break;
-
-		case 0x04:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_PCM86;
-			break;
-
-		case 0x06:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_RHYTHM | FLAG_PCM86;
-			break;
-
-		case 0x08:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_CS4231;
-			break;
-
-		case 0x14:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM | FLAG_PCM86;
-			break;
-
-		case 0x20:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_RHYTHM | FLAG_ADPCM;
-			break;
-
-		case 0x40:
-			saveflg = FLAG_FM1A | FLAG_FM1B | FLAG_FM2A | FLAG_FM2B | FLAG_RHYTHM | FLAG_ADPCM;
-			break;
-
-		case 0x80:
-			saveflg = FLAG_PSG1 | FLAG_PSG2 | FLAG_PSG3;
-			break;
-
-		default:
-			saveflg = 0;
-			break;
+	nSaveFlags = GetSoundFlags(g_nSoundID);
+	if (nSaveFlags & FLAG_MG)
+	{
+		ret |= statflag_write(sfh, &g_musicgen, sizeof(g_musicgen));
 	}
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		if (nSaveFlags & (FLAG_OPNA1 << i))
+		{
+			ret |= opna_sfsave(&g_opna[i], sfh, tbl);
+		}
+	}
+	if (nSaveFlags & FLAG_PCM86)
+	{
+		ret |= statflag_write(sfh, &g_pcm86, sizeof(g_pcm86));
+	}
+	if (nSaveFlags & FLAG_CS4231)
+	{
+		ret |= statflag_write(sfh, &cs4231, sizeof(cs4231));
+	}
+	if (nSaveFlags & FLAG_AMD98)
+	{
+		ret |= amd98_sfsave(sfh, tbl);
+	}
+	if (nSaveFlags & FLAG_OPL3)
+	{
+		ret |= opl3_sfsave(&g_opl3, sfh, tbl);
+	}
+	return ret;
+}
 
-	if (saveflg & FLAG_MG) {
+static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
+{
+	int ret;
+	SOUNDID nSoundID;
+	UINT nSaveFlags;
+	UINT i;
+
+	ret = statflag_read(sfh, &nSoundID, sizeof(nSoundID));
+	fmboard_reset(&np2cfg, nSoundID);
+
+	nSaveFlags = GetSoundFlags(g_nSoundID);
+	if (nSaveFlags & FLAG_MG)
+	{
 		ret |= statflag_read(sfh, &g_musicgen, sizeof(g_musicgen));
 		board14_allkeymake();
 	}
-
-	if (saveflg & FLAG_FM1A) {
-		ret |= statflag_read(sfh, &g_fmtimer, sizeof(g_fmtimer));
-		ret |= statflag_read(sfh, &g_opn, sizeof(g_opn));
-		ret |= statflag_read(sfh, &opnkey, sizeof(opnkey));
-		for (i = 0; i < OPNCH_MAX; i++)
+	for (i = 0; i < NELEMENTS(g_opna); i++)
+	{
+		if (nSaveFlags & (FLAG_OPNA1 << i))
 		{
-			g_opngen.opnch[i].keyreg = opnkey.keyreg[i];
+			ret |= opna_sfload(&g_opna[i], sfh, tbl);
 		}
-		g_opngen.opnch[2].extop = opnkey.extop[0];
-		g_opngen.opnch[5].extop = opnkey.extop[1];
-		g_opngen.opnch[8].extop = opnkey.extop[2];
-		g_opngen.opnch[11].extop = opnkey.extop[3];
 	}
-	if (saveflg & FLAG_PSG1) {
-		ret |= statflag_read(sfh, &g_psg1.reg, sizeof(PSGREG));
+	if (nSaveFlags & FLAG_PCM86)
+	{
+		ret |= statflag_read(sfh, &g_pcm86, sizeof(g_pcm86));
 	}
-	if (saveflg & FLAG_PSG2) {
-		ret |= statflag_read(sfh, &g_psg2.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_PSG3) {
-		ret |= statflag_read(sfh, &g_psg3.reg, sizeof(PSGREG));
-	}
-	if (saveflg & FLAG_ADPCM) {
-		ret |= statflag_read(sfh, &g_adpcm, sizeof(g_adpcm));
-	}
-	if (saveflg & FLAG_PCM86) {
-		ret |= statflag_read(sfh, &pcm86, sizeof(pcm86));
-	}
-	if (saveflg & FLAG_CS4231) {
+	if (nSaveFlags & FLAG_CS4231)
+	{
 		ret |= statflag_read(sfh, &cs4231, sizeof(cs4231));
+	}
+	if (nSaveFlags & FLAG_AMD98)
+	{
+		ret |= amd98_sfload(sfh, tbl);
+	}
+	if (nSaveFlags & FLAG_OPL3)
+	{
+		ret |= opl3_sfload(&g_opl3, sfh, tbl);
 	}
 
 	// •œŒ³B ‚±‚êˆÚ“®‚·‚é‚±‚ÆI
-	adpcm_update(&g_adpcm);
 	pcm86gen_update();
-	if (saveflg & FLAG_PCM86) {
-		fmboard_extenable((REG8)(pcm86.extfunc & 1));
+	if (nSaveFlags & FLAG_PCM86)
+	{
+		fmboard_extenable((REG8)(g_pcm86.extfunc & 1));
 	}
-	if (saveflg & FLAG_CS4231) {
+	if (nSaveFlags & FLAG_CS4231)
+	{
 		fmboard_extenable((REG8)(cs4231.extfunc & 1));
 	}
-	(void)t;
 	return(ret);
 }
 #endif

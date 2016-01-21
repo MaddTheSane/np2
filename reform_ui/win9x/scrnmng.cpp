@@ -16,7 +16,7 @@
 #include "winloc.h"
 #include "mousemng.h"
 #include "scrnmng.h"
-#include "sysmng.h"
+// #include "sysmng.h"
 #include "np2class.h"
 #include "pccore.h"
 #include "scrndraw.h"
@@ -79,67 +79,63 @@ static	SCRNSTAT	scrnstat;
 static	SCRNSURF	scrnsurf;
 
 
-static void setwindowsize(HWND hWnd, int width, int height) {
-
-	RECT	workrc;
-	int		scx;
-	int		scy;
-	UINT	cnt;
-	RECT	rectwindow;
-	RECT	rectclient;
-	int		cx;
-	int		cy;
-	UINT	update;
-
+static void setwindowsize(HWND hWnd, int width, int height)
+{
+	RECT workrc;
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
-	scx = GetSystemMetrics(SM_CXSCREEN);
-	scy = GetSystemMetrics(SM_CYSCREEN);
+	const int scx = GetSystemMetrics(SM_CXSCREEN);
+	const int scy = GetSystemMetrics(SM_CYSCREEN);
 
-	cnt = 2;
-	do {
+	UINT cnt = 2;
+	do
+	{
+		RECT rectwindow;
 		GetWindowRect(hWnd, &rectwindow);
+		RECT rectclient;
 		GetClientRect(hWnd, &rectclient);
-		cx = width;
+		int winx = (np2oscfg.winx != CW_USEDEFAULT) ? np2oscfg.winx : rectwindow.left;
+		int winy = (np2oscfg.winy != CW_USEDEFAULT) ? np2oscfg.winy : rectwindow.top;
+		int cx = width;
 		cx += np2oscfg.paddingx * 2;
 		cx += rectwindow.right - rectwindow.left;
 		cx -= rectclient.right - rectclient.left;
-		cy = height;
+		int cy = height;
 		cy += np2oscfg.paddingy * 2;
 		cy += rectwindow.bottom - rectwindow.top;
 		cy -= rectclient.bottom - rectclient.top;
 
-		update = 0;
-		if (scx < cx) {
-			np2oscfg.winx = (scx - cx) / 2;
-			update |= SYS_UPDATEOSCFG;
+		if (scx < cx)
+		{
+			winx = (scx - cx) / 2;
 		}
-		else {
-			if ((np2oscfg.winx + cx) > workrc.right) {
-				np2oscfg.winx = workrc.right - cx;
-				update |= SYS_UPDATEOSCFG;
+		else
+		{
+			if ((winx + cx) > workrc.right)
+			{
+				winx = workrc.right - cx;
 			}
-			if (np2oscfg.winx < workrc.left) {
-				np2oscfg.winx = workrc.left;
-				update |= SYS_UPDATEOSCFG;
-			}
-		}
-		if (scy < cy) {
-			np2oscfg.winy = (scy - cy) / 2;
-			update |= SYS_UPDATEOSCFG;
-		}
-		else {
-			if ((np2oscfg.winy + cy) > workrc.bottom) {
-				np2oscfg.winy = workrc.bottom - cy;
-				update |= SYS_UPDATEOSCFG;
-			}
-			if (np2oscfg.winy < workrc.top) {
-				np2oscfg.winy = workrc.top;
-				update |= SYS_UPDATEOSCFG;
+			if (winx < workrc.left)
+			{
+				winx = workrc.left;
 			}
 		}
-		sysmng_update(update);
-		MoveWindow(hWnd, np2oscfg.winx, np2oscfg.winy, cx, cy, TRUE);
-	} while(--cnt);
+		if (scy < cy)
+		{
+			winy = (scy - cy) / 2;
+		}
+		else
+		{
+			if ((winy + cy) > workrc.bottom)
+			{
+				winy = workrc.bottom - cy;
+			}
+			if (winy < workrc.top)
+			{
+				winy = workrc.top;
+			}
+		}
+		MoveWindow(hWnd, winx, winy, cx, cy, TRUE);
+	} while (--cnt);
 }
 
 static void renewalclientsize(BOOL winloc) {
