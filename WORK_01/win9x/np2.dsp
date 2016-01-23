@@ -1627,6 +1627,14 @@ SOURCE=.\ext\mt32snd.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\misc\DlgProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\DlgProc.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\extrom.cpp
 # End Source File
 # Begin Source File
