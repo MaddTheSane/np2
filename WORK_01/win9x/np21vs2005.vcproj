@@ -1696,10 +1696,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\subwnd\subwnd.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
@@ -1737,6 +1733,10 @@
 					</File>
 					<File
 						RelativePath=".\subwnd\skbdwnd.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\subwnd.cpp"
 						>
 					</File>
 					<File
