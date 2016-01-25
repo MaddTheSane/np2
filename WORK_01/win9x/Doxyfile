@@ -755,6 +755,8 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./debuguty/ \
+                         ./dialog/d_bmp.cpp \
+                         ./dialog/d_font.cpp \
                          ./dialog/d_soundlog.cpp \
                          ./ext/ \
                          ./ext/c86ctl/ \

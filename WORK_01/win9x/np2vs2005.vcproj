@@ -1834,6 +1834,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_font.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_mpu98.cpp"
 						>
 					</File>
