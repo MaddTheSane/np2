@@ -204,7 +204,7 @@ void CScciIf::Detach(CScciIf::Chip* pChip)
 /**
  * コンストラクタ
  * @param[in] pScciIf 親インスタンス
- * @param[in] pChip チップ インスタンス
+ * @param[in] pSoundChip チップ インスタンス
  */
 CScciIf::Chip::Chip(CScciIf* pScciIf, SoundChip* pSoundChip)
 	: m_pScciIf(pScciIf)

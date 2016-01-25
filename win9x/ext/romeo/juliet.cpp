@@ -286,8 +286,7 @@ bool CJuliet::Task()
 
 /**
  * コンストラクタ
- * @param[in] pScciIf 親インスタンス
- * @param[in] pChip チップ インスタンス
+ * @param[in] pJuliet 親インスタンス
  */
 CJuliet::Chip288::Chip288(CJuliet* pJuliet)
 	: m_pJuliet(pJuliet)
