@@ -253,7 +253,7 @@ LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 				POINT pt;
 				pt.x = GET_X_LPARAM(lParam);
 				pt.y = GET_Y_LPARAM(lParam);
-				OnRButtonDown(wParam, pt);
+				OnRButtonDown(static_cast<UINT>(wParam), pt);
 			}
 			break;
 
