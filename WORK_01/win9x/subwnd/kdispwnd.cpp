@@ -107,7 +107,7 @@ static UINT8 kdgetpal8(CMNPALFN* self, UINT num)
 /**
  * 16bpp色を返す
  * @param[in] self インスタンス
- * @param[in] num パレット番号
+ * @param[in] pal32 パレット
  * @return 色
  */
 static UINT16 kdcnvpal16(CMNPALFN* self, RGB32 pal32)
