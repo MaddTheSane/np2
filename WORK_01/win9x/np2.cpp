@@ -927,13 +927,11 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 
-#if defined(SUPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
 			dialog_soundlog(hWnd);
 			winuileave();
 			break;
-#endif
 
 		case IDM_CALENDAR:
 			winuienter();
