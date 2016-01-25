@@ -1356,6 +1356,14 @@ SOURCE=.\DIALOG\D_SOUND.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\dialog\d_soundlog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\dialog.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DIALOG\DIALOGS.CPP
 # End Source File
 # Begin Source File

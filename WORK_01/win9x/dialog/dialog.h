@@ -1,4 +1,6 @@
 
+#pragma once
+
 LRESULT CALLBACK CfgDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 LRESULT CALLBACK AboutDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 LRESULT CALLBACK MidiDialogProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
@@ -17,3 +19,4 @@ void dialog_changehdd(HWND hWnd, REG8 drv);
 void dialog_font(HWND hWnd);
 void dialog_writebmp(HWND hWnd);
 
+void dialog_soundlog(HWND hWnd);

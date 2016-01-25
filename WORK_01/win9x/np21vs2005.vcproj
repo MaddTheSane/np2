@@ -1492,6 +1492,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_soundlog.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\dialogs.cpp"
 						>
 					</File>

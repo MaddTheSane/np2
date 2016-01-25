@@ -12,11 +12,11 @@
 #include "misc\tstring.h"
 #include "dialog\np2class.h"
 #include "pccore.h"
-#if defined(SUPPORT_S98)
-#include "sound\s98.h"
-#endif
 #if defined(SUPPORT_WAVEREC)
 #include "sound\sound.h"
+#endif
+#if defined(SUPPORT_S98)
+#include "sound\s98.h"
 #endif
 
 /**
@@ -276,10 +276,6 @@ void xmenu_initialize(HMENU hMenu)
 	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
 #endif
 
-#if defined(SUPPORT_WAVEREC)
-	(void)menu_addmenubyid(hMenu, IDM_S98LOGGING, IDR_WAVEREC);
-#endif
-
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(SUPPORT_PC9821)
@@ -381,12 +377,20 @@ void xmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_ALTF4, MF_BYCOMMAND | MFCHECK(shortcut & 2));
 
 	// Other
+	bool bLogging = false;
 #if defined(SUPPORT_S98)
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_S98LOGGING, MFCHECK(S98_isopened()));
+	if (S98_isopened())
+	{
+		bLogging = true;
+	}
 #endif
 #if defined(SUPPORT_WAVEREC)
-	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_WAVEREC, MFCHECK(sound_isrecording()));
+	if (sound_isrecording())
+	{
+		bLogging = true;
+	}
 #endif
+	CheckMenuItem(hMenu, MF_BYCOMMAND | IDM_S98LOGGING, MFCHECK(bLogging));
 	const UINT8 DISPCLK = np2oscfg.DISPCLK;
 	CheckMenuItem(hMenu, IDM_DISPCLOCK, MF_BYCOMMAND | MFCHECK(DISPCLK & 1));
 	CheckMenuItem(hMenu, IDM_DISPFRAME, MF_BYCOMMAND | MFCHECK(DISPCLK & 2));

@@ -23,10 +23,8 @@
 #include "iocore.h"
 #include "sound.h"
 #include "fmboard.h"
-#include "s98.h"
 #include "tms3631.h"
 #include "dipswbmp.h"
-#include "recvideo.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "comctl32.lib")
@@ -982,81 +980,3 @@ void dialog_sndopt(HWND hWnd)
 	PropertySheet(&psh);
 	InvalidateRect(hWnd, NULL, TRUE);
 }
-
-
-// ----
-
-#if defined(SUPPORT_S98)
-
-static const FSPARAM fpS98 =
-{
-	MAKEINTRESOURCE(IDS_S98TITLE),
-	MAKEINTRESOURCE(IDS_S98EXT),
-	MAKEINTRESOURCE(IDS_S98FILTER),
-	1
-};
-static const TCHAR szS98File[] = TEXT("NP2_####.S98");
-
-void dialog_s98(HWND hWnd)
-{
-	TCHAR	szPath[MAX_PATH];
-
-	S98_close();
-	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
-	file_cutname(szPath);
-	file_catname(szPath, szS98File, NELEMENTS(szPath));
-	if ((dlgs_createfilenum(hWnd, &fpS98, szPath, NELEMENTS(szPath))) &&
-		(S98_open(szPath) == SUCCESS))
-	{
-		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
-		sysmng_update(SYS_UPDATEOSCFG);
-	}
-}
-#endif	// defined(SUPPORT_S98)
-
-
-// ----
-
-#if defined(SUPPORT_WAVEREC)
-
-static const FSPARAM fpWave =
-{
-	MAKEINTRESOURCE(IDS_WAVETITLE),
-	MAKEINTRESOURCE(IDS_WAVEEXT),
-	MAKEINTRESOURCE(IDS_WAVEFILTER),
-	1
-};
-static const TCHAR szWaveFile[] = TEXT("NP2_####.WAV");
-
-void dialog_waverec(HWND hWnd)
-{
-#if defined(SUPPORT_RECVIDEO)
-	const bool bShiftDown = (::GetKeyState(VK_SHIFT) < 0);
-	recvideo_close();
-#endif	// defined(SUPPORT_RECVIDEO)
-
-	sound_recstop();
-
-	TCHAR szPath[MAX_PATH];
-	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
-	file_cutname(szPath);
-	file_catname(szPath, szWaveFile, NELEMENTS(szPath));
-
-	if ((dlgs_createfilenum(hWnd, &fpWave, szPath, NELEMENTS(szPath))) &&
-		(sound_recstart(szPath) == SUCCESS))
-	{
-		file_cpyname(bmpfilefolder, szPath, NELEMENTS(bmpfilefolder));
-		sysmng_update(SYS_UPDATEOSCFG);
-	}
-
-#if defined(SUPPORT_RECVIDEO)
-	if (bShiftDown)
-	{
-		file_cutext(szPath);
-		file_catname(szPath, _T(".avi"), NELEMENTS(szPath));
-		recvideo_open(hWnd, szPath);
-	}
-#endif	// defined(SUPPORT_RECVIDEO)
-}
-#endif	// defined(SUPPORT_WAVEREC)
-
