@@ -1736,6 +1736,14 @@ SOURCE=.\OEMTEXT.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\recvideo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\recvideo.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File

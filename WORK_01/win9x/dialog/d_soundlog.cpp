@@ -87,7 +87,6 @@ void dialog_soundlog(HWND hWnd)
 	TCHAR szPath[MAX_PATH];
 	GetDefaultFilename(rExt.c_str(), szPath, _countof(szPath));
 
-
 	CFileDlg dlg(FALSE, rExt.c_str(), szPath, OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, rFilter.c_str(), hWnd);
 	dlg.m_ofn.lpstrTitle = rTitle.c_str();
 	dlg.m_ofn.nFilterIndex = 1;

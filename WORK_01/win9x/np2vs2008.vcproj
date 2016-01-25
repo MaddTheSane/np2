@@ -1734,6 +1734,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\recvideo.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\scrnmng.cpp"
 					>
 				</File>
@@ -2925,6 +2929,10 @@
 				</File>
 				<File
 					RelativePath=".\oemtext.h"
+					>
+				</File>
+				<File
+					RelativePath=".\recvideo.h"
 					>
 				</File>
 				<File
