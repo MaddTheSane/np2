@@ -26,7 +26,7 @@ void dialog_font(HWND hWnd)
 
 	CFileDlg dlg(TRUE, rExt.c_str(), np2cfg.fontfile, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, rFilter.c_str(), hWnd);
 	dlg.m_ofn.lpstrTitle = rTitle.c_str();
-	dlg.m_ofn.nFilterIndex = 1;
+	dlg.m_ofn.nFilterIndex = 3;
 	if (!dlg.DoModal())
 	{
 		return;
