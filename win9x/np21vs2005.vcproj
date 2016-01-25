@@ -1517,6 +1517,86 @@
 					</File>
 				</Filter>
 				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\externalchipmanager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopl3.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopm.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalpsg.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\mt32snd.cpp"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="scci"
+						>
+						<File
+							RelativePath=".\ext\scci\scciif.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\threadbase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\trace.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tstring.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndProc.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
 					Name="x64"
 					>
 					<File
@@ -1642,86 +1722,6 @@
 								Name="NASM"
 							/>
 						</FileConfiguration>
-					</File>
-				</Filter>
-				<Filter
-					Name="ext"
-					>
-					<File
-						RelativePath=".\ext\externalchipmanager.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\externalopl3.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\externalopm.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\externalopna.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\externalpsg.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ext\mt32snd.cpp"
-						>
-					</File>
-					<Filter
-						Name="c86ctl"
-						>
-						<File
-							RelativePath=".\ext\c86ctl\c86ctlif.cpp"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="romeo"
-						>
-						<File
-							RelativePath=".\ext\romeo\juliet.cpp"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="scci"
-						>
-						<File
-							RelativePath=".\ext\scci\scciif.cpp"
-							>
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
-					Name="misc"
-					>
-					<File
-						RelativePath=".\misc\extrom.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\threadbase.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\tickcounter.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\trace.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\tstring.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\misc\WndProc.cpp"
-						>
 					</File>
 				</Filter>
 			</Filter>
@@ -2635,22 +2635,6 @@
 					>
 				</File>
 				<Filter
-					Name="dialog"
-					>
-					<File
-						RelativePath=".\dialog\dialog.h"
-						>
-					</File>
-					<File
-						RelativePath=".\dialog\dialogs.h"
-						>
-					</File>
-					<File
-						RelativePath=".\dialog\np2class.h"
-						>
-					</File>
-				</Filter>
-				<Filter
 					Name="debuguty"
 					>
 					<File
@@ -2687,10 +2671,18 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="x86"
+					Name="dialog"
 					>
 					<File
-						RelativePath=".\x86\cputype.h"
+						RelativePath=".\dialog\dialog.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\dialogs.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\np2class.h"
 						>
 					</File>
 				</Filter>
@@ -2807,6 +2799,14 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="x86"
+					>
+					<File
+						RelativePath=".\x86\cputype.h"
 						>
 					</File>
 				</Filter>
