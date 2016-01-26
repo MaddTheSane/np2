@@ -1,4 +1,7 @@
-
+/**
+ * @file	dd2.h
+ * @brief	DirectDraw2 描画クラスの宣言およびインターフェイスの定義をします
+ */
 
 #pragma once
 
@@ -18,23 +21,21 @@ public:
 	void Release();
 	CMNVRAM* Lock();
 	void Unlock();
-	void Blt(const POINT *pt, const RECT *rect);
+	void Blt(const POINT* pt, const RECT* lpRect = NULL);
 	UINT16 GetPalette16(RGB32 pal) const;
 
 protected:
-	HWND					hwnd;
-	LPDIRECTDRAW			ddraw1;
-	LPDIRECTDRAW2			ddraw;
-	LPDIRECTDRAWSURFACE		primsurf;
-	LPDIRECTDRAWSURFACE		backsurf;
-	DDPIXELFORMAT			ddpf;
-	LPDIRECTDRAWCLIPPER		clipper;
-	LPDIRECTDRAWPALETTE		palette;
-	int						cliping;
-	RGB32					pal16;
-	UINT8					r16b;
-	UINT8					l16r;
-	UINT8					l16g;
-	CMNVRAM					vram;
-	PALETTEENTRY			pal[256];
+	HWND					m_hWnd;				/*!< ウィンドウ ハンドル */
+	LPDIRECTDRAW			m_pDDraw;			/*!< DirectDraw インスタンス */
+	LPDIRECTDRAW2			m_pDDraw2;			/*!< DirectDraw2 インスタンス */
+	LPDIRECTDRAWSURFACE		m_pPrimarySurface;	/*!< プライマリ サーフェス */
+	LPDIRECTDRAWSURFACE		m_pBackSurface;		/*!< バック サーフェス */
+	LPDIRECTDRAWCLIPPER		m_pClipper;			/*!< クリッパー */
+	LPDIRECTDRAWPALETTE		m_pPalette;			/*!< パレット */
+	RGB32					m_pal16;			/*!< 16BPPマスク */
+	UINT8					m_r16b;				/*!< B シフト量 */
+	UINT8					m_l16r;				/*!< R シフト量 */
+	UINT8					m_l16g;				/*!< G シフト量 */
+	CMNVRAM					m_vram;				/*!< VRAM */
+	PALETTEENTRY			m_pal[256];			/*!< パレット */
 };

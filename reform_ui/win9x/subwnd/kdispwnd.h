@@ -22,17 +22,17 @@ public:
 	CKeyDisplayWnd();
 	virtual ~CKeyDisplayWnd();
 	void Create();
-	void Destroy();
 	void Draw(UINT8 cnt);
 
 protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 	void OnDestroy();
+	void OnRButtonDown(UINT nFlags, POINT point);
 	void OnPaint();
 
 private:
 	static CKeyDisplayWnd sm_instance;		//!< インスタンス
-	DD2Surface m_dd2;
+	DD2Surface m_dd2;						//!< DirectDraw2 インスタンス
 	void OnDraw(BOOL redraw);
 	void OnResize();
 	void SetDispMode(UINT8 mode);

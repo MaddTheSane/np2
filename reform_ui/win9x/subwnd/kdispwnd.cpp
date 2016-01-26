@@ -20,6 +20,9 @@ extern WINLOCEX np2_winlocexallwin(HWND base);
 //! 唯一のインスタンスです
 CKeyDisplayWnd CKeyDisplayWnd::sm_instance;
 
+/**
+ * モード
+ */
 enum
 {
 	KDISPCFG_FM		= 0x00,
@@ -31,10 +34,10 @@ enum
  */
 struct KeyDisplayConfig
 {
-	int		posx;
-	int		posy;
-	UINT8	mode;
-	UINT8	type;
+	int		posx;		//!< X
+	int		posy;		//!< Y
+	UINT8	mode;		//!< モード
+	UINT8	type;		//!< ウィンドウ タイプ
 };
 
 //! コンフィグ
@@ -56,11 +59,6 @@ static const PFTBL s_kdispini[] =
 
 //! パレット
 static const UINT32 s_kdisppal[KEYDISP_PALS] = {0x00000000, 0xffffffff, 0xf9ff0000};
-
-
-static UINT8 kdgetpal8(CMNPALFN *self, UINT num);
-static UINT32 kdgetpal32(CMNPALFN *self, UINT num);
-static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32);
 
 /**
  * 初期化
@@ -89,6 +87,47 @@ CKeyDisplayWnd::CKeyDisplayWnd()
  */
 CKeyDisplayWnd::~CKeyDisplayWnd()
 {
+}
+
+/**
+ * 8bpp色を返す
+ * @param[in] self インスタンス
+ * @param[in] num パレット番号
+ * @return 色
+ */
+static UINT8 kdgetpal8(CMNPALFN* self, UINT num)
+{
+	if (num < KEYDISP_PALS)
+	{
+		return s_kdisppal[num] >> 24;
+	}
+	return 0;
+}
+
+/**
+ * 16bpp色を返す
+ * @param[in] self インスタンス
+ * @param[in] pal32 パレット
+ * @return 色
+ */
+static UINT16 kdcnvpal16(CMNPALFN* self, RGB32 pal32)
+{
+	return (reinterpret_cast<DD2Surface*>(self->userdata))->GetPalette16(pal32);
+}
+
+/**
+ * 32bpp色を返す
+ * @param[in] self インスタンス
+ * @param[in] num パレット番号
+ * @return 色
+ */
+static UINT32 kdgetpal32(CMNPALFN* self, UINT num)
+{
+	if (num < KEYDISP_PALS)
+	{
+		return s_kdisppal[num] & 0xffffff;
+	}
+	return 0;
 }
 
 /**
@@ -162,43 +201,6 @@ void CKeyDisplayWnd::Draw(UINT8 cnt)
 	}
 }
 
-static UINT8 kdgetpal8(CMNPALFN *self, UINT num)
-{
-	if (num < KEYDISP_PALS)
-	{
-		return s_kdisppal[num] >> 24;
-	}
-	return 0;
-}
-
-static UINT32 kdgetpal32(CMNPALFN *self, UINT num)
-{
-	if (num < KEYDISP_PALS)
-	{
-		return s_kdisppal[num] & 0xffffff;
-	}
-	return 0;
-}
-
-static UINT16 kdcnvpal16(CMNPALFN *self, RGB32 pal32)
-{
-	return (reinterpret_cast<DD2Surface*>(self->userdata))->GetPalette16(pal32);
-}
-
-static void kdopenpopup(HWND hWnd, LPARAM lp)
-{
-	HMENU hMenu = CreatePopupMenu();
-	menu_addmenu(hMenu, 0, np2class_gethmenu(hWnd), FALSE);
-	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
-
-	POINT pt;
-	pt.x = LOWORD(lp);
-	pt.y = HIWORD(lp);
-	ClientToScreen(hWnd, &pt);
-	TrackPopupMenu(hMenu, TPM_LEFTALIGN, pt.x, pt.y, 0, hWnd, NULL);
-	DestroyMenu(hMenu);
-}
-
 /**
  * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
  * @param[in] nMsg 処理される Windows メッセージを指定します
@@ -247,7 +249,12 @@ LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_RBUTTONDOWN:
-			kdopenpopup(m_hWnd, lParam);
+			{
+				POINT pt;
+				pt.x = GET_X_LPARAM(lParam);
+				pt.y = GET_Y_LPARAM(lParam);
+				OnRButtonDown(static_cast<UINT>(wParam), pt);
+			}
 			break;
 
 		case WM_LBUTTONDBLCLK:
@@ -274,15 +281,39 @@ LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_DESTROY:
-			np2class_wmdestroy(m_hWnd);
-			m_dd2.Release();
-			SetDispMode(KEYDISP_MODENONE);
+			OnDestroy();
 			break;
 
 		default:
 			return CSubWndBase::WindowProc(nMsg, wParam, lParam);
 	}
 	return 0L;
+}
+
+/**
+ * ウィンドウ破棄の時に呼ばれる
+ */
+void CKeyDisplayWnd::OnDestroy()
+{
+	::np2class_wmdestroy(m_hWnd);
+	m_dd2.Release();
+	SetDispMode(KEYDISP_MODENONE);
+}
+
+/**
+ * フレームワークは、ユーザーがマウスの右ボタンを押すと、このメンバー関数を呼び出します
+ * @param[in] nFlags 仮想キーが押されているかどうかを示します
+ * @param[in] point カーソルの x 座標と y 座標を指定します
+ */
+void CKeyDisplayWnd::OnRButtonDown(UINT nFlags, POINT point)
+{
+	HMENU hMenu = CreatePopupMenu();
+	menu_addmenu(hMenu, 0, np2class_gethmenu(m_hWnd), FALSE);
+	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
+
+	ClientToScreen(&point);
+	::TrackPopupMenu(hMenu, TPM_LEFTALIGN, point.x, point.y, 0, m_hWnd, NULL);
+	::DestroyMenu(hMenu);
 }
 
 /**

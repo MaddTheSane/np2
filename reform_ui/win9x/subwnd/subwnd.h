@@ -26,5 +26,5 @@ protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-	WINLOCEX m_wlex;
+	WINLOCEX m_wlex;		/*!< ウィンドウ ロケータ */
 };

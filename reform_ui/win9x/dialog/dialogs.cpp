@@ -120,56 +120,6 @@ BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize)
 	return openFileParam(&ofn, pcParam, pszPath, uSize, GetSaveFileName);
 }
 
-BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize)
-{
-	LPTSTR pszNum[4];
-	LPTSTR pszFile;
-	UINT uCount;
-	UINT uPos;
-
-	if (!pszPath)
-	{
-		return FALSE;
-	}
-
-	ZeroMemory(pszNum, sizeof(pszNum));
-	pszFile = file_getname(pszPath);
-	uCount = 0;
-	while(1)
-	{
-		pszFile = milstr_chr(pszPath, '#');
-		if (!pszFile)
-		{
-			break;
-		}
-		*pszFile = '0';
-		pszNum[uCount] = pszFile;
-		uCount = (uCount + 1) % NELEMENTS(pszNum);
-		pszFile++;
-	}
-
-	while(file_attr(pszPath) != (short)-1)
-	{
-		uPos = max(uCount, NELEMENTS(pszNum));
-		while(uPos)
-		{
-			pszFile = pszNum[(uPos - 1) % NELEMENTS(pszNum)];
-			*pszFile = *pszFile + 1;
-			if (*pszFile < ('0' + 10))
-			{
-				break;
-			}
-			*pszFile = '0';
-			uPos--;
-		}
-		if (!uPos)
-		{
-			break;
-		}
-	}
-	return dlgs_createfile(hWnd, pcParam, pszPath, uSize);
-}
-
 
 // ---- mimpi def file
 
