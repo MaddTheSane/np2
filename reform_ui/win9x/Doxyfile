@@ -756,6 +756,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ./debuguty/ \
                          ./dialog/d_bmp.cpp \
+                         ./dialog/d_disk.cpp \
                          ./dialog/d_font.cpp \
                          ./dialog/d_soundlog.cpp \
                          ./ext/ \
