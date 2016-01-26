@@ -733,6 +733,50 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="generic"
+				>
+				<File
+					RelativePath="..\..\generic\cmjasts.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\cmndraw.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\cmver.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\dipswbmp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\hostdrv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\hostdrvs.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\keydisp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\np2info.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\softkbd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\unasm.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="i286c"
 				>
 				<File
@@ -1020,66 +1064,6 @@
 					>
 				</File>
 				<Filter
-					Name="win32"
-					>
-					<File
-						RelativePath=".\compiler.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="1"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="1"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="1"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|x64"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="1"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\main.c"
-						>
-					</File>
-					<Filter
-						Name="misc"
-						>
-						<File
-							RelativePath=".\misc\threadbase.cpp"
-							>
-						</File>
-						<File
-							RelativePath=".\misc\tty.cpp"
-							>
-						</File>
-						<File
-							RelativePath=".\misc\usbdev.cpp"
-							>
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
 					Name="ext"
 					>
 					<File
@@ -1143,6 +1127,66 @@
 						</File>
 						<File
 							RelativePath="..\ext\scci\sccispfmlight.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="win32"
+					>
+					<File
+						RelativePath=".\compiler.c"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\main.c"
+						>
+					</File>
+					<Filter
+						Name="misc"
+						>
+						<File
+							RelativePath=".\misc\threadbase.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\tty.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\usbdev.cpp"
 							>
 						</File>
 					</Filter>
@@ -1353,50 +1397,6 @@
 				</File>
 				<File
 					RelativePath="..\..\vram\vram.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="generic"
-				>
-				<File
-					RelativePath="..\..\generic\cmjasts.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\cmndraw.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\cmver.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\dipswbmp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\hostdrv.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\hostdrvs.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\keydisp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\np2info.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\softkbd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\unasm.c"
 					>
 				</File>
 			</Filter>
@@ -1927,6 +1927,14 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="lio"
+				>
+				<File
+					RelativePath="..\..\lio\lio.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="mem"
 				>
 				<File
@@ -2034,34 +2042,6 @@
 					>
 				</File>
 				<Filter
-					Name="win32"
-					>
-					<File
-						RelativePath=".\compiler.h"
-						>
-					</File>
-					<Filter
-						Name="misc"
-						>
-						<File
-							RelativePath=".\misc\guard.h"
-							>
-						</File>
-						<File
-							RelativePath=".\misc\threadbase.h"
-							>
-						</File>
-						<File
-							RelativePath=".\misc\tty.h"
-							>
-						</File>
-						<File
-							RelativePath=".\misc\usbdev.h"
-							>
-						</File>
-					</Filter>
-				</Filter>
-				<Filter
 					Name="ext"
 					>
 					<File
@@ -2141,6 +2121,34 @@
 						</File>
 						<File
 							RelativePath="..\ext\scci\sccispfmlight.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="win32"
+					>
+					<File
+						RelativePath=".\compiler.h"
+						>
+					</File>
+					<Filter
+						Name="misc"
+						>
+						<File
+							RelativePath=".\misc\guard.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\threadbase.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\tty.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\usbdev.h"
 							>
 						</File>
 					</Filter>
@@ -2311,14 +2319,6 @@
 				</File>
 				<File
 					RelativePath="..\..\vram\vram.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="lio"
-				>
-				<File
-					RelativePath="..\..\lio\lio.h"
 					>
 				</File>
 			</Filter>
