@@ -6,13 +6,12 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include "dialogs.h"
 #include "np2class.h"
+#include "np2.h"
+#include "misc/DlgProc.h"
 #include "pccore.h"
 #include "np2ver.h"
 #include "generic/np2info.h"
-#include "np2.h"
-#include "misc/DlgProc.h"
 
 //! ƒ^ƒCƒgƒ‹
 static const TCHAR s_np2title[] = TEXT(PROJECTNAME) TEXT(PROJECTSUBNAME) TEXT("  ");

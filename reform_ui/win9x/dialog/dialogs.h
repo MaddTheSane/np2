@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "misc/DlgProc.h"
-
 struct tagFileSelectParam
 {
 	LPTSTR	lpszTitle;
@@ -74,16 +72,3 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname);
 void dlgs_setlistmidiin(HWND hWnd, UINT16 res, LPCTSTR defname);
 
 void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
-
-/**
- * @brief コンボ ボックス クラス
- */
-class CNp2ComboBox : public CComboBoxProc
-{
-public:
-	void Add(const UINT32* lpValues, UINT nCount);
-	void Add(PCCBPARAM pcItem, UINT nCount);
-	void Add(LPCTSTR lpString, DWORD_PTR nItemData);
-	void SetCurItemData(UINT32 nValue);
-	UINT32 GetCurItemData(UINT32 nDefault) const;
-};

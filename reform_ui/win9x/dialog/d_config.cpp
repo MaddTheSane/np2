@@ -6,12 +6,12 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include "dialogs.h"
-#include "pccore.h"
-#include "common/strres.h"
+#include "c_combodata.h"
 #include "np2.h"
 #include "sysmng.h"
 #include "misc/DlgProc.h"
+#include "pccore.h"
+#include "common/strres.h"
 
 /**
  * @brief 設定ダイアログ
@@ -28,13 +28,13 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 private:
+	CComboData m_baseClock;				//!< ベース クロック
+	CComboData m_multiple;				//!< 倍率
 	void SetClock(UINT nMultiple = 0);
-	CNp2ComboBox m_baseClock;			//!< ベース クロック
-	CNp2ComboBox m_multiple;			//!< 倍率
 };
 
 //! コンボ ボックス アイテム
-static const CBPARAM s_cpBase[] =
+static const CComboData::Entry s_baseclock[] =
 {
 	{MAKEINTRESOURCE(IDS_2_0MHZ),	PCBASECLOCK20},
 	{MAKEINTRESOURCE(IDS_2_5MHZ),	PCBASECLOCK25},
@@ -63,8 +63,8 @@ CConfigureDlg::CConfigureDlg(HWND hwndParent)
 BOOL CConfigureDlg::OnInitDialog()
 {
 	m_baseClock.SubclassDlgItem(IDC_BASECLOCK, this);
-	m_baseClock.Add(s_cpBase, _countof(s_cpBase));
-	const UINT32 nBaseClock = (np2cfg.baseclock < AVE(PCBASECLOCK25, PCBASECLOCK20)) ? PCBASECLOCK20 : PCBASECLOCK25;
+	m_baseClock.Add(s_baseclock, _countof(s_baseclock));
+	const UINT32 nBaseClock = (np2cfg.baseclock == PCBASECLOCK20) ? PCBASECLOCK20 : PCBASECLOCK25;
 	m_baseClock.SetCurItemData(nBaseClock);
 
 	m_multiple.SubclassDlgItem(IDC_MULTIPLE, this);
@@ -87,11 +87,11 @@ BOOL CConfigureDlg::OnInitDialog()
 	CheckDlgButton(nModel, BST_CHECKED);
 
 	UINT nSamplingRate;
-	if (np2cfg.samplingrate < AVE(11025, 22050))
+	if (np2cfg.samplingrate < 22050)
 	{
 		nSamplingRate = IDC_RATE11;
 	}
-	else if (np2cfg.samplingrate < AVE(22050, 44100))
+	else if (np2cfg.samplingrate < 44100)
 	{
 		nSamplingRate = IDC_RATE22;
 	}

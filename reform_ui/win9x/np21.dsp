@@ -1320,7 +1320,23 @@ SOURCE=.\debuguty\viewsnd.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DIALOG\D_ABOUT.CPP
+SOURCE=.\dialog\c_combodata.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_combodata.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_about.cpp
 # End Source File
 # Begin Source File
 
@@ -1328,11 +1344,11 @@ SOURCE=.\dialog\d_bmp.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CLND.CPP
+SOURCE=.\dialog\d_clnd.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CONFIG.CPP
+SOURCE=.\dialog\d_config.cpp
 # End Source File
 # Begin Source File
 
@@ -1344,7 +1360,7 @@ SOURCE=.\dialog\d_font.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_MPU98.CPP
+SOURCE=.\dialog\d_mpu98.cpp
 # End Source File
 # Begin Source File
 

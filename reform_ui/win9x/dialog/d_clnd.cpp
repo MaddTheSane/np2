@@ -6,14 +6,13 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include "dialogs.h"
-#include "pccore.h"
-#include "timemng.h"
-#include "calendar.h"
-#include "common/strres.h"
 #include "np2.h"
 #include "sysmng.h"
+#include "timemng.h"
 #include "misc/DlgProc.h"
+#include "calendar.h"
+#include "pccore.h"
+#include "common/strres.h"
 
 /**
  * @brief カレンダ設定ダイアログ

@@ -1809,6 +1809,14 @@
 					Name="dialog"
 					>
 					<File
+						RelativePath=".\dialog\c_combodata.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_midi.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_about.cpp"
 						>
 					</File>
@@ -3022,6 +3030,14 @@
 				<Filter
 					Name="dialog"
 					>
+					<File
+						RelativePath=".\dialog\c_combodata.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_midi.h"
+						>
+					</File>
 					<File
 						RelativePath=".\dialog\dialog.h"
 						>

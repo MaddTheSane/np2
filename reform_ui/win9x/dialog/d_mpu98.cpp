@@ -6,14 +6,16 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
+#include "c_combodata.h"
+#include "c_midi.h"
 #include "dialogs.h"
-#include "pccore.h"
-#include "common/strres.h"
-#include "generic/dipswbmp.h"
 #include "np2.h"
 #include "commng.h"
 #include "sysmng.h"
 #include "misc/DlgProc.h"
+#include "pccore.h"
+#include "common/strres.h"
+#include "generic/dipswbmp.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -43,9 +45,13 @@ protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-	UINT8 m_mpu;			//!< 設定値
-	CNp2ComboBox m_port;	//!< IO
-	CNp2ComboBox m_int;		//!< INT
+	UINT8 m_mpu;				//!< 設定値
+	CComboData m_port;			//!< IO
+	CComboData m_int;			//!< INT
+	CComboMidiDevice m_midiin;	//!< MIDI IN
+	CComboMidiDevice m_midiout;	//!< MIDI OUT
+	CComboMidiModule m_module;	//!< MIDI Module
+	CEditMimpiFile m_mimpifile;	//!< MIMPI
 	void OnDipSw();
 	void SetJumper(UINT8 cValue, UINT8 cBit);
 	void SetPort(UINT8 cValue);
@@ -57,7 +63,7 @@ private:
 /**
  * 割り込みリスト
  */
-static const CBPARAM s_cpInt[] =
+static const CComboData::Entry s_int[] =
 {
 	{MAKEINTRESOURCE(IDS_INT0),		0},
 	{MAKEINTRESOURCE(IDS_INT1),		1},
@@ -94,15 +100,23 @@ BOOL CMpu98Dlg::OnInitDialog()
 	SetPort(m_mpu);
 
 	m_int.SubclassDlgItem(IDC_MPUINT, this);
-	m_int.Add(s_cpInt, _countof(s_cpInt));
+	m_int.Add(s_int, _countof(s_int));
 	SetInt(m_mpu);
 
-	dlgs_setlistmidiout(m_hWnd, IDC_MPU98MMAP, np2oscfg.mpu.mout);
-	dlgs_setlistmidiin(m_hWnd, IDC_MPU98MDIN, np2oscfg.mpu.min);
-	SETLISTSTR(m_hWnd, IDC_MPU98MMDL, cmmidi_mdlname);
-	SetDlgItemText(IDC_MPU98MMDL, np2oscfg.mpu.mdl);
+	m_midiout.SubclassDlgItem(IDC_MPU98MMAP, this);
+	m_midiout.EnumerateMidiOut();
+	m_midiout.SetCurString(np2oscfg.mpu.mout);
+
+	m_midiin.SubclassDlgItem(IDC_MPU98MDIN, this);
+	m_midiin.EnumerateMidiIn();
+	m_midiin.SetCurString(np2oscfg.mpu.min);
+
+	m_module.SubclassDlgItem(IDC_MPU98MMDL, this);
+	m_module.SetWindowText(np2oscfg.mpu.mdl);
 	CheckDlgButton(IDC_MPU98DEFE, (np2oscfg.mpu.def_en) ? BST_CHECKED : BST_UNCHECKED);
-	SetDlgItemText(IDC_MPU98DEFF, np2oscfg.mpu.def);
+
+	m_mimpifile.SubclassDlgItem(IDC_MPU98DEFF, this);
+	m_mimpifile.SetWindowText(np2oscfg.mpu.def);
 
 	// SS_OWNERDRAWにすると IDEで不都合が出るので…
 	CWndBase sub = GetDlgItem(IDC_MPUDIP);
@@ -202,7 +216,7 @@ BOOL CMpu98Dlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			return TRUE;
 
 		case IDC_MPU98DEFB:
-			dlgs_browsemimpidef(m_hWnd, IDC_MPU98DEFF);
+			m_mimpifile.Browse();
 			return TRUE;
 	}
 	return FALSE;
