@@ -1448,6 +1448,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\commng\cmmidioutvst.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\commng\cmnull.cpp"
 						>
 					</File>
@@ -1459,6 +1463,26 @@
 						RelativePath=".\commng\cmserial.cpp"
 						>
 					</File>
+					<Filter
+						Name="vsthost"
+						>
+						<File
+							RelativePath=".\commng\vsthost\vstbuffer.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwnd.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteffect.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vstmidievent.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="debuguty"
@@ -2682,6 +2706,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\commng\cmmidioutvst.h"
+						>
+					</File>
+					<File
 						RelativePath=".\commng\cmnull.h"
 						>
 					</File>
@@ -2693,6 +2721,30 @@
 						RelativePath=".\commng\cmserial.h"
 						>
 					</File>
+					<Filter
+						Name="vsthost"
+						>
+						<File
+							RelativePath=".\commng\vsthost\vstbuffer.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwnd.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwndbase.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteffect.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vstmidievent.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="dialog"
