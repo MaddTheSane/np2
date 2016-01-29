@@ -61,20 +61,19 @@ public:
 	CSoundMng();
 	bool Open(HWND hWnd);
 	void Close();
+	void Enable(SoundProc nProc);
+	void Disable(SoundProc nProc);
 	UINT CreateStream(UINT nSamplingRate, UINT ms);
-	void ResetStream();
 	void DestroyStream();
+	void ResetStream();
 	void PlayStream();
 	void StopStream();
 	void Sync();
 	void SetReverse(bool bReverse);
 	void LoadPCM(SoundPCMNumber nNum, LPCTSTR lpFilename);
-	void UnloadPCM(SoundPCMNumber nNum);
 	void SetPCMVolume(SoundPCMNumber nNum, int nVolume);
 	bool PlayPCM(SoundPCMNumber nNum, BOOL bLoop);
 	void StopPCM(SoundPCMNumber nNum);
-	void Enable(SoundProc nProc);
-	void Disable(SoundProc nProc);
 	virtual UINT Get16(SINT16* lpBuffer, UINT nBufferCount);
 
 private:

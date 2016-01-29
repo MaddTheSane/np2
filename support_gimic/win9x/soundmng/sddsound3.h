@@ -25,8 +25,7 @@ public:
 	virtual bool PlayStream();
 	virtual void StopStream();
 	virtual void SyncStream();
-	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename);
-	virtual void UnloadPCM(UINT nNum);
+	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename = NULL);
 	virtual void SetPCMVolume(UINT nNum, int nVolume);
 	virtual bool PlayPCM(UINT nNum, BOOL bLoop);
 	virtual void StopPCM(UINT nNum);
@@ -41,6 +40,7 @@ private:
 
 private:
 	void FillStream(DWORD dwPosition);
+	void UnloadPCM(UINT nNum);
 	void DestroyAllPCM();
 	LPDIRECTSOUNDBUFFER CreateWaveBuffer(LPCTSTR lpFilename);
 };

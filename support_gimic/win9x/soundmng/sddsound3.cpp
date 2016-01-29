@@ -13,18 +13,6 @@
 #pragma comment(lib, "dsound.lib")
 #endif	// !defined(__GNUC__)
 
-#if defined(_M_IA64) || defined(_M_AMD64)
-#define SOUNDBUFFERALIGN	(1 << 3)					/*!< バッファ アライメント */
-#else
-#define SOUNDBUFFERALIGN	(1 << 2)					/*!< バッファ アライメント */
-#endif
-
-#if 1
-#define DSBUFFERDESC_SIZE	20							/*!< DirectX3 Structsize */
-#else
-#define DSBUFFERDESC_SIZE	sizeof(DSBUFFERDESC)		/*!< DSBUFFERDESC Structsize */
-#endif
-
 #ifndef DSBVOLUME_MAX
 #define DSBVOLUME_MAX		0							/*!< ヴォリューム最大値 */
 #endif
@@ -147,9 +135,23 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 		DestroyStream();
 		return 0;
 	}
+	ResetStream();
 
 	m_nStreamEvent = -1;
 	return nBufferSize;
+}
+
+/**
+ * ストリームを破棄
+ */
+void CSoundDeviceDSound3::DestroyStream()
+{
+	if (m_lpDSStream)
+	{
+		m_lpDSStream->Stop();
+		m_lpDSStream->Release();
+		m_lpDSStream = NULL;
+	}
 }
 
 /**
@@ -174,19 +176,6 @@ void CSoundDeviceDSound3::ResetStream()
 			m_lpDSStream->SetCurrentPosition(0);
 			m_nStreamEvent = -1;
 		}
-	}
-}
-
-/**
- * ストリームを破棄
- */
-void CSoundDeviceDSound3::DestroyStream()
-{
-	if (m_lpDSStream)
-	{
-		m_lpDSStream->Stop();
-		m_lpDSStream->Release();
-		m_lpDSStream = NULL;
 	}
 }
 
@@ -410,12 +399,18 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 
 		DSBUFFERDESC dsbdesc;
 		ZeroMemory(&dsbdesc, sizeof(dsbdesc));
-		dsbdesc.dwSize = DSBUFFERDESC_SIZE;
+		dsbdesc.dwSize = sizeof(dsbdesc);
 		dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
 		dsbdesc.dwBufferBytes = nSize;
-		dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
+		dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
 
-		if (FAILED(m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL)))
+		HRESULT r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+		if (FAILED(r))
+		{
+			dsbdesc.dwSize = (sizeof(DWORD) * 4) + sizeof(LPWAVEFORMATEX);
+			r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+		}
+		if (FAILED(r))
 		{
 			break;
 		}

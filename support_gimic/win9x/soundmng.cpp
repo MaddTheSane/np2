@@ -130,7 +130,6 @@ void CSoundMng::Enable(SoundProc nProc)
 	{
 		if (m_pSoundDevice)
 		{
-			m_pSoundDevice->ResetStream();
 			m_pSoundDevice->PlayStream();
 		}
 	}
@@ -175,6 +174,8 @@ UINT CSoundMng::CreateStream(UINT nSamplingRate, UINT ms)
 		ms = 1000;
 	}
 	UINT nBuffer = (nSamplingRate * ms) / 2000;
+	nBuffer = (nBuffer + 1) & (~1);
+
 	nBuffer = m_pSoundDevice->CreateStream(nSamplingRate, 2, nBuffer);
 	if (nBuffer == 0)
 	{
@@ -195,17 +196,6 @@ UINT CSoundMng::CreateStream(UINT nSamplingRate, UINT ms)
 }
 
 /**
- * ストリームをリセット
- */
-inline void CSoundMng::ResetStream()
-{
-	if (m_pSoundDevice)
-	{
-		m_pSoundDevice->ResetStream();
-	}
-}
-
-/**
  * ストリームを破棄
  */
 inline void CSoundMng::DestroyStream()
@@ -222,6 +212,17 @@ inline void CSoundMng::DestroyStream()
 #if defined(MT32SOUND_DLL)
 	MT32Sound::GetInstance()->SetRate(0);
 #endif
+}
+
+/**
+ * ストリームのリセット
+ */
+inline void CSoundMng::ResetStream()
+{
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->ResetStream();
+	}
 }
 
 /**
@@ -332,18 +333,6 @@ void CSoundMng::LoadPCM(SoundPCMNumber nNum, LPCTSTR lpFilename)
 }
 
 /**
- * PCM をアンロード
- * @param[in] nNum PCM 番号
- */
-void CSoundMng::UnloadPCM(SoundPCMNumber nNum)
-{
-	if (m_pSoundDevice)
-	{
-		m_pSoundDevice->UnloadPCM(nNum);
-	}
-}
-
-/**
  * PCM ヴォリューム設定
  * @param[in] nNum PCM 番号
  * @param[in] nVolume ヴォリューム
@@ -401,19 +390,19 @@ UINT soundmng_create(UINT rate, UINT ms)
 }
 
 /**
- * ストリーム リセット
- */
-void soundmng_reset(void)
-{
-	CSoundMng::GetInstance()->ResetStream();
-}
-
-/**
  * ストリーム破棄
  */
 void soundmng_destroy(void)
 {
 	CSoundMng::GetInstance()->DestroyStream();
+}
+
+/**
+ * ストリーム リセット
+ */
+void soundmng_reset(void)
+{
+	CSoundMng::GetInstance()->ResetStream();
 }
 
 /**
