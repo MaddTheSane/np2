@@ -8,6 +8,30 @@ dist_pkgdata_DATA=	$(real_topsrcdir)/x11/resources/fddseek.wav \
 			$(real_topsrcdir)/x11/resources/fddseek1.wav
 dist_pkgdata_DATA+=	$(real_topsrcdir)/np2tool/np2tool.d88
 
+#EMUFM_SOURCES=	$(real_topsrcdir)/sound/opl3.c \
+#		$(real_topsrcdir)/sound/opna.c
+
+# CAVEAT:
+# sccisoundinterfacemanager.cpp must be linked before externalchipmanager.cpp.
+# Otherwise, it will take the curse of destructor calls the order of the
+# global instances.
+EXTFM_SOURCES=	$(real_topsrcdir)/x11/ext/opl3.cpp \
+		$(real_topsrcdir)/x11/ext/opna.cpp \
+		$(real_topsrcdir)/x11/ext/c86ctl/c86ctlc86box.cpp \
+		$(real_topsrcdir)/x11/ext/c86ctl/c86ctlgimic.cpp \
+		$(real_topsrcdir)/x11/ext/c86ctl/c86ctlif.cpp \
+		$(real_topsrcdir)/x11/ext/c86ctl/c86ctlrealchipbase.cpp \
+		$(real_topsrcdir)/x11/ext/scci/scciif.cpp \
+		$(real_topsrcdir)/x11/ext/scci/sccisoundchip.cpp \
+		$(real_topsrcdir)/x11/ext/scci/sccisoundinterface.cpp \
+		$(real_topsrcdir)/x11/ext/scci/sccisoundinterfacemanager.cpp \
+		$(real_topsrcdir)/x11/ext/scci/sccispfmlight.cpp \
+		$(real_topsrcdir)/x11/ext/externalchipmanager.cpp \
+		$(real_topsrcdir)/x11/ext/externalopl3.cpp \
+		$(real_topsrcdir)/x11/ext/externalopm.cpp \
+		$(real_topsrcdir)/x11/ext/externalopna.cpp \
+		$(real_topsrcdir)/x11/ext/externalpsg.cpp
+
 COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/x11/np2.c \
 		$(real_topsrcdir)/x11/dosio.c \
@@ -45,6 +69,11 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/x11/gtk2/gtk_main.c \
 		$(real_topsrcdir)/x11/gtk2/gtk_wrapper.c \
 		$(real_topsrcdir)/x11/debug/viewmem.c \
+		$(real_topsrcdir)/x11/misc/threadbase.cpp \
+		$(real_topsrcdir)/x11/misc/tty.cpp \
+		$(real_topsrcdir)/x11/misc/usbdev.cpp \
+		\
+		$(EXTFM_SOURCES) \
 		\
 		$(real_topsrcdir)/pccore.c \
 		$(real_topsrcdir)/nevent.c \
@@ -69,6 +98,10 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/codecnv/eucucs2.c \
 		$(real_topsrcdir)/codecnv/sjiseuc.c \
 		$(real_topsrcdir)/codecnv/sjisucs2.c \
+		$(real_topsrcdir)/codecnv/tcswap16.c \
+		$(real_topsrcdir)/codecnv/tcswap32.c \
+		$(real_topsrcdir)/codecnv/textcnv.c \
+		$(real_topsrcdir)/codecnv/ucs2sjis.c \
 		$(real_topsrcdir)/codecnv/ucs2utf8.c \
 		$(real_topsrcdir)/codecnv/utf8ucs2.c \
 		\
@@ -187,10 +220,8 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/sound/cs4231c.c \
 		$(real_topsrcdir)/sound/cs4231g.c \
 		$(real_topsrcdir)/sound/fmboard.c \
-		$(real_topsrcdir)/sound/opl3.c \
 		$(real_topsrcdir)/sound/oplgenc.c \
 		$(real_topsrcdir)/sound/oplgeng.c \
-		$(real_topsrcdir)/sound/opna.c \
 		$(real_topsrcdir)/sound/opngenc.c \
 		$(real_topsrcdir)/sound/opngeng.c \
 		$(real_topsrcdir)/sound/opntimer.c \
@@ -224,6 +255,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/vram/makegrph.c \
 		$(real_topsrcdir)/vram/makegrex.c \
 		$(real_topsrcdir)/vram/scrnsave.c
+
 xnp2_SOURCES=	$(COMMON_SOURCES)
 
 AM_CPPFLAGS=	-I$(real_topsrcdir) \
@@ -237,7 +269,8 @@ AM_CPPFLAGS=	-I$(real_topsrcdir) \
 		-I$(real_topsrcdir)/mem \
 		-I$(real_topsrcdir)/sound \
 		-I$(real_topsrcdir)/vram \
-		$(GTK_CFLAGS) $(SDL_CFLAGS) $(X11_CFLAGS) $(XEXT_CFLAGS)
+		$(GTK_CFLAGS) $(SDL_CFLAGS) $(LIBUSB1_CFLAGS) \
+		$(X11_CFLAGS) $(XEXT_CFLAGS)
 if BUILD_ALL
 AM_CPPFLAGS+=	-DX11_BUILD_ALL
 endif
@@ -245,10 +278,13 @@ xnp2_CPPFLAGS=	$(AM_CPPFLAGS)
 
 if HAVE_GCC
 AM_CFLAGS=	-fsigned-char
-CFLAGS+=	-fno-strict-aliasing
+AM_CFLAGS+=	-fno-strict-aliasing
+AM_CXXFLAGS=	$(AM_CFLAGS)
+AM_CXXFLAGS+=	-std=c++11
 endif
 
-LDADD=		$(GTK_LIBS) $(SDL_LIBS) $(X11_LIBS) $(XEXT_LIBS) \
+LDADD=		$(GTK_LIBS) $(SDL_LIBS) $(LIBUSB1_LIBS) \
+		$(X11_LIBS) $(XEXT_LIBS) \
 		$(X_LIBS) $(X_PRE_LIBS) $(XLIB) $(X_EXTRA_LIBS)
 
 DEFS=		@DEFS@ -DSYSRESPATH=\""$(pkgdatadir)"\"
