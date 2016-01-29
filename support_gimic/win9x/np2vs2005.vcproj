@@ -1687,18 +1687,6 @@
 				Name="win9x"
 				>
 				<File
-					RelativePath=".\cmmidi.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\cmpara.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\cmserial.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\commng.cpp"
 					>
 				</File>
@@ -1786,6 +1774,46 @@
 					RelativePath=".\winloc.cpp"
 					>
 				</File>
+				<Filter
+					Name="commng"
+					>
+					<File
+						RelativePath=".\commng\cmbase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidi.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiin32.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout32.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutmt32sound.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvermouth.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmnull.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmpara.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmserial.cpp"
+						>
+					</File>
+				</Filter>
 				<Filter
 					Name="debuguty"
 					>
@@ -2857,18 +2885,6 @@
 				Name="win9x"
 				>
 				<File
-					RelativePath=".\cmmidi.h"
-					>
-				</File>
-				<File
-					RelativePath=".\cmpara.h"
-					>
-				</File>
-				<File
-					RelativePath=".\cmserial.h"
-					>
-				</File>
-				<File
 					RelativePath=".\commng.h"
 					>
 				</File>
@@ -2960,6 +2976,50 @@
 					RelativePath=".\winloc.h"
 					>
 				</File>
+				<Filter
+					Name="commng"
+					>
+					<File
+						RelativePath=".\commng\cmbase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidi.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiin32.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout32.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutmt32sound.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvermouth.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmnull.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmpara.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmserial.h"
+						>
+					</File>
+				</Filter>
 				<Filter
 					Name="dialog"
 					>
