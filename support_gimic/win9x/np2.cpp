@@ -170,14 +170,14 @@ static void unloadextinst(void)
 static void winuienter(void) {
 
 	winui_en = TRUE;
-	soundmng_disable(SNDPROC_MAIN);
+	CSoundMng::GetInstance()->Disable(SNDPROC_MAIN);
 	scrnmng_topwinui();
 }
 
 static void winuileave(void) {
 
 	scrnmng_clearwinui();
-	soundmng_enable(SNDPROC_MAIN);
+	CSoundMng::GetInstance()->Enable(SNDPROC_MAIN);
 	winui_en = FALSE;
 }
 
@@ -290,7 +290,7 @@ void np2active_renewal(void) {										// ver0.30
 
 	if (np2break & (~NP2BREAK_MAIN)) {
 		np2stopemulate = 2;
-		soundmng_disable(SNDPROC_MASTER);
+		CSoundMng::GetInstance()->Disable(SNDPROC_MASTER);
 	}
 	else if (np2break & NP2BREAK_MAIN) {
 		if (np2oscfg.background & 1) {
@@ -300,15 +300,15 @@ void np2active_renewal(void) {										// ver0.30
 			np2stopemulate = 0;
 		}
 		if (np2oscfg.background) {
-			soundmng_disable(SNDPROC_MASTER);
+			CSoundMng::GetInstance()->Disable(SNDPROC_MASTER);
 		}
 		else {
-			soundmng_enable(SNDPROC_MASTER);
+			CSoundMng::GetInstance()->Enable(SNDPROC_MASTER);
 		}
 	}
 	else {
 		np2stopemulate = 0;
-		soundmng_enable(SNDPROC_MASTER);
+		CSoundMng::GetInstance()->Enable(SNDPROC_MASTER);
 	}
 }
 
@@ -1237,7 +1237,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_MAIN);
+			CSoundMng::GetInstance()->Disable(SNDPROC_MAIN);
 			mousemng_disable(MOUSEPROC_WINUI);
 			winlocex_destroy(smwlex);
 			smwlex = np2_winlocexallwin(hWnd);
@@ -1260,7 +1260,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			winlocex_destroy(smwlex);
 			smwlex = NULL;
 			mousemng_enable(MOUSEPROC_WINUI);
-			soundmng_enable(SNDPROC_MAIN);
+			CSoundMng::GetInstance()->Enable(SNDPROC_MAIN);
 			break;
 
 		case WM_KEYDOWN:
@@ -1641,11 +1641,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		}
 	}
 
-	if (soundmng_initialize() == SUCCESS) {
-		soundmng_pcmload(SOUND_PCMSEEK, TEXT("SEEKWAV"));
-		soundmng_pcmload(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
-		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
-		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
+	CSoundMng::Initialize();
+	if (CSoundMng::GetInstance()->Open(hWnd))
+	{
+		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
+		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
+		CSoundMng::GetInstance()->SetPCMVolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
+		CSoundMng::GetInstance()->SetPCMVolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
 
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
@@ -1684,7 +1686,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			mousemng_disable(MOUSEPROC_WINUI);
 			S98_trash();
 			pccore_term();
-			soundmng_deinitialize();
+			CSoundMng::GetInstance()->Close();
+			CSoundMng::Deinitialize();
 			scrnmng_destroy();
 			unloadextinst();
 			TRACETERM();
@@ -1816,7 +1819,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	pccore_term();
 
-	soundmng_deinitialize();
+	CSoundMng::GetInstance()->Close();
+	CSoundMng::Deinitialize();
 	scrnmng_destroy();
 	recvideo_close();
 

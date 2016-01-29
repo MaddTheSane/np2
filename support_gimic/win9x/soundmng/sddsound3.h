@@ -16,20 +16,21 @@ class CSoundDeviceDSound3 : public CSoundDeviceBase
 {
 public:
 	CSoundDeviceDSound3();
-	bool Initialize(HWND hWnd);
-	void Deinitialize();
-	UINT CreateStream(UINT rate, UINT ms);
-	void ResetStream();
-	void DestroyStream();
-	void PlayStream();
-	void StopStream();
-	void Sync();
-	void LoadPCM(UINT nNum, LPCTSTR lpFilename);
-	void UnloadPCM(UINT nNum);
-	void SetPCMVolume(UINT nNum, int nVolume);
-	bool PlayPCM(UINT nNum, BOOL bLoop);
-	void StopPCM(UINT nNum);
-	void StopAllPCM();
+	virtual ~CSoundDeviceDSound3();
+	virtual bool Open(LPCTSTR lpDevice = NULL, HWND hWnd = NULL);
+	virtual void Close();
+	virtual UINT CreateStream(UINT nSamplingRate, UINT nChannels, UINT nBufferSize = 0);
+	virtual void DestroyStream();
+	virtual void ResetStream();
+	virtual bool PlayStream();
+	virtual void StopStream();
+	virtual void SyncStream();
+	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename);
+	virtual void UnloadPCM(UINT nNum);
+	virtual void SetPCMVolume(UINT nNum, int nVolume);
+	virtual bool PlayPCM(UINT nNum, BOOL bLoop);
+	virtual void StopPCM(UINT nNum);
+	virtual void StopAllPCM();
 
 private:
 	LPDIRECTSOUND m_lpDSound;					//!< Direct Sound インタフェイス

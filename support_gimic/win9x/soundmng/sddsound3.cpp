@@ -44,13 +44,26 @@ CSoundDeviceDSound3::CSoundDeviceDSound3()
 }
 
 /**
- * 初期化
+ * デストラクタ
+ */
+CSoundDeviceDSound3::~CSoundDeviceDSound3()
+{
+}
+
+/**
+ * オープン
+ * @param[in] lpDevice デバイス名
  * @param[in] hWnd ウィンドウ ハンドル
  * @retval true 成功
  * @retval false 失敗
  */
-bool CSoundDeviceDSound3::Initialize(HWND hWnd)
+bool CSoundDeviceDSound3::Open(LPCTSTR lpDevice, HWND hWnd)
 {
+	if (hWnd == NULL)
+	{
+		return false;
+	}
+
 	// DirectSoundの初期化
 	LPDIRECTSOUND lpDSound;
 	if (FAILED(DirectSoundCreate(0, &lpDSound, 0)))
@@ -71,72 +84,72 @@ bool CSoundDeviceDSound3::Initialize(HWND hWnd)
 }
 
 /**
- * 解放
+ * クローズ
  */
-void CSoundDeviceDSound3::Deinitialize()
+void CSoundDeviceDSound3::Close()
 {
 	DestroyAllPCM();
 	DestroyStream();
 
-	RELEASE(m_lpDSound);
+	if (m_lpDSound)
+	{
+		m_lpDSound->Release();
+	}
 }
 
 /**
- * ストリームを作成
- * @param[in] rate サンプリング レート
- * @param[in] ms バッファ長(ミリ秒)
- * @return バッファ数
+ * ストリームの作成
+ * @param[in] nSamplingRate サンプリング レート
+ * @param[in] nChannels チャネル数
+ * @param[in] nBufferSize バッファ サイズ
+ * @return バッファ サイズ
  */
-UINT CSoundDeviceDSound3::CreateStream(UINT rate, UINT ms)
+UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT nBufferSize)
 {
-	if ((m_lpDSound == NULL) || ((rate != 11025) && (rate != 22050) && (rate != 44100)))
+	if (m_lpDSound == NULL)
 	{
 		return 0;
 	}
 
-	if (ms < 40) {
-		ms = 40;
-	}
-	else if (ms > 1000) {
-		ms = 1000;
+	if (nBufferSize == 0)
+	{
+		nBufferSize = nSamplingRate / 10;
 	}
 
-	UINT samples = (rate * ms) / 2000;
-	samples = (samples + SOUNDBUFFERALIGN - 1) & (~(SOUNDBUFFERALIGN - 1));
-	m_dwHalfBufferSize = samples * 2 * sizeof(SINT16);
+//	m_nBufferSize = nBufferSize;
+	m_dwHalfBufferSize = nBufferSize * nChannels * sizeof(short);
 
 	PCMWAVEFORMAT pcmwf;
 	ZeroMemory(&pcmwf, sizeof(pcmwf));
 	pcmwf.wf.wFormatTag = WAVE_FORMAT_PCM;
-	pcmwf.wf.nChannels = 2;
-	pcmwf.wf.nSamplesPerSec = rate;
+	pcmwf.wf.nChannels = nChannels;
+	pcmwf.wf.nSamplesPerSec = nSamplingRate;
 	pcmwf.wBitsPerSample = 16;
-	pcmwf.wf.nBlockAlign = 2 * sizeof(SINT16);
-	pcmwf.wf.nAvgBytesPerSec = rate * 2 * sizeof(SINT16);
+	pcmwf.wf.nBlockAlign = nChannels * (pcmwf.wBitsPerSample / 8);
+	pcmwf.wf.nAvgBytesPerSec = nSamplingRate * pcmwf.wf.nBlockAlign;
 
-	int i;
-	for (i = 0; i < 2; i++)
-	{
-		DSBUFFERDESC dsbdesc;
-		ZeroMemory(&dsbdesc, sizeof(dsbdesc));
-		dsbdesc.dwSize = i ? sizeof(dsbdesc) : DSBUFFERDESC_SIZE;
-		dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME |
+	DSBUFFERDESC dsbdesc;
+	ZeroMemory(&dsbdesc, sizeof(dsbdesc));
+	dsbdesc.dwSize = sizeof(dsbdesc);
+	dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME |
 						DSBCAPS_CTRLFREQUENCY |
 						DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
-		dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
-		dsbdesc.dwBufferBytes = m_dwHalfBufferSize * 2;
-		if (SUCCEEDED(m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL)))
-		{
-			break;
-		}
-	}
-	if (i >= 2)
+	dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
+	dsbdesc.dwBufferBytes = m_dwHalfBufferSize * 2;
+	HRESULT r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
+	if (FAILED(r))
 	{
+		dsbdesc.dwSize = (sizeof(DWORD) * 4) + sizeof(LPWAVEFORMATEX);
+		r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
+	}
+	if (FAILED(r))
+	{
+		DestroyStream();
 		return 0;
 	}
 
 	m_nStreamEvent = -1;
-	return samples;
+	return nBufferSize;
 }
 
 /**
@@ -178,18 +191,25 @@ void CSoundDeviceDSound3::DestroyStream()
 }
 
 /**
- * ストリーム再生
+ * ストリームの再生
+ * @retval true 成功
+ * @retval false 失敗
  */
-void CSoundDeviceDSound3::PlayStream()
+bool CSoundDeviceDSound3::PlayStream()
 {
 	if (m_lpDSStream)
 	{
 		m_lpDSStream->Play(0, 0, DSBPLAY_LOOPING);
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
 /**
- * ストリーム停止
+ * ストリームの停止
  */
 void CSoundDeviceDSound3::StopStream()
 {
@@ -232,7 +252,7 @@ void CSoundDeviceDSound3::FillStream(DWORD dwPosition)
 /**
  * 同期
  */
-void CSoundDeviceDSound3::Sync()
+void CSoundDeviceDSound3::SyncStream()
 {
 	if (m_lpDSStream)
 	{
@@ -290,8 +310,10 @@ void CSoundDeviceDSound3::StopAllPCM()
  * PCM データ読み込み
  * @param[in] nNum PCM 番号
  * @param[in] lpFilename ファイル名
+ * @retval true 成功
+ * @retval false 失敗
  */
-void CSoundDeviceDSound3::LoadPCM(UINT nNum, LPCTSTR lpFilename)
+bool CSoundDeviceDSound3::LoadPCM(UINT nNum, LPCTSTR lpFilename)
 {
 	UnloadPCM(nNum);
 
@@ -299,6 +321,11 @@ void CSoundDeviceDSound3::LoadPCM(UINT nNum, LPCTSTR lpFilename)
 	if (lpDSBuffer)
 	{
 		m_pcm[nNum] = lpDSBuffer;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 

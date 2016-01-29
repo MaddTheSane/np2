@@ -1,9 +1,6 @@
 /**
  * @file	soundmng.cpp
- * @brief	Sound Manager (DirectSound3)
- *
- * @author	$Author: yui $
- * @date	$Date: 2011/03/07 09:54:11 $
+ * @brief	サウンド マネージャ クラスの動作の定義を行います
  */
 
 #include "compiler.h"
@@ -15,7 +12,6 @@
 #if defined(MT32SOUND_DLL)
 #include "ext\mt32snd.h"
 #endif
-#include "soundmng\sdbase.h"
 #include "soundmng\sddsound3.h"
 #include "common\parts.h"
 #include "sound\sound.h"
@@ -40,43 +36,6 @@ void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 #endif
 #endif
 
-/**
- * @brief サウンド マネージャ クラス
- */
-class CSoundMng : public ISoundData
-{
-public:
-	static CSoundMng* GetInstance();
-
-	CSoundMng();
-	bool Initialize(HWND hWnd);
-	void Deinitialize();
-
-	UINT CreateStream(UINT rate, UINT ms);
-	void ResetStream();
-	void DestroyStream();
-	void PlayStream();
-	void StopStream();
-	void Sync();
-	void SetReverse(bool bReverse);
-	void LoadPCM(SoundPCMNumber nNum, LPCTSTR lpFilename);
-	void UnloadPCM(SoundPCMNumber nNum);
-	void SetPCMVolume(SoundPCMNumber nNum, int nVolume);
-	bool PlayPCM(SoundPCMNumber nNum, BOOL bLoop);
-	void StopPCM(SoundPCMNumber nNum);
-	void EnableSound(SoundProc nProc);
-	void DisableSound(SoundProc nProc);
-	virtual UINT Get16(SINT16* lpBuffer, UINT nBufferCount);
-
-private:
-	static CSoundMng sm_instance;									//!< 唯一のインスタンスです
-
-	typedef void (PARTSCALL * FNMIX)(SINT16*, const SINT32*, UINT);	//!< satuation関数型宣言
-	FNMIX m_fnMix;													//!< satuation関数ポインタ
-	UINT m_nMute;													//!< ミュート フラグ
-	CSoundDeviceDSound3 m_dsound3;									//!< Direct Sound
-};
-
 #if defined(VERMOUTH_LIB)
 	MIDIMOD		vermouth_module = NULL;
 #endif
@@ -85,35 +44,52 @@ private:
 CSoundMng CSoundMng::sm_instance;
 
 /**
- * インスタンスを得る
- * @return インスタンス
+ * 初期化
  */
-inline CSoundMng* CSoundMng::GetInstance()
+void CSoundMng::Initialize()
 {
-	return &sm_instance;
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Initialize();
+#endif	// defined(SUPPORT_ROMEO)
+}
+
+/**
+ * 解放
+ */
+void CSoundMng::Deinitialize()
+{
+#if defined(SUPPORT_ROMEO)
+	CExternalChipManager::GetInstance()->Deinitialize();
+#endif	// defined(SUPPORT_ROMEO)
 }
 
 /**
  * コンストラクタ
  */
 CSoundMng::CSoundMng()
-	: m_nMute(0)
+	: m_pSoundDevice(NULL)
+	, m_nMute(0)
 {
 	SetReverse(false);
 }
 
 /**
- * 初期化
+ * オープン
  * @param[in] hWnd ウィンドウ ハンドル
  * @retval true 成功
  * @retval false 失敗
  */
-inline bool CSoundMng::Initialize(HWND hWnd)
+bool CSoundMng::Open(HWND hWnd)
 {
-	if (!m_dsound3.Initialize(hWnd))
+	Close();
+
+	CSoundDeviceBase* pSoundDevice = new CSoundDeviceDSound3();
+	if (!pSoundDevice->Open(NULL, hWnd))
 	{
+		delete pSoundDevice;
 		return false;
 	}
+	m_pSoundDevice = pSoundDevice;
 
 #if defined(MT32SOUND_DLL)
 	MT32Sound::GetInstance()->Initialize();
@@ -122,11 +98,16 @@ inline bool CSoundMng::Initialize(HWND hWnd)
 }
 
 /**
- * 解放
+ * クローズ
  */
-inline void CSoundMng::Deinitialize()
+void CSoundMng::Close()
 {
-	m_dsound3.Deinitialize();
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->Close();
+		delete m_pSoundDevice;
+		m_pSoundDevice = NULL;
+	}
 
 #if defined(MT32SOUND_DLL)
 	MT32Sound::GetInstance()->Deinitialize();
@@ -137,7 +118,7 @@ inline void CSoundMng::Deinitialize()
  * サウンド有効
  * @param[in] nProc プロシージャ
  */
-void CSoundMng::EnableSound(SoundProc nProc)
+void CSoundMng::Enable(SoundProc nProc)
 {
 	const UINT nBit = 1 << nProc;
 	if (!(m_nMute & nBit))
@@ -147,8 +128,11 @@ void CSoundMng::EnableSound(SoundProc nProc)
 	m_nMute &= ~nBit;
 	if (!m_nMute)
 	{
-		m_dsound3.ResetStream();
-		m_dsound3.PlayStream();
+		if (m_pSoundDevice)
+		{
+			m_pSoundDevice->ResetStream();
+			m_pSoundDevice->PlayStream();
+		}
 	}
 }
 
@@ -156,40 +140,56 @@ void CSoundMng::EnableSound(SoundProc nProc)
  * サウンド無効
  * @param[in] nProc プロシージャ
  */
-void CSoundMng::DisableSound(SoundProc nProc)
+void CSoundMng::Disable(SoundProc nProc)
 {
 	if (!m_nMute)
 	{
-		m_dsound3.StopStream();
-		m_dsound3.StopAllPCM();
+		if (m_pSoundDevice)
+		{
+			m_pSoundDevice->StopStream();
+			m_pSoundDevice->StopAllPCM();
+		}
 	}
 	m_nMute |= (1 << nProc);
 }
 
 /**
  * ストリームを作成
- * @param[in] rate サンプリング レート
+ * @param[in] nSamplingRate サンプリング レート
  * @param[in] ms バッファ長(ミリ秒)
  * @return バッファ数
  */
-UINT CSoundMng::CreateStream(UINT rate, UINT ms)
+UINT CSoundMng::CreateStream(UINT nSamplingRate, UINT ms)
 {
-	const UINT nBuffer = m_dsound3.CreateStream(rate, ms);
-	if (nBuffer == 0)
+	if (m_pSoundDevice == NULL)
 	{
 		return 0;
 	}
 
+	if (ms < 40)
+	{
+		ms = 40;
+	}
+	else if (ms > 1000)
+	{
+		ms = 1000;
+	}
+	UINT nBuffer = (nSamplingRate * ms) / 2000;
+	nBuffer = m_pSoundDevice->CreateStream(nSamplingRate, 2, nBuffer);
+	if (nBuffer == 0)
+	{
+		return 0;
+	}
+	m_pSoundDevice->SetStreamData(this);
+
 #if defined(VERMOUTH_LIB)
-	vermouth_module = midimod_create(rate);
+	vermouth_module = midimod_create(nSamplingRate);
 	midimod_loadall(vermouth_module);
 #endif
 
 #if defined(MT32SOUND_DLL)
-	MT32Sound::GetInstance()->SetRate(rate);
+	MT32Sound::GetInstance()->SetRate(nSamplingRate);
 #endif
-
-	m_dsound3.SetStreamData(this);
 
 	return nBuffer;
 }
@@ -199,15 +199,21 @@ UINT CSoundMng::CreateStream(UINT rate, UINT ms)
  */
 inline void CSoundMng::ResetStream()
 {
-	m_dsound3.ResetStream();
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->ResetStream();
+	}
 }
 
 /**
  * ストリームを破棄
  */
-void CSoundMng::DestroyStream()
+inline void CSoundMng::DestroyStream()
 {
-	m_dsound3.DestroyStream();
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->DestroyStream();
+	}
 
 #if defined(VERMOUTH_LIB)
 	midimod_destroy(vermouth_module);
@@ -221,11 +227,14 @@ void CSoundMng::DestroyStream()
 /**
  * ストリームの再生
  */
-void CSoundMng::PlayStream()
+inline void CSoundMng::PlayStream()
 {
 	if (!m_nMute)
 	{
-		m_dsound3.PlayStream();
+		if (m_pSoundDevice)
+		{
+			m_pSoundDevice->PlayStream();
+		}
 
 #if defined(SUPPORT_ROMEO)
 		CExternalChipManager::GetInstance()->Mute(false);
@@ -236,11 +245,14 @@ void CSoundMng::PlayStream()
 /**
  * ストリームの停止
  */
-void CSoundMng::StopStream()
+inline void CSoundMng::StopStream()
 {
 	if (!m_nMute)
 	{
-		m_dsound3.StopStream();
+		if (m_pSoundDevice)
+		{
+			m_pSoundDevice->StopStream();
+		}
 
 #if defined(SUPPORT_ROMEO)
 		CExternalChipManager::GetInstance()->Mute(true);
@@ -274,14 +286,17 @@ UINT CSoundMng::Get16(SINT16* lpBuffer, UINT nBufferCount)
  */
 inline void CSoundMng::Sync()
 {
-	m_dsound3.Sync();
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->SyncStream();
+	}
 }
 
 /**
  * パン反転を設定する
  * @param[in] bReverse 反転フラグ
  */
-void CSoundMng::SetReverse(bool bReverse)
+inline void CSoundMng::SetReverse(bool bReverse)
 {
 	if (!bReverse)
 	{
@@ -308,18 +323,24 @@ void CSoundMng::SetReverse(bool bReverse)
  * @param[in] nNum PCM 番号
  * @param[in] lpFilename ファイル名
  */
-inline void CSoundMng::LoadPCM(SoundPCMNumber nNum, LPCTSTR lpFilename)
+void CSoundMng::LoadPCM(SoundPCMNumber nNum, LPCTSTR lpFilename)
 {
-	m_dsound3.LoadPCM(nNum, lpFilename);
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->LoadPCM(nNum, lpFilename);
+	}
 }
 
 /**
  * PCM をアンロード
  * @param[in] nNum PCM 番号
  */
-inline void CSoundMng::UnloadPCM(SoundPCMNumber nNum)
+void CSoundMng::UnloadPCM(SoundPCMNumber nNum)
 {
-	m_dsound3.UnloadPCM(nNum);
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->UnloadPCM(nNum);
+	}
 }
 
 /**
@@ -327,9 +348,12 @@ inline void CSoundMng::UnloadPCM(SoundPCMNumber nNum)
  * @param[in] nNum PCM 番号
  * @param[in] nVolume ヴォリューム
  */
-inline void CSoundMng::SetPCMVolume(SoundPCMNumber nNum, int nVolume)
+void CSoundMng::SetPCMVolume(SoundPCMNumber nNum, int nVolume)
 {
-	m_dsound3.SetPCMVolume(nNum, nVolume);
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->SetPCMVolume(nNum, nVolume);
+	}
 }
 
 /**
@@ -343,7 +367,10 @@ inline bool CSoundMng::PlayPCM(SoundPCMNumber nNum, BOOL bLoop)
 {
 	if (!m_nMute)
 	{
-		return m_dsound3.PlayPCM(nNum, bLoop);
+		if (m_pSoundDevice)
+		{
+			return m_pSoundDevice->PlayPCM(nNum, bLoop);
+		}
 	}
 	return false;
 }
@@ -354,7 +381,10 @@ inline bool CSoundMng::PlayPCM(SoundPCMNumber nNum, BOOL bLoop)
  */
 inline void CSoundMng::StopPCM(SoundPCMNumber nNum)
 {
-	m_dsound3.StopPCM(nNum);
+	if (m_pSoundDevice)
+	{
+		m_pSoundDevice->StopPCM(nNum);
+	}
 }
 
 // ---- C ラッパー
@@ -420,26 +450,6 @@ void soundmng_setreverse(BOOL bReverse)
 }
 
 /**
- * PCM ロード
- * @param[in] nNum PCM 番号
- * @param[in] lpFilename ファイル名
- */
-void soundmng_pcmload(SoundPCMNumber nNum, LPCTSTR lpFilename)
-{
-	CSoundMng::GetInstance()->LoadPCM(nNum, lpFilename);
-}
-
-/**
- * PCM ヴォリューム設定
- * @param[in] nNum PCM 番号
- * @param[in] nVolume ヴォリューム
- */
-void soundmng_pcmvolume(SoundPCMNumber nNum, int nVolume)
-{
-	CSoundMng::GetInstance()->SetPCMVolume(nNum, nVolume);
-}
-
-/**
  * PCM 再生
  * @param[in] nNum PCM 番号
  * @param[in] bLoop ループ
@@ -458,48 +468,4 @@ BRESULT soundmng_pcmplay(enum SoundPCMNumber nNum, BOOL bLoop)
 void soundmng_pcmstop(enum SoundPCMNumber nNum)
 {
 	CSoundMng::GetInstance()->StopPCM(nNum);
-}
-
-/**
- * 初期化
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
- */
-BRESULT soundmng_initialize(void)
-{
-#if defined(SUPPORT_ROMEO)
-	CExternalChipManager::GetInstance()->Initialize();
-#endif	// defined(SUPPORT_ROMEO)
-
-	return (CSoundMng::GetInstance()->Initialize(g_hWndMain)) ? SUCCESS : FAILURE;
-}
-
-/**
- * 解放
- */
-void soundmng_deinitialize(void)
-{
-#if defined(SUPPORT_ROMEO)
-	CExternalChipManager::GetInstance()->Deinitialize();
-#endif	// defined(SUPPORT_ROMEO)
-
-	CSoundMng::GetInstance()->Deinitialize();
-}
-
-/**
- * サウンド有効
- * @param[in] nProc プロシージャ
- */
-void soundmng_enable(SoundProc nProc)
-{
-	CSoundMng::GetInstance()->EnableSound(nProc);
-}
-
-/**
- * サウンド無効
- * @param[in] nProc プロシージャ
- */
-void soundmng_disable(SoundProc nProc)
-{
-	CSoundMng::GetInstance()->DisableSound(nProc);
 }

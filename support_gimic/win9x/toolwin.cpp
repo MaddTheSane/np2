@@ -803,10 +803,10 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 					break;
 
 				case IDM_TOOL_SKINSEL:
-					soundmng_disable(SNDPROC_TOOL);
+					CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 					r = dlgs_openfile(hWnd, &fpSkin, np2tool.skin,
 											NELEMENTS(np2tool.skin), NULL);
-					soundmng_enable(SNDPROC_TOOL);
+					CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 					if (r) {
 						skinchange(hWnd);
 					}
@@ -864,15 +864,15 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 			winlocex_destroy(toolwin.wlex);
 			toolwin.wlex = np2_winlocexallwin(hWnd);
 			break;
@@ -884,7 +884,7 @@ static LRESULT CALLBACK twproc(HWND hWnd, UINT uMsg, WPARAM wp, LPARAM lp)
 		case WM_EXITSIZEMOVE:
 			winlocex_destroy(toolwin.wlex);
 			toolwin.wlex = NULL;
-			soundmng_enable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 			break;
 
 		case WM_MOVE:

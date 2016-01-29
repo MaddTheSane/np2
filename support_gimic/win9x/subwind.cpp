@@ -219,15 +219,15 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			winlocex_destroy(kdispwin.wlex);
 			kdispwin.wlex = np2_winlocexallwin(hWnd);
 			break;
@@ -239,7 +239,7 @@ static LRESULT CALLBACK kdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_EXITSIZEMOVE:
 			winlocex_destroy(kdispwin.wlex);
 			kdispwin.wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_MOVE:
@@ -524,15 +524,15 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			winlocex_destroy(mdbgwin.wlex);
 			mdbgwin.wlex = np2_winlocexallwin(hWnd);
 			break;
@@ -544,7 +544,7 @@ static LRESULT CALLBACK mdproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_EXITSIZEMOVE:
 			winlocex_destroy(mdbgwin.wlex);
 			mdbgwin.wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_MOVE:
@@ -792,15 +792,15 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			winlocex_destroy(skbdwin.wlex);
 			skbdwin.wlex = np2_winlocexallwin(hWnd);
 			break;
@@ -812,7 +812,7 @@ static LRESULT CALLBACK skproc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		case WM_EXITSIZEMOVE:
 			winlocex_destroy(skbdwin.wlex);
 			skbdwin.wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_MOVE:
