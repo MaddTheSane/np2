@@ -31,8 +31,10 @@ void dialog_mpu98(HWND hwndParent);
 // d_screen.cpp
 void dialog_scropt(HWND hwndParent);
 
+// d_sound.cpp
+void dialog_sndopt(HWND hwndParent);
+
 // d_soundlog.cpp
 void dialog_soundlog(HWND hWnd);
 
-void dialog_sndopt(HWND hWnd);
 void dialog_serial(HWND hWnd);

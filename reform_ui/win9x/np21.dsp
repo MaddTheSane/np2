@@ -1388,7 +1388,7 @@ SOURCE=.\DIALOG\D_SERIAL.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SOUND.CPP
+SOURCE=.\dialog\d_sound.cpp
 # End Source File
 # Begin Source File
 

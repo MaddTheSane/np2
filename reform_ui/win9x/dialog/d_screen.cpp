@@ -7,7 +7,6 @@
 #include "resource.h"
 #include "dialog.h"
 #include <vector>
-#include <commctrl.h>
 #include "c_combodata.h"
 #include "c_slidervalue.h"
 #include "np2class.h"
