@@ -1328,6 +1328,14 @@ SOURCE=.\dialog\c_combodata.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\dialog\c_dipsw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_dipsw.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\dialog\c_midi.cpp
 # End Source File
 # Begin Source File

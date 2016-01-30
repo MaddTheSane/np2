@@ -1822,6 +1822,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\c_dipsw.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\c_midi.cpp"
 						>
 					</File>
@@ -3041,6 +3045,10 @@
 					>
 					<File
 						RelativePath=".\dialog\c_combodata.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_dipsw.h"
 						>
 					</File>
 					<File

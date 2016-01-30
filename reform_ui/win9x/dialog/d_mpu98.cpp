@@ -7,8 +7,8 @@
 #include "resource.h"
 #include "dialog.h"
 #include "c_combodata.h"
+#include "c_dipsw.h"
 #include "c_midi.h"
-#include "dialogs.h"
 #include "np2.h"
 #include "commng.h"
 #include "sysmng.h"
@@ -48,6 +48,7 @@ private:
 	UINT8 m_mpu;				//!< 設定値
 	CComboData m_port;			//!< IO
 	CComboData m_int;			//!< INT
+	CStaticDipSw m_dipsw;		//!< DIPSW
 	CComboMidiDevice m_midiin;	//!< MIDI IN
 	CComboMidiDevice m_midiout;	//!< MIDI OUT
 	CComboMidiModule m_module;	//!< MIDI Module
@@ -103,6 +104,8 @@ BOOL CMpu98Dlg::OnInitDialog()
 	m_int.Add(s_int, _countof(s_int));
 	SetInt(m_mpu);
 
+	m_dipsw.SubclassDlgItem(IDC_MPUDIP, this);
+
 	m_midiout.SubclassDlgItem(IDC_MPU98MMAP, this);
 	m_midiout.EnumerateMidiOut();
 	m_midiout.SetCurString(np2oscfg.mpu.mout);
@@ -117,10 +120,6 @@ BOOL CMpu98Dlg::OnInitDialog()
 
 	m_mimpifile.SubclassDlgItem(IDC_MPU98DEFF, this);
 	m_mimpifile.SetWindowText(np2oscfg.mpu.def);
-
-	// SS_OWNERDRAWにすると IDEで不都合が出るので…
-	CWndBase sub = GetDlgItem(IDC_MPUDIP);
-	::SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW + (::GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
 
 	m_port.SetFocus();
 
@@ -208,7 +207,7 @@ BOOL CMpu98Dlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			m_mpu = 0x82;
 			SetPort(m_mpu);
 			SetInt(m_mpu);
-			GetDlgItem(IDC_MPUDIP).Invalidate();
+			m_dipsw.Invalidate();
 			return TRUE;
 
 		case IDC_MPUDIP:
@@ -236,7 +235,9 @@ LRESULT CMpu98Dlg::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 		case WM_DRAWITEM:
 			if (LOWORD(wParam) == IDC_MPUDIP)
 			{
-				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lParam)->hDC, dipswbmp_getmpu(m_mpu));
+				UINT8* pBitmap = dipswbmp_getmpu(m_mpu);
+				m_dipsw.Draw((reinterpret_cast<LPDRAWITEMSTRUCT>(lParam))->hDC, pBitmap);
+				_MFREE(pBitmap);
 			}
 			return FALSE;
 	}
@@ -248,12 +249,10 @@ LRESULT CMpu98Dlg::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
  */
 void CMpu98Dlg::OnDipSw()
 {
-	CWndBase dip = GetDlgItem(IDC_MPUDIP);
-
 	RECT rect1;
-	dip.GetWindowRect(&rect1);
+	m_dipsw.GetWindowRect(&rect1);
 	RECT rect2;
-	dip.GetClientRect(&rect2);
+	m_dipsw.GetClientRect(&rect2);
 	POINT p;
 	GetCursorPos(&p);
 
@@ -287,7 +286,7 @@ void CMpu98Dlg::OnDipSw()
 	}
 	if (bRedraw)
 	{
-		GetDlgItem(IDC_MPUDIP).Invalidate();
+		m_dipsw.Invalidate();
 	}
 }
 
@@ -302,7 +301,7 @@ void CMpu98Dlg::SetJumper(UINT8 cValue, UINT8 cBit)
 	{
 		m_mpu &= ~cBit;
 		m_mpu |= cValue;
-		GetDlgItem(IDC_MPUDIP).Invalidate();
+		m_dipsw.Invalidate();
 	}
 }
 

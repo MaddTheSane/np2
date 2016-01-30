@@ -23,6 +23,7 @@ public:
 	// Attributes
 	operator HWND() const;
 	DWORD GetStyle() const;
+	BOOL ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0);
 
 	// Message Functions
 	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
@@ -140,6 +141,30 @@ inline CWndBase::operator HWND() const
 inline DWORD CWndBase::GetStyle() const
 {
 	return static_cast<DWORD>(::GetWindowLong(m_hWnd, GWL_STYLE));
+}
+
+/**
+ * ウィンドウ スタイルを変更します
+ * @param[in] dwRemove スタイルのリビジョン中に削除するウィンドウ スタイルを指定します
+ * @param[in] dwAdd スタイルのリビジョン中に追加するウィンドウ スタイルを指定します
+ * @param[in] nFlags SetWindowPosに渡すフラグ
+ * @retval TRUE 変更された
+ * @retval FALSE 変更されなかった
+ */
+inline BOOL CWndBase::ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags)
+{
+	const DWORD dwStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
+	const DWORD dwNewStyle = (dwStyle & ~dwRemove) | dwAdd;
+	if (dwStyle == dwNewStyle)
+	{
+		return FALSE;
+	}
+	::SetWindowLong(m_hWnd, GWL_STYLE, dwNewStyle);
+	if (nFlags != 0)
+	{
+		::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | nFlags);
+	}
+	return TRUE;
 }
 
 /**
