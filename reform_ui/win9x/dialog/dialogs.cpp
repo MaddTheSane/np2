@@ -23,22 +23,6 @@
 #pragma comment(lib, "winmm.lib")
 #endif	// !defined(__GNUC__)
 
-// ---- enable
-
-void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
-{
-	EnableWindow(GetDlgItem(hWnd, uID),
-			(SendDlgItemMessage(hWnd, uCheckID, BM_GETCHECK, 0, 0) != 0));
-}
-
-void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID)
-{
-	EnableWindow(GetDlgItem(hWnd, uID),
-			(SendDlgItemMessage(hWnd, uCheckID, BM_GETCHECK, 0, 0) == 0));
-
-}
-
-
 // ---- file select
 
 static BOOL openFileParam(LPOPENFILENAME lpOFN, PCFSPARAM pcParam,

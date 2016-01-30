@@ -53,9 +53,6 @@ typedef const struct tagCBNParam	*PCCBNPARAM;
 #define	SETLISTUINT32(a, b, c)		\
 			dlgs_setlistuint32((a), (b), (c), NELEMENTS((c)))
 
-void dlgs_enablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
-void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
-
 BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *puRO);
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
