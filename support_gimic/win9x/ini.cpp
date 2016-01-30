@@ -594,6 +594,9 @@ static const PFTBL s_IniItems[] =
 	PFVAL("fscrn_cy", PFRO_SINT32,		&np2oscfg.fscrn_cy),
 	PFVAL("fscrnbpp", PFRO_UINT8,		&np2oscfg.fscrnbpp),
 	PFVAL("fscrnmod", PFTYPE_HEX8,		&np2oscfg.fscrnmod),
+
+	PFSTR("sounddev", PFRO_STR,			np2oscfg.szSoundDevice),
+
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)
 };
 

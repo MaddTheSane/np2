@@ -12,6 +12,7 @@
 #if defined(MT32SOUND_DLL)
 #include "ext\mt32snd.h"
 #endif
+#include "soundmng\sdasio.h"
 #include "soundmng\sddsound3.h"
 #include "common\parts.h"
 #include "sound\sound.h"
@@ -48,6 +49,8 @@ CSoundMng CSoundMng::sm_instance;
  */
 void CSoundMng::Initialize()
 {
+	CSoundDeviceDSound3::Initialize();
+
 #if defined(SUPPORT_ROMEO)
 	CExternalChipManager::GetInstance()->Initialize();
 #endif	// defined(SUPPORT_ROMEO)
@@ -75,20 +78,44 @@ CSoundMng::CSoundMng()
 
 /**
  * オープン
+ * @param[in] lpDevice デバイス名
  * @param[in] hWnd ウィンドウ ハンドル
  * @retval true 成功
  * @retval false 失敗
  */
-bool CSoundMng::Open(HWND hWnd)
+bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
 {
 	Close();
 
-	CSoundDeviceBase* pSoundDevice = new CSoundDeviceDSound3();
-	if (!pSoundDevice->Open(NULL, hWnd))
+	CSoundDeviceBase* pSoundDevice = NULL;
+
+	// Asio
+	if (pSoundDevice == NULL)
 	{
-		delete pSoundDevice;
+		pSoundDevice = new CSoundDeviceAsio();
+		if (!pSoundDevice->Open(lpDevice, hWnd))
+		{
+			delete pSoundDevice;
+			pSoundDevice = NULL;
+		}
+	}
+
+	// DSound3
+	if (pSoundDevice == NULL)
+	{
+		pSoundDevice = new CSoundDeviceDSound3();
+		if (!pSoundDevice->Open(lpDevice, hWnd))
+		{
+			delete pSoundDevice;
+			pSoundDevice = NULL;
+		}
+	}
+
+	if (pSoundDevice == NULL)
+	{
 		return false;
 	}
+
 	m_pSoundDevice = pSoundDevice;
 
 #if defined(MT32SOUND_DLL)

@@ -10,6 +10,7 @@
 #include "common\wavefile.h"
 
 #if !defined(__GNUC__)
+#pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dsound.lib")
 #endif	// !defined(__GNUC__)
 
@@ -19,6 +20,50 @@
 #ifndef DSBVOLUME_MIN
 #define DSBVOLUME_MIN		(-10000)					/*!< ヴォリューム最小値 */
 #endif
+
+//!< デバイス リスト
+std::vector<DSound3Device> CSoundDeviceDSound3::sm_devices;
+
+/**
+ * 初期化
+ */
+void CSoundDeviceDSound3::Initialize()
+{
+	::DirectSoundEnumerate(EnumCallback, NULL);
+}
+
+/**
+ * デバイス列挙コールバック
+ * @param[in] lpGuid GUID
+ * @param[in] lpcstrDescription デバイス名
+ * @param[in] lpcstrModule モジュール名
+ * @param[in] lpContext コンテキスト
+ * @retval TRUE 継続
+ */
+BOOL CALLBACK CSoundDeviceDSound3::EnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
+{
+	if (lpGuid != NULL)
+	{
+		DSound3Device device;
+		ZeroMemory(&device, sizeof(device));
+		device.guid = *lpGuid;
+		::lstrcpyn(device.szDevice, lpcstrDescription, _countof(device.szDevice));
+		sm_devices.push_back(device);
+	}
+	return TRUE;
+}
+
+/**
+ * 列挙
+ * @param[out] devices デバイス リスト
+ */
+void CSoundDeviceDSound3::EnumerateDevices(std::vector<LPCTSTR>& devices)
+{
+	for (std::vector<DSound3Device>::const_iterator it = sm_devices.begin(); it != sm_devices.end(); ++it)
+	{
+		devices.push_back(it->szDevice);
+	}
+}
 
 /**
  * コンストラクタ
@@ -53,9 +98,24 @@ bool CSoundDeviceDSound3::Open(LPCTSTR lpDevice, HWND hWnd)
 		return false;
 	}
 
+	LPGUID lpGuid = NULL;
+	if ((lpDevice) && (lpDevice[0] != '\0'))
+	{
+		std::vector<DSound3Device>::const_iterator it = sm_devices.begin();
+		while ((it != sm_devices.end()) && (::lstrcmpi(lpDevice, it->szDevice) != 0))
+		{
+			++it;
+		}
+		if (it == sm_devices.end())
+		{
+			return false;
+		}
+		lpGuid = const_cast<LPGUID>(&it->guid);
+	}
+
 	// DirectSoundの初期化
 	LPDIRECTSOUND lpDSound;
-	if (FAILED(DirectSoundCreate(0, &lpDSound, 0)))
+	if (FAILED(DirectSoundCreate(lpGuid, &lpDSound, 0)))
 	{
 		return false;
 	}

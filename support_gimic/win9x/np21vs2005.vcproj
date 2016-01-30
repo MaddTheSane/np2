@@ -1652,9 +1652,21 @@
 					Name="soundmng"
 					>
 					<File
+						RelativePath=".\soundmng\sdasio.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\soundmng\sddsound3.cpp"
 						>
 					</File>
+					<Filter
+						Name="asio"
+						>
+						<File
+							RelativePath=".\soundmng\asio\asiodriverlist.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="x64"
@@ -2926,6 +2938,10 @@
 					Name="soundmng"
 					>
 					<File
+						RelativePath=".\soundmng\sdasio.h"
+						>
+					</File>
+					<File
 						RelativePath=".\soundmng\sdbase.h"
 						>
 					</File>
@@ -2933,6 +2949,18 @@
 						RelativePath=".\soundmng\sddsound3.h"
 						>
 					</File>
+					<Filter
+						Name="asio"
+						>
+						<File
+							RelativePath=".\soundmng\asio\asiodriverlist.h"
+							>
+						</File>
+						<File
+							RelativePath=".\soundmng\asio\asiosdk.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="x86"

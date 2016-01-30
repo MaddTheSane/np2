@@ -96,7 +96,8 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						0,
 #endif
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8};
+						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
+						TEXT("")};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -1642,7 +1643,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	CSoundMng::Initialize();
-	if (CSoundMng::GetInstance()->Open(hWnd))
+	if (CSoundMng::GetInstance()->Open(np2oscfg.szSoundDevice, hWnd))
 	{
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
