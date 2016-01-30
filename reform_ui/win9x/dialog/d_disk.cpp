@@ -6,7 +6,7 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include "dialogs.h"
+#include "c_combodata.h"
 #include "dosio.h"
 #include "np2.h"
 #include "sysmng.h"
@@ -18,56 +18,6 @@
 #include "fdd/fddfile.h"
 #include "fdd/newdisk.h"
 
-static const FSPARAM fpFDD =
-{
-	MAKEINTRESOURCE(IDS_FDDTITLE),
-	MAKEINTRESOURCE(IDS_FDDEXT),
-	MAKEINTRESOURCE(IDS_FDDFILTER),
-	3
-};
-
-#if defined(SUPPORT_SASI)
-static const FSPARAM fpSASI =
-{
-	MAKEINTRESOURCE(IDS_SASITITLE),
-	MAKEINTRESOURCE(IDS_HDDEXT),
-	MAKEINTRESOURCE(IDS_HDDFILTER),
-	4
-};
-#else	// defined(SUPPORT_SASI)
-static const FSPARAM fpSASI =
-{
-	MAKEINTRESOURCE(IDS_HDDTITLE),
-	MAKEINTRESOURCE(IDS_HDDEXT),
-	MAKEINTRESOURCE(IDS_HDDFILTER),
-	4
-};
-#endif	// defined(SUPPORT_SASI)
-
-#if defined(SUPPORT_IDEIO)
-static const FSPARAM fpISO =
-{
-	MAKEINTRESOURCE(IDS_ISOTITLE),
-	MAKEINTRESOURCE(IDS_ISOEXT),
-	MAKEINTRESOURCE(IDS_ISOFILTER),
-	3
-};
-#endif	// defined(SUPPORT_IDEIO)
-
-#if defined(SUPPORT_SCSI)
-static const FSPARAM fpSCSI =
-{
-	MAKEINTRESOURCE(IDS_SCSITITLE),
-	MAKEINTRESOURCE(IDS_SCSIEXT),
-	MAKEINTRESOURCE(IDS_SCSIFILTER),
-	1
-};
-#endif	// defined(SUPPORT_SCSI)
-
-
-
-// ----
-
 /**
  * FDD 選択ダイアログ
  * @param[in] hWnd 親ウィンドウ
@@ -77,21 +27,28 @@ void dialog_changefdd(HWND hWnd, REG8 drv)
 {
 	if (drv < 4)
 	{
-		LPCTSTR p = fdd_diskname(drv);
-		if ((p == NULL) || (p[0] == '\0'))
+		LPCTSTR lpPath = fdd_diskname(drv);
+		if ((lpPath == NULL) || (lpPath[0] == '\0'))
 		{
-			p = fddfolder;
+			lpPath = fddfolder;
 		}
-		TCHAR path[MAX_PATH];
-		file_cpyname(path, p, _countof(path));
 
-		int readonly;
-		if (dlgs_openfile(hWnd, &fpFDD, path, _countof(path), &readonly))
+		std::tstring rExt(LoadTString(IDS_FDDEXT));
+		std::tstring rFilter(LoadTString(IDS_FDDFILTER));
+		std::tstring rTitle(LoadTString(IDS_FDDTITLE));
+
+		CFileDlg dlg(TRUE, rExt.c_str(), lpPath, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, rFilter.c_str(), hWnd);
+		dlg.m_ofn.lpstrTitle = rTitle.c_str();
+		dlg.m_ofn.nFilterIndex = 3;
+		if (dlg.DoModal())
 		{
-			file_cpyname(fddfolder, path, _countof(fddfolder));
+			LPCTSTR lpImage = dlg.GetPathName();
+			BOOL bReadOnly = dlg.GetReadOnlyPref();
+
+			file_cpyname(fddfolder, lpImage, _countof(fddfolder));
 			sysmng_update(SYS_UPDATEOSCFG);
-			diskdrv_setfdd(drv, path, readonly);
-			toolwin_setfdd(drv, path);
+			diskdrv_setfdd(drv, lpImage, bReadOnly);
+			toolwin_setfdd(drv, lpImage);
 		}
 	}
 }
@@ -103,47 +60,72 @@ void dialog_changefdd(HWND hWnd, REG8 drv)
  */
 void dialog_changehdd(HWND hWnd, REG8 drv)
 {
-	LPCTSTR p = diskdrv_getsxsi(drv);
-	UINT num = drv & 0x0f;
+	const UINT num = drv & 0x0f;
 
-	PCFSPARAM pfp = NULL;
+	UINT nTitle = 0;
+	UINT nExt = 0;
+	UINT nFilter = 0;
+	UINT nIndex = 0;
+
 	if (!(drv & 0x20))			// SASI/IDE
 	{
 		if (num < 2)
 		{
-			pfp = &fpSASI;
+#if defined(SUPPORT_SASI)
+			nTitle = IDS_SASITITLE;
+#else
+			nTitle = IDS_HDDTITLE;
+#endif
+			nExt = IDS_HDDEXT;
+			nFilter = IDS_HDDFILTER;
+			nIndex = 4;
 		}
 #if defined(SUPPORT_IDEIO)
 		else if (num == 2)
 		{
-			pfp = &fpISO;
+			nTitle = IDS_ISOTITLE;
+			nExt = IDS_ISOEXT;
+			nFilter = IDS_ISOFILTER;
+			nIndex = 3;
 		}
-#endif
+#endif	// defined(SUPPORT_IDEIO)
 	}
 #if defined(SUPPORT_SCSI)
 	else						// SCSI
 	{
 		if (num < 4)
 		{
-			pfp = &fpSCSI;
+			nTitle = IDS_SCSITITLE;
+			nExt = IDS_SCSIEXT;
+			nFilter = IDS_SCSIFILTER;
+			nIndex = 1;
 		}
 	}
-#endif
-	if (pfp == NULL)
+#endif	// defined(SUPPORT_SCSI)
+	if (nExt == 0)
 	{
 		return;
 	}
-	if ((p == NULL) || (p[0] == '\0'))
+
+	LPCTSTR lpPath = diskdrv_getsxsi(drv);
+	if ((lpPath == NULL) || (lpPath[0] == '\0'))
 	{
-		p = hddfolder;
+		lpPath = hddfolder;
 	}
-	TCHAR path[MAX_PATH];
-	file_cpyname(path, p, _countof(path));
-	if (dlgs_openfile(hWnd, pfp, path, _countof(path), NULL))
+
+	std::tstring rExt(LoadTString(nExt));
+	std::tstring rFilter(LoadTString(nFilter));
+	std::tstring rTitle(LoadTString(nTitle));
+
+	CFileDlg dlg(TRUE, rExt.c_str(), lpPath, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, rFilter.c_str(), hWnd);
+	dlg.m_ofn.lpstrTitle = rTitle.c_str();
+	dlg.m_ofn.nFilterIndex = nIndex;
+	if (dlg.DoModal())
 	{
-		file_cpyname(hddfolder, path, _countof(hddfolder));
+		LPCTSTR lpImage = dlg.GetPathName();
+		file_cpyname(hddfolder, lpImage, _countof(hddfolder));
 		sysmng_update(SYS_UPDATEOSCFG);
-		diskdrv_sethdd(drv, path);
+		diskdrv_sethdd(drv, lpImage);
 	}
 }
 
@@ -154,7 +136,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 static const TCHAR str_newdisk[] = TEXT("newdisk");
 
 /** HDD サイズ */
-static const UINT32 hddsizetbl[5] = {20, 41, 65, 80, 128};
+static const UINT32 s_hddsizetbl[5] = {20, 41, 65, 80, 128};
 
 /** SASI HDD */
 static const UINT16 s_sasires[6] = 
@@ -185,6 +167,13 @@ public:
 	}
 
 	/**
+	 * デストラクタ
+	 */
+	virtual ~CNewHddDlg()
+	{
+	}
+
+	/**
 	 * サイズを返す
 	 * @return サイズ
 	 */
@@ -201,12 +190,14 @@ protected:
 	 */
 	virtual BOOL OnInitDialog()
 	{
-		SETLISTUINT32(m_hWnd, IDC_HDDSIZE, hddsizetbl);
+		m_hddsize.SubclassDlgItem(IDC_HDDSIZE, this);
+		m_hddsize.Add(s_hddsizetbl, _countof(s_hddsizetbl));
 
 		TCHAR work[32];
 		::wsprintf(work, TEXT("(%d-%dMB)"), m_nHddMinSize, m_nHddMaxSize);
 		SetDlgItemText(IDC_HDDLIMIT, work);
-		GetDlgItem(IDC_HDDSIZE).SetFocus();
+
+		m_hddsize.SetFocus();
 		return FALSE;
 	}
 
@@ -223,6 +214,7 @@ protected:
 	}
 
 private:
+	CComboData m_hddsize;			/*!< HDD サイズ コントロール */
 	UINT m_nHddSize;				/*!< HDD サイズ */
 	UINT m_nHddMinSize;				/*!< 最小サイズ */
 	UINT m_nHddMaxSize;				/*!< 最大サイズ */
