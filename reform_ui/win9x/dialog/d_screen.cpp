@@ -1,27 +1,26 @@
 /**
  * @file	d_screen.cpp
- * @brief	Screen configure dialog procedure
- *
- * @author	$Author: yui $
- * @date	$Date: 2011/03/07 09:54:11 $
+ * @brief	スクリーン設定ダイアログ
  */
 
 #include "compiler.h"
-#include <commctrl.h>
-#include <prsht.h>
-#include "strres.h"
 #include "resource.h"
+#include "dialog.h"
+#include <vector>
+#include <commctrl.h>
+#include "c_combodata.h"
+#include "dialogs.h"
+#include "np2class.h"
 #include "np2.h"
-#include "misc\tstring.h"
 #include "scrnmng.h"
 #include "sysmng.h"
-#include "np2class.h"
-#include "dialog.h"
-#include "dialogs.h"
+#include "misc\PropProc.h"
+#include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "scrndraw.h"
-#include "palettes.h"
+#include "common\strres.h"
+#include "vram\scrndraw.h"
+#include "vram\palettes.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "comctl32.lib")
@@ -272,7 +271,30 @@ static LRESULT CALLBACK Scropt3DlgProc(HWND hWnd, UINT msg,
 	return(FALSE);
 }
 
-static const CBPARAM cpZoom[] =
+
+
+// ----
+
+/**
+ * @brief Fullscreen ページ
+ */
+class ScrOptFullscreenPage : public CPropPageProc
+{
+public:
+	ScrOptFullscreenPage();
+	virtual ~ScrOptFullscreenPage();
+
+protected:
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+
+private:
+	CComboData m_zoom;				//!< ズーム
+};
+
+//! ズーム リスト
+static const CComboData::Entry s_zoom[] =
 {
 	{MAKEINTRESOURCE(IDS_ZOOM_NONE),			0},
 	{MAKEINTRESOURCE(IDS_ZOOM_FIXEDASPECT),		1},
@@ -280,104 +302,124 @@ static const CBPARAM cpZoom[] =
 	{MAKEINTRESOURCE(IDS_ZOOM_FULL),			3},
 };
 
-static LRESULT CALLBACK ScroptFullScreenDlgProc(HWND hWnd, UINT uMsg,
-												WPARAM wParam, LPARAM lParam)
+/**
+ * コンストラクタ
+ */
+ScrOptFullscreenPage::ScrOptFullscreenPage()
+	: CPropPageProc(IDD_SCROPT_FULLSCREEN)
 {
-	UINT8	c;
-
-	switch(uMsg)
-	{
-		case WM_INITDIALOG:
-			c = np2oscfg.fscrnmod;
-			SetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMEBPP,
-													(c & FSCRNMOD_SAMEBPP));
-			SetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMERES,
-													(c & FSCRNMOD_SAMERES));
-			dlgs_setcbitem(hWnd, IDC_FULLSCREEN_ZOOM,
-												cpZoom, NELEMENTS(cpZoom));
-			dlgs_setcbcur(hWnd, IDC_FULLSCREEN_ZOOM, (c & 3));
-			EnableWindow(GetDlgItem(hWnd, IDC_FULLSCREEN_ZOOM),
-												(c & FSCRNMOD_SAMERES) != 0);
-			return(TRUE);
-
-		case WM_COMMAND:
-			switch(LOWORD(wParam))
-			{
-				case IDC_FULLSCREEN_SAMERES:
-					dlgs_enablebyautocheck(hWnd, IDC_FULLSCREEN_ZOOM,
-													IDC_FULLSCREEN_SAMERES);
-					break;
-			}
-			break;
-
-		case WM_NOTIFY:
-			if ((((NMHDR *)lParam)->code) == (UINT)PSN_APPLY)
-			{
-				c = 0;
-				if (GetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMEBPP))
-				{
-					c |= FSCRNMOD_SAMEBPP;
-				}
-				if (GetDlgItemCheck(hWnd, IDC_FULLSCREEN_SAMERES))
-				{
-					c |= FSCRNMOD_SAMERES;
-				}
-				c |= dlgs_getcbcur(hWnd, IDC_FULLSCREEN_ZOOM, 0);
-				if (np2oscfg.fscrnmod != c)
-				{
-					np2oscfg.fscrnmod = c;
-					sysmng_update(SYS_UPDATEOSCFG);
-				}
-				return(TRUE);
-			}
-			break;
-	}
-	return(FALSE);
 }
 
-void dialog_scropt(HWND hWnd)
+/**
+ * デストラクタ
+ */
+ScrOptFullscreenPage::~ScrOptFullscreenPage()
 {
-	HINSTANCE		hInstance;
-	PROPSHEETPAGE	psp;
-	PROPSHEETHEADER	psh;
-	HPROPSHEETPAGE	hpsp[4];
+}
 
-	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL ScrOptFullscreenPage::OnInitDialog()
+{
+	const UINT8 c = np2oscfg.fscrnmod;
+	CheckDlgButton(IDC_FULLSCREEN_SAMEBPP, (c & FSCRNMOD_SAMEBPP) ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(IDC_FULLSCREEN_SAMERES, (c & FSCRNMOD_SAMERES) ? BST_CHECKED : BST_UNCHECKED);
 
+	m_zoom.SubclassDlgItem(IDC_FULLSCREEN_ZOOM, this);
+	m_zoom.Add(s_zoom, _countof(s_zoom));
+	m_zoom.SetCurItemData(c & 3);
+	m_zoom.EnableWindow((c & FSCRNMOD_SAMERES) ? TRUE : FALSE);
+
+	return TRUE;
+}
+
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void ScrOptFullscreenPage::OnOK()
+{
+	UINT8 c = 0;
+	if (IsDlgButtonChecked(IDC_FULLSCREEN_SAMEBPP) != BST_UNCHECKED)
+	{
+		c |= FSCRNMOD_SAMEBPP;
+	}
+	if (IsDlgButtonChecked(IDC_FULLSCREEN_SAMERES) != BST_UNCHECKED)
+	{
+		c |= FSCRNMOD_SAMERES;
+	}
+	c |= m_zoom.GetCurItemData(np2oscfg.fscrnmod & 3);
+	if (np2oscfg.fscrnmod != c)
+	{
+		np2oscfg.fscrnmod = c;
+		::sysmng_update(SYS_UPDATEOSCFG);
+	}
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL ScrOptFullscreenPage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	if (LOWORD(wParam) == IDC_FULLSCREEN_SAMERES)
+	{
+		m_zoom.EnableWindow((IsDlgButtonChecked(IDC_FULLSCREEN_SAMERES) != BST_UNCHECKED) ? TRUE : FALSE);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+
+// ----
+
+/**
+ * スクリーン設定
+ * @param[in] hwndParent 親ウィンドウ
+ */
+void dialog_scropt(HWND hwndParent)
+{
+	std::vector<HPROPSHEETPAGE> hpsp;
+
+	PROPSHEETPAGE psp;
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);
 	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = hInstance;
+	psp.hInstance = CWndProc::GetResourceHandle();
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT1);
 	psp.pfnDlgProc = (DLGPROC)Scropt1DlgProc;
-	hpsp[0] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT2);
 	psp.pfnDlgProc = (DLGPROC)Scropt2DlgProc;
-	hpsp[1] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT3);
 	psp.pfnDlgProc = (DLGPROC)Scropt3DlgProc;
-	hpsp[2] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
-	psp.pszTemplate = MAKEINTRESOURCE(IDD_SCROPT_FULLSCREEN);
-	psp.pfnDlgProc = (DLGPROC)ScroptFullScreenDlgProc;
-	hpsp[3] = CreatePropertySheetPage(&psp);
+	ScrOptFullscreenPage fullscreen;
+	hpsp.push_back(::CreatePropertySheetPage(&fullscreen.m_psp));
 
 	std::tstring rTitle(LoadTString(IDS_SCREENOPTION));
 
+	PROPSHEETHEADER psh;
 	ZeroMemory(&psh, sizeof(psh));
-	psh.dwSize = sizeof(PROPSHEETHEADER);
+	psh.dwSize = sizeof(psh);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
-	psh.hwndParent = hWnd;
-	psh.hInstance = hInstance;
-	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = 4;
-	psh.phpage = hpsp;
+	psh.hwndParent = hwndParent;
+	psh.hInstance = CWndProc::GetResourceHandle();
+	psh.hIcon = LoadIcon(psh.hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	psh.nPages = hpsp.size();
+	psh.phpage = &hpsp.at(0);
 	psh.pszCaption = rTitle.c_str();
 	psh.pfnCallback = np2class_propetysheet;
-	PropertySheet(&psh);
-	InvalidateRect(hWnd, NULL, TRUE);
+	::PropertySheet(&psh);
+	::InvalidateRect(hwndParent, NULL, TRUE);
 }
-
