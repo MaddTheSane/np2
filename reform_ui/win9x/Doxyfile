@@ -757,6 +757,8 @@ WARN_LOGFILE           =
 INPUT                  = ./debuguty/ \
                          ./dialog/c_combodata.cpp \
                          ./dialog/c_combodata.h \
+                         ./dialog/c_dipsw.cpp \
+                         ./dialog/c_dipsw.h \
                          ./dialog/c_midi.cpp \
                          ./dialog/c_midi.h \
                          ./dialog/d_about.cpp \
@@ -766,6 +768,7 @@ INPUT                  = ./debuguty/ \
                          ./dialog/d_disk.cpp \
                          ./dialog/d_font.cpp \
                          ./dialog/d_mpu98.cpp \
+                         ./dialog/d_screen.cpp \
                          ./dialog/d_soundlog.cpp \
                          ./ext/ \
                          ./ext/c86ctl/ \

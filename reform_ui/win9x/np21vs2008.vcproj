@@ -1467,6 +1467,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\c_slidervalue.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_about.cpp"
 						>
 					</File>
@@ -2718,6 +2722,10 @@
 					</File>
 					<File
 						RelativePath=".\dialog\c_midi.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_slidervalue.h"
 						>
 					</File>
 					<File
