@@ -769,6 +769,7 @@ INPUT                  = ./debuguty/ \
                          ./dialog/d_font.cpp \
                          ./dialog/d_mpu98.cpp \
                          ./dialog/d_screen.cpp \
+                         ./dialog/d_sound.cpp \
                          ./dialog/d_soundlog.cpp \
                          ./ext/ \
                          ./ext/c86ctl/ \

@@ -10,7 +10,6 @@
 #include "c_combodata.h"
 #include "c_dipsw.h"
 #include "c_slidervalue.h"
-#include "dialogs.h"
 #include "np2class.h"
 #include "dosio.h"
 #include "joymng.h"
@@ -346,15 +345,43 @@ LRESULT SndOpt14Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 
 
 
-// ---- 26K, SPB jumper
+// ---- PC-9801-26
 
-static const CBPARAM cpIO26[] =
+/**
+ * @brief 26 ページ
+ */
+class SndOpt26Page : public CPropPageProc
+{
+public:
+	SndOpt26Page();
+	virtual ~SndOpt26Page();
+
+protected:
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+
+private:
+	UINT8 m_snd26;				//!< 設定値
+	CComboData m_io;			//!< IO
+	CComboData m_int;			//!< INT
+	CComboData m_rom;			//!< ROM
+	CStaticDipSw m_dipsw;		//!< DIPSW
+	void Set(UINT8 cValue);
+	void SetJumper(UINT cAdd, UINT cRemove);
+	void OnDipSw();
+};
+
+//! 26 I/O
+static const CComboData::Entry s_io26[] =
 {
 	{MAKEINTRESOURCE(IDS_0088),		0x00},
 	{MAKEINTRESOURCE(IDS_0188),		0x10},
 };
 
-static const CBPARAM cpInt26[] =
+//! 26 INT
+static const CComboData::Entry s_int26[] =
 {
 	{MAKEINTRESOURCE(IDS_INT0),		0x00},
 	{MAKEINTRESOURCE(IDS_INT41),	0x80},
@@ -362,7 +389,8 @@ static const CBPARAM cpInt26[] =
 	{MAKEINTRESOURCE(IDS_INT6),		0x40},
 };
 
-static const CBPARAM cpAddr[] =
+//! 26 ROM
+static const CComboData::Entry s_rom26[] =
 {
 	{MAKEINTRESOURCE(IDS_C8000),		0x00},
 	{MAKEINTRESOURCE(IDS_CC000),		0x01},
@@ -371,188 +399,200 @@ static const CBPARAM cpAddr[] =
 	{MAKEINTRESOURCE(IDS_NONCONNECT),	0x04},
 };
 
-static void setsnd26io(HWND hWnd, UINT uID, UINT8 cValue)
+/**
+ * コンストラクタ
+ */
+SndOpt26Page::SndOpt26Page()
+	: CPropPageProc(IDD_SND26)
+	, m_snd26(0)
 {
-	dlgs_setcbcur(hWnd, uID, cValue & 0x10);
 }
 
-static UINT8 getsnd26io(HWND hWnd, UINT uID)
+/**
+ * デストラクタ
+ */
+SndOpt26Page::~SndOpt26Page()
 {
-	return dlgs_getcbcur(hWnd, uID, 0x10);
 }
 
-static void setsnd26int(HWND hWnd, UINT uID, UINT8 cValue)
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL SndOpt26Page::OnInitDialog()
 {
-	dlgs_setcbcur(hWnd, uID, cValue & 0xc0);
+	m_io.SubclassDlgItem(IDC_SND26IO, this);
+	m_io.Add(s_io26, _countof(s_io26));
+
+	m_int.SubclassDlgItem(IDC_SND26INT, this);
+	m_int.Add(s_int26, _countof(s_int26));
+
+	m_rom.SubclassDlgItem(IDC_SND26ROM, this);
+	m_rom.Add(s_rom26, _countof(s_rom26));
+
+	Set(np2cfg.snd26opt);
+
+	m_dipsw.SubclassDlgItem(IDC_SND26JMP, this);
+
+	m_io.SetFocus();
+	return FALSE;
 }
 
-static UINT8 getsnd26int(HWND hWnd, UINT uID)
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void SndOpt26Page::OnOK()
 {
-	return dlgs_getcbcur(hWnd, uID, 0xc0);
-}
-
-static void setsnd26rom(HWND hWnd, UINT uID, UINT8 cValue)
-{
-	UINT	uParam;
-
-	uParam = cValue & 0x07;
-	uParam = min(uParam, 0x04);
-	dlgs_setcbcur(hWnd, uID, uParam);
-}
-
-static UINT8 getsnd26rom(HWND hWnd, UINT uID)
-{
-	return dlgs_getcbcur(hWnd, uID, 0x04);
-}
-
-
-
-// ---- PC-9801-26
-
-static	UINT8	snd26 = 0;
-
-static void snd26set(HWND hWnd, UINT8 cValue)
-{
-	setsnd26io(hWnd, IDC_SND26IO, cValue);
-	setsnd26int(hWnd, IDC_SND26INT, cValue);
-	setsnd26rom(hWnd, IDC_SND26ROM, cValue);
-}
-
-static void set26jmp(HWND hWnd, UINT8 value, UINT8 bit) {
-
-	if ((snd26 ^ value) & bit) {
-		snd26 &= ~bit;
-		snd26 |= value;
-		InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+	if (np2cfg.snd26opt != m_snd26)
+	{
+		np2cfg.snd26opt = m_snd26;
+		::sysmng_update(SYS_UPDATECFG);
 	}
 }
 
-static void snd26cmdjmp(HWND hWnd) {
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL SndOpt26Page::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch (LOWORD(wParam))
+	{
+		case IDC_SND26IO:
+			SetJumper(m_io.GetCurItemData(m_snd26 & 0x10), 0x10);
+			break;
 
-	RECT	rect1;
-	RECT	rect2;
-	POINT	p;
-	BOOL	redraw;
-	UINT8	b;
-	UINT8	bit;
+		case IDC_SND26INT:
+			SetJumper(m_int.GetCurItemData(m_snd26 & 0xc0), 0xc0);
+			break;
 
-	GetWindowRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect1);
-	GetClientRect(GetDlgItem(hWnd, IDC_SND26JMP), &rect2);
-	GetCursorPos(&p);
-	redraw = FALSE;
+		case IDC_SND26ROM:
+			SetJumper(m_rom.GetCurItemData(m_snd26 & 0x07), 0x07);
+			break;
+
+		case IDC_SND26DEF:
+			Set(0xd1);
+			m_dipsw.Invalidate();
+			break;
+
+		case IDC_SND26JMP:
+			OnDipSw();
+			break;
+	}
+	return FALSE;
+}
+
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT SndOpt26Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
+		case WM_DRAWITEM:
+			if (LOWORD(wParam) == IDC_SND26JMP)
+			{
+				UINT8* pBitmap = dipswbmp_getsnd26(m_snd26);
+				m_dipsw.Draw((reinterpret_cast<LPDRAWITEMSTRUCT>(lParam))->hDC, pBitmap);
+				_MFREE(pBitmap);
+			}
+			return FALSE;
+	}
+	return CDlgProc::WindowProc(nMsg, wParam, lParam);
+}
+
+/**
+ * コントロール設定
+ * @param[in] cValue 設定値
+ */
+void SndOpt26Page::Set(UINT8 cValue)
+{
+	m_snd26 = cValue;
+
+	m_io.SetCurItemData(cValue & 0x10);
+	m_int.SetCurItemData(cValue & 0xc0);
+
+	const UINT nRom = cValue & 0x07;
+	m_rom.SetCurItemData((nRom & 0x04) ? 0x04 : nRom);
+}
+
+/**
+ * 設定
+ * @param[in] nAdd 追加ビット
+ * @param[in] nRemove 削除ビット
+ */
+void SndOpt26Page::SetJumper(UINT nAdd, UINT nRemove)
+{
+	const UINT nValue = (m_snd26 & (~nRemove)) | nAdd;
+	if (m_snd26 != static_cast<UINT8>(nValue))
+	{
+		m_snd26 = static_cast<UINT8>(nValue);
+		m_dipsw.Invalidate();
+	}
+}
+
+/**
+ * DIPSW をタップした
+ */
+void SndOpt26Page::OnDipSw()
+{
+	RECT rect1;
+	m_dipsw.GetWindowRect(&rect1);
+
+	RECT rect2;
+	m_dipsw.GetClientRect(&rect2);
+
+	POINT p;
+	::GetCursorPos(&p);
 	p.x += rect2.left - rect1.left;
 	p.y += rect2.top - rect1.top;
 	p.x /= 9;
 	p.y /= 9;
-	if ((p.y < 1) || (p.y >= 3)) {
+	if ((p.y < 1) || (p.y >= 3))
+	{
 		return;
 	}
-	if ((p.x >= 2) && (p.x < 7)) {
-		b = (UINT8)(p.x - 2);
-		if ((snd26 ^ b) & 7) {
-			snd26 &= ~0x07;
-			snd26 |= b;
-			setsnd26rom(hWnd, IDC_SND26ROM, b);
-			redraw = TRUE;
-		}
+
+	UINT nValue = m_snd26;
+	if ((p.x >= 2) && (p.x < 7))
+	{
+		nValue = (nValue & (~7)) | (p.x - 2);
 	}
-	else if ((p.x >= 9) && (p.x < 12)) {
-		b = snd26;
-		bit = 0x40 << (2 - p.y);
-		switch(p.x) {
+	else if ((p.x >= 9) && (p.x < 12))
+	{
+		UINT cBit = 0x40 << (2 - p.y);
+		switch (p.x)
+		{
 			case 9:
-				b |= bit;
+				nValue |= cBit;
 				break;
 
 			case 10:
-				b ^= bit;
+				nValue ^= cBit;
 				break;
 
 			case 11:
-				b &= ~bit;
+				nValue &= ~cBit;
 				break;
 		}
-		if (snd26 != b) {
-			snd26 = b;
-			setsnd26int(hWnd, IDC_SND26INT, b);
-			redraw = TRUE;
-		}
 	}
-	else if ((p.x >= 15) && (p.x < 17)) {
-		b = (UINT8)((p.x - 15) << 4);
-		if ((snd26 ^ b) & 0x10) {
-			snd26 &= ~0x10;
-			snd26 |= b;
-			setsnd26io(hWnd, IDC_SND26IO, b);
-			redraw = TRUE;
-		}
+	else if ((p.x >= 15) && (p.x < 17))
+	{
+		nValue = (nValue & (~0x10)) | ((p.x - 15) << 4);
 	}
-	if (redraw) {
-		InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
+
+	if (m_snd26 != static_cast<UINT8>(nValue))
+	{
+		Set(static_cast<UINT8>(nValue));
+		m_dipsw.Invalidate();
 	}
-}
-
-static LRESULT CALLBACK Snd26optDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
-
-	HWND	sub;
-
-	switch(msg) {
-		case WM_INITDIALOG:
-			snd26 = np2cfg.snd26opt;
-			dlgs_setcbitem(hWnd, IDC_SND26IO, cpIO26, NELEMENTS(cpIO26));
-			dlgs_setcbitem(hWnd, IDC_SND26INT, cpInt26, NELEMENTS(cpInt26));
-			dlgs_setcbitem(hWnd, IDC_SND26ROM, cpAddr, NELEMENTS(cpAddr));
-			snd26set(hWnd, snd26);
-			sub = GetDlgItem(hWnd, IDC_SND26JMP);
-			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
-							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
-			return(TRUE);
-
-		case WM_COMMAND:
-			switch(LOWORD(wp)) {
-				case IDC_SND26IO:
-					set26jmp(hWnd, getsnd26io(hWnd, IDC_SND26IO), 0x10);
-					break;
-
-				case IDC_SND26INT:
-					set26jmp(hWnd, getsnd26int(hWnd, IDC_SND26INT), 0xc0);
-					break;
-
-				case IDC_SND26ROM:
-					set26jmp(hWnd, getsnd26rom(hWnd, IDC_SND26ROM), 0x07);
-					break;
-
-				case IDC_SND26DEF:
-					snd26 = 0xd1;
-					snd26set(hWnd, snd26);
-					InvalidateRect(GetDlgItem(hWnd, IDC_SND26JMP), NULL, TRUE);
-					break;
-
-				case IDC_SND26JMP:
-					snd26cmdjmp(hWnd);
-					break;
-			}
-			break;
-
-		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
-				if (np2cfg.snd26opt != snd26) {
-					np2cfg.snd26opt = snd26;
-					sysmng_update(SYS_UPDATECFG);
-				}
-				return(TRUE);
-			}
-			break;
-
-		case WM_DRAWITEM:
-			if (LOWORD(wp) == IDC_SND26JMP) {
-				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
-												dipswbmp_getsnd26(snd26));
-			}
-			break;
-	}
-	return(FALSE);
 }
 
 
@@ -698,7 +738,7 @@ BOOL SndOpt86Page::OnCommand(WPARAM wParam, LPARAM lParam)
 
 		case IDC_SND86DEF:
 			Set(0x7f);
-			m_dipsw.Invalidate(TRUE);
+			m_dipsw.Invalidate();
 			break;
 
 		case IDC_SND86DIP:
@@ -756,7 +796,7 @@ void SndOpt86Page::SetJumper(UINT nAdd, UINT nRemove)
 	if (m_snd86 != static_cast<UINT8>(nValue))
 	{
 		m_snd86 = static_cast<UINT8>(nValue);
-		m_dipsw.Invalidate(TRUE);
+		m_dipsw.Invalidate();
 	}
 }
 
@@ -784,230 +824,297 @@ void SndOpt86Page::OnDipSw()
 	p.x -= 2;
 	m_snd86 ^= (1 << p.x);
 	Set(m_snd86);
-	m_dipsw.Invalidate(TRUE);
+	m_dipsw.Invalidate();
 }
 
 
 
 // ---- Speak board
 
-static	UINT8	spb = 0;
-static	UINT8	spbvrc = 0;
-
-static void setspbVRch(HWND hWnd) {
-
-	SetDlgItemCheck(hWnd, IDC_SPBVRL, spbvrc & 1);
-	SetDlgItemCheck(hWnd, IDC_SPBVRR, spbvrc & 2);
-}
-
-static void spbcreate(HWND hWnd)
+/**
+ * @brief Speak board ページ
+ */
+class SndOptSpbPage : public CPropPageProc
 {
-	HWND	sub;
+public:
+	SndOptSpbPage();
+	virtual ~SndOptSpbPage();
 
-	spb = np2cfg.spbopt;
+protected:
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
-	dlgs_setcbitem(hWnd, IDC_SPBIO, cpIO26, NELEMENTS(cpIO26));
-	setsnd26io(hWnd, IDC_SPBIO, spb);
-	dlgs_setcbitem(hWnd, IDC_SPBINT, cpInt26, NELEMENTS(cpInt26));
-	setsnd26int(hWnd, IDC_SPBINT, spb);
-	dlgs_setcbitem(hWnd, IDC_SPBROM, cpAddr, NELEMENTS(cpAddr));
-	setsnd26rom(hWnd, IDC_SPBROM, spb);
-	spbvrc = np2cfg.spb_vrc;								// ver0.30
-	setspbVRch(hWnd);
-	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETRANGE, TRUE,
-															MAKELONG(0, 24));
-	SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL, TBM_SETPOS, TRUE,
-															np2cfg.spb_vrl);
-	SetDlgItemCheck(hWnd, IDC_SPBREVERSE, np2cfg.spb_x);
+private:
+	UINT8 m_spb;				//!< 設定値
+	UINT8 m_vr;					//!< VR設定値
+	CComboData m_io;			//!< IO
+	CComboData m_int;			//!< INT
+	CComboData m_rom;			//!< ROM
+	CSliderProc m_vol;			//!< VOL
+	CStaticDipSw m_dipsw;		//!< DIPSW
+	void Set(UINT8 cValue, UINT8 cVR);
+	void SetJumper(UINT cAdd, UINT cRemove);
+	void OnDipSw();
+};
 
-	sub = GetDlgItem(hWnd, IDC_SPBJMP);
-	SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
-							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
+/**
+ * コンストラクタ
+ */
+SndOptSpbPage::SndOptSpbPage()
+	: CPropPageProc(IDD_SNDSPB)
+	, m_spb(0)
+	, m_vr(0)
+{
 }
 
-static void spbcmdjmp(HWND hWnd) {
+/**
+ * デストラクタ
+ */
+SndOptSpbPage::~SndOptSpbPage()
+{
+}
 
-	RECT	rect1;
-	RECT	rect2;
-	POINT	p;
-	BOOL	redraw;
-	UINT8	b;
-	UINT8	bit;
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL SndOptSpbPage::OnInitDialog()
+{
+	m_io.SubclassDlgItem(IDC_SPBIO, this);
+	m_io.Add(s_io26, _countof(s_io26));
 
-	GetWindowRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect1);
-	GetClientRect(GetDlgItem(hWnd, IDC_SPBJMP), &rect2);
-	GetCursorPos(&p);
-	redraw = FALSE;
+	m_int.SubclassDlgItem(IDC_SPBINT, this);
+	m_int.Add(s_int26, _countof(s_int26));
+
+	m_rom.SubclassDlgItem(IDC_SPBROM, this);
+	m_rom.Add(s_rom26, _countof(s_rom26));
+
+	Set(np2cfg.spbopt, np2cfg.spb_vrc);
+
+	m_vol.SubclassDlgItem(IDC_SPBVRLEVEL, this);
+	m_vol.SetRangeMin(0, FALSE);
+	m_vol.SetRangeMax(24, FALSE);
+	m_vol.SetPos(np2cfg.spb_vrl);
+
+	CheckDlgButton(IDC_SPBREVERSE, (np2cfg.spb_x) ? BST_CHECKED : BST_UNCHECKED);
+
+	m_dipsw.SubclassDlgItem(IDC_SPBJMP, this);
+
+	m_io.SetFocus();
+	return FALSE;
+}
+
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void SndOptSpbPage::OnOK()
+{
+	bool bUpdated = false;
+
+	if (np2cfg.spbopt != m_spb)
+	{
+		np2cfg.spbopt = m_spb;
+		bUpdated = true;
+	}
+
+	if (np2cfg.spb_vrc != m_vr)
+	{
+		np2cfg.spb_vrc = m_vr;
+		bUpdated = true;
+	}
+	const UINT8 cVol = static_cast<UINT8>(m_vol.GetPos());
+	if (np2cfg.spb_vrl != cVol)
+	{
+		np2cfg.spb_vrl = cVol;
+		bUpdated = true;
+	}
+
+	const UINT8 cRev = (IsDlgButtonChecked(IDC_SPBREVERSE) != BST_UNCHECKED) ? 1 : 0;
+	if (np2cfg.spb_x != cRev)
+	{
+		np2cfg.spb_x = cRev;
+		bUpdated = true;
+	}
+
+	if (bUpdated)
+	{
+		::sysmng_update(SYS_UPDATECFG);
+	}
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL SndOptSpbPage::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch (LOWORD(wParam))
+	{
+		case IDC_SPBIO:
+			SetJumper(m_io.GetCurItemData(m_spb & 0x10), 0x10);
+			break;
+
+		case IDC_SPBINT:
+			SetJumper(m_int.GetCurItemData(m_spb & 0xc0), 0xc0);
+			break;
+
+		case IDC_SPBROM:
+			SetJumper(m_rom.GetCurItemData(m_spb & 0x07), 0x07);
+			break;
+
+		case IDC_SPBDEF:
+			Set(0xd1, 0);
+			m_dipsw.Invalidate();
+			break;
+
+		case IDC_SPBVRL:
+		case IDC_SPBVRR:
+			m_vr = 0;
+			if (IsDlgButtonChecked(IDC_SPBVRL) != BST_UNCHECKED)
+			{
+				m_vr |= 0x01;
+			}
+			if (IsDlgButtonChecked(IDC_SPBVRR) != BST_UNCHECKED)
+			{
+				m_vr |= 0x02;
+			}
+			m_dipsw.Invalidate();
+			break;
+
+		case IDC_SPBJMP:
+			OnDipSw();
+			break;
+	}
+	return FALSE;
+}
+
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT SndOptSpbPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
+		case WM_DRAWITEM:
+			if (LOWORD(wParam) == IDC_SPBJMP)
+			{
+				UINT8* pBitmap = dipswbmp_getsndspb(m_spb, m_vr);
+				m_dipsw.Draw((reinterpret_cast<LPDRAWITEMSTRUCT>(lParam))->hDC, pBitmap);
+				_MFREE(pBitmap);
+			}
+			return FALSE;
+	}
+	return CDlgProc::WindowProc(nMsg, wParam, lParam);
+}
+
+/**
+ * コントロール設定
+ * @param[in] cValue 設定値
+ * @param[in] cVR VR 設定値
+ */
+void SndOptSpbPage::Set(UINT8 cValue, UINT8 cVR)
+{
+	m_spb = cValue;
+	m_vr = cVR;
+
+	m_io.SetCurItemData(cValue & 0x10);
+	m_int.SetCurItemData(cValue & 0xc0);
+
+	const UINT nRom = cValue & 0x07;
+	m_rom.SetCurItemData((nRom & 0x04) ? 0x04 : nRom);
+
+	CheckDlgButton(IDC_SPBVRL, (cVR & 0x01) ? BST_CHECKED : BST_UNCHECKED);
+	CheckDlgButton(IDC_SPBVRR, (cVR & 0x02) ? BST_CHECKED : BST_UNCHECKED);
+}
+
+/**
+ * 設定
+ * @param[in] nAdd 追加ビット
+ * @param[in] nRemove 削除ビット
+ */
+void SndOptSpbPage::SetJumper(UINT nAdd, UINT nRemove)
+{
+	const UINT nValue = (m_spb & (~nRemove)) | nAdd;
+	if (m_spb != static_cast<UINT8>(nValue))
+	{
+		m_spb = static_cast<UINT8>(nValue);
+		m_dipsw.Invalidate();
+	}
+}
+
+/**
+ * DIPSW をタップした
+ */
+void SndOptSpbPage::OnDipSw()
+{
+	RECT rect1;
+	m_dipsw.GetWindowRect(&rect1);
+
+	RECT rect2;
+	m_dipsw.GetClientRect(&rect2);
+
+	POINT p;
+	::GetCursorPos(&p);
 	p.x += rect2.left - rect1.left;
 	p.y += rect2.top - rect1.top;
 	p.x /= 9;
 	p.y /= 9;
-	if ((p.y < 1) || (p.y >= 3)) {
+	if ((p.y < 1) || (p.y >= 3))
+	{
 		return;
 	}
-	if ((p.x >= 2) && (p.x < 5)) {
-		b = spb;
-		bit = 0x40 << (2 - p.y);
-		switch(p.x) {
+
+	UINT8 cValue = m_spb;
+	UINT8 cVR = m_vr;
+	if ((p.x >= 2) && (p.x < 5))
+	{
+		UINT8 cBit = 0x40 << (2 - p.y);
+		switch (p.x)
+		{
 			case 2:
-				b |= bit;
+				cValue |= cBit;
 				break;
 
 			case 3:
-				b ^= bit;
+				cValue ^= cBit;
 				break;
 
 			case 4:
-				b &= ~bit;
+				cValue &= ~cBit;
 				break;
 		}
-		if (spb != b) {
-			spb = b;
-			setsnd26int(hWnd, IDC_SPBINT, b);
-			redraw = TRUE;
-		}
 	}
-	else if (p.x == 7) {
-		spb ^= 0x20;
-		redraw = TRUE;
+	else if (p.x == 7)
+	{
+		cValue ^= 0x20;
 	}
-	else if ((p.x >= 10) && (p.x < 12)) {
-		b = (UINT8)((p.x - 10) << 4);
-		if ((spb ^ b) & 0x10) {
-			spb &= ~0x10;
-			spb |= b;
-			setsnd26io(hWnd, IDC_SPBIO, b);
-			redraw = TRUE;
-		}
+	else if ((p.x >= 10) && (p.x < 12))
+	{
+		cValue = (cValue & (~0x10)) | ((p.x - 10) << 4);
 	}
-	else if ((p.x >= 14) && (p.x < 19)) {
-		b = (UINT8)(p.x - 14);
-		if ((spb ^ b) & 7) {
-			spb &= ~0x07;
-			spb |= b;
-			setsnd26rom(hWnd, IDC_SPBROM, b);
-			redraw = TRUE;
-		}
+	else if ((p.x >= 14) && (p.x < 19))
+	{
+		cValue = (cValue & (~7)) | (p.x - 14);
 	}
-	else if ((p.x >= 21) && (p.x < 24)) {
-		spbvrc ^= (UINT8)(3 - p.y);
-		setspbVRch(hWnd);
-		redraw = TRUE;
+	else if ((p.x >= 21) && (p.x < 24))
+	{
+		cVR ^= (3 - p.y);
 	}
-	if (redraw) {
-		InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
+
+	if ((m_spb != cValue) || (m_vr != cVR))
+	{
+		Set(cValue, cVR);
+		m_dipsw.Invalidate();
 	}
-}
-
-static void setspbjmp(HWND hWnd, UINT8 value, UINT8 bit) {
-
-	if ((spb ^ value) & bit) {
-		spb &= ~bit;
-		spb |= value;
-		InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
-	}
-}
-
-static UINT8 getspbVRch(HWND hWnd) {
-
-	UINT8	ret;
-
-	ret = 0;
-	if (GetDlgItemCheck(hWnd, IDC_SPBVRL)) {
-		ret += 1;
-	}
-	if (GetDlgItemCheck(hWnd, IDC_SPBVRR)) {
-		ret += 2;
-	}
-	return(ret);
-}
-
-static LRESULT CALLBACK SPBoptDlgProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
-	UINT8	b;
-	UINT	update;
-
-	switch(msg) {
-		case WM_INITDIALOG:
-			spbcreate(hWnd);
-			return(TRUE);
-
-		case WM_COMMAND:
-			switch(LOWORD(wp)) {
-				case IDC_SPBIO:
-					setspbjmp(hWnd, getsnd26io(hWnd, IDC_SPBIO), 0x10);
-					break;
-
-				case IDC_SPBINT:
-					setspbjmp(hWnd, getsnd26int(hWnd, IDC_SPBINT), 0xc0);
-					break;
-
-				case IDC_SPBROM:
-					setspbjmp(hWnd, getsnd26rom(hWnd, IDC_SPBROM), 0x07);
-					break;
-
-				case IDC_SPBDEF:
-					spb = 0xd1;
-					setsnd26io(hWnd, IDC_SPBIO, spb);
-					setsnd26int(hWnd, IDC_SPBINT, spb);
-					setsnd26rom(hWnd, IDC_SPBROM, spb);
-					spbvrc = 0;
-					setspbVRch(hWnd);
-					InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP), NULL, TRUE);
-					break;
-
-				case IDC_SPBVRL:
-				case IDC_SPBVRR:
-					b = getspbVRch(hWnd);
-					if ((spbvrc ^ b) & 3) {
-						spbvrc = b;
-						InvalidateRect(GetDlgItem(hWnd, IDC_SPBJMP),
-																NULL, TRUE);
-					}
-					break;
-
-				case IDC_SPBJMP:
-					spbcmdjmp(hWnd);
-					break;
-			}
-			break;
-
-		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
-				update = 0;
-				if (np2cfg.spbopt != spb) {
-					np2cfg.spbopt = spb;
-					update |= SYS_UPDATECFG;
-				}
-				if (np2cfg.spb_vrc != spbvrc) {
-					np2cfg.spb_vrc = spbvrc;
-					update |= SYS_UPDATECFG;
-				}
-				b = (UINT8)SendDlgItemMessage(hWnd, IDC_SPBVRLEVEL,
-															TBM_GETPOS, 0, 0);
-				if (np2cfg.spb_vrl != b) {
-					np2cfg.spb_vrl = b;
-					update |= SYS_UPDATECFG;
-				}
-				opngen_setVR(np2cfg.spb_vrc, np2cfg.spb_vrl);
-				b = (UINT8)GetDlgItemCheck(hWnd, IDC_SPBREVERSE);
-				if (np2cfg.spb_x != b) {
-					np2cfg.spb_x = b;
-					update |= SYS_UPDATECFG;
-				}
-				sysmng_update(update);
-				return(TRUE);
-			}
-			break;
-
-		case WM_DRAWITEM:
-			if (LOWORD(wp) == IDC_SPBJMP) {
-				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
-											dipswbmp_getsndspb(spb, spbvrc));
-			}
-			return(FALSE);
-	}
-	return(FALSE);
 }
 
 
@@ -1119,22 +1226,14 @@ void dialog_sndopt(HWND hwndParent)
 	SndOpt14Page pc980114;
 	hpsp.push_back(::CreatePropertySheetPage(&pc980114.m_psp));
 
-	PROPSHEETPAGE psp;
-	ZeroMemory(&psp, sizeof(psp));
-	psp.dwSize = sizeof(PROPSHEETPAGE);
-	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = CWndProc::GetResourceHandle();
-
-	psp.pszTemplate = MAKEINTRESOURCE(IDD_SND26);
-	psp.pfnDlgProc = (DLGPROC)Snd26optDlgProc;
-	hpsp.push_back(::CreatePropertySheetPage(&psp));
+	SndOpt26Page pc980126;
+	hpsp.push_back(::CreatePropertySheetPage(&pc980126.m_psp));
 
 	SndOpt86Page pc980186;
 	hpsp.push_back(::CreatePropertySheetPage(&pc980186.m_psp));
 
-	psp.pszTemplate = MAKEINTRESOURCE(IDD_SNDSPB);
-	psp.pfnDlgProc = (DLGPROC)SPBoptDlgProc;
-	hpsp.push_back(::CreatePropertySheetPage(&psp));
+	SndOptSpbPage spb;
+	hpsp.push_back(::CreatePropertySheetPage(&spb.m_psp));
 
 	SndOptPadPage pad;
 	hpsp.push_back(::CreatePropertySheetPage(&pad.m_psp));
