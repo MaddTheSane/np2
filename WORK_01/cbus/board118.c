@@ -57,7 +57,7 @@ static void IOOUTCALL ymf_o18e(UINT port, REG8 dat)
 		return;
 	}
 
-	opna_writeExtendedRegister(&g_opna[0], g_opna[0].s.addrh, dat);
+	opna_writeExtendedRegister(&g_opna[0], g_opna[0].s.addrl, dat);
 
 	(void)port;
 }
