@@ -96,11 +96,6 @@ public:
 	virtual void StopStream() = 0;
 
 	/**
-	 * 同期
-	 */
-	virtual void SyncStream() = 0;
-
-	/**
 	 * PCM データ読み込み
 	 * @param[in] nNum PCM 番号
 	 * @param[in] lpFilename ファイル名

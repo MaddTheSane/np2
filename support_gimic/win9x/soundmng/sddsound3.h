@@ -8,11 +8,12 @@
 #include <map>
 #include <dsound.h>
 #include "sdbase.h"
+#include "misc\threadbase.h"
 
 /**
  * @brief Direct Sound3 クラス
  */
-class CSoundDeviceDSound3 : public CSoundDeviceBase
+class CSoundDeviceDSound3 : public CSoundDeviceBase, protected CThreadBase
 {
 public:
 	CSoundDeviceDSound3();
@@ -24,18 +25,20 @@ public:
 	virtual void ResetStream();
 	virtual bool PlayStream();
 	virtual void StopStream();
-	virtual void SyncStream();
 	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename = NULL);
 	virtual void SetPCMVolume(UINT nNum, int nVolume);
 	virtual bool PlayPCM(UINT nNum, BOOL bLoop);
 	virtual void StopPCM(UINT nNum);
 	virtual void StopAllPCM();
 
+protected:
+	virtual bool Task();
+
 private:
 	LPDIRECTSOUND m_lpDSound;					//!< Direct Sound インタフェイス
 	LPDIRECTSOUNDBUFFER m_lpDSStream;			//!< ストリーム バッファ
 	UINT m_dwHalfBufferSize;					//!< バッファ サイズ
-	int m_nStreamEvent;							//!< ストリーム イベント
+	HANDLE m_hEvents[2];						//!< イベント
 	std::map<UINT, LPDIRECTSOUNDBUFFER> m_pcm;	//!< PCM バッファ
 
 private:

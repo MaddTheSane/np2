@@ -27,8 +27,8 @@ CSoundDeviceDSound3::CSoundDeviceDSound3()
 	: m_lpDSound(NULL)
 	, m_lpDSStream(NULL)
 	, m_dwHalfBufferSize(0)
-	, m_nStreamEvent(-1)
 {
+	ZeroMemory(m_hEvents, sizeof(m_hEvents));
 }
 
 /**
@@ -36,6 +36,7 @@ CSoundDeviceDSound3::CSoundDeviceDSound3()
  */
 CSoundDeviceDSound3::~CSoundDeviceDSound3()
 {
+	Close();
 }
 
 /**
@@ -82,6 +83,7 @@ void CSoundDeviceDSound3::Close()
 	if (m_lpDSound)
 	{
 		m_lpDSound->Release();
+		m_lpDSound = NULL;
 	}
 }
 
@@ -120,7 +122,7 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 	ZeroMemory(&dsbdesc, sizeof(dsbdesc));
 	dsbdesc.dwSize = sizeof(dsbdesc);
 	dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME |
-						DSBCAPS_CTRLFREQUENCY |
+						DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPOSITIONNOTIFY |
 						DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
 	dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
 	dsbdesc.dwBufferBytes = m_dwHalfBufferSize * 2;
@@ -135,9 +137,31 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 		DestroyStream();
 		return 0;
 	}
-	ResetStream();
 
-	m_nStreamEvent = -1;
+	LPDIRECTSOUNDNOTIFY pNotify;
+	if (FAILED(m_lpDSStream->QueryInterface(IID_IDirectSoundNotify, reinterpret_cast<LPVOID*>(&pNotify))))
+	{
+		DestroyStream();
+		return 0;
+	}
+
+	for (UINT i = 0; i < _countof(m_hEvents); i++)
+	{
+		m_hEvents[i] = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+	}
+
+	DSBPOSITIONNOTIFY pos[2];
+	ZeroMemory(pos, sizeof(pos));
+	for (UINT i = 0; i < _countof(pos); i++)
+	{
+		pos[i].dwOffset = m_dwHalfBufferSize * i;
+		pos[i].hEventNotify = m_hEvents[0];
+	}
+	pNotify->SetNotificationPositions(_countof(pos), pos);
+	pNotify->Release();
+
+	ResetStream();
+	CThreadBase::Start();
 	return nBufferSize;
 }
 
@@ -146,11 +170,26 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
  */
 void CSoundDeviceDSound3::DestroyStream()
 {
+	if (m_hEvents[1])
+	{
+		::SetEvent(m_hEvents[1]);
+		CThreadBase::Stop();
+	}
+
 	if (m_lpDSStream)
 	{
 		m_lpDSStream->Stop();
 		m_lpDSStream->Release();
 		m_lpDSStream = NULL;
+	}
+
+	for (UINT i = 0; i < _countof(m_hEvents); i++)
+	{
+		if (m_hEvents[i])
+		{
+			::CloseHandle(m_hEvents[i]);
+			m_hEvents[i] = NULL;
+		}
 	}
 }
 
@@ -174,7 +213,6 @@ void CSoundDeviceDSound3::ResetStream()
 			}
 			m_lpDSStream->Unlock(lpBlock1, cbBlock1, lpBlock2, cbBlock2);
 			m_lpDSStream->SetCurrentPosition(0);
-			m_nStreamEvent = -1;
 		}
 	}
 }
@@ -209,6 +247,37 @@ void CSoundDeviceDSound3::StopStream()
 }
 
 /**
+ * 同期
+ * @retval true 継続
+ * @retval false 終了
+ */
+bool CSoundDeviceDSound3::Task()
+{
+	 switch (WaitForMultipleObjects(_countof(m_hEvents), m_hEvents, 0, INFINITE))
+	 {
+		case WAIT_OBJECT_0 + 0:
+			if (m_lpDSStream)
+			{
+				DWORD dwCurrentPlayCursor;
+				DWORD dwCurrentWriteCursor;
+				if (SUCCEEDED(m_lpDSStream->GetCurrentPosition(&dwCurrentPlayCursor, &dwCurrentWriteCursor)))
+				{
+					const DWORD dwPos = (dwCurrentPlayCursor >= m_dwHalfBufferSize) ? 0 : m_dwHalfBufferSize;
+					FillStream(dwPos);
+				}
+			}
+			break;
+
+		case WAIT_OBJECT_0 + 1:
+			return false;
+
+		default:
+			break;
+	}
+	return true;
+}
+
+/**
  * ストリームを更新する
  * @param[in] dwPosition 更新位置
  */
@@ -235,37 +304,6 @@ void CSoundDeviceDSound3::FillStream(DWORD dwPosition)
 			ZeroMemory(lpBlock1, cbBlock1);
 		}
 		m_lpDSStream->Unlock(lpBlock1, cbBlock1, lpBlock2, cbBlock2);
-	}
-}
-
-/**
- * 同期
- */
-void CSoundDeviceDSound3::SyncStream()
-{
-	if (m_lpDSStream)
-	{
-		DWORD dwCurrentPlayCursor;
-		DWORD dwCurrentWriteCursor;
-		if (m_lpDSStream->GetCurrentPosition(&dwCurrentPlayCursor, &dwCurrentWriteCursor) == DS_OK)
-		{
-			if (dwCurrentPlayCursor >= m_dwHalfBufferSize)
-			{
-				if (m_nStreamEvent != 0)
-				{
-					m_nStreamEvent = 0;
-					FillStream(0);
-				}
-			}
-			else
-			{
-				if (m_nStreamEvent != 1)
-				{
-					m_nStreamEvent = 1;
-					FillStream(m_dwHalfBufferSize);
-				}
-			}
-		}
 	}
 }
 

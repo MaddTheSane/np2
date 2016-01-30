@@ -283,17 +283,6 @@ UINT CSoundMng::Get16(SINT16* lpBuffer, UINT nBufferCount)
 }
 
 /**
- * 同期
- */
-inline void CSoundMng::Sync()
-{
-	if (m_pSoundDevice)
-	{
-		m_pSoundDevice->SyncStream();
-	}
-}
-
-/**
  * パン反転を設定する
  * @param[in] bReverse 反転フラグ
  */
@@ -419,14 +408,6 @@ void soundmng_play(void)
 void soundmng_stop(void)
 {
 	CSoundMng::GetInstance()->StopStream();
-}
-
-/**
- * ストリーム同期
- */
-void soundmng_sync(void)
-{
-	CSoundMng::GetInstance()->Sync();
 }
 
 /**
