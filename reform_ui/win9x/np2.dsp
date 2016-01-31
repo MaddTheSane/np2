@@ -1547,10 +1547,6 @@ SOURCE=.\dialog\dialog.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\DIALOGS.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DIALOG\NP2CLASS.CPP
 # End Source File
 # End Group

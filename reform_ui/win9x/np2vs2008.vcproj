@@ -1869,10 +1869,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\dialog\dialogs.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\dialog\np2class.cpp"
 						>
 					</File>
@@ -3056,10 +3052,6 @@
 					</File>
 					<File
 						RelativePath=".\dialog\dialog.h"
-						>
-					</File>
-					<File
-						RelativePath=".\dialog\dialogs.h"
 						>
 					</File>
 					<File
