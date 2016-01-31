@@ -158,8 +158,8 @@ static void cfgupdate(HWND hWnd)
 	else {
 		val = 44100;
 	}
-	if (np2cfg.samplingrate != (UINT16)val) {
-		np2cfg.samplingrate = (UINT16)val;
+	if (np2cfg.samplingrate != val) {
+		np2cfg.samplingrate = val;
 		update |= SYS_UPDATECFG | SYS_UPDATERATE;
 		soundrenewal = 1;
 	}

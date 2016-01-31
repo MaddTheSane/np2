@@ -200,14 +200,13 @@ static void pccore_set(const NP2CFG *pConfig)
 #if !defined(DISABLE_SOUND)
 static void sound_init(void)
 {
-	UINT	rate;
+	UINT rate;
 
 	rate = np2cfg.samplingrate;
-	if ((rate != 11025) && (rate != 22050) && (rate != 44100) && (rate != 48000))
+	if (sound_create(rate, np2cfg.delayms) != SUCCESS)
 	{
 		rate = 0;
 	}
-	sound_create(rate, np2cfg.delayms);
 	fddmtrsnd_initialize(rate);
 	beep_initialize(rate);
 	beep_setvol(np2cfg.BEEP_VOL);
