@@ -16,6 +16,15 @@ public:
 	/**
 	 * @brief エントリー
 	 */
+	struct Value
+	{
+		UINT32 nNumber;				/*!< 数値 */
+		UINT32 nItemData;			/*!< 値 */
+	};
+
+	/**
+	 * @brief エントリー
+	 */
 	struct Entry
 	{
 		LPCTSTR lpcszString;		/*!< 文字列 */
@@ -23,6 +32,7 @@ public:
 	};
 
 	void Add(const UINT32* lpValues, UINT cchValues);
+	void Add(const Value* lpValues, UINT cchValues);
 	void Add(const Entry* lpEntries, UINT cchEntries);
 	void Add(LPCTSTR lpString, UINT32 nItemData);
 	void SetCurItemData(UINT32 nValue);

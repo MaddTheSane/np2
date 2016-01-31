@@ -19,7 +19,6 @@
 #include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "common\strres.h"
 #include "generic\dipswbmp.h"
 #include "sound\sound.h"
 #include "sound\fmboard.h"

@@ -67,5 +67,3 @@ int dlgs_getcbcur(HWND hWnd, UINT uID, int nDefault);
 
 void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname);
 void dlgs_setlistmidiin(HWND hWnd, UINT16 res, LPCTSTR defname);
-
-void dlgs_drawbmp(HDC hdc, UINT8 *bmp);

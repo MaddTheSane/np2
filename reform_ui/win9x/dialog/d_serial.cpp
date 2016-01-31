@@ -1,27 +1,27 @@
 /**
  * @file	d_serial.cpp
  * @brief	Serial configure dialog procedure
- *
- * @author	$Author: yui $
- * @date	$Date: 2011/03/07 09:54:11 $
  */
 
 #include "compiler.h"
-#include <prsht.h>
-#include "strres.h"
 #include "resource.h"
-#include "np2.h"
-#include "dosio.h"
-#include "misc\tstring.h"
-#include "commng.h"
-#include "sysmng.h"
-#include "np2class.h"
 #include "dialog.h"
+#include <vector>
+#include "c_combodata.h"
+#include "c_dipsw.h"
 #include "dialogs.h"
+#include "np2class.h"
+#include "commng.h"
+#include "dosio.h"
+#include "np2.h"
+#include "sysmng.h"
+#include "misc\PropProc.h"
+#include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "pc9861k.h"
-#include "dipswbmp.h"
+#include "cbus\pc9861k.h"
+#include "common\strres.h"
+#include "generic\dipswbmp.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "comctl32.lib")
@@ -374,27 +374,39 @@ static LRESULT CALLBACK Com3Proc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 
 
 
-// --------------------------------------------------------------------
+// ----
 
-static	UINT8	pc9861_s[3];
-static	UINT8	pc9861_j[6];
+/**
+ * @brief 61 ページ
+ */
+class SndOpt61Page : public CPropPageProc
+{
+public:
+	SndOpt61Page();
+	virtual ~SndOpt61Page();
 
-typedef struct {
-	int		idc_speed;
-	int		idc_int;
-	int		idc_mode;
-	UINT8	*dip_mode;
-	UINT8	*dip_int;
-	UINT8	sft_int;
-} PC9861MODE_T;
+protected:
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
-static const PC9861MODE_T pc9861mode[2] = {
-			{IDC_CH1SPEED, IDC_CH1INT, IDC_CH1MODE,
-								&pc9861_s[0], &pc9861_s[1], 0},
-			{IDC_CH2SPEED, IDC_CH2INT, IDC_CH2MODE,
-								&pc9861_s[2], &pc9861_s[1], 2}};
+private:
+	UINT8 m_sw[3];				//!< スイッチ
+	UINT8 m_jmp[6];				//!< ジャンパ
+	CComboData m_speed[2];		//!< Speed
+	CComboData m_int[2];		//!< INT
+	CComboData m_sync[2];		//!< Mode
+	CStaticDipSw m_dipsw;		//!< DIPSW
+	void Set(const UINT8* sw, const UINT8* jmp);
+	UINT8 GetMode(UINT nIndex, UINT8 cMode);
+	void SetMode(UINT nIndex, UINT8 cMode);
+	void UpdateMode(UINT nIndex, UINT8& cMode);
+	void OnDipSw();
+};
 
-enum {
+enum
+{
 	PC9861S1_X		= 1,
 	PC9861S2_X		= 10,
 	PC9861S3_X		= 17,
@@ -410,7 +422,8 @@ enum {
 	PC9861J4_Y		= 7
 };
 
-static const CBNPARAM cpInt1[] =
+//! INT1
+static const CComboData::Value s_int1[] =
 {
 	{0,	0x00},
 	{1,	0x02},
@@ -418,7 +431,8 @@ static const CBNPARAM cpInt1[] =
 	{3,	0x03},
 };
 
-static const CBNPARAM cpInt2[] =
+//! INT2
+static const CComboData::Value s_int2[] =
 {
 	{0,	0x00},
 	{4,	0x08},
@@ -426,7 +440,8 @@ static const CBNPARAM cpInt2[] =
 	{6,	0x0c},
 };
 
-static const CBPARAM cpSync[] =
+//! 同期方法
+static const CComboData::Entry s_sync[] =
 {
 	{MAKEINTRESOURCE(IDS_SYNC),		0x03},
 	{MAKEINTRESOURCE(IDS_ASYNC),	0x00},
@@ -434,316 +449,360 @@ static const CBPARAM cpSync[] =
 	{MAKEINTRESOURCE(IDS_ASYNC64X),	0x02},
 };
 
-static void pc9861setspeed(HWND hWnd, const PC9861MODE_T *m)
+/**
+ * コンストラクタ
+ */
+SndOpt61Page::SndOpt61Page()
+	: CPropPageProc(IDD_PC9861A)
 {
-	UINT8	cMode;
-	UINT	uSpeed;
+	ZeroMemory(m_sw, sizeof(m_sw));
+	ZeroMemory(m_jmp, sizeof(m_jmp));
+}
 
-	cMode = *(m->dip_mode);
-	uSpeed = (((~cMode) >> 2) & 0x0f) + 1;
+/**
+ * デストラクタ
+ */
+SndOpt61Page::~SndOpt61Page()
+{
+}
+
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL SndOpt61Page::OnInitDialog()
+{
+	CheckDlgButton(IDC_PC9861E, (np2cfg.pc9861enable) ? BST_CHECKED : BST_UNCHECKED);
+
+	m_speed[0].SubclassDlgItem(IDC_CH1SPEED, this);
+	m_speed[0].Add(pc9861k_speed, _countof(pc9861k_speed));
+	m_speed[1].SubclassDlgItem(IDC_CH2SPEED, this);
+	m_speed[1].Add(pc9861k_speed, _countof(pc9861k_speed));
+
+	m_int[0].SubclassDlgItem(IDC_CH1INT, this);
+	m_int[0].Add(s_int1, _countof(s_int1));
+	m_int[1].SubclassDlgItem(IDC_CH2INT, this);
+	m_int[1].Add(s_int2, _countof(s_int2));
+
+	m_sync[0].SubclassDlgItem(IDC_CH1MODE, this);
+	m_sync[0].Add(s_sync, _countof(s_sync));
+	m_sync[1].SubclassDlgItem(IDC_CH2MODE, this);
+	m_sync[1].Add(s_sync, _countof(s_sync));
+
+	Set(np2cfg.pc9861sw, np2cfg.pc9861jmp);
+
+	m_dipsw.SubclassDlgItem(IDC_PC9861DIP, this);
+
+	return TRUE;
+}
+
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void SndOpt61Page::OnOK()
+{
+	bool bUpdated = false;
+
+	const UINT8 cEnabled = (IsDlgButtonChecked(IDC_PC9861E) != BST_UNCHECKED) ? 1 : 0;
+	if (np2cfg.pc9861enable != cEnabled)
+	{
+		np2cfg.pc9861enable = cEnabled;
+		bUpdated = true;
+	}
+
+	if (memcmp(np2cfg.pc9861sw, m_sw, 3))
+	{
+		CopyMemory(np2cfg.pc9861sw, m_sw, 3);
+		bUpdated = true;
+	}
+	if (memcmp(np2cfg.pc9861jmp, m_jmp, 6))
+	{
+		CopyMemory(np2cfg.pc9861jmp, m_jmp, 6);
+		bUpdated = true;
+	}
+
+	if (bUpdated)
+	{
+		::sysmng_update(SYS_UPDATECFG);
+	}
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL SndOpt61Page::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch (LOWORD(wParam))
+	{
+		case IDC_CH1SPEED:
+		case IDC_CH1MODE:
+			UpdateMode(0, m_sw[0]);
+			break;
+
+		case IDC_CH2SPEED:
+		case IDC_CH2MODE:
+			UpdateMode(1, m_sw[2]);
+			break;
+
+		case IDC_CH1INT:
+		case IDC_CH2INT:
+			{
+				UINT8 cMode = m_sw[1] & 0xf0;
+				cMode |= m_int[0].GetCurItemData(m_sw[1] & 0x03);
+				cMode |= m_int[1].GetCurItemData(m_sw[1] & 0x0c);
+				if (m_sw[1] != cMode)
+				{
+					m_sw[1] = cMode;
+					m_dipsw.Invalidate();
+				}
+			}
+			break;
+
+		case IDC_PC9861DIP:
+			OnDipSw();
+			break;
+	}
+	return FALSE;
+}
+
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT SndOpt61Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMsg)
+	{
+		case WM_DRAWITEM:
+			if (LOWORD(wParam) == IDC_PC9861DIP)
+			{
+				UINT8* pBitmap = dipswbmp_get9861(m_sw, m_jmp);
+				m_dipsw.Draw((reinterpret_cast<LPDRAWITEMSTRUCT>(lParam))->hDC, pBitmap);
+				_MFREE(pBitmap);
+			}
+			return FALSE;
+	}
+	return CDlgProc::WindowProc(nMsg, wParam, lParam);
+}
+
+/**
+ * コントロール設定
+ * @param[in] sw 設定値
+ * @param[in] jmp 設定値
+ */
+void SndOpt61Page::Set(const UINT8* sw, const UINT8* jmp)
+{
+	CopyMemory(m_sw, sw, sizeof(m_sw));
+	CopyMemory(m_jmp, jmp, sizeof(m_jmp));
+
+	SetMode(0, sw[0]);
+	SetMode(1, sw[2]);
+	m_int[0].SetCurItemData(sw[1] & 0x03);
+	m_int[1].SetCurItemData(sw[1] & 0x0c);
+}
+
+/**
+ * モードを得る
+ * @param[in] nIndex ポート
+ * @param[in] cMode デフォルト値
+ * @return モード
+ */
+UINT8 SndOpt61Page::GetMode(UINT nIndex, UINT8 cMode)
+{
+	const UINT8 cSync = m_sync[nIndex].GetCurItemData(cMode & 0x03);
+
+	UINT nSpeed = m_speed[nIndex].GetCurSel();
+	if (nSpeed > (_countof(pc9861k_speed) - 1))
+	{
+		nSpeed = _countof(pc9861k_speed) - 1;
+	}
+	if (cSync & 2)
+	{
+		nSpeed += 3;
+	}
+	else
+	{
+		if (nSpeed)
+		{
+			nSpeed--;
+		}
+	}
+	return (((~nSpeed) & 0x0f) << 2) | cSync;
+}
+
+/**
+ * モードを設定
+ * @param[in] nIndex ポート
+ * @param[in] cMode モード
+ */
+void SndOpt61Page::SetMode(UINT nIndex, UINT8 cMode)
+{
+	UINT nSpeed = (((~cMode) >> 2) & 0x0f) + 1;
 	if (cMode)
 	{
-		if (uSpeed > 4)
+		if (nSpeed > 4)
 		{
-			uSpeed -= 4;
+			nSpeed -= 4;
 		}
 		else
 		{
-			uSpeed = 0;
+			nSpeed = 0;
 		}
 	}
-	if (uSpeed > (NELEMENTS(pc9861k_speed) - 1))
+	if (nSpeed > (_countof(pc9861k_speed) - 1))
 	{
-		uSpeed = NELEMENTS(pc9861k_speed) - 1;
+		nSpeed = _countof(pc9861k_speed) - 1;
 	}
-
-	SendDlgItemMessage(hWnd, m->idc_speed,
-								CB_SETCURSEL, (WPARAM)uSpeed, (LPARAM)0);
+	m_speed[nIndex].SetCurSel(nSpeed);
+	m_sync[nIndex].SetCurItemData(cMode & 0x03);
 }
 
-static void pc9861getspeed(HWND hWnd, const PC9861MODE_T *m)
+/**
+ * 更新
+ * @param[in] nIndex ポート
+ * @param[out] cMode モード
+ */
+void SndOpt61Page::UpdateMode(UINT nIndex, UINT8& cMode)
 {
-	UINT8	cMode;
-	LRESULT	r;
-	UINT	uSpeed;
-
-	cMode = *(m->dip_mode);
-	r = SendDlgItemMessage(hWnd, m->idc_speed, CB_GETCURSEL, 0, 0);
-	if (r != CB_ERR)
+	const UINT8 cValue = GetMode(nIndex, cMode);
+	if (cMode != cValue)
 	{
-		uSpeed = (UINT)r;
-		if (uSpeed > (NELEMENTS(pc9861k_speed) - 1))
-		{
-			uSpeed = NELEMENTS(pc9861k_speed) - 1;
-		}
-		if (cMode & 2)
-		{
-			uSpeed += 3;
-		}
-		else
-		{
-			if (uSpeed)
-			{
-				uSpeed--;
-			}
-		}
-		cMode &= 3;
-		cMode |= ((~uSpeed) & 0x0f) << 2;
-		*(m->dip_mode) = cMode;
+		cMode = cValue;
+		SetMode(nIndex, cMode);
+		m_dipsw.Invalidate();
 	}
 }
 
-static void pc9861setsync(HWND hWnd, const PC9861MODE_T *m)
+/**
+ * DIPSW をタップした
+ */
+void SndOpt61Page::OnDipSw()
 {
-	UINT8	cMode;
+	RECT rect1;
+	m_dipsw.GetWindowRect(&rect1);
 
-	cMode = *(m->dip_mode);
-	dlgs_setcbcur(hWnd, m->idc_mode, cMode & 0x03);
-}
+	RECT rect2;
+	m_dipsw.GetClientRect(&rect2);
 
-static void pc9861getsync(HWND hWnd, const PC9861MODE_T *m)
-{
-	UINT8	cMode;
-	UINT8	cNewMode;
-
-	cMode = *(m->dip_mode);
-	cNewMode = (UINT8)dlgs_getcbcur(hWnd, m->idc_mode, cMode & 0x03);
-	*(m->dip_mode) = (UINT8)((cMode & (~3)) | cNewMode);
-}
-
-static void pc9861setint(HWND hWnd, const PC9861MODE_T *m)
-{
-	UINT8	cMask;
-	UINT8	cMode;
-
-	cMask = 3 << (m->sft_int);
-	cMode = *(m->dip_int);
-	dlgs_setcbcur(hWnd, m->idc_int, cMode & cMask);
-}
-
-static void pc9861getint(HWND hWnd, const PC9861MODE_T *m)
-{
-	UINT8	cMask;
-	UINT8	cMode;
-	UINT8	cNewMode;
-
-	cMask = 3 << (m->sft_int);
-	cMode = *(m->dip_int);
-	cNewMode = (UINT8)dlgs_getcbcur(hWnd, m->idc_int, cMode & cMask);
-	*(m->dip_int) = (cMode & (~cMask)) | cNewMode;
-}
-
-static void pc9861setmode(HWND hWnd, const PC9861MODE_T *m)
-{
-	pc9861setspeed(hWnd, m);
-	pc9861setint(hWnd, m);
-	pc9861setsync(hWnd, m);
-}
-
-static void pc9861cmddipsw(HWND hWnd) {
-
-	RECT	rect1;
-	RECT	rect2;
-	POINT	p;
-	UINT8	bit;
-
-	GetWindowRect(GetDlgItem(hWnd, IDC_PC9861DIP), &rect1);
-	GetClientRect(GetDlgItem(hWnd, IDC_PC9861DIP), &rect2);
-	GetCursorPos(&p);
+	POINT p;
+	::GetCursorPos(&p);
 	p.x += rect2.left - rect1.left;
 	p.y += rect2.top - rect1.top;
 	p.x /= 9;
 	p.y /= 9;
-	if ((p.y >= 1) && (p.y < 3)) {					// 1段目
-		if ((p.x >= 1) && (p.x < 7)) {				// S1
-			pc9861_s[0] ^= (1 << (p.x - 1));
-			pc9861setmode(hWnd, pc9861mode);
+
+	UINT8 sw[3];
+	UINT8 jmp[6];
+	CopyMemory(sw, m_sw, sizeof(sw));
+	CopyMemory(jmp, m_jmp, sizeof(jmp));
+
+	if ((p.y >= 1) && (p.y < 3))					// 1段目
+	{
+		if ((p.x >= 1) && (p.x < 7))				// S1
+		{
+			sw[0] ^= (1 << (p.x - 1));
 		}
-		else if ((p.x >= 10) && (p.x < 14)) {		// S2
-			pc9861_s[1] ^= (1 << (p.x - 10));
-			pc9861setint(hWnd, pc9861mode);
-			pc9861setint(hWnd, pc9861mode+1);
+		else if ((p.x >= 10) && (p.x < 14))			// S2
+		{
+			sw[1] ^= (1 << (p.x - 10));
 		}
-		else if ((p.x >= 17) && (p.x < 23)) {		// S3
-			pc9861_s[2] ^= (1 << (p.x - 17));
-			pc9861setmode(hWnd, pc9861mode+1);
-		}
-	}
-	else if ((p.y >= 4) && (p.y < 6)) {				// 2段目
-		if ((p.x >= 1) && (p.x < 7)) {				// J1
-			pc9861_j[0] ^= (1 << (p.x - 1));
-		}
-		else if ((p.x >= 9) && (p.x < 15)) {		// J2
-			pc9861_j[1] ^= (1 << (p.x - 9));
-		}
-		else if ((p.x >= 17) && (p.x < 19)) {		// J3
-			pc9861_j[2] = (1 << (p.x - 17));
+		else if ((p.x >= 17) && (p.x < 23))			// S3
+		{
+			sw[2] ^= (1 << (p.x - 17));
 		}
 	}
-	else if ((p.y >= 7) && (p.y < 9)) {				// 3段目
-		if ((p.x >= 1) && (p.x < 9)) {				// J4
-			bit = (1 << (p.x - 1));
-			if (pc9861_j[3] == bit) {
-				bit = 0;
-			}
-			pc9861_j[3] = bit;
+	else if ((p.y >= 4) && (p.y < 6))				// 2段目
+	{
+		if ((p.x >= 1) && (p.x < 7))				// J1
+		{
+			jmp[0] ^= (1 << (p.x - 1));
 		}
-		else if ((p.x >= 11) && (p.x < 17)) {		// J5
-			pc9861_j[4] ^= (1 << (p.x - 11));
+		else if ((p.x >= 9) && (p.x < 15))			// J2
+		{
+			jmp[1] ^= (1 << (p.x - 9));
 		}
-		else if ((p.x >= 19) && (p.x < 25)) {		// J6
-			pc9861_j[5] ^= (1 << (p.x - 19));
+		else if ((p.x >= 17) && (p.x < 19))			// J3
+		{
+			jmp[2] = (1 << (p.x - 17));
 		}
+	}
+	else if ((p.y >= 7) && (p.y < 9))				// 3段目
+	{
+		if ((p.x >= 1) && (p.x < 9))				// J4
+		{
+			const UINT8 cBit = (1 << (p.x - 1));
+			jmp[3] = (jmp[3] != cBit) ? cBit : 0;
+		}
+		else if ((p.x >= 11) && (p.x < 17))			// J5
+		{
+			jmp[4] ^= (1 << (p.x - 11));
+		}
+		else if ((p.x >= 19) && (p.x < 25))			// J6
+		{
+			jmp[5] ^= (1 << (p.x - 19));
+		}
+	}
+
+	if ((memcmp(m_sw, sw, sizeof(sw)) != 0) || (memcmp(m_jmp, jmp, sizeof(jmp)) != 0))
+	{
+		Set(sw, jmp);
+		m_dipsw.Invalidate();
 	}
 }
 
-static LRESULT CALLBACK pc9861mainProc(HWND hWnd, UINT msg,
-													WPARAM wp, LPARAM lp) {
-
-	HWND	sub;
-	UINT8	r;
-	UINT	update;
-
-	switch (msg) {
-		case WM_INITDIALOG:
-			CopyMemory(pc9861_s, np2cfg.pc9861sw, 3);
-			CopyMemory(pc9861_j, np2cfg.pc9861jmp, 6);
-			SETLISTUINT32(hWnd, IDC_CH1SPEED, pc9861k_speed);
-			SETLISTUINT32(hWnd, IDC_CH2SPEED, pc9861k_speed);
-			dlgs_setcbnumber(hWnd, IDC_CH1INT, cpInt1, NELEMENTS(cpInt1));
-			dlgs_setcbnumber(hWnd, IDC_CH2INT, cpInt2, NELEMENTS(cpInt2));
-			dlgs_setcbitem(hWnd, IDC_CH1MODE, cpSync, NELEMENTS(cpSync));
-			dlgs_setcbitem(hWnd, IDC_CH2MODE, cpSync, NELEMENTS(cpSync));
-
-			SendDlgItemMessage(hWnd, IDC_PC9861E, BM_GETCHECK,
-												np2cfg.pc9861enable & 1, 0);
-			pc9861setmode(hWnd, pc9861mode);
-			pc9861setmode(hWnd, pc9861mode+1);
-
-			sub = GetDlgItem(hWnd, IDC_PC9861DIP);
-			SetWindowLong(sub, GWL_STYLE, SS_OWNERDRAW +
-							(GetWindowLong(sub, GWL_STYLE) & (~SS_TYPEMASK)));
-			return(TRUE);
-
-		case WM_COMMAND:
-			switch (LOWORD(wp)) {
-				case IDC_CH1SPEED:
-					pc9861getspeed(hWnd, pc9861mode);
-					pc9861setspeed(hWnd, pc9861mode);
-					break;
-
-				case IDC_CH1INT:
-					pc9861getint(hWnd, pc9861mode);
-					pc9861setint(hWnd, pc9861mode);
-					break;
-
-				case IDC_CH1MODE:
-					pc9861getsync(hWnd, pc9861mode);
-					pc9861setsync(hWnd, pc9861mode);
-					break;
-
-				case IDC_CH2SPEED:
-					pc9861getspeed(hWnd, pc9861mode+1);
-					pc9861setspeed(hWnd, pc9861mode+1);
-					break;
-
-				case IDC_CH2INT:
-					pc9861getint(hWnd, pc9861mode+1);
-					pc9861setint(hWnd, pc9861mode+1);
-					break;
-
-				case IDC_CH2MODE:
-					pc9861getsync(hWnd, pc9861mode+1);
-					pc9861setsync(hWnd, pc9861mode+1);
-					break;
-
-				case IDC_PC9861DIP:
-					pc9861cmddipsw(hWnd);
-					break;
-
-				default:
-					return(FALSE);
-			}
-			InvalidateRect(GetDlgItem(hWnd, IDC_PC9861DIP), NULL, TRUE);
-			break;
-
-		case WM_NOTIFY:
-			if ((((NMHDR *)lp)->code) == (UINT)PSN_APPLY) {
-				update = 0;
-				r = GetDlgItemCheck(hWnd, IDC_PC9861E);
-				if (np2cfg.pc9861enable != r) {
-					np2cfg.pc9861enable = r;
-					update |= SYS_UPDATECFG;
-				}
-				if (memcmp(np2cfg.pc9861sw, pc9861_s, 3)) {
-					CopyMemory(np2cfg.pc9861sw, pc9861_s, 3);
-					update |= SYS_UPDATECFG;
-				}
-				if (memcmp(np2cfg.pc9861jmp, pc9861_j, 6)) {
-					CopyMemory(np2cfg.pc9861jmp, pc9861_j, 6);
-					update |= SYS_UPDATECFG;
-				}
-				sysmng_update(update);
-				return(TRUE);
-			}
-			break;
-
-		case WM_DRAWITEM:
-			if (LOWORD(wp) == IDC_PC9861DIP) {
-				dlgs_drawbmp(((LPDRAWITEMSTRUCT)lp)->hDC,
-										dipswbmp_get9861(pc9861_s, pc9861_j));
-			}
-			return(FALSE);
-	}
-	return(FALSE);
-}
 
 
-// --------------------------------------------------------------------------
+// ----
 
-void dialog_serial(HWND hWnd)
+/**
+ * シリアル設定
+ * @param[in] hwndParent 親ウィンドウ
+ */
+void dialog_serial(HWND hwndParent)
 {
-	HINSTANCE		hInstance;
-	PROPSHEETPAGE	psp;
-	PROPSHEETHEADER	psh;
-	HPROPSHEETPAGE	hpsp[4];
+	std::vector<HPROPSHEETPAGE> hpsp;
 
-	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
-
+	PROPSHEETPAGE psp;
 	ZeroMemory(&psp, sizeof(psp));
 	psp.dwSize = sizeof(PROPSHEETPAGE);
 	psp.dwFlags = PSP_DEFAULT;
-	psp.hInstance = hInstance;
+	psp.hInstance = CWndProc::GetResourceHandle();
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_SERIAL1);
 	psp.pfnDlgProc = (DLGPROC)Com1Proc;
-	hpsp[0] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
-	psp.pszTemplate = MAKEINTRESOURCE(IDD_PC9861A);
-	psp.pfnDlgProc = (DLGPROC)pc9861mainProc;
-	hpsp[1] = CreatePropertySheetPage(&psp);
+	SndOpt61Page pc9861;
+	hpsp.push_back(::CreatePropertySheetPage(&pc9861.m_psp));
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_PC9861B);
 	psp.pfnDlgProc = (DLGPROC)Com2Proc;
-	hpsp[2] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
 	psp.pszTemplate = MAKEINTRESOURCE(IDD_PC9861C);
 	psp.pfnDlgProc = (DLGPROC)Com3Proc;
-	hpsp[3] = CreatePropertySheetPage(&psp);
+	hpsp.push_back(::CreatePropertySheetPage(&psp));
 
 	std::tstring rTitle(LoadTString(IDS_SERIALOPTION));
 
+	PROPSHEETHEADER psh;
 	ZeroMemory(&psh, sizeof(psh));
 	psh.dwSize = sizeof(PROPSHEETHEADER);
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
-	psh.hwndParent = hWnd;
-	psh.hInstance = hInstance;
-	psh.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = 4;
-	psh.phpage = hpsp;
+	psh.hwndParent = hwndParent;
+	psh.hInstance = CWndProc::GetResourceHandle();
+	psh.hIcon = LoadIcon(psh.hInstance, MAKEINTRESOURCE(IDI_ICON2));
+	psh.nPages = hpsp.size();
+	psh.phpage = &hpsp.at(0);
 	psh.pszCaption = rTitle.c_str();
 	psh.pfnCallback = np2class_propetysheet;
-	PropertySheet(&psh);
-	InvalidateRect(hWnd, NULL, TRUE);
+	::PropertySheet(&psh);
+	::InvalidateRect(hwndParent, NULL, TRUE);
 }
-
