@@ -62,6 +62,7 @@ private:
 	void UpdateControls();
 };
 
+//! ポート
 static const CComboData::Entry s_port[] =
 {
 	{MAKEINTRESOURCE(IDS_NONCONNECT),	COMPORT_NONE},
@@ -72,6 +73,7 @@ static const CComboData::Entry s_port[] =
 	{MAKEINTRESOURCE(IDS_MIDI),			COMPORT_MIDI},
 };
 
+//! キャラクタ サイズ
 static const CComboData::Value s_chars[] =
 {
 	{5,	0x00},
@@ -80,6 +82,7 @@ static const CComboData::Value s_chars[] =
 	{8,	0x0c},
 };
 
+//! パリティ
 static const CComboData::Entry s_parity[] =
 {
     {MAKEINTRESOURCE(IDS_PARITY_NONE),	0x00},
@@ -87,6 +90,7 @@ static const CComboData::Entry s_parity[] =
 	{MAKEINTRESOURCE(IDS_PARITY_EVEN),	0x30},
 };
 
+//! ストップ ビット
 static const CComboData::Entry s_sbit[] =
 {
     {MAKEINTRESOURCE(IDS_1),			0x40},
