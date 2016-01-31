@@ -1,7 +1,7 @@
 
 %define OPNGENX86
 
-FMDIV_BITS		equ		8
+FMDIV_BITS		equ		10
 FMDIV_ENT		equ		(1 << FMDIV_BITS)
 FMVOL_SFTBIT	equ		4
 
@@ -213,15 +213,19 @@ OPN_LENG		equ		16 + 8 + 4
 				mov		esi, ecx
 				mov		ebp, edx
 				mov		ebx, [esi + opngen_t.calcremain]
-og_fmout_st:	mov		eax, ebx
-				sub		ebx, FMDIV_ENT
-				mov		edx, eax
+og_fmout_st:	mov		eax, FMDIV_ENT
+				and		dword [esp + OPNV_SAMPL], byte 0
+				and		dword [esp + OPNV_SAMPR], byte 0
+				sub		ebx, eax
+				jnc		near og_nextsamp
+				lea		eax, [eax + ebx]
 				neg		ebx
+og_fmout_lp:	mov		edx, eax
 				imul	eax, [esi + opngen_t.outdl]
 				imul	edx, [esi + opngen_t.outdr]
-				mov		[esp + OPN_SAMPL], eax
-				mov		[esp + OPN_SAMPR], edx
-og_fmout_lp:	mov		[esi + opngen_t.calcremain], ebx
+				add		[esp + OPN_SAMPL], eax
+				add		[esp + OPN_SAMPR], edx
+				mov		[esi + opngen_t.calcremain], ebx
 				and		dword [esi + opngen_t.playing], byte 0
 				and		dword [esi + opngen_t.outdl], byte 0
 				and		dword [esi + opngen_t.outdc], byte 0
@@ -289,18 +293,12 @@ og_calcch_nt:	add		edi, ch_t_size
 				sar		dword [esi + opngen_t.outdl], FMVOL_SFTBIT
 				sar		dword [esi + opngen_t.outdr], FMVOL_SFTBIT
 				mov		ebx, [esi + opngen_t.calcremain]
-				mov		edx, [_opncfg + opncfg_t.calc1024]
-				mov		eax, ebx
-				sub		ebx, edx
-				jbe		short og_nextsamp
-				mov		eax, edx
-				imul	edx, [esi + opngen_t.outdl]
-				imul	eax, [esi + opngen_t.outdr]
-				add		[esp + OPN_SAMPL], edx
-				add		[esp + OPN_SAMPR], eax
-				jmp		near og_fmout_lp
-og_nextsamp:	neg		ebx
-				mov		ecx, eax
+				mov		eax, [_opncfg + opncfg_t.calc1024]
+				sub		ebx, eax
+				ja		near og_fmout_lp
+				lea		eax, [eax + ebx]
+				neg		ebx
+og_nextsamp:	mov		ecx, eax
 %ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
 				imul	ecx, [esi + opngen_t.outdr]
@@ -365,15 +363,19 @@ OPNV_LENG		equ		16 + 8 + 4
 				mov		esi, ecx
 				mov		ebp, edx
 				mov		ebx, [esi + opngen_t.calcremain]
-ogv_fmout_st:	mov		eax, ebx
-				sub		ebx, FMDIV_ENT
-				mov		edx, eax
+ogv_fmout_st:	mov		eax, FMDIV_ENT
+				and		dword [esp + OPNV_SAMPL], byte 0
+				and		dword [esp + OPNV_SAMPR], byte 0
+				sub		ebx, eax
+				jnc		near ogv_nextsamp
+				lea		eax, [eax + ebx]
 				neg		ebx
+ogv_fmout_lp:	mov		edx, eax
 				imul	eax, [esi + opngen_t.outdl]
 				imul	edx, [esi + opngen_t.outdr]
-				mov		[esp + OPNV_SAMPL], eax
-				mov		[esp + OPNV_SAMPR], edx
-ogv_fmout_lp:	xor		eax, eax
+				add		[esp + OPNV_SAMPL], eax
+				add		[esp + OPNV_SAMPR], edx
+				xor		eax, eax
 				mov		[esi + opngen_t.calcremain], ebx
 				mov		[esi + opngen_t.outdl], eax
 				mov		[esi + opngen_t.outdc], eax
@@ -450,18 +452,12 @@ ogv_calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
 				sar		dword [esi + opngen_t.outdl], FMVOL_SFTBIT
 				sar		dword [esi + opngen_t.outdr], FMVOL_SFTBIT
 				mov		ebx, [esi + opngen_t.calcremain]
-				mov		edx, [_opncfg + opncfg_t.calc1024]
-				mov		eax, ebx
-				sub		ebx, edx
-				jbe		short ogv_nextsamp
-				mov		eax, edx
-				imul	eax, [esi + opngen_t.outdl]
-				imul	edx, [esi + opngen_t.outdr]
-				add		[esp + OPNV_SAMPL], eax
-				add		[esp + OPNV_SAMPR], edx
-				jmp		near ogv_fmout_lp
-ogv_nextsamp:	neg		ebx
-				mov		ecx, eax
+				mov		eax, [_opncfg + opncfg_t.calc1024]
+				sub		ebx, eax
+				ja		near ogv_fmout_lp
+				lea		eax, [eax + ebx]
+				neg		ebx
+ogv_nextsamp:	mov		ecx, eax
 %ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
 				imul	ecx, [esi + opngen_t.outdr]

@@ -236,24 +236,16 @@ void SOUNDCALL oplgen_getpcm(OPLGEN oplgen, SINT32 *pcm, UINT count)
 
 	do
 	{
-		samp_c = oplgen->outdc * oplgen->calcremain;
-		oplgen->calcremain = FMDIV_ENT - oplgen->calcremain;
-		while (TRUE /*CONSTCOND*/)
+		samp_c = oplgen->outdc;
+		if (oplgen->calcremain < FMDIV_ENT)
 		{
-			oplgen->outdc = 0;
-			playing = 0;
-			for (i = 0; i < 6; i++)
+			samp_c *= oplgen->calcremain;
+			oplgen->calcremain = FMDIV_ENT - oplgen->calcremain;
+			while (TRUE /*CONSTCOND*/)
 			{
-				ch = &oplgen->oplch[i];
-				if (ch->playing & 3)
-				{
-					calcratechannel(oplgen, ch);
-					playing++;
-				}
-			}
-			if (!(oplgen->rhythm & 0x20))
-			{
-				for (i = 6; i < 9; i++)
+				oplgen->outdc = 0;
+				playing = 0;
+				for (i = 0; i < 6; i++)
 				{
 					ch = &oplgen->oplch[i];
 					if (ch->playing & 3)
@@ -262,25 +254,42 @@ void SOUNDCALL oplgen_getpcm(OPLGEN oplgen, SINT32 *pcm, UINT count)
 						playing++;
 					}
 				}
-			}
-			else
-			{
-				playing += calcraterhythm(oplgen);
-			}
-			oplgen->playing = playing;
+				if (!(oplgen->rhythm & 0x20))
+				{
+					for (i = 6; i < 9; i++)
+					{
+						ch = &oplgen->oplch[i];
+						if (ch->playing & 3)
+						{
+							calcratechannel(oplgen, ch);
+							playing++;
+						}
+					}
+				}
+				else
+				{
+					playing += calcraterhythm(oplgen);
+				}
+				oplgen->playing = playing;
 
-			oplgen->outdc >>= (FMVOL_SFTBIT + 1);
-			if (oplgen->calcremain > oplgen->calc1024)
-			{
-				oplgen->calcremain -= oplgen->calc1024;
-				samp_c += oplgen->outdc * oplgen->calc1024;
+				oplgen->outdc >>= (FMVOL_SFTBIT + 1);
+				if (oplgen->calcremain > oplgen->calc1024)
+				{
+					oplgen->calcremain -= oplgen->calc1024;
+					samp_c += oplgen->outdc * oplgen->calc1024;
+				}
+				else
+				{
+					break;
+				}
 			}
-			else
-			{
-				break;
-			}
+			samp_c += oplgen->outdc * oplgen->calcremain;
 		}
-		samp_c += oplgen->outdc * oplgen->calcremain;
+		else
+		{
+			samp_c *= FMDIV_ENT;
+			oplgen->calcremain -= FMDIV_ENT;
+		}
 #if defined(OPLGENX86)
 		pcm[0] += (SINT32)(((SINT64)samp_c * (SINT32)oplcfg.fmvol) >> 32);
 		pcm[1] += (SINT32)(((SINT64)samp_c * (SINT32)oplcfg.fmvol) >> 32);
