@@ -1384,7 +1384,7 @@ SOURCE=.\dialog\d_screen.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SERIAL.CPP
+SOURCE=.\dialog\d_serial.cpp
 # End Source File
 # Begin Source File
 
