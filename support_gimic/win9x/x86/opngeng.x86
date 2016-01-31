@@ -214,12 +214,13 @@ OPN_LENG		equ		16 + 8 + 4
 				mov		ebp, edx
 				mov		ebx, [esi + opngen_t.calcremain]
 og_fmout_st:	mov		eax, ebx
-				imul	ebx, [esi + opngen_t.outdl]
-				mov		[esp + OPN_SAMPL], ebx
-				mov		ebx, FMDIV_ENT
-				sub		ebx, eax
-				imul	eax, [esi + opngen_t.outdr]
-				mov		[esp + OPN_SAMPR], eax
+				sub		ebx, FMDIV_ENT
+				mov		edx, eax
+				neg		ebx
+				imul	eax, [esi + opngen_t.outdl]
+				imul	edx, [esi + opngen_t.outdr]
+				mov		[esp + OPN_SAMPL], eax
+				mov		[esp + OPN_SAMPR], edx
 og_fmout_lp:	mov		[esi + opngen_t.calcremain], ebx
 				and		dword [esi + opngen_t.playing], byte 0
 				and		dword [esi + opngen_t.outdl], byte 0
@@ -287,33 +288,33 @@ og_calcch_nt:	add		edi, ch_t_size
 				add		[esi + opngen_t.outdr], eax
 				sar		dword [esi + opngen_t.outdl], FMVOL_SFTBIT
 				sar		dword [esi + opngen_t.outdr], FMVOL_SFTBIT
-				mov		edx, [_opncfg + opncfg_t.calc1024]
 				mov		ebx, [esi + opngen_t.calcremain]
+				mov		edx, [_opncfg + opncfg_t.calc1024]
 				mov		eax, ebx
 				sub		ebx, edx
 				jbe		short og_nextsamp
-				mov		[esi + opngen_t.calcremain], ebx
 				mov		eax, edx
-				imul	eax, [esi + opngen_t.outdl]
-				add		[esp + OPN_SAMPL], eax
-				imul	edx, [esi + opngen_t.outdr]
-				add		[esp + OPN_SAMPR], edx
+				imul	edx, [esi + opngen_t.outdl]
+				imul	eax, [esi + opngen_t.outdr]
+				add		[esp + OPN_SAMPL], edx
+				add		[esp + OPN_SAMPR], eax
 				jmp		near og_fmout_lp
 og_nextsamp:	neg		ebx
-				mov		[esi + opngen_t.calcremain], ebx
 				mov		ecx, eax
 %ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
+				imul	ecx, [esi + opngen_t.outdr]
 				add		eax, [esp + OPN_SAMPL]
+				add		ecx, [esp + OPN_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
+				mov		eax, ecx
 				add		[ebp], edx
-				mov		eax, [esi + opngen_t.outdr]
-				imul	ecx
-				add		eax, [esp + OPN_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
+				mov		[esi + opngen_t.calcremain], ebx
 				add		[ebp+4], edx
 %else
 				mov		edx, [_opncfg + opncfg_t.fmvol]
+				mov		[esi + opngen_t.calcremain], ebx
 				imul	eax, [esi + opngen_t.outdl]
 				imul	ecx, [esi + opngen_t.outdr]
 				add		eax, [esp + OPN_SAMPL]
@@ -365,12 +366,13 @@ OPNV_LENG		equ		16 + 8 + 4
 				mov		ebp, edx
 				mov		ebx, [esi + opngen_t.calcremain]
 ogv_fmout_st:	mov		eax, ebx
-				imul	ebx, [esi + opngen_t.outdl]
-				mov		[esp + OPNV_SAMPL], ebx
-				mov		ebx, FMDIV_ENT
-				sub		ebx, eax
-				imul	eax, [esi + opngen_t.outdr]
-				mov		[esp + OPNV_SAMPR], eax
+				sub		ebx, FMDIV_ENT
+				mov		edx, eax
+				neg		ebx
+				imul	eax, [esi + opngen_t.outdl]
+				imul	edx, [esi + opngen_t.outdr]
+				mov		[esp + OPNV_SAMPL], eax
+				mov		[esp + OPNV_SAMPR], edx
 ogv_fmout_lp:	xor		eax, eax
 				mov		[esi + opngen_t.calcremain], ebx
 				mov		[esi + opngen_t.outdl], eax
@@ -447,33 +449,33 @@ ogv_calcsloted:	add		edi, byte (ch_t_size - (slot_t_size * 3))
 				add		[esi + opngen_t.outdr], ebx
 				sar		dword [esi + opngen_t.outdl], FMVOL_SFTBIT
 				sar		dword [esi + opngen_t.outdr], FMVOL_SFTBIT
-				mov		edx, [_opncfg + opncfg_t.calc1024]
 				mov		ebx, [esi + opngen_t.calcremain]
+				mov		edx, [_opncfg + opncfg_t.calc1024]
 				mov		eax, ebx
 				sub		ebx, edx
 				jbe		short ogv_nextsamp
-				mov		[esi + opngen_t.calcremain], ebx
 				mov		eax, edx
 				imul	eax, [esi + opngen_t.outdl]
-				add		[esp + OPNV_SAMPL], eax
 				imul	edx, [esi + opngen_t.outdr]
+				add		[esp + OPNV_SAMPL], eax
 				add		[esp + OPNV_SAMPR], edx
 				jmp		near ogv_fmout_lp
 ogv_nextsamp:	neg		ebx
-				mov		[esi + opngen_t.calcremain], ebx
 				mov		ecx, eax
 %ifdef OPNGENX86
 				imul	eax, [esi + opngen_t.outdl]
+				imul	ecx, [esi + opngen_t.outdr]
 				add		eax, [esp + OPNV_SAMPL]
+				add		ecx, [esp + OPNV_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
+				mov		eax, ecx
 				add		[ebp], edx
-				mov		eax, [esi + opngen_t.outdr]
-				imul	ecx
-				add		eax, [esp + OPNV_SAMPR]
 				imul	dword [_opncfg + opncfg_t.fmvol]
+				mov		[esi + opngen_t.calcremain], ebx
 				add		[ebp+4], edx
 %else
 				mov		edx, [_opncfg + opncfg_t.fmvol]
+				mov		[esi + opngen_t.calcremain], ebx
 				imul	eax, [esi + opngen_t.outdl]
 				imul	ecx, [esi + opngen_t.outdr]
 				add		eax, [esp + OPN_SAMPL]
