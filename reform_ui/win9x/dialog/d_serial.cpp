@@ -262,8 +262,8 @@ BOOL SerialOptComPage::OnCommand(WPARAM wParam, LPARAM lParam)
 void SerialOptComPage::UpdateControls()
 {
 	const UINT nPort = m_port.GetCurItemData(m_cfg.port);
-	const const bSerialShow = ((nPort >= COMPORT_COM1) && (nPort <= COMPORT_COM4));
-	const const bMidiShow = (nPort == COMPORT_MIDI);
+	const bool bSerialShow = ((nPort >= COMPORT_COM1) && (nPort <= COMPORT_COM4));
+	const bool bMidiShow = (nPort == COMPORT_MIDI);
 
 	static const UINT serial[] =
 	{

@@ -1096,11 +1096,11 @@ void SndOptSpbPage::OnDipSw()
 	}
 	else if ((p.x >= 10) && (p.x < 12))
 	{
-		cValue = (cValue & (~0x10)) | ((p.x - 10) << 4);
+		cValue = static_cast<UINT8>((cValue & (~0x10)) | ((p.x - 10) << 4));
 	}
 	else if ((p.x >= 14) && (p.x < 19))
 	{
-		cValue = (cValue & (~7)) | (p.x - 14);
+		cValue = static_cast<UINT8>((cValue & (~7)) | (p.x - 14));
 	}
 	else if ((p.x >= 21) && (p.x < 24))
 	{
