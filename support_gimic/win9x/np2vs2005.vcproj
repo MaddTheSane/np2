@@ -1731,6 +1731,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\recvideo.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\scrnmng.cpp"
 					>
 				</File>
@@ -1862,6 +1866,22 @@
 					Name="dialog"
 					>
 					<File
+						RelativePath=".\dialog\c_combodata.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_dipsw.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_midi.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_slidervalue.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_about.cpp"
 						>
 					</File>
@@ -1882,6 +1902,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_font.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_mpu98.cpp"
 						>
 					</File>
@@ -1898,7 +1922,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\dialog\dialogs.cpp"
+						RelativePath=".\dialog\d_soundlog.cpp"
 						>
 					</File>
 					<File
@@ -1962,7 +1986,15 @@
 					Name="misc"
 					>
 					<File
+						RelativePath=".\misc\DlgProc.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.cpp"
 						>
 					</File>
 					<File
@@ -2989,6 +3021,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\recvideo.h"
+					>
+				</File>
+				<File
 					RelativePath=".\resource.h"
 					>
 				</File>
@@ -3132,11 +3168,23 @@
 					Name="dialog"
 					>
 					<File
-						RelativePath=".\dialog\dialog.h"
+						RelativePath=".\dialog\c_combodata.h"
 						>
 					</File>
 					<File
-						RelativePath=".\dialog\dialogs.h"
+						RelativePath=".\dialog\c_dipsw.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_midi.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\c_slidervalue.h"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\dialog.h"
 						>
 					</File>
 					<File
@@ -3224,11 +3272,19 @@
 					Name="misc"
 					>
 					<File
+						RelativePath=".\misc\DlgProc.h"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\extrom.h"
 						>
 					</File>
 					<File
 						RelativePath=".\misc\guard.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.h"
 						>
 					</File>
 					<File

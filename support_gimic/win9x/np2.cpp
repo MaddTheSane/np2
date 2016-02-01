@@ -137,34 +137,40 @@ static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 
 // ----
 
-static HINSTANCE loadextinst(HINSTANCE hInstance)
+/**
+ * リソース DLL をロード
+ * @param[in] hInstance 元のインスタンス
+ * @return インスタンス
+ */
+static HINSTANCE LoadExternalResource(HINSTANCE hInstance)
 {
-	OEMCHAR	szPath[MAX_PATH];
-	OEMCHAR	szDllName[32];
-	HMODULE hMod;
-
-	file_cpyname(szPath, modulefile, NELEMENTS(szPath));
-	file_cutname(szPath);
+	OEMCHAR szDllName[32];
 	OEMSPRINTF(szDllName, szNp2ResDll, GetOEMCP());
-	file_catname(szPath, szDllName, NELEMENTS(szPath));
-	hMod = LoadLibrary(szPath);
-	s_hModResource = hMod;
-	if (hMod != NULL)
+
+	TCHAR szPath[MAX_PATH];
+	file_cpyname(szPath, modulefile, _countof(szPath));
+	file_cutname(szPath);
+	file_catname(szPath, szDllName, _countof(szPath));
+
+	HMODULE hModule = LoadLibrary(szPath);
+	s_hModResource = hModule;
+	if (hModule != NULL)
 	{
-		hInstance = (HINSTANCE)hMod;
+		hInstance = static_cast<HINSTANCE>(hModule);
 	}
-	return(hInstance);
+	return hInstance;
 }
 
-static void unloadextinst(void)
+/**
+ * リソースのアンロード
+ */
+static void UnloadExternalResource()
 {
-	HMODULE hMod;
-
-	hMod = s_hModResource;
-	s_hModResource = 0;
-	if (hMod)
+	HMODULE hModule = s_hModResource;
+	s_hModResource = NULL;
+	if (hModule)
 	{
-		FreeLibrary(hMod);
+		FreeLibrary(hModule);
 	}
 }
 
@@ -447,8 +453,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_CONFIG:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CONFIG),
-									hWnd, (DLGPROC)CfgDialogProc);
+			dialog_configure(hWnd);
 			if (!scrnmng_isfullscreen()) {
 				UINT8 thick;
 				thick = (GetWindowLong(hWnd, GWL_STYLE) & WS_THICKFRAME)?1:0;
@@ -907,8 +912,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_MPUPC98:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_MPUPC98),
-											hWnd, (DLGPROC)MidiDialogProc);
+			dialog_mpu98(hWnd);
 			winuileave();
 			break;
 
@@ -930,26 +934,15 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 
-#if defined(SUPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
-			dialog_s98(hWnd);
+			dialog_soundlog(hWnd);
 			winuileave();
 			break;
-#endif
-
-#if defined(SUPPORT_WAVEREC)
-		case IDM_WAVEREC:
-			winuienter();
-			dialog_waverec(hWnd);
-			winuileave();
-			break;
-#endif
 
 		case IDM_CALENDAR:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_CALENDAR),
-											hWnd, (DLGPROC)ClndDialogProc);
+			dialog_calendar(hWnd);
 			winuileave();
 			break;
 
@@ -1002,7 +995,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_ABOUT:
 			winuienter();
-			DialogBox(hInstance, MAKEINTRESOURCE(IDD_ABOUT), hWnd, (DLGPROC)AboutDialogProc);
+			dialog_about(hWnd);
 			winuileave();
 			break;
 
@@ -1545,7 +1538,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		return(FALSE);
 	}
 
-	g_hInstance = loadextinst(hInstance);
+	g_hInstance = LoadExternalResource(hInstance);
+	CWndProc::SetResourceHandle(g_hInstance);
+
 	g_hPrevInst = hPrevInst;
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
@@ -1584,7 +1579,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
 		wc.lpszClassName = szClassName;
 		if (!RegisterClass(&wc)) {
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1638,7 +1633,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		g_scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(g_scrnmode) != SUCCESS) {
 			messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW), MB_OK | MB_ICONSTOP);
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1693,7 +1688,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			CSoundMng::GetInstance()->Close();
 			CSoundMng::Deinitialize();
 			scrnmng_destroy();
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1837,7 +1832,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	skbdwin_deinitialize();
 
-	unloadextinst();
+	UnloadExternalResource();
 
 	TRACETERM();
 	_MEM_USED(TEXT("report.txt"));

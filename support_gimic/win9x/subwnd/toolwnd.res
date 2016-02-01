@@ -51,16 +51,3 @@ static const PFTBL s_skinini2[] =
 	PFEXT("RESETBTN",	PFTYPE_ARGS16,	&subitem[IDC_TOOLRESET].posx,		5),
 	PFEXT("POWERBTN",	PFTYPE_ARGS16,	&subitem[IDC_TOOLPOWER].posx,		5)
 };
-
-
-
-// ----
-
-static const FSPARAM fpSkin = 
-{
-	MAKEINTRESOURCE(IDS_SKINTITLE),
-	MAKEINTRESOURCE(IDS_SKINEXT),
-	MAKEINTRESOURCE(IDS_SKINFILTER),
-	1
-};
-
