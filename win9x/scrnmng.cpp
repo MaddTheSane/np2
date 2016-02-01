@@ -23,7 +23,7 @@
 #include "palettes.h"
 
 #if defined(SUPPORT_DCLOCK)
-#include "dclock.h"
+#include "subwnd\dclock.h"
 #endif
 #include "recvideo.h"
 

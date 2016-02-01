@@ -1698,14 +1698,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\dd2.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\dosio.cpp"
 					>
 				</File>
@@ -1750,10 +1742,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subwind.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\sysmng.cpp"
 					>
 				</File>
@@ -1763,10 +1751,6 @@
 				</File>
 				<File
 					RelativePath=".\timemng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\toolwin.cpp"
 					>
 				</File>
 				<File
@@ -1938,6 +1922,38 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="subwnd"
+					>
+					<File
+						RelativePath=".\subwnd\dclock.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\dd2.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\kdispwnd.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\mdbgwnd.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\skbdwnd.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\subwnd.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\toolwnd.cpp"
 						>
 					</File>
 				</Filter>
@@ -2868,14 +2884,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.h"
-					>
-				</File>
-				<File
-					RelativePath=".\dd2.h"
-					>
-				</File>
-				<File
 					RelativePath=".\dosio.h"
 					>
 				</File>
@@ -2924,10 +2932,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subwind.h"
-					>
-				</File>
-				<File
 					RelativePath=".\sysmng.h"
 					>
 				</File>
@@ -2937,10 +2941,6 @@
 				</File>
 				<File
 					RelativePath=".\timemng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\toolwin.h"
 					>
 				</File>
 				<File
@@ -3116,6 +3116,38 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="subwnd"
+					>
+					<File
+						RelativePath=".\subwnd\dclock.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\dd2.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\kdispwnd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\mdbgwnd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\skbdwnd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\subwnd.h"
+						>
+					</File>
+					<File
+						RelativePath=".\subwnd\toolwnd.h"
 						>
 					</File>
 				</Filter>

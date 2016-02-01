@@ -1686,6 +1686,66 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
+# Begin Group "subwnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dd2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dd2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\kdispwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\kdispwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\mdbgwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\mdbgwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\skbdwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\skbdwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\toolwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\toolwnd.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\CMMIDI.CPP
@@ -1788,14 +1848,6 @@ InputName=CPUTYPE
 # End Source File
 # Begin Source File
 
-SOURCE=.\DCLOCK.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DD2.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
@@ -1848,10 +1900,6 @@ SOURCE=.\SOUNDMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SUBWIND.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\SYSMNG.CPP
 # End Source File
 # Begin Source File
@@ -1861,10 +1909,6 @@ SOURCE=.\TASKMNG.CPP
 # Begin Source File
 
 SOURCE=.\TIMEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TOOLWIN.CPP
 # End Source File
 # Begin Source File
 
