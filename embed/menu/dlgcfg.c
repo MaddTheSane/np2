@@ -285,21 +285,6 @@ const OEMCHAR	*str;
 		update |= SYS_UPDATECFG | SYS_UPDATECLOCK;
 	}
 
-	if (menudlg_getval(DID_RATE11)) {
-		val = 11025;
-	}
-	else if (menudlg_getval(DID_RATE44)) {
-		val = 44100;
-	}
-	else {
-		val = 22050;
-	}
-	if (np2cfg.samplingrate != (UINT16)val) {
-		np2cfg.samplingrate = (UINT16)val;
-		update |= SYS_UPDATECFG | SYS_UPDATERATE;
-		soundrenewal = 1;
-	}
-
 	if (menudlg_getval(DID_MODELVM)) {
 		str = str_VM;
 	}
