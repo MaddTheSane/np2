@@ -370,7 +370,7 @@ void CDebugUtyView::OnPaint()
 
 /**
  * フレームワークは、ユーザーがウィンドウに垂直スクロール バーをクリックすると、このメンバー関数を呼び出します
- * @param[in] nSBCodeユーザーの要求を示すスクロール バー コードを指定します
+ * @param[in] nSBCode ユーザーの要求を示すスクロール バー コードを指定します
  * @param[in] nPos 現在のスクロール ボックスの位置
  * @param[in] hwndScrollBar スクロール バー コントロール
  */
