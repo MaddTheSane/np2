@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include <vector>
 #include "c_combodata.h"
 #include "c_dipsw.h"
 #include "c_slidervalue.h"
@@ -16,7 +15,6 @@
 #include "np2.h"
 #include "sysmng.h"
 #include "misc\PropProc.h"
-#include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
 #include "generic\dipswbmp.h"
@@ -1217,39 +1215,30 @@ void SndOptPadPage::OnOK()
  */
 void dialog_sndopt(HWND hwndParent)
 {
-	std::vector<HPROPSHEETPAGE> hpsp;
+	CPropSheetProc prop(IDS_SOUNDOPTION, hwndParent);
 
 	SndOptMixerPage mixer;
-	hpsp.push_back(::CreatePropertySheetPage(&mixer.m_psp));
+	prop.AddPage(&mixer);
 
 	SndOpt14Page pc980114;
-	hpsp.push_back(::CreatePropertySheetPage(&pc980114.m_psp));
+	prop.AddPage(&pc980114);
 
 	SndOpt26Page pc980126;
-	hpsp.push_back(::CreatePropertySheetPage(&pc980126.m_psp));
+	prop.AddPage(&pc980126);
 
 	SndOpt86Page pc980186;
-	hpsp.push_back(::CreatePropertySheetPage(&pc980186.m_psp));
+	prop.AddPage(&pc980186);
 
 	SndOptSpbPage spb;
-	hpsp.push_back(::CreatePropertySheetPage(&spb.m_psp));
+	prop.AddPage(&spb);
 
 	SndOptPadPage pad;
-	hpsp.push_back(::CreatePropertySheetPage(&pad.m_psp));
+	prop.AddPage(&pad);
 
-	std::tstring rTitle(LoadTString(IDS_SOUNDOPTION));
+	prop.m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
+	prop.m_psh.hIcon = LoadIcon(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDI_ICON2));
+	prop.m_psh.pfnCallback = np2class_propetysheet;
+	prop.DoModal();
 
-	PROPSHEETHEADER psh;
-	ZeroMemory(&psh, sizeof(psh));
-	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
-	psh.hwndParent = hwndParent;
-	psh.hInstance = CWndProc::GetResourceHandle();
-	psh.hIcon = LoadIcon(psh.hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = hpsp.size();
-	psh.phpage = &hpsp.at(0);
-	psh.pszCaption = rTitle.c_str();
-	psh.pfnCallback = np2class_propetysheet;
-	PropertySheet(&psh);
 	InvalidateRect(hwndParent, NULL, TRUE);
 }

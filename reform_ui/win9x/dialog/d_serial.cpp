@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include <vector>
 #include "c_combodata.h"
 #include "c_dipsw.h"
 #include "c_midi.h"
@@ -16,7 +15,6 @@
 #include "np2.h"
 #include "sysmng.h"
 #include "misc\PropProc.h"
-#include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
 #include "cbus\pc9861k.h"
@@ -688,33 +686,24 @@ void SerialOpt61Page::OnDipSw()
  */
 void dialog_serial(HWND hwndParent)
 {
-	std::vector<HPROPSHEETPAGE> hpsp;
+	CPropSheetProc prop(IDS_SERIALOPTION, hwndParent);
 
 	SerialOptComPage com1(IDD_SERIAL1, cm_rs232c, np2oscfg.com1);
-	hpsp.push_back(::CreatePropertySheetPage(&com1.m_psp));
+	prop.AddPage(&com1);
 
 	SerialOpt61Page pc9861;
-	hpsp.push_back(::CreatePropertySheetPage(&pc9861.m_psp));
+	prop.AddPage(&pc9861);
 
 	SerialOptComPage com2(IDD_PC9861B, cm_pc9861ch1, np2oscfg.com2);
-	hpsp.push_back(::CreatePropertySheetPage(&com2.m_psp));
+	prop.AddPage(&com2);
 
 	SerialOptComPage com3(IDD_PC9861C, cm_pc9861ch2, np2oscfg.com3);
-	hpsp.push_back(::CreatePropertySheetPage(&com3.m_psp));
+	prop.AddPage(&com3);
 
-	std::tstring rTitle(LoadTString(IDS_SERIALOPTION));
+	prop.m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
+	prop.m_psh.hIcon = LoadIcon(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDI_ICON2));
+	prop.m_psh.pfnCallback = np2class_propetysheet;
+	prop.DoModal();
 
-	PROPSHEETHEADER psh;
-	ZeroMemory(&psh, sizeof(psh));
-	psh.dwSize = sizeof(PROPSHEETHEADER);
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
-	psh.hwndParent = hwndParent;
-	psh.hInstance = CWndProc::GetResourceHandle();
-	psh.hIcon = LoadIcon(psh.hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = hpsp.size();
-	psh.phpage = &hpsp.at(0);
-	psh.pszCaption = rTitle.c_str();
-	psh.pfnCallback = np2class_propetysheet;
-	::PropertySheet(&psh);
 	::InvalidateRect(hwndParent, NULL, TRUE);
 }

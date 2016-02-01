@@ -6,7 +6,6 @@
 #include "compiler.h"
 #include "resource.h"
 #include "dialog.h"
-#include <vector>
 #include "c_combodata.h"
 #include "c_slidervalue.h"
 #include "np2class.h"
@@ -14,16 +13,11 @@
 #include "scrnmng.h"
 #include "sysmng.h"
 #include "misc\PropProc.h"
-#include "misc\tstring.h"
 #include "pccore.h"
 #include "iocore.h"
 #include "common\strres.h"
 #include "vram\scrndraw.h"
 #include "vram\palettes.h"
-
-#if !defined(__GNUC__)
-#pragma comment(lib, "comctl32.lib")
-#endif	// !defined(__GNUC__)
 
 /**
  * @brief Video ÉyÅ[ÉW
@@ -522,33 +516,24 @@ BOOL ScrOptFullscreenPage::OnCommand(WPARAM wParam, LPARAM lParam)
  */
 void dialog_scropt(HWND hwndParent)
 {
-	std::vector<HPROPSHEETPAGE> hpsp;
+	CPropSheetProc prop(IDS_SCREENOPTION, hwndParent);
 
 	ScrOptVideoPage video;
-	hpsp.push_back(::CreatePropertySheetPage(&video.m_psp));
+	prop.AddPage(&video);
 
 	ScrOptChipPage chip;
-	hpsp.push_back(::CreatePropertySheetPage(&chip.m_psp));
+	prop.AddPage(&chip);
 
 	ScrOptTimingPage timing;
-	hpsp.push_back(::CreatePropertySheetPage(&timing.m_psp));
+	prop.AddPage(&timing);
 
 	ScrOptFullscreenPage fullscreen;
-	hpsp.push_back(::CreatePropertySheetPage(&fullscreen.m_psp));
+	prop.AddPage(&fullscreen);
 
-	std::tstring rTitle(LoadTString(IDS_SCREENOPTION));
+	prop.m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
+	prop.m_psh.hIcon = LoadIcon(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDI_ICON2));
+	prop.m_psh.pfnCallback = np2class_propetysheet;
+	prop.DoModal();
 
-	PROPSHEETHEADER psh;
-	ZeroMemory(&psh, sizeof(psh));
-	psh.dwSize = sizeof(psh);
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
-	psh.hwndParent = hwndParent;
-	psh.hInstance = CWndProc::GetResourceHandle();
-	psh.hIcon = LoadIcon(psh.hInstance, MAKEINTRESOURCE(IDI_ICON2));
-	psh.nPages = hpsp.size();
-	psh.phpage = &hpsp.at(0);
-	psh.pszCaption = rTitle.c_str();
-	psh.pfnCallback = np2class_propetysheet;
-	::PropertySheet(&psh);
 	::InvalidateRect(hwndParent, NULL, TRUE);
 }

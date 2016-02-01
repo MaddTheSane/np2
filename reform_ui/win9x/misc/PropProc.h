@@ -5,7 +5,9 @@
 
 #pragma once
 
+#include <vector>
 #include "DlgProc.h"
+#include "tstring.h"
 
 /**
  * @brief プロパティ シート ページ
@@ -31,4 +33,26 @@ protected:
 
 private:
 	static UINT CALLBACK PropPageCallback(HWND hWnd, UINT message, LPPROPSHEETPAGE pPropPage);
+};
+
+/**
+ * @brief プロパティ シート
+ */
+class CPropSheetProc /* : public CWnd */
+{
+public:
+	PROPSHEETHEADER m_psh;					//!< プロパティ シート ヘッダ構造体
+
+public:
+	CPropSheetProc();
+	CPropSheetProc(UINT nIDCaption, HWND hwndParent = NULL, UINT iSelectPage = 0);
+	CPropSheetProc(LPCTSTR pszCaption, HWND hwndParent = NULL, UINT iSelectPage = 0);
+	INT DoModal();
+	void AddPage(CPropPageProc* pPage);
+
+protected:
+	std::vector<CPropPageProc*> m_pages;	//!< The array of CPropPageProc pointers
+	std::tstring m_strCaption;				//!< The caption
+
+	void CommonConstruct(HWND hwndParent, UINT iSelectPage);
 };

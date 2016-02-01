@@ -6,6 +6,12 @@
 #include "compiler.h"
 #include "PropProc.h"
 
+#if !defined(__GNUC__)
+#pragma comment(lib, "comctl32.lib")
+#endif	// !defined(__GNUC__)
+
+// ---- プロパティ ページ
+
 /**
  * コンストラクタ
  * @param[in] nIDTemplate このページに使用するテンプレートの ID
@@ -53,7 +59,7 @@ void CPropPageProc::Construct(LPCTSTR lpszTemplateName, UINT nIDCaption)
 	ZeroMemory(&m_psp, sizeof(m_psp));
 	m_psp.dwSize = sizeof(m_psp);
 	m_psp.dwFlags = PSP_USECALLBACK;
-	m_psp.hInstance = GetInstanceHandle();
+	m_psp.hInstance = GetResourceHandle();
 	m_psp.pszTemplate = lpszTemplateName;
 	m_psp.pfnDlgProc = DlgProc;
 	m_psp.lParam = reinterpret_cast<LPARAM>(this);
@@ -155,4 +161,83 @@ void CPropPageProc::OnOK()
  */
 void CPropPageProc::OnCancel()
 {
+}
+
+// ---- プロパティ シート
+
+/**
+ * コンストラクタ
+ */
+CPropSheetProc::CPropSheetProc()
+{
+	CommonConstruct(NULL, 0);
+}
+
+/**
+ * コンストラクタ
+ * @param[in] nIDCaption キャプション
+ * @param[in] hwndParent 親ウィンドウ
+ * @param[in] iSelectPage スタート ページ
+ */
+CPropSheetProc::CPropSheetProc(UINT nIDCaption, HWND hwndParent, UINT iSelectPage)
+{
+	m_strCaption = LoadTString(nIDCaption);
+	CommonConstruct(hwndParent, iSelectPage);
+}
+
+/**
+ * コンストラクタ
+ * @param[in] pszCaption キャプション
+ * @param[in] hwndParent 親ウィンドウ
+ * @param[in] iSelectPage スタート ページ
+ */
+CPropSheetProc::CPropSheetProc(LPCTSTR pszCaption, HWND hwndParent, UINT iSelectPage)
+{
+	m_strCaption = pszCaption;
+	CommonConstruct(hwndParent, iSelectPage);
+}
+
+/**
+ * コンストラクト
+ * @param[in] hwndParent 親ウィンドウ
+ * @param[in] iSelectPage スタート ページ
+ */
+void CPropSheetProc::CommonConstruct(HWND hwndParent, UINT iSelectPage)
+{
+	ZeroMemory(&m_psh, sizeof(m_psh));
+	m_psh.dwSize = sizeof(m_psh);
+	m_psh.hwndParent = hwndParent;
+	m_psh.hInstance = CWndProc::GetResourceHandle();
+	m_psh.nStartPage = iSelectPage;
+}
+
+/**
+ * モーダル
+ * @return リザルト コード
+ */
+INT CPropSheetProc::DoModal()
+{
+	m_psh.pszCaption = m_strCaption.c_str();
+	m_psh.nPages = m_pages.size();
+	m_psh.phpage = new HPROPSHEETPAGE[m_psh.nPages];
+	for (UINT i = 0; i < m_pages.size(); i++)
+	{
+		m_psh.phpage[i] = ::CreatePropertySheetPage(&m_pages[i]->m_psp);
+	}
+
+	const INT_PTR r = ::PropertySheet(&m_psh);
+
+	delete[] m_psh.phpage;
+	m_psh.phpage = NULL;
+
+	return r;
+}
+
+/**
+ * ページの追加
+ * @param[in] pPage ページ
+ */
+void CPropSheetProc::AddPage(CPropPageProc* pPage)
+{
+	m_pages.push_back(pPage);
 }
