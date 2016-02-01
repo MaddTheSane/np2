@@ -134,34 +134,40 @@ static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 
 // ----
 
-static HINSTANCE loadextinst(HINSTANCE hInstance)
+/**
+ * リソース DLL をロード
+ * @param[in] hInstance 元のインスタンス
+ * @return インスタンス
+ */
+static HINSTANCE LoadExternalResource(HINSTANCE hInstance)
 {
-	OEMCHAR	szPath[MAX_PATH];
-	OEMCHAR	szDllName[32];
-	HMODULE hMod;
-
-	file_cpyname(szPath, modulefile, NELEMENTS(szPath));
-	file_cutname(szPath);
+	OEMCHAR szDllName[32];
 	OEMSPRINTF(szDllName, szNp2ResDll, GetOEMCP());
-	file_catname(szPath, szDllName, NELEMENTS(szPath));
-	hMod = LoadLibrary(szPath);
-	s_hModResource = hMod;
-	if (hMod != NULL)
+
+	TCHAR szPath[MAX_PATH];
+	file_cpyname(szPath, modulefile, _countof(szPath));
+	file_cutname(szPath);
+	file_catname(szPath, szDllName, _countof(szPath));
+
+	HMODULE hModule = LoadLibrary(szPath);
+	s_hModResource = hModule;
+	if (hModule != NULL)
 	{
-		hInstance = (HINSTANCE)hMod;
+		hInstance = static_cast<HINSTANCE>(hModule);
 	}
-	return(hInstance);
+	return hInstance;
 }
 
-static void unloadextinst(void)
+/**
+ * リソースのアンロード
+ */
+static void UnloadExternalResource()
 {
-	HMODULE hMod;
-
-	hMod = s_hModResource;
-	s_hModResource = 0;
-	if (hMod)
+	HMODULE hModule = s_hModResource;
+	s_hModResource = NULL;
+	if (hModule)
 	{
-		FreeLibrary(hMod);
+		FreeLibrary(hModule);
 	}
 }
 
@@ -1540,7 +1546,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		return(FALSE);
 	}
 
-	g_hInstance = loadextinst(hInstance);
+	g_hInstance = LoadExternalResource(hInstance);
+	CWndProc::SetResourceHandle(g_hInstance);
+
 	g_hPrevInst = hPrevInst;
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
@@ -1579,7 +1587,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
 		wc.lpszClassName = szClassName;
 		if (!RegisterClass(&wc)) {
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1633,7 +1641,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		g_scrnmode ^= SCRNMODE_FULLSCREEN;
 		if (scrnmng_create(g_scrnmode) != SUCCESS) {
 			messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW), MB_OK | MB_ICONSTOP);
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1685,7 +1693,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			pccore_term();
 			soundmng_deinitialize();
 			scrnmng_destroy();
-			unloadextinst();
+			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
 			return(FALSE);
@@ -1828,7 +1836,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	skbdwin_deinitialize();
 
-	unloadextinst();
+	UnloadExternalResource();
 
 	TRACETERM();
 	_MEM_USED(TEXT("report.txt"));
