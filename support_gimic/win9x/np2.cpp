@@ -33,7 +33,6 @@
 #include "ini.h"
 #include "menu.h"
 #include "winloc.h"
-#include "toolwin.h"
 #include "np2class.h"
 #include "dialog.h"
 #include "cpucore.h"
@@ -51,12 +50,16 @@
 #include "timing.h"
 #include "keystat.h"
 #include "debugsub.h"
-#include "subwind.h"
+#include "subwnd/kdispwnd.h"
+#include "subwnd/mdbgwnd.h"
+#include "subwnd/skbdwnd.h"
+#include "subwnd/subwnd.h"
+#include "subwnd/toolwnd.h"
 #if !defined(_WIN64)
 #include "cputype.h"
 #endif
 #if defined(SUPPORT_DCLOCK)
-#include "dclock.h"
+#include "subwnd\dclock.h"
 #endif
 #include "recvideo.h"
 
@@ -247,10 +250,10 @@ static void changescreen(UINT8 newmode) {
 		if (renewal & SCRNMODE_FULLSCREEN) {
 			if (!scrnmng_isfullscreen()) {
 				if (np2oscfg.toolwin) {
-					toolwin_create(g_hInstance);
+					toolwin_create();
 				}
 				if (np2oscfg.keydisp) {
-					kdispwin_create(g_hInstance);
+					kdispwin_create();
 				}
 			}
 		}
@@ -1048,7 +1051,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_TOOLWIN:
 					np2oscfg.toolwin = !np2oscfg.toolwin;
 					if (np2oscfg.toolwin) {
-						toolwin_create(g_hInstance);
+						toolwin_create();
 					}
 					else {
 						toolwin_destroy();
@@ -1060,7 +1063,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_KEYDISP:
 					np2oscfg.keydisp = !np2oscfg.keydisp;
 					if (np2oscfg.keydisp) {
-						kdispwin_create(g_hInstance);
+						kdispwin_create();
 					}
 					else {
 						kdispwin_destroy();
@@ -1069,12 +1072,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 #endif
 #if defined(SUPPORT_SOFTKBD)
 				case IDM_SOFTKBD:
-					skbdwin_create(g_hInstance);
+					skbdwin_create();
 					break;
 #endif
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
 				case IDM_MEMDBG32:
-					mdbgwin_create(g_hInstance);
+					mdbgwin_create();
 					break;
 #endif
 				case IDM_SCREENCENTER:
@@ -1516,6 +1519,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	_MEM_INIT();
 	CWndProc::Initialize(hInstance);
+	CSubWndBase::Initialize(hInstance);
 	CVstEditWnd::Initialize(hInstance);
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
@@ -1586,10 +1590,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			return(FALSE);
 		}
 
-		toolwin_initapp(g_hInstance);
-		kdispwin_initialize(g_hInstance);
-		skbdwin_initialize(g_hInstance);
-		mdbgwin_initialize(g_hInstance);
+		kdispwin_initialize();
+		skbdwin_initialize();
+		mdbgwin_initialize();
 		CDebugUtyView::Initialize(g_hInstance);
 	}
 
@@ -1710,10 +1713,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	if (!(g_scrnmode & SCRNMODE_FULLSCREEN)) {
 		if (np2oscfg.toolwin) {
-			toolwin_create(g_hInstance);
+			toolwin_create();
 		}
 		if (np2oscfg.keydisp) {
-			kdispwin_create(g_hInstance);
+			kdispwin_create();
 		}
 	}
 
