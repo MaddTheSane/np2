@@ -28,6 +28,7 @@
 #define IDD_SND86                       155
 #define IDD_SNDSPB                      156
 #define IDD_SNDPAD1                     157
+#define IDD_SNDDEV                      158
 #define IDD_CALENDAR                    161
 #define IDD_ABOUT                       171
 #define IDR_SYS                         201
@@ -199,6 +200,9 @@
 #define IDC_PAD1_RB                     15711
 #define IDC_PAD1_RC                     15712
 #define IDC_PAD1_RD                     15713
+#define IDC_SNDDEV_DEVICE               15801
+#define IDC_SNDDEV_RATE                 15802
+#define IDC_SNDDEV_BUFFER               15803
 #define IDC_CLNDREAL                    16101
 #define IDC_CLNDVIR                     16102
 #define IDC_VIRYEAR                     16103

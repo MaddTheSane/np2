@@ -33,9 +33,14 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum);
 #ifdef __cplusplus
 }
 
+#include <vector>
 #include "soundmng\sdbase.h"
 
 class CSoundDeviceBase;
+
+
+//! WAVE MAPPER
+extern TCHAR g_szWaveMapper[];
 
 /**
  * サウンド プロシージャ
@@ -57,6 +62,7 @@ public:
 	static CSoundMng* GetInstance();
 	static void Initialize();
 	static void Deinitialize();
+	static void EnumerateDevices(std::vector<LPCTSTR>& devices);
 
 	CSoundMng();
 	bool Open(LPCTSTR lpDevice, HWND hWnd);

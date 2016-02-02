@@ -6,19 +6,6 @@
 #include "compiler.h"
 #include "c_combodata.h"
 
-#if 0
-#include "strres.h"
-#include "bmpdata.h"
-#include "dosio.h"
-#include "misc\tstring.h"
-#include "commng.h"
-#include "dialogs.h"
-#include "np2.h"
-#if defined(MT32SOUND_DLL)
-#include "..\ext\mt32snd.h"
-#endif
-#endif
-
 /**
  * 追加
  * @param[in] lpValues 値の配列
@@ -28,9 +15,7 @@ void CComboData::Add(const UINT32* lpValues, UINT cchValues)
 {
 	for (UINT i = 0; i < cchValues; i++)
 	{
-		TCHAR szStr[16];
-		wsprintf(szStr, TEXT("%u"), lpValues[i]);
-		Add(szStr, lpValues[i]);
+		Add(lpValues[i]);
 	}
 }
 
@@ -43,9 +28,7 @@ void CComboData::Add(const Value* lpValues, UINT cchValues)
 {
 	for (UINT i = 0; i < cchValues; i++)
 	{
-		TCHAR szStr[16];
-		wsprintf(szStr, TEXT("%u"), lpValues[i].nNumber);
-		Add(szStr, lpValues[i].nItemData);
+		Add(lpValues[i].nNumber, lpValues[i].nItemData);
 	}
 }
 
@@ -65,16 +48,56 @@ void CComboData::Add(const Entry* lpEntries, UINT cchEntries)
 
 /**
  * 追加
+ * @param[in] nValue 値
+ */
+int CComboData::Add(UINT32 nValue)
+{
+	return Add(nValue, nValue);
+}
+
+/**
+ * 追加
+ * @param[in] nValue 値
+ * @param[in] nItemData データ
+ */
+int CComboData::Add(UINT32 nValue, UINT32 nItemData)
+{
+	TCHAR szStr[16];
+	wsprintf(szStr, TEXT("%u"), nValue);
+	return Add(szStr, nItemData);
+}
+
+/**
+ * 追加
  * @param[in] lpString 表示名
  * @param[in] nItemData データ
  */
-void CComboData::Add(LPCTSTR lpString, UINT32 nItemData)
+int CComboData::Add(LPCTSTR lpString, UINT32 nItemData)
 {
 	const int nIndex = AddString(lpString);
 	if (nIndex >= 0)
 	{
 		SetItemData(nIndex, static_cast<DWORD_PTR>(nItemData));
 	}
+	return nIndex;
+}
+
+/**
+ * アイテム検索
+ * @param[in] nValue 値
+ * @return インデックス
+ */
+int CComboData::FindItemData(UINT32 nValue) const
+{
+	const int nItems = GetCount();
+	for (int i = 0; i < nItems; i++)
+	{
+		if (GetItemData(i) == nValue)
+		{
+			return i;
+		}
+	}
+	return CB_ERR;
 }
 
 /**
@@ -83,14 +106,10 @@ void CComboData::Add(LPCTSTR lpString, UINT32 nItemData)
  */
 void CComboData::SetCurItemData(UINT32 nValue)
 {
-	const int nItems = GetCount();
-	for (int i = 0; i < nItems; i++)
+	const int nIndex = FindItemData(nValue);
+	if (nIndex != CB_ERR)
 	{
-		if (GetItemData(i) == nValue)
-		{
-			SetCurSel(i);
-			break;
-		}
+		SetCurSel(nIndex);
 	}
 }
 

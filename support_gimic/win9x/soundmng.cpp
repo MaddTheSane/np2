@@ -44,6 +44,9 @@ void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 //! 唯一のインスタンスです
 CSoundMng CSoundMng::sm_instance;
 
+//! WAVE MAPPER
+	TCHAR g_szWaveMapper[] = TEXT("WAVE MAPPER");
+
 /**
  * 初期化
  */
@@ -67,6 +70,16 @@ void CSoundMng::Deinitialize()
 }
 
 /**
+ * 列挙
+ * @param[out] devices デバイス リスト
+ */
+void CSoundMng::EnumerateDevices(std::vector<LPCTSTR>& devices)
+{
+	CSoundDeviceDSound3::EnumerateDevices(devices);
+	CSoundDeviceAsio::EnumerateDevices(devices);
+}
+
+/**
  * コンストラクタ
  */
 CSoundMng::CSoundMng()
@@ -86,6 +99,11 @@ CSoundMng::CSoundMng()
 bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
 {
 	Close();
+
+	if ((lpDevice) && (::lstrcmpi(lpDevice, g_szWaveMapper) == 0))
+	{
+		lpDevice = NULL;
+	}
 
 	CSoundDeviceBase* pSoundDevice = NULL;
 

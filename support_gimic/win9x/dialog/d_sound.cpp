@@ -13,6 +13,7 @@
 #include "dosio.h"
 #include "joymng.h"
 #include "np2.h"
+#include "soundmng.h"
 #include "sysmng.h"
 #include "misc\PropProc.h"
 #include "pccore.h"
@@ -21,6 +22,124 @@
 #include "sound\sound.h"
 #include "sound\fmboard.h"
 #include "sound\tms3631.h"
+
+// ---- Out
+
+/**
+ * @brief Mixer ページ
+ */
+class SndOptOutPage : public CPropPageProc
+{
+public:
+	SndOptOutPage();
+	virtual ~SndOptOutPage();
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+
+protected:
+	CComboData m_dev;			//!< デバイス
+	CComboData m_rate;			//!< レート
+
+};
+
+//! サンプリング レート
+static const UINT32 s_nSamplingRate[] = {11025, 16000, 22050, 32000, 44100, 48000, 88200, 96000};
+
+/**
+ * コンストラクタ
+ */
+SndOptOutPage::SndOptOutPage()
+	: CPropPageProc(IDD_SNDDEV)
+{
+}
+
+/**
+ * デストラクタ
+ */
+SndOptOutPage::~SndOptOutPage()
+{
+}
+
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL SndOptOutPage::OnInitDialog()
+{
+	m_dev.SubclassDlgItem(IDC_SNDDEV_DEVICE, this);
+	m_dev.AddString(g_szWaveMapper);
+
+	std::vector<LPCTSTR> devices;
+	CSoundMng::EnumerateDevices(devices);
+	for (std::vector<LPCTSTR>::const_iterator it = devices.begin(); it != devices.end(); ++it)
+	{
+		m_dev.AddString(*it);
+	}
+
+	LPCTSTR lpDevice = np2oscfg.szSoundDevice;
+	if (lpDevice[0] == '\0')
+	{
+		lpDevice = g_szWaveMapper;
+	}
+	int nIndex = m_dev.FindStringExact(-1, lpDevice);
+	if (nIndex == CB_ERR)
+	{
+		nIndex = m_dev.AddString(lpDevice);
+	}
+	m_dev.SetCurSel(nIndex);
+
+	m_rate.SubclassDlgItem(IDC_SNDDEV_RATE, this);
+	m_rate.Add(s_nSamplingRate, _countof(s_nSamplingRate));
+	nIndex = m_rate.FindItemData(np2cfg.samplingrate);
+	if (nIndex == CB_ERR)
+	{
+		m_rate.Add(np2cfg.samplingrate);
+	}
+	m_rate.SetCurSel(nIndex);
+
+	SetDlgItemInt(IDC_SNDDEV_BUFFER, np2cfg.delayms, FALSE);
+
+	return TRUE;
+}
+
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void SndOptOutPage::OnOK()
+{
+	UINT nUpdated = 0;
+
+	TCHAR szDevice[MAX_PATH];
+	m_dev.GetWindowText(szDevice, _countof(szDevice));
+	if (::lstrcmpi(szDevice, np2oscfg.szSoundDevice) != 0)
+	{
+		::lstrcpyn(np2oscfg.szSoundDevice, szDevice, _countof(np2oscfg.szSoundDevice));
+		nUpdated |= SYS_UPDATEOSCFG;
+	}
+
+	const UINT nSamplingRate = m_rate.GetCurItemData(np2cfg.samplingrate);
+	if (np2cfg.samplingrate != nSamplingRate)
+	{
+		np2cfg.samplingrate = nSamplingRate;
+		nUpdated |= SYS_UPDATECFG | SYS_UPDATERATE;
+		soundrenewal = 1;
+	}
+
+	UINT nBuffer = GetDlgItemInt(IDC_SNDDEV_BUFFER, NULL, FALSE);
+	nBuffer = max(nBuffer, 40);
+	nBuffer = min(nBuffer, 1000);
+	if (np2cfg.delayms != static_cast<UINT16>(nBuffer))
+	{
+		np2cfg.delayms = static_cast<UINT16>(nBuffer);
+		nUpdated |= SYS_UPDATECFG | SYS_UPDATESBUF;
+		soundrenewal = 1;
+	}
+
+	::sysmng_update(nUpdated);
+}
+
+
 
 // ---- mixer
 
@@ -1216,6 +1335,9 @@ void SndOptPadPage::OnOK()
 void dialog_sndopt(HWND hwndParent)
 {
 	CPropSheetProc prop(IDS_SOUNDOPTION, hwndParent);
+
+	SndOptOutPage out;
+	prop.AddPage(&out);
 
 	SndOptMixerPage mixer;
 	prop.AddPage(&mixer);
