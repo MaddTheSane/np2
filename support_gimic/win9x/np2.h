@@ -77,7 +77,8 @@ typedef struct {
 	UINT8	fscrnbpp;
 	UINT8	fscrnmod;
 
-	TCHAR	szSoundDevice[MAX_PATH];
+	UINT8	cSoundDeviceType;
+	TCHAR	szSoundDeviceName[MAX_PATH];
 } NP2OSCFG;
 
 

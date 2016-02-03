@@ -36,12 +36,6 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum);
 #include <vector>
 #include "soundmng\sdbase.h"
 
-class CSoundDeviceBase;
-
-
-//! WAVE MAPPER
-extern TCHAR g_szWaveMapper[];
-
 /**
  * サウンド プロシージャ
  */
@@ -59,13 +53,23 @@ enum SoundProc
 class CSoundMng : public ISoundData
 {
 public:
+	/**
+	 * デバイス タイプ
+	 */
+	enum DeviceType
+	{
+		kDefault			= 0,	/*!< Default */
+		kDSound3,					/*!< Direct Sound3 */
+		kWasapi,					/*!< WASAPI */
+		kAsio						/*!< ASIO */
+	};
+
 	static CSoundMng* GetInstance();
 	static void Initialize();
 	static void Deinitialize();
-	static void EnumerateDevices(std::vector<LPCTSTR>& devices);
 
 	CSoundMng();
-	bool Open(LPCTSTR lpDevice, HWND hWnd);
+	bool Open(DeviceType nType, LPCTSTR lpName, HWND hWnd);
 	void Close();
 	void Enable(SoundProc nProc);
 	void Disable(SoundProc nProc);

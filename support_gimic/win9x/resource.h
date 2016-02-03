@@ -200,9 +200,10 @@
 #define IDC_PAD1_RB                     15711
 #define IDC_PAD1_RC                     15712
 #define IDC_PAD1_RD                     15713
-#define IDC_SNDDEV_DEVICE               15801
-#define IDC_SNDDEV_RATE                 15802
-#define IDC_SNDDEV_BUFFER               15803
+#define IDC_SNDDEV_TYPE                 15801
+#define IDC_SNDDEV_NAME                 15802
+#define IDC_SNDDEV_RATE                 15803
+#define IDC_SNDDEV_BUFFER               15804
 #define IDC_CLNDREAL                    16101
 #define IDC_CLNDVIR                     16102
 #define IDC_VIRYEAR                     16103
