@@ -47,7 +47,7 @@ public:
 	CPropSheetProc();
 	CPropSheetProc(UINT nIDCaption, HWND hwndParent = NULL, UINT iSelectPage = 0);
 	CPropSheetProc(LPCTSTR pszCaption, HWND hwndParent = NULL, UINT iSelectPage = 0);
-	INT DoModal();
+	INT_PTR DoModal();
 	void AddPage(CPropPageProc* pPage);
 
 protected:

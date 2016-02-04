@@ -98,7 +98,7 @@ public:
 	 */
 	int FindString(int nStartAfter, LPCTSTR lpszString) const
 	{
-		return ::SendMessage(m_hWnd, CB_FINDSTRING, nStartAfter, reinterpret_cast<LPARAM>(lpszString));
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRING, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
 	}
 
 	/**
@@ -109,7 +109,7 @@ public:
 	 */
 	int FindStringExact(int nStartAfter, LPCTSTR lpszString) const
 	{
-		return ::SendMessage(m_hWnd, CB_FINDSTRINGEXACT, nStartAfter, reinterpret_cast<LPARAM>(lpszString));
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRINGEXACT, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
 	}
 
 	/**

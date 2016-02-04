@@ -215,10 +215,10 @@ void CPropSheetProc::CommonConstruct(HWND hwndParent, UINT iSelectPage)
  * モーダル
  * @return リザルト コード
  */
-INT CPropSheetProc::DoModal()
+INT_PTR CPropSheetProc::DoModal()
 {
 	m_psh.pszCaption = m_strCaption.c_str();
-	m_psh.nPages = m_pages.size();
+	m_psh.nPages = static_cast<UINT>(m_pages.size());
 	m_psh.phpage = new HPROPSHEETPAGE[m_psh.nPages];
 	for (UINT i = 0; i < m_pages.size(); i++)
 	{
