@@ -174,7 +174,7 @@ typedef	signed __int64		SINT64;
 #define SUPPORT_ASIO
 #if (_MSC_VER >= 1500)
 #define SUPPORT_WASAPI
-#endif	// (_MSC_VER >= 1500)
+#endif	/* (_MSC_VER >= 1500) */
 
 #define	SUPPORT_TEXTCNV
 
@@ -183,7 +183,7 @@ typedef	signed __int64		SINT64;
 #endif
 
 
-#ifdef _UNICODE
+#if (_MSC_VER >= 1500)
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
@@ -193,4 +193,4 @@ typedef	signed __int64		SINT64;
 #else
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
-#endif
+#endif	/* (_MSC_VER >= 1500) */
