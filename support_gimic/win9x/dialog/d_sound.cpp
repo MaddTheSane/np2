@@ -152,7 +152,6 @@ BOOL SndOptOutPage::OnInitDialog()
 
 /**
  * リスト更新
- * @param[in] nType タイプ
  */
 void SndOptOutPage::UpdateDeviceList()
 {

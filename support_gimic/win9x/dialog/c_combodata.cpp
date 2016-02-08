@@ -49,6 +49,7 @@ void CComboData::Add(const Entry* lpEntries, UINT cchEntries)
 /**
  * 追加
  * @param[in] nValue 値
+ * @return インデックス
  */
 int CComboData::Add(UINT32 nValue)
 {
@@ -59,6 +60,7 @@ int CComboData::Add(UINT32 nValue)
  * 追加
  * @param[in] nValue 値
  * @param[in] nItemData データ
+ * @return インデックス
  */
 int CComboData::Add(UINT32 nValue, UINT32 nItemData)
 {
@@ -71,6 +73,7 @@ int CComboData::Add(UINT32 nValue, UINT32 nItemData)
  * 追加
  * @param[in] lpString 表示名
  * @param[in] nItemData データ
+ * @return インデックス
  */
 int CComboData::Add(LPCTSTR lpString, UINT32 nItemData)
 {
