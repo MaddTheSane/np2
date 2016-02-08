@@ -67,7 +67,6 @@
 
 static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		g_hWndMain;
-		HINSTANCE	g_hInstance;
 #if !defined(_WIN64)
 		int			mmxflag;
 #endif
@@ -1532,8 +1531,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		return(FALSE);
 	}
 
-	g_hInstance = LoadExternalResource(hInstance);
-	CWndProc::SetResourceHandle(g_hInstance);
+	hInstance = LoadExternalResource(hInstance);
+	CWndProc::SetResourceHandle(hInstance);
 
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
@@ -1559,14 +1558,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
-	np2class_initialize(g_hInstance);
+	np2class_initialize(hInstance);
 	if (!hPrevInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = g_hInstance;
-		wc.hIcon = LoadIcon(g_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
@@ -1581,7 +1580,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		kdispwin_initialize();
 		skbdwin_initialize();
 		mdbgwin_initialize();
-		CDebugUtyView::Initialize(g_hInstance);
+		CDebugUtyView::Initialize(hInstance);
 	}
 
 	mousemng_initialize();
@@ -1592,7 +1591,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, g_hInstance, NULL);
+						NULL, NULL, hInstance, NULL);
 	g_hWndMain = hWnd;
 	scrnmng_initialize();
 
