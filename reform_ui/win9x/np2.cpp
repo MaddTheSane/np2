@@ -68,7 +68,6 @@
 static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		g_hWndMain;
 		HINSTANCE	g_hInstance;
-		HINSTANCE	g_hPrevInst;
 #if !defined(_WIN64)
 		int			mmxflag;
 #endif
@@ -1536,7 +1535,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	g_hInstance = LoadExternalResource(hInstance);
 	CWndProc::SetResourceHandle(g_hInstance);
 
-	g_hPrevInst = hPrevInst;
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
