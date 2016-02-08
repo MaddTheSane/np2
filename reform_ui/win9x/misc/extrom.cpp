@@ -40,8 +40,7 @@ bool CExtRom::Open(LPCTSTR lpFilename)
 {
 	Close();
 
-	HINSTANCE hInstance = CWndProc::GetResourceHandle();
-
+	HINSTANCE hInstance = CWndProc::FindResourceHandle(lpFilename, s_szExtRom);
 	HRSRC hRsrc = ::FindResource(hInstance, lpFilename, s_szExtRom);
 	if (hRsrc == NULL)
 	{

@@ -59,7 +59,7 @@ void CPropPageProc::Construct(LPCTSTR lpszTemplateName, UINT nIDCaption)
 	ZeroMemory(&m_psp, sizeof(m_psp));
 	m_psp.dwSize = sizeof(m_psp);
 	m_psp.dwFlags = PSP_USECALLBACK;
-	m_psp.hInstance = GetResourceHandle();
+	m_psp.hInstance = FindResourceHandle(lpszTemplateName, RT_DIALOG);
 	m_psp.pszTemplate = lpszTemplateName;
 	m_psp.pfnDlgProc = DlgProc;
 	m_psp.lParam = reinterpret_cast<LPARAM>(this);

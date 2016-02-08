@@ -62,6 +62,22 @@ void CWndProc::Deinitialize()
 }
 
 /**
+ * リソースの検索
+ * @param[in] lpszName リソース ID
+ * @param[in] lpszType リソースの型へのポインタ
+ * @return インスタンス
+ */
+HINSTANCE CWndProc::FindResourceHandle(LPCTSTR lpszName, LPCTSTR lpszType)
+{
+	HINSTANCE hInst = GetResourceHandle();
+	if ((hInst != GetInstanceHandle()) && (::FindResource(hInst, lpszName, lpszType) != NULL))
+	{
+		return hInst;
+	}
+	return GetInstanceHandle();
+}
+
+/**
  * コンストラクタ
  */
 CWndProc::CWndProc()

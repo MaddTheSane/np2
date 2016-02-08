@@ -19,6 +19,7 @@ public:
 	static HINSTANCE GetInstanceHandle();
 	static void SetResourceHandle(HINSTANCE hInstance);
 	static HINSTANCE GetResourceHandle();
+	static HINSTANCE FindResourceHandle(LPCTSTR lpszName, LPCTSTR lpszType);
 
 	CWndProc();
 	virtual ~CWndProc();

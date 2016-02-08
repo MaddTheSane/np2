@@ -133,7 +133,8 @@ static HBITMAP skinload(const OEMCHAR *path)
 	}
 	if (ret == NULL)
 	{
-		ret = ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
+		HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2TOOL"), RT_BITMAP);
+		ret = ::LoadBitmap(hInstance, TEXT("NP2TOOL"));
 	}
 	return ret;
 }
