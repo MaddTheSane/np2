@@ -183,7 +183,7 @@ static void filltailsample(UINT nCount)
 	if (nCount)
 	{
 		ptr = sndstream.ptr;
-		nOrgSize = (ptr - sndstream.buffer) / 2;
+		nOrgSize = (UINT)((ptr - sndstream.buffer) / 2);
 		if (nOrgSize == 0)
 		{
 			nSampleL = 0;
