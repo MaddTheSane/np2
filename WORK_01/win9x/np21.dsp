@@ -525,20 +525,6 @@ SOURCE=..\I386C\ia32\debug.c
 
 SOURCE=..\I386C\ia32\disasm.c
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
