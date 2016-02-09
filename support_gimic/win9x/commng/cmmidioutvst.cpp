@@ -153,8 +153,8 @@ void CComMidiOutVst::Process32(SINT32* lpBuffer, UINT nBufferCount)
 		float** output = m_output.GetBuffer();
 		do
 		{
-			lpBuffer[0] += output[0][m_nIndex] * 32767.0f - 0.5f;
-			lpBuffer[1] += output[1][m_nIndex] * 32767.0f - 0.5f;
+			lpBuffer[0] += static_cast<SINT32>(output[0][m_nIndex] * 32767.0f - 0.5f);
+			lpBuffer[1] += static_cast<SINT32>(output[1][m_nIndex] * 32767.0f - 0.5f);
 			lpBuffer += 2;
 			m_nIndex++;
 		} while (--nSize);
