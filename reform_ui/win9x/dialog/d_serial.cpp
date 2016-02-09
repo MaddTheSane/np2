@@ -38,7 +38,7 @@ extern COMMNG cm_pc9861ch2;
 class SerialOptComPage : public CPropPageProc
 {
 public:
-	SerialOptComPage(UINT nIDTemplate, COMMNG cm, COMCFG& cfg);
+	SerialOptComPage(UINT nCaption, COMMNG cm, COMCFG& cfg);
 	virtual ~SerialOptComPage();
 
 protected:
@@ -98,12 +98,12 @@ static const CComboData::Entry s_sbit[] =
 
 /**
  * コンストラクタ
- * @param[in] nIDTemplate テンプレート ID
+ * @param[in] nCaption キャプション ID
  * @param[in] cm パラメータ
  * @param[in] cfg コンフィグ
  */
-SerialOptComPage::SerialOptComPage(UINT nIDTemplate, COMMNG cm, COMCFG& cfg)
-	: CPropPageProc(nIDTemplate)
+SerialOptComPage::SerialOptComPage(UINT nCaption, COMMNG cm, COMCFG& cfg)
+	: CPropPageProc(IDD_SERIAL1, nCaption)
 	, m_cm(cm)
 	, m_cfg(cfg)
 {
@@ -688,16 +688,16 @@ void dialog_serial(HWND hwndParent)
 {
 	CPropSheetProc prop(IDS_SERIALOPTION, hwndParent);
 
-	SerialOptComPage com1(IDD_SERIAL1, cm_rs232c, np2oscfg.com1);
+	SerialOptComPage com1(IDS_SERIAL1, cm_rs232c, np2oscfg.com1);
 	prop.AddPage(&com1);
 
 	SerialOpt61Page pc9861;
 	prop.AddPage(&pc9861);
 
-	SerialOptComPage com2(IDD_PC9861B, cm_pc9861ch1, np2oscfg.com2);
+	SerialOptComPage com2(IDS_PC9861B, cm_pc9861ch1, np2oscfg.com2);
 	prop.AddPage(&com2);
 
-	SerialOptComPage com3(IDD_PC9861C, cm_pc9861ch2, np2oscfg.com3);
+	SerialOptComPage com3(IDS_PC9861C, cm_pc9861ch2, np2oscfg.com3);
 	prop.AddPage(&com3);
 
 	prop.m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;

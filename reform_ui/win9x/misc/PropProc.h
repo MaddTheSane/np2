@@ -32,6 +32,7 @@ protected:
 	virtual void OnCancel();
 
 private:
+	LPTSTR m_lpCaption;				//!< ƒLƒƒƒvƒVƒ‡ƒ“
 	static UINT CALLBACK PropPageCallback(HWND hWnd, UINT message, LPPROPSHEETPAGE pPropPage);
 };
 

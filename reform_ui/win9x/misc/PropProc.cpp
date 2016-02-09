@@ -37,6 +37,10 @@ CPropPageProc::CPropPageProc(LPCTSTR lpszTemplateName, UINT nIDCaption)
  */
 CPropPageProc::~CPropPageProc()
 {
+	if (m_lpCaption)
+	{
+		free(m_lpCaption);
+	}
 }
 
 /**
@@ -64,6 +68,15 @@ void CPropPageProc::Construct(LPCTSTR lpszTemplateName, UINT nIDCaption)
 	m_psp.pfnDlgProc = DlgProc;
 	m_psp.lParam = reinterpret_cast<LPARAM>(this);
 	m_psp.pfnCallback = PropPageCallback;
+
+	m_lpCaption = NULL;
+	if (nIDCaption)
+	{
+		std::tstring rTitle(LoadTString(nIDCaption));
+		m_lpCaption = _tcsdup(rTitle.c_str());
+		m_psp.pszTitle = m_lpCaption;
+		m_psp.dwFlags |= PSP_USETITLE;
+	}
 }
 
 /**
