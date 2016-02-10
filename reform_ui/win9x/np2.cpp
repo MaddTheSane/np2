@@ -414,12 +414,10 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 
 static void OnCommand(HWND hWnd, WPARAM wParam)
 {
-	HINSTANCE	hInstance;
 	UINT		update;
 	UINT		uID;
 	BOOL		b;
 
-	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);;
 	update = 0;
 	uID = LOWORD(wParam);
 	switch(uID)
@@ -1167,7 +1165,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			if (np2opening) {
-				HINSTANCE	hInstance;
 				RECT		rect;
 				int			width;
 				int			height;
@@ -1175,11 +1172,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				BITMAP		bmp;
 				HDC			hmdc;
 				HBRUSH		hbrush;
-				hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hInstance, _T("NP2BMP"));
+				HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2BMP"), RT_BITMAP);
+				hbmp = LoadBitmap(hInstance, TEXT("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
