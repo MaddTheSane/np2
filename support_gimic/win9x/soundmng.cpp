@@ -185,6 +185,9 @@ void CSoundMng::Enable(SoundProc nProc)
 		{
 			m_pSoundDevice->PlayStream();
 		}
+#if defined(SUPPORT_ROMEO)
+		CExternalChipManager::GetInstance()->Mute(false);
+#endif	// defined(SUPPORT_ROMEO)
 	}
 }
 
@@ -201,6 +204,9 @@ void CSoundMng::Disable(SoundProc nProc)
 			m_pSoundDevice->StopStream();
 			m_pSoundDevice->StopAllPCM();
 		}
+#if defined(SUPPORT_ROMEO)
+		CExternalChipManager::GetInstance()->Mute(true);
+#endif	// defined(SUPPORT_ROMEO)
 	}
 	m_nMute |= (1 << nProc);
 }
@@ -289,10 +295,6 @@ inline void CSoundMng::PlayStream()
 		{
 			m_pSoundDevice->PlayStream();
 		}
-
-#if defined(SUPPORT_ROMEO)
-		CExternalChipManager::GetInstance()->Mute(false);
-#endif
 	}
 }
 
@@ -307,10 +309,6 @@ inline void CSoundMng::StopStream()
 		{
 			m_pSoundDevice->StopStream();
 		}
-
-#if defined(SUPPORT_ROMEO)
-		CExternalChipManager::GetInstance()->Mute(true);
-#endif
 	}
 }
 
