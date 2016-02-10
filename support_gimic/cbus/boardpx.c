@@ -393,12 +393,12 @@ void boardpx1_reset(const NP2CFG *pConfig)
 	nIrq1 = (pConfig->spbopt & 0xc0) | 0x10;
 	nIrq2 = (nIrq1 == 0xd0) ? 0x90 : 0xd0;
 
-	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR | OPNA_S98);
 	opna_timer(&g_opna[0], nIrq1, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
-	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM);
+	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR);
 	opna_timer(&g_opna[1], nIrq2, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
-	opna_reset(&g_opna[2], OPNA_MODE_3438);
-	opna_reset(&g_opna[3], OPNA_MODE_3438);
+	opna_reset(&g_opna[2], OPNA_MODE_3438 | OPNA_HAS_VR);
+	opna_reset(&g_opna[3], OPNA_MODE_3438 | OPNA_HAS_VR);
 
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
 	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
@@ -450,12 +450,12 @@ void boardpx2_reset(const NP2CFG *pConfig)
 	nIrq1 = (pConfig->spbopt & 0xc0) | 0x10;
 	nIrq2 = (nIrq1 == 0xd0) ? 0x90 : 0xd0;
 
-	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_S98);
+	opna_reset(&g_opna[0], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR | OPNA_S98);
 	opna_timer(&g_opna[0], nIrq1, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
-	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM);
+	opna_reset(&g_opna[1], OPNA_MODE_2608 | OPNA_HAS_TIMER | OPNA_HAS_ADPCM | OPNA_HAS_VR);
 	opna_timer(&g_opna[1], nIrq2, NEVENT_FMTIMER2A, NEVENT_FMTIMER2B);
-	opna_reset(&g_opna[2], OPNA_MODE_3438);
-	opna_reset(&g_opna[3], OPNA_MODE_3438);
+	opna_reset(&g_opna[2], OPNA_MODE_3438 | OPNA_HAS_VR);
+	opna_reset(&g_opna[3], OPNA_MODE_3438 | OPNA_HAS_VR);
 	opna_reset(&g_opna[4], OPNA_MODE_2608 | OPNA_HAS_ADPCM);
 
 	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
