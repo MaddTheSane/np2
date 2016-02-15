@@ -109,17 +109,6 @@ BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int
 	return bResult;
 }
 
-BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize)
-{
-	OPENFILENAME	ofn;
-
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = hWnd;
-	ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-	return openFileParam(&ofn, pcParam, pszPath, uSize, GetSaveFileName);
-}
-
 
 // ---- mimpi def file
 

@@ -1507,7 +1507,7 @@ SOURCE=.\dialog\d_config.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_DISK.CPP
+SOURCE=.\dialog\d_disk.cpp
 # End Source File
 # Begin Source File
 
