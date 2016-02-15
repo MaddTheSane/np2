@@ -1,6 +1,6 @@
 /**
  * @file	dialogs.cpp
- * @brief	Dialog subroutines
+ * @brief	ダイアログ ヘルパーの動作の定義を行います
  *
  * @author	$Author: yui $
  * @date	$Date: 2011/03/07 09:54:11 $
@@ -367,33 +367,3 @@ void dlgs_drawbmp(HDC hdc, UINT8 *bmp) {
 dsdb_err1:
 	_MFREE(bmp);
 }
-
-
-// ----
-
-BOOL dlgs_getitemrect(HWND hWnd, UINT uID, RECT *pRect)
-{
-	HWND	hItem;
-	POINT	pt;
-
-	if (pRect == NULL)
-	{
-		return FALSE;
-	}
-	hItem = GetDlgItem(hWnd, uID);
-	if (!GetWindowRect(hItem, pRect))
-	{
-		return FALSE;
-	}
-	ZeroMemory(&pt, sizeof(pt));
-	if (!ClientToScreen(hWnd, &pt))
-	{
-		return FALSE;
-	}
-	pRect->left -= pt.x;
-	pRect->top -= pt.y;
-	pRect->right -= pt.x;
-	pRect->bottom -= pt.y;
-	return TRUE;
-}
-

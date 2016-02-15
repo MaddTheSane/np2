@@ -1,3 +1,9 @@
+/**
+ * @file	dialogs.h
+ * @brief	ダイアログ ヘルパーの宣言およびインターフェイスの定義をします
+ */
+
+#pragma once
 
 struct tagFileSelectParam
 {
@@ -67,6 +73,3 @@ void dlgs_setlistmidiout(HWND hWnd, UINT16 res, LPCTSTR defname);
 void dlgs_setlistmidiin(HWND hWnd, UINT16 res, LPCTSTR defname);
 
 void dlgs_drawbmp(HDC hdc, UINT8 *bmp);
-
-BOOL dlgs_getitemrect(HWND hWnd, UINT uID, RECT *pRect);
-

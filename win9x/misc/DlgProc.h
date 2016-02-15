@@ -90,6 +90,28 @@ public:
 	}
 
 	/**
+	 * コンボ ボックスのリスト ボックスで指定されているプレフィックスを含む最初の文字列を検索します
+	 * @param[in] nStartAfter 検索する最初の項目の前の項目のインデックス
+	 * @param[in] lpszString 検索する文字列
+	 * @return インデックス
+	 */
+	int FindString(int nStartAfter, LPCTSTR lpszString) const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRING, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
+	 * コンボ ボックスのリスト ボックスで指定されている最初の文字列を検索します
+	 * @param[in] nStartAfter 検索する最初の項目の前の項目のインデックス
+	 * @param[in] lpszString 検索する文字列
+	 * @return インデックス
+	 */
+	int FindStringExact(int nStartAfter, LPCTSTR lpszString) const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRINGEXACT, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
 	 * コンボ ボックスのリスト ボックスに文字列を追加します
 	 * @param[in] nIndex 文字列を受け取るリスト ボックスの位置
 	 * @param[in] lpszString 追加された null で終わる文字列へのポインター
