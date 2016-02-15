@@ -1310,7 +1310,7 @@ SOURCE=.\DIALOG\D_ABOUT.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_BMP.CPP
+SOURCE=.\dialog\d_bmp.cpp
 # End Source File
 # Begin Source File
 
@@ -1323,6 +1323,10 @@ SOURCE=.\DIALOG\D_CONFIG.CPP
 # Begin Source File
 
 SOURCE=.\DIALOG\D_DISK.CPP
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_font.cpp
 # End Source File
 # Begin Source File
 

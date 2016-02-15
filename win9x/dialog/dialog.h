@@ -12,8 +12,12 @@ void dialog_serial(HWND hWnd);
 void dialog_newdisk(HWND hWnd);
 void dialog_changefdd(HWND hWnd, REG8 drv);
 void dialog_changehdd(HWND hWnd, REG8 drv);
-void dialog_font(HWND hWnd);
+
+// d_bmp.cpp
 void dialog_writebmp(HWND hWnd);
+
+// d_font.cpp
+void dialog_font(HWND hWnd);
 
 // d_soundlog.cpp
 void dialog_soundlog(HWND hWnd);

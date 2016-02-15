@@ -52,7 +52,6 @@ void dlgs_disablebyautocheck(HWND hWnd, UINT uID, UINT uCheckID);
 
 BOOL dlgs_openfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize, int *puRO);
 BOOL dlgs_createfile(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize);
-BOOL dlgs_createfilenum(HWND hWnd, PCFSPARAM pcParam, LPTSTR pszPath, UINT uSize);
 
 void dlgs_browsemimpidef(HWND hWnd, UINT16 res);
 
