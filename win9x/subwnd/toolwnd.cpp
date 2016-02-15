@@ -134,7 +134,8 @@ static HBITMAP skinload(const OEMCHAR *path)
 	}
 	if (ret == NULL)
 	{
-		ret = ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
+		HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2TOOL"), RT_BITMAP);
+		ret = ::LoadBitmap(hInstance, TEXT("NP2TOOL"));
 	}
 	return ret;
 }
@@ -420,7 +421,7 @@ void CToolWnd::CreateSubItems()
 		{
 			sub = CreateWindow(cls, p->text, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
-							m_hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
+							m_hWnd, (HMENU)(i + IDC_BASE), CWndProc::GetInstanceHandle(), NULL);
 		}
 		m_sub[i] = sub;
 		m_subproc[i] = NULL;

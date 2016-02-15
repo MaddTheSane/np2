@@ -140,7 +140,8 @@ void CKeyDisplayWnd::Create()
 		return;
 	}
 
-	HMENU hMenu = ::LoadMenu(GetResourceHandle(), MAKEINTRESOURCE(IDR_KEYDISP));
+	HINSTANCE hInstance = FindResourceHandle(MAKEINTRESOURCE(IDR_KEYDISP), RT_MENU);
+	HMENU hMenu = ::LoadMenu(hInstance, MAKEINTRESOURCE(IDR_KEYDISP));
 	if (!CSubWndBase::Create(IDS_CAPTION_KEYDISP, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX, s_kdispcfg.posx, s_kdispcfg.posy, KEYDISP_WIDTH, KEYDISP_HEIGHT, NULL, hMenu))
 	{
 		np2oscfg.keydisp = 0;

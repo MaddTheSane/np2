@@ -41,7 +41,8 @@ INT_PTR CDlgProc::DoModal()
 {
 	HookWindowCreate(this);
 
-	const INT_PTR nRet = ::DialogBox(GetInstanceHandle(), m_lpszTemplateName, m_hwndParent, DlgProc);
+	HINSTANCE hInstance = FindResourceHandle(m_lpszTemplateName, RT_DIALOG);
+	const INT_PTR nRet = ::DialogBox(hInstance, m_lpszTemplateName, m_hwndParent, DlgProc);
 
 	if (!UnhookWindowCreate())
 	{
