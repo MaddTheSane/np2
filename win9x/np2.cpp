@@ -933,21 +933,11 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 
-#if defined(SUPPORT_S98)
 		case IDM_S98LOGGING:
 			winuienter();
-			dialog_s98(hWnd);
+			dialog_soundlog(hWnd);
 			winuileave();
 			break;
-#endif
-
-#if defined(SUPPORT_WAVEREC)
-		case IDM_WAVEREC:
-			winuienter();
-			dialog_waverec(hWnd);
-			winuileave();
-			break;
-#endif
 
 		case IDM_CALENDAR:
 			winuienter();

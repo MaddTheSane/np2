@@ -1734,6 +1734,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\recvideo.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\scrnmng.cpp"
 					>
 				</File>
@@ -1834,6 +1838,10 @@
 					</File>
 					<File
 						RelativePath=".\dialog\d_sound.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\d_soundlog.cpp"
 						>
 					</File>
 					<File
@@ -2921,6 +2929,10 @@
 				</File>
 				<File
 					RelativePath=".\oemtext.h"
+					>
+				</File>
+				<File
+					RelativePath=".\recvideo.h"
 					>
 				</File>
 				<File
