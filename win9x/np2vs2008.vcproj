@@ -1901,6 +1901,10 @@
 					Name="misc"
 					>
 					<File
+						RelativePath=".\misc\DlgProc.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\misc\extrom.cpp"
 						>
 					</File>
@@ -3082,6 +3086,10 @@
 				<Filter
 					Name="misc"
 					>
+					<File
+						RelativePath=".\misc\DlgProc.h"
+						>
+					</File>
 					<File
 						RelativePath=".\misc\extrom.h"
 						>
