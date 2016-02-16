@@ -33,7 +33,7 @@
 #include "gtk2/xnp2.h"
 
 
-typedef struct {
+struct tagFontMng {
 	int			size;
 	UINT			type;
 	GdkRectangle		rect;
@@ -42,7 +42,7 @@ typedef struct {
 	PangoLayout		*layout;
 	GdkPixmap		*backsurf;
 	unsigned long		black_pixel;
-} _FNTMNG, *FNTMNG;
+};
 
 
 BRESULT
@@ -68,12 +68,12 @@ fontmng_setdeffontname(const OEMCHAR *fontface)
 	milstr_ncpy(fontname, fontface, sizeof(fontname));
 }
 
-void *
+FONTMNGH
 fontmng_create(int size, UINT type, const OEMCHAR *fontface)
 {
 	char buf[256];
-	_FNTMNG fnt;
-	FNTMNG fntp;
+	struct tagFontMng fnt;
+	FONTMNGH fntp;
 	gchar *fontname_utf8;
 	int fontalign;
 	int allocsize;
@@ -127,7 +127,7 @@ fontmng_create(int size, UINT type, const OEMCHAR *fontface)
 	fontalign = sizeof(_FNTDAT) + (fnt.rect.width * fnt.rect.height);
 	fontalign = roundup(fontalign, 4);
 
-	allocsize = sizeof(_FNTMNG);
+	allocsize = sizeof(fnt);
 	allocsize += fontalign;
 
 	fnt.backsurf = gdk_pixmap_new(main_window->window,
@@ -144,23 +144,21 @@ fontmng_create(int size, UINT type, const OEMCHAR *fontface)
 }
 
 void
-fontmng_destroy(void *hdl)
+fontmng_destroy(FONTMNGH fhdl)
 {
-	FNTMNG fnt = (FNTMNG)hdl;
-
-	if (fnt) {
-		if (fnt->backsurf)
-			g_object_unref(fnt->backsurf);
-		if (fnt->layout)
-			g_object_unref(fnt->layout);
-		if (fnt->desc)
-			pango_font_description_free(fnt->desc);
-		_MFREE(fnt);
+	if (fhdl) {
+		if (fhdl->backsurf)
+			g_object_unref(fhdl->backsurf);
+		if (fhdl->layout)
+			g_object_unref(fhdl->layout);
+		if (fhdl->desc)
+			pango_font_description_free(fhdl->desc);
+		_MFREE(fhdl);
 	}
 }
 
 static void
-setfdathead(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
+setfdathead(FONTMNGH fhdl, FNTDAT fdat, const char *str, int len)
 {
 
 	fdat->width = fhdl->rect.width;
@@ -172,14 +170,14 @@ setfdathead(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 }
 
 static void
-getlength1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
+getlength1(FONTMNGH fhdl, FNTDAT fdat, const char *str, int len)
 {
 
 	setfdathead(fhdl, fdat, str, len);
 }
 
 static void
-getfont1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
+getfont1(FONTMNGH fhdl, FNTDAT fdat, const char *str, int len)
 {
 	GdkImage *img;
 
@@ -215,9 +213,8 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 }
 
 BRESULT
-fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
+fontmng_getsize(FONTMNGH fhdl, const char *str, POINT_T *pt)
 {
-	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
 	char buf[4];
 	int width;
@@ -244,16 +241,15 @@ fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 }
 
 BRESULT
-fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
+fontmng_getdrawsize(FONTMNGH fhdl, const char *str, POINT_T *pt)
 {
-	FNTMNG fhdl = (FNTMNG)hdl;
 	_FNTDAT fdat;
 	char buf[4];
 	int width;
 	int len;
 	int posx;
 
-	if ((hdl == NULL) || (str == NULL)) {
+	if ((fhdl == NULL) || (str == NULL)) {
 		return FAILURE;
 	}
 
@@ -276,9 +272,8 @@ fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
 }
 
 FNTDAT
-fontmng_get(void *hdl, const char *str)
+fontmng_get(FONTMNGH fhdl, const char *str)
 {
-	FNTMNG fhdl = (FNTMNG)hdl;
 	FNTDAT fdat = (FNTDAT)(fhdl + 1);
 	char buf[4];
 	gchar *utf8;

@@ -21,17 +21,17 @@ typedef struct {
 	int	pitch;
 } _FNTDAT, *FNTDAT;
 
-typedef void* FONTMNGH;
+typedef struct tagFontMng *FONTMNGH;
 
 BRESULT fontmng_init(void);
 void fontmng_terminate(void);
 void fontmng_setdeffontname(const OEMCHAR *fontface);
-void* fontmng_create(int size, UINT type, const OEMCHAR *fontface);
-void fontmng_destroy(void *hdl);
+FONTMNGH fontmng_create(int size, UINT type, const OEMCHAR *fontface);
+void fontmng_destroy(FONTMNGH fhdl);
 
-BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt);
-BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt);
-FNTDAT fontmng_get(void *hdl, const char *string);
+BRESULT fontmng_getsize(FONTMNGH fhdl, const char *string, POINT_T *pt);
+BRESULT fontmng_getdrawsize(FONTMNGH fhdl, const char *string, POINT_T *pt);
+FNTDAT fontmng_get(FONTMNGH fhdl, const char *string);
 
 G_END_DECLS
 
