@@ -35,7 +35,7 @@ void soundmng_pcmstop(UINT num);
 BRESULT soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
-BOOL soundmng_pcmload(UINT num, const char *filename);
+BRESULT soundmng_pcmload(UINT num, const char *filename);
 void soundmng_pcmvolume(UINT num, int volume);
 
 extern int pcm_volume_default;

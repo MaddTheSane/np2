@@ -455,7 +455,7 @@ soundmng_pcmdestroy(void)
 	}
 }
 
-BOOL
+BRESULT
 soundmng_pcmload(UINT num, const char *filename)
 {
 	pcm_channel_t *chan;
