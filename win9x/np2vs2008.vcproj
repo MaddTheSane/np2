@@ -1817,6 +1817,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\c_slidervalue.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_about.cpp"
 						>
 					</File>
@@ -1930,6 +1934,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.cpp"
 						>
 					</File>
 					<File
@@ -3035,6 +3043,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\c_slidervalue.h"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\dialog.h"
 						>
 					</File>
@@ -3136,6 +3148,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\guard.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\PropProc.h"
 						>
 					</File>
 					<File

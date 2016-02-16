@@ -1330,6 +1330,14 @@ SOURCE=.\dialog\c_midi.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\dialog\c_slidervalue.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_slidervalue.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\dialog\d_about.cpp
 # End Source File
 # Begin Source File
@@ -1358,15 +1366,15 @@ SOURCE=.\dialog\d_mpu98.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SCREEN.CPP
+SOURCE=.\dialog\d_screen.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SERIAL.CPP
+SOURCE=.\dialog\d_serial.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SOUND.CPP
+SOURCE=.\dialog\d_sound.cpp
 # End Source File
 # Begin Source File
 
@@ -1519,6 +1527,14 @@ SOURCE=.\misc\extrom.h
 # Begin Source File
 
 SOURCE=.\misc\guard.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.h
 # End Source File
 # Begin Source File
 

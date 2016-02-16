@@ -36,6 +36,21 @@ void CComboData::Add(const UINT32* lpValues, UINT cchValues)
 
 /**
  * 追加
+ * @param[in] lpValues 値の配列
+ * @param[in] cchValues 値の数
+ */
+void CComboData::Add(const Value* lpValues, UINT cchValues)
+{
+	for (UINT i = 0; i < cchValues; i++)
+	{
+		TCHAR szStr[16];
+		wsprintf(szStr, TEXT("%u"), lpValues[i].nNumber);
+		Add(szStr, lpValues[i].nItemData);
+	}
+}
+
+/**
+ * 追加
  * @param[in] lpEntries エントリの配列
  * @param[in] cchEntries エントリの数
  */
