@@ -27,12 +27,12 @@ void soundmng_stop(void);
 void soundmng_sync(void);
 void soundmng_setreverse(BOOL reverse);
 
-BOOL soundmng_pcmplay(UINT num, BOOL loop);
+BRESULT soundmng_pcmplay(UINT num, BOOL loop);
 void soundmng_pcmstop(UINT num);
 
 /* ---- for X11 */
 
-BOOL soundmng_initialize(void);
+BRESULT soundmng_initialize(void);
 void soundmng_deinitialize(void);
 
 BOOL soundmng_pcmload(UINT num, const char *filename);

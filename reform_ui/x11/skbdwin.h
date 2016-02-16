@@ -15,7 +15,7 @@ typedef struct {
 
 extern SKBDCFG skbdcfg;
 
-BOOL skbdwin_initialize(void);
+BRESULT skbdwin_initialize(void);
 void skbdwin_deinitialize(void);
 void skbdwin_create(void);
 void skbdwin_destroy(void);

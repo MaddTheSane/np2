@@ -68,8 +68,8 @@ MIDIMOD vermouth_module = NULL;
  * driver
  */
 static struct {
-	BOOL (*drvinit)(UINT rate, UINT samples);
-	BOOL (*drvterm)(void);
+	BRESULT (*drvinit)(UINT rate, UINT samples);
+	BRESULT (*drvterm)(void);
 	void (*drvlock)(void);
 	void (*drvunlock)(void);
 
@@ -86,8 +86,8 @@ static int audio_fd = -1;
 static BOOL opened = FALSE;
 static UINT opna_frame;
 
-static BOOL nosound_setup(void);
-static BOOL sdlaudio_setup(void);
+static BRESULT nosound_setup(void);
+static BRESULT sdlaudio_setup(void);
 
 static void PARTSCALL (*fnmix)(SINT16* dst, const SINT32* src, UINT size);
 
@@ -176,7 +176,7 @@ do {									\
 #define	sndbuf_lock()
 #define	sndbuf_unlock()
 
-static BOOL buffer_init(void);
+static BRESULT buffer_init(void);
 static void buffer_destroy(void);
 static void buffer_clear(void);
 
@@ -343,7 +343,7 @@ soundmng_stop(void)
 	(*snddrv.sndstop)();
 }
 
-BOOL
+BRESULT
 soundmng_initialize(void)
 {
 
@@ -502,7 +502,7 @@ soundmng_pcmvolume(UINT num, int volume)
 	}
 }
 
-BOOL
+BRESULT
 soundmng_pcmplay(UINT num, BOOL loop)
 {
 	pcm_channel_t *chan;
@@ -533,10 +533,10 @@ soundmng_pcmstop(UINT num)
 /*
  * sound buffer
  */
-static BOOL
+static BRESULT
 buffer_init(void)
 {
-	BOOL result = SUCCESS;
+	BRESULT result = SUCCESS;
 	int i;
 
 	sounddrv_lock();
@@ -605,14 +605,14 @@ buffer_destroy(void)
 /*
  * No sound support
  */
-static BOOL
+static BRESULT
 nosound_drvinit(UINT rate, UINT bufmsec)
 {
 
 	return SUCCESS;
 }
 
-static BOOL
+static BRESULT
 nosound_drvterm(void)
 {
 
@@ -682,7 +682,7 @@ nosound_pcmvolume(void *cookie, UINT num, int volume)
 	/* Nothing to do */
 }
 
-static BOOL
+static BRESULT
 nosound_setup(void)
 {
 
@@ -915,7 +915,7 @@ static void sdlaudio_callback(void *, unsigned char *, int);
 static UINT8 sound_silence;
 #endif
 
-static BOOL
+static BRESULT
 sdlaudio_init(UINT rate, UINT samples)
 {
 	static SDL_AudioSpec fmt;
@@ -949,7 +949,7 @@ sdlaudio_init(UINT rate, UINT samples)
 	return SUCCESS;
 }
 
-static BOOL
+static BRESULT
 sdlaudio_term(void)
 {
 
@@ -987,7 +987,7 @@ sdlaudio_stop(void)
 	SDL_PauseAudio(1);
 }
 
-static BOOL
+static BRESULT
 sdlaudio_setup(void)
 {
 
@@ -1012,7 +1012,7 @@ sdlaudio_setup(void)
 
 static SDL_mutex *audio_lock = NULL;
 
-static BOOL
+static BRESULT
 sdlmixer_init(UINT rate, UINT samples)
 {
 	int rv;
@@ -1055,7 +1055,7 @@ failure:
 	return FAILURE;
 }
 
-static BOOL
+static BRESULT
 sdlmixer_term(void)
 {
 
@@ -1132,7 +1132,7 @@ sdlmixer_stop(void)
 	Mix_Pause(-1);
 }
 
-static BOOL
+static BRESULT
 sdlaudio_setup(void)
 {
 
