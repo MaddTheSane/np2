@@ -1,8 +1,8 @@
 #include	"compiler.h"
 #include	"fontmng.h"
 
-
-typedef struct {
+struct tagFontMng
+{
 	int			fontsize;
 	UINT		fonttype;
 	int			fontwidth;
@@ -17,8 +17,7 @@ typedef struct {
 	int			bmpwidth;
 	int			bmpheight;
 	int			bmpalign;
-} _FNTMNG, *FNTMNG;
-
+};
 
 static const OEMCHAR deffontface[] = OEMTEXT("‚l‚r ƒSƒVƒbƒN");
 static const OEMCHAR deffontface2[] = OEMTEXT("‚l‚r ‚oƒSƒVƒbƒN");
@@ -29,12 +28,12 @@ static const OEMCHAR *deffont[4] = {
 	deffontface,	deffontface2,
 	edeffontface,	edeffontface2};
 
-void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
+FONTMNGH fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 
 	int			i;
 	int			fontalign;
 	int			allocsize;
-	FNTMNG		ret;
+	FONTMNGH	ret;
 	BITMAPINFO	*bi;
 	HDC			hdc;
 	int			fontwidth;
@@ -62,11 +61,11 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	fontalign = sizeof(_FNTDAT) + (fontwidth * fontheight);
 	fontalign = (fontalign + 3) & (~3);
 
-	allocsize = sizeof(_FNTMNG);
+	allocsize = sizeof(tagFontMng);
 	allocsize += fontalign;
 	allocsize += sizeof(BITMAPINFOHEADER) + (4 * 2);
 
-	ret = (FNTMNG)_MALLOC(allocsize, "font mng");
+	ret = (FONTMNGH)_MALLOC(allocsize, "font mng");
 	if (ret == NULL) {
 		return(NULL);
 	}
@@ -129,23 +128,20 @@ void *fontmng_create(int size, UINT type, const OEMCHAR *fontface) {
 	return(ret);
 }
 
-void fontmng_destroy(void *hdl) {
+void fontmng_destroy(FONTMNGH fhdl) {
 
-	FNTMNG	fhdl;
-
-	fhdl = (FNTMNG)hdl;
 	if (fhdl) {
 		DeleteObject(SelectObject(fhdl->hdcimage, fhdl->hBitmap));
 		DeleteObject(SelectObject(fhdl->hdcimage, fhdl->hfont));
 		DeleteDC(fhdl->hdcimage);
-		_MFREE(hdl);
+		_MFREE(fhdl);
 	}
 }
 
 
 // ----
 
-static void getlength1(FNTMNG fhdl, FNTDAT fdat,
+static void getlength1(FONTMNGH fhdl, FNTDAT fdat,
 										const OEMCHAR *string, int length) {
 
 	SIZE	fntsize;
@@ -162,7 +158,7 @@ static void getlength1(FNTMNG fhdl, FNTDAT fdat,
 	fdat->height = fhdl->fontheight;
 }
 
-static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const OEMCHAR *string) {
+static void fontmng_getchar(FONTMNGH fhdl, FNTDAT fdat, const OEMCHAR *string) {
 
 	int		leng;
 
@@ -173,7 +169,7 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const OEMCHAR *string) {
 	getlength1(fhdl, fdat, string, leng);
 }
 
-BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
+BRESULT fontmng_getsize(FONTMNGH hdl, const OEMCHAR *string, POINT_T *pt) {
 
 	int		width;
 	OEMCHAR	buf[4];
@@ -193,13 +189,13 @@ BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		CopyMemory(buf, string, leng * sizeof(OEMCHAR));
 		buf[leng] = '\0';
 		string += leng;
-		getlength1((FNTMNG)hdl, &fdat, buf, leng);
+		getlength1(hdl, &fdat, buf, leng);
 		width += fdat.pitch;
 	}
 
 	if (pt) {
 		pt->x = width;
-		pt->y = ((FNTMNG)hdl)->fontsize;
+		pt->y = hdl->fontsize;
 	}
 	return(SUCCESS);
 
@@ -207,7 +203,7 @@ fmgs_exit:
 	return(FAILURE);
 }
 
-BRESULT fontmng_getdrawsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
+BRESULT fontmng_getdrawsize(FONTMNGH hdl, const OEMCHAR *string, POINT_T *pt) {
 
 	OEMCHAR	buf[4];
 	_FNTDAT	fdat;
@@ -229,14 +225,14 @@ BRESULT fontmng_getdrawsize(void *hdl, const OEMCHAR *string, POINT_T *pt) {
 		CopyMemory(buf, string, leng * sizeof(OEMCHAR));
 		buf[leng] = '\0';
 		string += leng;
-		getlength1((FNTMNG)hdl, &fdat, buf, leng);
+		getlength1(hdl, &fdat, buf, leng);
 		width = posx + max(fdat.width, fdat.pitch);
 		posx += fdat.pitch;
 	}
 
 	if (pt) {
 		pt->x = width;
-		pt->y = ((FNTMNG)hdl)->fontsize;
+		pt->y = hdl->fontsize;
 	}
 	return(SUCCESS);
 
@@ -244,7 +240,7 @@ fmgds_exit:
 	return(FAILURE);
 }
 
-static void fontmng_setpat(FNTMNG fhdl, FNTDAT fdat) {
+static void fontmng_setpat(FONTMNGH fhdl, FNTDAT fdat) {
 
 	UINT	remx;
 	UINT	remy;
@@ -287,15 +283,13 @@ fmsp_end:
 
 // ----
 
-FNTDAT fontmng_get(void *hdl, const OEMCHAR *string) {
+FNTDAT fontmng_get(FONTMNGH fhdl, const OEMCHAR *string) {
 
-	FNTMNG	fhdl;
 	FNTDAT	fdat;
 
-	if ((hdl == NULL) || (string == NULL)) {
+	if ((fhdl == NULL) || (string == NULL)) {
 		goto ftmggt_err;
 	}
-	fhdl = (FNTMNG)hdl;
 	fdat = (FNTDAT)(fhdl + 1);
 	fontmng_getchar(fhdl, fdat, string);
 	fontmng_setpat(fhdl, fdat);

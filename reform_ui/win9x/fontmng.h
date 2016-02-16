@@ -18,18 +18,20 @@ typedef struct {
 	int		pitch;
 } _FNTDAT, *FNTDAT;
 
-typedef void* FONTMNGH;
+
+struct tagFontMng;
+typedef struct tagFontMng *FONTMNGH;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void *fontmng_create(int size, UINT type, const OEMCHAR *fontface);
-void fontmng_destroy(void *hdl);
+FONTMNGH fontmng_create(int size, UINT type, const OEMCHAR *fontface);
+void fontmng_destroy(FONTMNGH hdl);
 
-BRESULT fontmng_getsize(void *hdl, const OEMCHAR *string, POINT_T *pt);
-BRESULT fontmng_getdrawsize(void *hdl, const OEMCHAR *string, POINT_T *pt);
-FNTDAT fontmng_get(void *hdl, const OEMCHAR *string);
+BRESULT fontmng_getsize(FONTMNGH hdl, const OEMCHAR *string, POINT_T *pt);
+BRESULT fontmng_getdrawsize(FONTMNGH hdl, const OEMCHAR *string, POINT_T *pt);
+FNTDAT fontmng_get(FONTMNGH hdl, const OEMCHAR *string);
 
 #ifdef __cplusplus
 }
