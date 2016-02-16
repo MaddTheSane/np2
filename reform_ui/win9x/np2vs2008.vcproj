@@ -1698,10 +1698,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\dosio.cpp"
 					>
 				</File>
@@ -1968,6 +1964,10 @@
 				<Filter
 					Name="subwnd"
 					>
+					<File
+						RelativePath=".\subwnd\dclock.cpp"
+						>
+					</File>
 					<File
 						RelativePath=".\subwnd\dd2.cpp"
 						>
@@ -2920,10 +2920,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\dclock.h"
-					>
-				</File>
-				<File
 					RelativePath=".\dosio.h"
 					>
 				</File>
@@ -3190,6 +3186,10 @@
 				<Filter
 					Name="subwnd"
 					>
+					<File
+						RelativePath=".\subwnd\dclock.h"
+						>
+					</File>
 					<File
 						RelativePath=".\subwnd\dd2.h"
 						>

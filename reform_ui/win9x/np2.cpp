@@ -57,7 +57,7 @@
 #include "cputype.h"
 #endif
 #if defined(SUPPORT_DCLOCK)
-#include "dclock.h"
+#include "subwnd\dclock.h"
 #endif
 #include "recvideo.h"
 
