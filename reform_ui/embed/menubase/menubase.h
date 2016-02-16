@@ -79,6 +79,7 @@ public:
 	int Width() const;
 	int Height() const;
 	int Bpp() const;
+	VRAMHDL Vram();
 
 private:
 	static MenuBase sm_instance;
@@ -88,9 +89,9 @@ private:
 	int m_width;
 	int m_height;
 	UINT m_bpp;
+	VRAMHDL m_menuvram;
 	IMenuBaseWnd* m_pWnd;
 };
-// typedef MenuBase MENUBASE;
 
 inline MenuBase* MenuBase::GetInstance()
 {
@@ -117,11 +118,14 @@ inline int MenuBase::Bpp() const
 	return m_bpp;
 }
 
+inline VRAMHDL MenuBase::Vram()
+{
+	return m_menuvram;
+}
+
 extern "C"
 {
 #endif
-
-extern	VRAMHDL		menuvram;
 
 void menubase_initialize(void);
 void menubase_deinitialize(void);
@@ -129,6 +133,8 @@ void menubase_close(void);
 BRESULT menubase_moving(int x, int y, int btn);
 BRESULT menubase_key(UINT key);
 void menubase_modalproc(void);
+BOOL menubase_isopened(void);
+VRAMHDL menubase_vram(void);
 
 #ifdef __cplusplus
 }

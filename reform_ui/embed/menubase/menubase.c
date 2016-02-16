@@ -14,8 +14,6 @@
 #include "scrnmng.h"
 #include "taskmng.h"
 
-	VRAMHDL		menuvram;
-
 MenuBase MenuBase::sm_instance;
 
 MenuBase::MenuBase()
@@ -24,6 +22,7 @@ MenuBase::MenuBase()
 	, m_width(0)
 	, m_height(0)
 	, m_bpp(0)
+	, m_menuvram(NULL)
 	, m_pWnd(NULL)
 {
 }
@@ -63,7 +62,7 @@ bool MenuBase::Open(IMenuBaseWnd* pWnd)
 	m_height = smenu.height;
 	m_bpp = smenu.bpp;
 	VRAMHDL hdl = vram_create(m_width, m_height, TRUE, m_bpp);
-	menuvram = hdl;
+	m_menuvram = hdl;
 	if (hdl == NULL)
 	{
 		return false;
@@ -80,11 +79,11 @@ void MenuBase::Close()
 	{
 		m_pWnd = NULL;
 		pWnd->OnClose();
-		VRAMHDL hdl = menuvram;
+		VRAMHDL hdl = m_menuvram;
 		if (hdl)
 		{
 			Draw(NULL, NULL);
-			menuvram = NULL;
+			m_menuvram = NULL;
 			vram_destroy(hdl);
 		}
 		scrnmng_leavemenu();
@@ -138,7 +137,7 @@ void MenuBase::Clear(VRAMHDL vram)
 	{
 		RECT_T rct;
 		vram_getrect(vram, &rct);
-		vram_fillalpha(menuvram, &rct, 1);
+		vram_fillalpha(m_menuvram, &rct, 1);
 		Invalidate(vram, NULL);
 	}
 }
@@ -150,7 +149,7 @@ void MenuBase::Draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), vo
 		const RECT_T* rect = unionrect_get(&m_rect);
 		if (draw)
 		{
-			(*draw)(menuvram, rect, arg);
+			(*draw)(m_menuvram, rect, arg);
 		}
 		scrnmng_menudraw(rect);
 		unionrect_rst(&m_rect);
@@ -159,7 +158,7 @@ void MenuBase::Draw(void (*draw)(VRAMHDL dst, const RECT_T *rect, void *arg), vo
 
 void MenuBase::DoModal()
 {
-	while ((taskmng_sleep(5)) && (menuvram != NULL))
+	while ((taskmng_sleep(5)) && (menubase_isopened()))
 	{
 	}
 }
@@ -195,4 +194,14 @@ BRESULT menubase_key(UINT key)
 void menubase_modalproc(void)
 {
 	MenuBase::GetInstance()->DoModal();
+}
+
+BOOL menubase_isopened(void)
+{
+	return (MenuBase::GetInstance()->Vram() != NULL);
+}
+
+VRAMHDL menubase_vram(void)
+{
+	return MenuBase::GetInstance()->Vram();
 }

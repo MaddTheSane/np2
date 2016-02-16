@@ -35,9 +35,8 @@ void taskmng_rol(void) {
 	}
 	switch(e.type) {
 		case SDL_MOUSEMOTION:
-			if (menuvram == NULL) {
-			}
-			else {
+			if (menubase_isopened())
+			{
 				menubase_moving(e.motion.x, e.motion.y, 0);
 			}
 			break;
@@ -45,7 +44,7 @@ void taskmng_rol(void) {
 		case SDL_MOUSEBUTTONUP:
 			switch(e.button.button) {
 				case SDL_BUTTON_LEFT:
-					if (menuvram != NULL)
+					if (menubase_isopened())
 					{
 						menubase_moving(e.button.x, e.button.y, 2);
 					}
@@ -73,7 +72,7 @@ void taskmng_rol(void) {
 		case SDL_MOUSEBUTTONDOWN:
 			switch(e.button.button) {
 				case SDL_BUTTON_LEFT:
-					if (menuvram != NULL)
+					if (menubase_isopened())
 					{
 						menubase_moving(e.button.x, e.button.y, 1);
 					}
@@ -86,7 +85,8 @@ void taskmng_rol(void) {
 
 		case SDL_KEYDOWN:
 			if (e.key.keysym.sym == SDLK_F11) {
-				if (menuvram == NULL) {
+				if (!menubase_isopened())
+				{
 					sysmenu_menuopen(0, 0, 0);
 				}
 				else {

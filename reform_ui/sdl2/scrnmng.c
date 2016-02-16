@@ -190,7 +190,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 	return(&scrnsurf);
 }
 
-static void draw_onmenu(void) {
+static void draw_onmenu(VRAMHDL menuvram) {
 
 	RECT_T		rt;
 	SDL_Surface	*surface;
@@ -296,6 +296,7 @@ const UINT8		*a;
 void scrnmng_surfunlock(const SCRNSURF *surf) {
 
 	SDL_Surface	*surface;
+	VRAMHDL menuvram;
 
 	if (surf) {
 		if (scrnmng.vram == NULL) {
@@ -311,8 +312,9 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 			}
 		}
 		else {
+			menuvram = menubase_vram();
 			if (menuvram) {
-				draw_onmenu();
+				draw_onmenu(menuvram);
 			}
 		}
 	}
@@ -349,6 +351,7 @@ void scrnmng_leavemenu(void) {
 
 void scrnmng_menudraw(const RECT_T *rct) {
 
+	VRAMHDL menuvram;
 	SDL_Surface	*surface;
 	DRAWRECT	dr;
 const UINT8		*p;
@@ -359,6 +362,7 @@ const UINT8		*q;
 	int			dalign;
 	int			x;
 
+	menuvram = menubase_vram();
 	if ((!scrnmng.enable) && (menuvram == NULL)) {
 		return;
 	}

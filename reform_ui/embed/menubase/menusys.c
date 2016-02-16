@@ -635,7 +635,7 @@ bool MenuSys::OpenRootWnd()
 	}
 	if (m_style & MENUSTYLE_BOTTOM)
 	{
-		vram->posy = max(0, menuvram->height - height);
+		vram->posy = max(0, m_pMenuBase->Height() - height);
 	}
 	menuvram_caption(vram, &mrect, m_icon, m_title);
 	m_pMenuBase->Invalidate(vram, NULL);
