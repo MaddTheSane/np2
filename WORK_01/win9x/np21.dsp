@@ -1306,7 +1306,39 @@ SOURCE=.\debuguty\viewsnd.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DIALOG\D_ABOUT.CPP
+SOURCE=.\dialog\c_combodata.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_combodata.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_dipsw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_dipsw.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_slidervalue.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_slidervalue.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_about.cpp
 # End Source File
 # Begin Source File
 
@@ -1314,15 +1346,15 @@ SOURCE=.\dialog\d_bmp.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CLND.CPP
+SOURCE=.\dialog\d_clnd.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CONFIG.CPP
+SOURCE=.\dialog\d_config.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_DISK.CPP
+SOURCE=.\dialog\d_disk.cpp
 # End Source File
 # Begin Source File
 
@@ -1330,19 +1362,19 @@ SOURCE=.\dialog\d_font.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_MPU98.CPP
+SOURCE=.\dialog\d_mpu98.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SCREEN.CPP
+SOURCE=.\dialog\d_screen.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SERIAL.CPP
+SOURCE=.\dialog\d_serial.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SOUND.CPP
+SOURCE=.\dialog\d_sound.cpp
 # End Source File
 # Begin Source File
 
@@ -1351,10 +1383,6 @@ SOURCE=.\dialog\d_soundlog.cpp
 # Begin Source File
 
 SOURCE=.\dialog\dialog.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\DIALOG\DIALOGS.CPP
 # End Source File
 # Begin Source File
 
@@ -1495,6 +1523,14 @@ SOURCE=.\misc\extrom.h
 # Begin Source File
 
 SOURCE=.\misc\guard.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.h
 # End Source File
 # Begin Source File
 

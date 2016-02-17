@@ -3,6 +3,7 @@
 #include	"toolwnd.h"
 #include	"strres.h"
 #include	"np2.h"
+#include "misc\DlgProc.h"
 #include "misc\tstring.h"
 #include	"winloc.h"
 #include	"dosio.h"
@@ -11,8 +12,6 @@
 #include	"menu.h"
 #include	"ini.h"
 #include	"np2class.h"
-#include	"dialog.h"
-#include	"dialogs.h"
 #include	"pccore.h"
 #include	"fdd/diskdrv.h"
 
@@ -134,7 +133,8 @@ static HBITMAP skinload(const OEMCHAR *path)
 	}
 	if (ret == NULL)
 	{
-		ret = ::LoadBitmap(CWndProc::GetResourceHandle(), TEXT("NP2TOOL"));
+		HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2TOOL"), RT_BITMAP);
+		ret = ::LoadBitmap(hInstance, TEXT("NP2TOOL"));
 	}
 	return ret;
 }
@@ -420,7 +420,7 @@ void CToolWnd::CreateSubItems()
 		{
 			sub = CreateWindow(cls, p->text, WS_CHILD | WS_VISIBLE | style,
 							p->posx, p->posy, p->width, p->height,
-							m_hWnd, (HMENU)(i + IDC_BASE), g_hInstance, NULL);
+							m_hWnd, (HMENU)(i + IDC_BASE), CWndProc::GetInstanceHandle(), NULL);
 		}
 		m_sub[i] = sub;
 		m_subproc[i] = NULL;
@@ -768,10 +768,21 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 				case IDM_TOOL_SKINSEL:
 					{
 						soundmng_disable(SNDPROC_TOOL);
-						BOOL r = dlgs_openfile(m_hWnd, &fpSkin, s_toolwndcfg.skin, NELEMENTS(s_toolwndcfg.skin), NULL);
+
+						std::tstring rExt(LoadTString(IDS_SKINEXT));
+						std::tstring rFilter(LoadTString(IDS_SKINFILTER));
+						std::tstring rTitle(LoadTString(IDS_SKINTITLE));
+
+						CFileDlg dlg(TRUE, rExt.c_str(), s_toolwndcfg.skin, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, rFilter.c_str(), m_hWnd);
+						dlg.m_ofn.lpstrTitle = rTitle.c_str();
+						dlg.m_ofn.nFilterIndex = 1;
+						const BOOL r = dlg.DoModal();
+
 						soundmng_enable(SNDPROC_TOOL);
+
 						if (r)
 						{
+							file_cpyname(s_toolwndcfg.skin, dlg.GetPathName(), _countof(s_toolwndcfg.skin));
 							ChangeSkin();
 						}
 					}

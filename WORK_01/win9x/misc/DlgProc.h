@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <commctrl.h>
 #include "tstring.h"
 #include "WndProc.h"
 
@@ -90,6 +91,28 @@ public:
 	}
 
 	/**
+	 * コンボ ボックスのリスト ボックスで指定されているプレフィックスを含む最初の文字列を検索します
+	 * @param[in] nStartAfter 検索する最初の項目の前の項目のインデックス
+	 * @param[in] lpszString 検索する文字列
+	 * @return インデックス
+	 */
+	int FindString(int nStartAfter, LPCTSTR lpszString) const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRING, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
+	 * コンボ ボックスのリスト ボックスで指定されている最初の文字列を検索します
+	 * @param[in] nStartAfter 検索する最初の項目の前の項目のインデックス
+	 * @param[in] lpszString 検索する文字列
+	 * @return インデックス
+	 */
+	int FindStringExact(int nStartAfter, LPCTSTR lpszString) const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, CB_FINDSTRINGEXACT, nStartAfter, reinterpret_cast<LPARAM>(lpszString)));
+	}
+
+	/**
 	 * コンボ ボックスのリスト ボックスに文字列を追加します
 	 * @param[in] nIndex 文字列を受け取るリスト ボックスの位置
 	 * @param[in] lpszString 追加された null で終わる文字列へのポインター
@@ -122,6 +145,50 @@ public:
 	}
 };
 
+/**
+ * @brief スライダー ボックス
+ */
+class CSliderProc : public CWndProc
+{
+public:
+	/**
+	 * スライダーの現在位置を取得します
+	 * @return 現在位置を返します
+	 */
+	int GetPos() const
+	{
+		return static_cast<int>(::SendMessage(m_hWnd, TBM_GETPOS, 0, 0));
+	}
+
+	/**
+	 * スライダー コントロールでスライダーの最小範囲を設定します
+	 * @param[in] nMin スライダーの最小の位置
+	 * @param[in] bRedraw 再描画のフラグ
+	 */
+	void SetRangeMin(int nMin, BOOL bRedraw)
+	{
+		::SendMessage(m_hWnd, TBM_SETRANGEMIN, bRedraw, nMin);
+	}
+
+	/**
+	 * スライダー コントロールでスライダーの最大範囲を設定します
+	 * @param[in] nMax スライダーの最大の位置
+	 * @param[in] bRedraw 再描画のフラグ
+	 */
+	void SetRangeMax(int nMax, BOOL bRedraw)
+	{
+		::SendMessage(m_hWnd, TBM_SETRANGEMAX, bRedraw, nMax);
+	}
+
+	/**
+	 * スライダーの現在位置を設定します
+	 * @param[in] nPos 新しいスライダーの位置を指定します
+	 */
+	void SetPos(int nPos)
+	{
+		::SendMessage(m_hWnd, TBM_SETPOS, TRUE, nPos);
+	}
+};
 
 /**
  * @brief ファイル選択

@@ -18,16 +18,15 @@ std::tstring LoadTString(UINT uID)
 
 	do
 	{
-		HMODULE hModule = static_cast<HMODULE>(CWndProc::GetResourceHandle());
-
-		HRSRC hRsrc = ::FindResource(hModule, MAKEINTRESOURCE((uID >> 4) + 1), RT_STRING);
+		HINSTANCE hInstance = CWndProc::FindResourceHandle(MAKEINTRESOURCE((uID >> 4) + 1), RT_STRING);
+		HRSRC hRsrc = ::FindResource(hInstance, MAKEINTRESOURCE((uID >> 4) + 1), RT_STRING);
 		if (hRsrc == NULL)
 		{
 			break;
 		}
 
-		DWORD dwResSize = ::SizeofResource(hModule, hRsrc);
-		HGLOBAL hGlobal = ::LoadResource(hModule, hRsrc);
+		DWORD dwResSize = ::SizeofResource(hInstance, hRsrc);
+		HGLOBAL hGlobal = ::LoadResource(hInstance, hRsrc);
 		if (hGlobal == NULL)
 		{
 			break;
