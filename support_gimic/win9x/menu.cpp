@@ -10,7 +10,7 @@
 #include "scrnmng.h"
 #include "sysmng.h"
 #include "misc\tstring.h"
-#include "dialog\np2class.h"
+#include "misc\WndProc.h"
 #include "pccore.h"
 #if defined(SUPPORT_WAVEREC)
 #include "sound\sound.h"
@@ -118,7 +118,8 @@ int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
 int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
 {
 	int nCount = 0;
-	HMENU hmenuAdd = LoadMenu(g_hInstance, MAKEINTRESOURCE(uID));
+	HINSTANCE hInstance = CWndProc::FindResourceHandle(MAKEINTRESOURCE(uID), RT_MENU);
+	HMENU hmenuAdd = LoadMenu(hInstance, MAKEINTRESOURCE(uID));
 	if (hmenuAdd)
 	{
 		nCount = menu_addmenu(hMenu, nPos, hmenuAdd, bSeparator);

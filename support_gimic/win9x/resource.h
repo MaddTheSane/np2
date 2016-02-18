@@ -19,8 +19,6 @@
 #define IDD_SCROPT3                     134
 #define IDD_SERIAL1                     141
 #define IDD_PC9861A                     142
-#define IDD_PC9861B                     143
-#define IDD_PC9861C                     144
 #define IDD_MPUPC98                     151
 #define IDD_SNDMIX                      152
 #define IDD_SND14                       153
@@ -273,6 +271,9 @@
 #define IDS_CC000                       30163
 #define IDS_D0000                       30167
 #define IDS_D4000                       30171
+#define IDS_SERIAL1                     30181
+#define IDS_PC9861B                     30182
+#define IDS_PC9861C                     30183
 #define IDS_COM1                        30191
 #define IDS_COM2                        30192
 #define IDS_COM3                        30193

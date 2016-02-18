@@ -69,8 +69,6 @@
 
 static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		g_hWndMain;
-		HINSTANCE	g_hInstance;
-		HINSTANCE	g_hPrevInst;
 #if !defined(_WIN64)
 		int			mmxflag;
 #endif
@@ -419,12 +417,10 @@ static void np2popup(HWND hWnd, LPARAM lp) {
 
 static void OnCommand(HWND hWnd, WPARAM wParam)
 {
-	HINSTANCE	hInstance;
 	UINT		update;
 	UINT		uID;
 	BOOL		b;
 
-	hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);;
 	update = 0;
 	uID = LOWORD(wParam);
 	switch(uID)
@@ -1172,7 +1168,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_PAINT:
 			hdc = BeginPaint(hWnd, &ps);
 			if (np2opening) {
-				HINSTANCE	hInstance;
 				RECT		rect;
 				int			width;
 				int			height;
@@ -1180,11 +1175,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				BITMAP		bmp;
 				HDC			hmdc;
 				HBRUSH		hbrush;
-				hInstance = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 				GetClientRect(hWnd, &rect);
 				width = rect.right - rect.left;
 				height = rect.bottom - rect.top;
-				hbmp = LoadBitmap(hInstance, _T("NP2BMP"));
+				HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2BMP"), RT_BITMAP);
+				hbmp = LoadBitmap(hInstance, TEXT("NP2BMP"));
 				GetObject(hbmp, sizeof(BITMAP), &bmp);
 				hbrush = (HBRUSH)SelectObject(hdc,
 												GetStockObject(BLACK_BRUSH));
@@ -1538,10 +1533,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		return(FALSE);
 	}
 
-	g_hInstance = LoadExternalResource(hInstance);
-	CWndProc::SetResourceHandle(g_hInstance);
+	hInstance = LoadExternalResource(hInstance);
+	CWndProc::SetResourceHandle(hInstance);
 
-	g_hPrevInst = hPrevInst;
 #if !defined(_WIN64)
 	mmxflag = (havemmx())?0:MMXFLAG_NOTSUPPORT;
 	mmxflag += (np2oscfg.disablemmx)?MMXFLAG_DISABLE:0;
@@ -1566,14 +1560,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	winkbd_setf12(np2oscfg.F12COPY);
 	keystat_initialize();
 
-	np2class_initialize(g_hInstance);
+	np2class_initialize(hInstance);
 	if (!hPrevInst) {
 		wc.style = CS_BYTEALIGNCLIENT | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = NP2GWLP_SIZE;
-		wc.hInstance = g_hInstance;
-		wc.hIcon = LoadIcon(g_hInstance, MAKEINTRESOURCE(IDI_ICON1));
+		wc.hInstance = hInstance;
+		wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 		wc.lpszMenuName = MAKEINTRESOURCE(IDR_MAIN);
@@ -1588,7 +1582,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 		kdispwin_initialize();
 		skbdwin_initialize();
 		mdbgwin_initialize();
-		CDebugUtyView::Initialize(g_hInstance);
+		CDebugUtyView::Initialize(hInstance);
 	}
 
 	mousemng_initialize();
@@ -1599,7 +1593,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
-						NULL, NULL, g_hInstance, NULL);
+						NULL, NULL, hInstance, NULL);
 	g_hWndMain = hWnd;
 	scrnmng_initialize();
 

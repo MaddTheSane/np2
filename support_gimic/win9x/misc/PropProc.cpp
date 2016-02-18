@@ -37,6 +37,10 @@ CPropPageProc::CPropPageProc(LPCTSTR lpszTemplateName, UINT nIDCaption)
  */
 CPropPageProc::~CPropPageProc()
 {
+	if (m_lpCaption)
+	{
+		free(m_lpCaption);
+	}
 }
 
 /**
@@ -59,11 +63,20 @@ void CPropPageProc::Construct(LPCTSTR lpszTemplateName, UINT nIDCaption)
 	ZeroMemory(&m_psp, sizeof(m_psp));
 	m_psp.dwSize = sizeof(m_psp);
 	m_psp.dwFlags = PSP_USECALLBACK;
-	m_psp.hInstance = GetResourceHandle();
+	m_psp.hInstance = FindResourceHandle(lpszTemplateName, RT_DIALOG);
 	m_psp.pszTemplate = lpszTemplateName;
 	m_psp.pfnDlgProc = DlgProc;
 	m_psp.lParam = reinterpret_cast<LPARAM>(this);
 	m_psp.pfnCallback = PropPageCallback;
+
+	m_lpCaption = NULL;
+	if (nIDCaption)
+	{
+		std::tstring rTitle(LoadTString(nIDCaption));
+		m_lpCaption = _tcsdup(rTitle.c_str());
+		m_psp.pszTitle = m_lpCaption;
+		m_psp.dwFlags |= PSP_USETITLE;
+	}
 }
 
 /**
@@ -215,10 +228,10 @@ void CPropSheetProc::CommonConstruct(HWND hwndParent, UINT iSelectPage)
  * モーダル
  * @return リザルト コード
  */
-INT CPropSheetProc::DoModal()
+INT_PTR CPropSheetProc::DoModal()
 {
 	m_psh.pszCaption = m_strCaption.c_str();
-	m_psh.nPages = m_pages.size();
+	m_psh.nPages = static_cast<UINT>(m_pages.size());
 	m_psh.phpage = new HPROPSHEETPAGE[m_psh.nPages];
 	for (UINT i = 0; i < m_pages.size(); i++)
 	{

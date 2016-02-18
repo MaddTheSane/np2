@@ -111,8 +111,6 @@ enum {
 
 extern	NP2OSCFG	np2oscfg;
 extern	HWND		g_hWndMain;
-extern	HINSTANCE	g_hInstance;
-extern	HINSTANCE	g_hPrevInst;
 extern	UINT8		np2break;
 extern	BOOL		winui_en;
 extern	UINT8		g_scrnmode;
