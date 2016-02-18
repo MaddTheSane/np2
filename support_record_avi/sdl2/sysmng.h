@@ -1,3 +1,9 @@
+/**
+ *	@file	sysmng.h
+ *	@brief	Interface of the system
+ */
+
+#pragma once
 
 // どーでもいい通知系
 
@@ -15,29 +21,17 @@ enum {
 	SYS_UPDATESERIAL1	= 0x0400
 };
 
+void sysmng_initialize(void);
+void sysmng_deinitialize(void);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern	UINT	sys_updates;
-
-#if 0
-void sysmng_initialize(void);
-void sysmng_update(UINT bitmap);
+void sysmng_update(UINT update);
 void sysmng_cpureset(void);
-void sysmng_fddaccess(BYTE drv);
-void sysmng_hddaccess(BYTE drv);
-#else
-
-// マクロ(単に関数コールしたくないだけ)
-#define	sysmng_initialize()	sys_updates = 0
-#define	sysmng_update(a)	sys_updates |= (a)
-#define	sysmng_cpureset()	sys_updates	&= (SYS_UPDATECFG | SYS_UPDATEOSCFG)
 #define	sysmng_fddaccess(a)
 #define	sysmng_hddaccess(a)
-
-#endif
 
 #ifdef __cplusplus
 }

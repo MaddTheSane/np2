@@ -1,4 +1,4 @@
-.TH XNP2 1 "November 17, 2003"
+.TH XNP2 1 "June 7, 2014"
 .SH NAME
 Xnp2 \- PC-9801 series emulator
 .SH SYNOPSIS
@@ -113,4 +113,4 @@ tk800 <tk_np2x@yahoo.co.jp>, who ported
 to MacOS X.
 .SH "SEE ALSO"
 .B Xnp2
-Web site: http://www.asahi-net.or.jp/~aw9k-nnk/np2/ (japanese)
+Web site: http://www.nonakap.org/np2/ (japanese)

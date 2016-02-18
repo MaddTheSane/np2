@@ -22,3 +22,4 @@ enum {
 
 extern	NP2OSCFG	np2oscfg;
 
+extern int np2_main(int argc, char *argv[]);

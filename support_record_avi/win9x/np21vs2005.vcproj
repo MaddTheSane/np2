@@ -1345,10 +1345,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.cpp"
 					>
 				</File>
@@ -1358,10 +1354,6 @@
 				</File>
 				<File
 					RelativePath=".\joymng.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\juliet.cpp"
 					>
 				</File>
 				<File
@@ -1674,6 +1666,50 @@
 								Name="NASM"
 							/>
 						</FileConfiguration>
+					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\externalopna.cpp"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.cpp"
+						>
 					</File>
 				</Filter>
 			</Filter>
@@ -2491,10 +2527,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\extromio.h"
-					>
-				</File>
-				<File
 					RelativePath=".\fontmng.h"
 					>
 				</File>
@@ -2504,10 +2536,6 @@
 				</File>
 				<File
 					RelativePath=".\joymng.h"
-					>
-				</File>
-				<File
-					RelativePath=".\juliet.h"
 					>
 				</File>
 				<File
@@ -2536,10 +2564,6 @@
 				</File>
 				<File
 					RelativePath=".\resource.h"
-					>
-				</File>
-				<File
-					RelativePath=".\romeo.h"
 					>
 				</File>
 				<File
@@ -2663,6 +2687,74 @@
 					>
 					<File
 						RelativePath=".\x86\cputype.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath=".\ext\extendmodule.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ext\externalopna.h"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctl.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="romeo"
+						>
+						<File
+							RelativePath=".\ext\romeo\juliet.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\romeo\romeo.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="rebirth"
+						>
+						<File
+							RelativePath=".\ext\rebirth\rebirth.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\scci.h"
+							>
+						</File>
+						<File
+							RelativePath=".\ext\rebirth\SCCIDefines.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
+					Name="misc"
+					>
+					<File
+						RelativePath=".\misc\extrom.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\tickcounter.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\vc6macros.h"
 						>
 					</File>
 				</Filter>

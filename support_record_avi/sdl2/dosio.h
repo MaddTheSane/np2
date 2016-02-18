@@ -56,10 +56,6 @@ typedef struct {
 extern "C" {
 #endif
 
-/* DOSIO:ŠÖ”‚Ì€”õ */
-void dosio_init(void);
-void dosio_term(void);
-
 /* ƒtƒ@ƒCƒ‹‘€ì */
 FILEH file_open(const char *path);
 FILEH file_open_rb(const char *path);
@@ -88,11 +84,7 @@ BOOL file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 
 #define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)
-#if defined(WIN32)
 #define file_cmpname(p, n)		milstr_cmp(p, n)
-#else
-#define file_cmpname(p, n)		strcmp(p, n)
-#endif
 void file_catname(char *path, const char *name, int maxlen);
 char *file_getname(const char *path);
 void file_cutname(char *path);

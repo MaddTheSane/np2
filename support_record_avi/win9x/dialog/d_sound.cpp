@@ -12,7 +12,6 @@
 #include "strres.h"
 #include "resource.h"
 #include "np2.h"
-#include "oemtext.h"
 #include "dosio.h"
 #include "joymng.h"
 #include "sysmng.h"
@@ -94,7 +93,7 @@ static void slidersetvaluestr(HWND hWnd, const SLIDERTBL *item, UINT8 value) {
 
 	TCHAR	work[32];
 
-	wsprintf(work, tchar_d, value);
+	wsprintf(work, str_d, value);
 	SetDlgItemText(hWnd, item->resstr, work);
 }
 
@@ -993,12 +992,12 @@ static const FSPARAM fpS98 =
 	MAKEINTRESOURCE(IDS_S98FILTER),
 	1
 };
-static const OEMCHAR szS98File[] = OEMTEXT("NP2_####.S98");
+static const TCHAR szS98File[] = TEXT("NP2_####.S98");
 
 void dialog_s98(HWND hWnd)
 {
 	BOOL	bCheck;
-	OEMCHAR	szPath[MAX_PATH];
+	TCHAR	szPath[MAX_PATH];
 
 	S98_close();
 	bCheck = FALSE;
@@ -1028,7 +1027,7 @@ static const FSPARAM fpWave =
 	MAKEINTRESOURCE(IDS_WAVEFILTER),
 	1
 };
-static const OEMCHAR szWaveFile[] = OEMTEXT("NP2_####.WAV");
+static const TCHAR szWaveFile[] = TEXT("NP2_####.WAV");
 
 void dialog_waverec(HWND hWnd)
 {
@@ -1039,7 +1038,7 @@ void dialog_waverec(HWND hWnd)
 
 	sound_recstop();
 
-	OEMCHAR szPath[MAX_PATH];
+	TCHAR szPath[MAX_PATH];
 	file_cpyname(szPath, bmpfilefolder, NELEMENTS(szPath));
 	file_cutname(szPath);
 	file_catname(szPath, szWaveFile, NELEMENTS(szPath));

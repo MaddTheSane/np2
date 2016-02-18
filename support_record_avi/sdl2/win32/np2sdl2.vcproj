@@ -881,7 +881,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\linker.c"
+						RelativePath=".\main.c"
 						>
 					</File>
 				</Filter>

@@ -26,7 +26,7 @@ static BYTE ncgetstat(COMMNG self) {
 	return(0xf0);
 }
 
-static long ncmsg(COMMNG self, UINT msg, long param) {
+static INTPTR ncmsg(COMMNG self, UINT msg, INTPTR param) {
 
 	(void)self;
 	(void)msg;
@@ -65,8 +65,8 @@ COMMNG commng_create(UINT device) {
 			cfg = &np2oscfg.mpu;;
 			ret = cmmidi_create(cfg->mout, cfg->min, cfg->mdl);
 			if (ret) {
-				ret->msg(ret, COMMSG_MIMPIDEFFILE, (long)cfg->def);
-				ret->msg(ret, COMMSG_MIMPIDEFEN, (long)cfg->def_en);
+				ret->msg(ret, COMMSG_MIMPIDEFFILE, (INTPTR)cfg->def);
+				ret->msg(ret, COMMSG_MIMPIDEFEN, (INTPTR)cfg->def_en);
 			}
 			break;
 

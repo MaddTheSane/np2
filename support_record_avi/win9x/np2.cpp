@@ -18,7 +18,6 @@
 #include "np2.h"
 #include "np2arg.h"
 #include "dosio.h"
-#include "extromio.h"
 #include "commng.h"
 #include "joymng.h"
 #include "mousemng.h"
@@ -58,7 +57,7 @@
 #include "dclock.h"
 #endif
 #if defined(SUPPORT_ROMEO)
-#include "juliet.h"
+#include "ext\externalopna.h"
 #endif
 #include "recvideo.h"
 #include "recstat.h"
@@ -126,24 +125,16 @@ static const TCHAR s_szRecStat[] = _T(".rec");
 
 static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 {
-	int		nRet;
-	LPTSTR	lpszText;
-
-#if defined(OSLANG_UTF8)
-	TCHAR szCation[128];
-	oemtotchar(szCaption, NELEMENTS(szCaption), np2oscfg.titles, -1);
-#else	// defined(OSLANG_UTF8)
 	LPCTSTR szCaption = np2oscfg.titles;
-#endif	// defined(OSLANG_UTF8)
 
-	nRet = 0;
+	int nRet = 0;
 	if (HIWORD(lpcszText))
 	{
 		nRet = MessageBox(hWnd, lpcszText, szCaption, uType);
 	}
 	else
 	{
-		lpszText = lockstringresource(lpcszText);
+		LPTSTR lpszText = lockstringresource(lpcszText);
 		nRet = MessageBox(hWnd, lpszText, szCaption, uType);
 		unlockstringresource(lpszText);
 	}
@@ -1734,8 +1725,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	if (soundmng_initialize() == SUCCESS) {
-		soundmng_pcmload(SOUND_PCMSEEK, OEMTEXT("SEEKWAV"), EXTROMIO_RES);
-		soundmng_pcmload(SOUND_PCMSEEK1, OEMTEXT("SEEK1WAV"), EXTROMIO_RES);
+		soundmng_pcmload(SOUND_PCMSEEK, TEXT("SEEKWAV"));
+		soundmng_pcmload(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
 		soundmng_pcmvolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		soundmng_pcmvolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
 	}
@@ -1743,7 +1734,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #if defined(SUPPORT_ROMEO)
 	if (np2oscfg.useromeo)
 	{
-		CJuliet::GetInstance()->Initialize();
+		CExternalOpna::GetInstance()->Initialize();
 	}
 #endif
 
@@ -1945,8 +1936,8 @@ main_loop:
 #endif
 
 #if defined(SUPPORT_ROMEO)
-	CJuliet::GetInstance()->Reset();
-	CJuliet::GetInstance()->Deinitialize();
+	CExternalOpna::GetInstance()->Reset();
+	CExternalOpna::GetInstance()->Deinitialize();
 #endif
 	pccore_term();
 
