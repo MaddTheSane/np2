@@ -2602,10 +2602,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\vc6macros.h"
-					>
-				</File>
-				<File
 					RelativePath=".\win32sub.h"
 					>
 				</File>
