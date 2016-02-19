@@ -195,6 +195,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\recstat.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\statsave.c"
 				>
 			</File>
@@ -1278,6 +1282,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pccore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\recstat.h"
 				>
 			</File>
 			<File

@@ -394,6 +394,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\recstat.c"
+				>
+			</File>
+			<File
 				RelativePath="..\statsave.c"
 				>
 			</File>
@@ -1409,6 +1413,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\tawnd.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\timemng.cpp"
 					>
 				</File>
@@ -1711,6 +1719,10 @@
 						RelativePath=".\misc\tickcounter.cpp"
 						>
 					</File>
+					<File
+						RelativePath=".\misc\WndBase.cpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1773,6 +1785,10 @@
 			</File>
 			<File
 				RelativePath="..\pccore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\recstat.h"
 				>
 			</File>
 			<File
@@ -2599,6 +2615,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\tawnd.h"
+					>
+				</File>
+				<File
 					RelativePath=".\timemng.h"
 					>
 				</File>
@@ -2751,6 +2771,10 @@
 					</File>
 					<File
 						RelativePath=".\misc\vc6macros.h"
+						>
+					</File>
+					<File
+						RelativePath=".\misc\WndBase.h"
 						>
 					</File>
 				</Filter>

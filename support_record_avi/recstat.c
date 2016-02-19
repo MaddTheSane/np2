@@ -11,6 +11,7 @@
 #include "pccore.h"
 #include "fdd/diskdrv.h"
 #include "io/lsidef.h"
+#include "io/dmac.h"
 #include "io/mouseif.h"
 #include "io/serial.h"
 #include "sound/sound.h"

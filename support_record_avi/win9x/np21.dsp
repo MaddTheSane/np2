@@ -1354,6 +1354,14 @@ SOURCE=.\misc\tickcounter.h
 
 SOURCE=.\misc\vc6macros.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\misc\WndBase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\WndBase.h
+# End Source File
 # End Group
 # Begin Source File
 
@@ -1587,6 +1595,14 @@ SOURCE=.\TASKMNG.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\tawnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\tawnd.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TIMEMNG.CPP
 # End Source File
 # Begin Source File
@@ -1660,6 +1676,10 @@ SOURCE=..\PCCORE.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\recstat.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\STATSAVE.C
 # End Source File
 # Begin Source File
@@ -1670,6 +1690,10 @@ SOURCE=..\TIMING.C
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\recstat.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 
