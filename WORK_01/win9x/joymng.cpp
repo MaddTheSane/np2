@@ -4,12 +4,10 @@
  */
 
 #include "compiler.h"
-#include "np2.h"
 #include "joymng.h"
+#include "np2.h"
 
-#if !defined(__GNUC__)
 #pragma comment(lib, "winmm.lib")
-#endif	// !defined(__GNUC__)
 
 /**
  * ビット定義
@@ -24,7 +22,8 @@ enum
 	JOY_BTN2_BIT	= 0x20		//!< ボタン2
 };
 
-static REG8 s_sFlag = 0xff;					//!< パッド状態
+static bool s_bEnabled = false;				//!< 有効フラグ
+static UINT8 s_cJoyFlag = 0;				//!< ステータス
 static UINT8 s_sJoyPad1ButtonBit[4];		//!< パッドに割り当てたボタン ビット
 
 /**
@@ -33,10 +32,7 @@ static UINT8 s_sJoyPad1ButtonBit[4];		//!< パッドに割り当てたボタン ビット
 void joymng_initialize()
 {
 	JOYINFO ji;
-	if ((!::joyGetNumDevs()) || (::joyGetPos(JOYSTICKID1, &ji) == JOYERR_UNPLUGGED))
-	{
-		np2oscfg.JOYPAD1 |= 2;
-	}
+	s_bEnabled = ((joyGetNumDevs() != 0) && (joyGetPos(JOYSTICKID1, &ji) == JOYERR_NOERROR));
 	for (int i = 0; i < 4; i++)
 	{
 		s_sJoyPad1ButtonBit[i] = 0xff ^ ((np2oscfg.JOY1BTN[i] & 3) << ((np2oscfg.JOY1BTN[i] & 4) ? 4 : 6));
@@ -44,67 +40,68 @@ void joymng_initialize()
 }
 
 /**
+ * 有効?
+ * @return 有効フラグ
+ */
+bool joymng_isEnabled()
+{
+	return s_bEnabled;
+}
+
+/**
  * 同期
  */
 void joymng_sync()
 {
-	np2oscfg.JOYPAD1 &= 0x7f;
-	s_sFlag = 0xff;
+	s_cJoyFlag = 0;
 }
 
 /**
- * 状態読み込み
- * @return 状態
+ * ステータスを得る
+ * @return ステータス
  */
-REG8 joymng_getstat()
+REG8 joymng_getstat(void)
 {
-	JOYINFO ji;
-	if ((np2oscfg.JOYPAD1 == 1) && (::joyGetPos(JOYSTICKID1, &ji) == JOYERR_NOERROR))
+	if (s_cJoyFlag == 0)
 	{
-		np2oscfg.JOYPAD1 |= 0x80;
-		s_sFlag = 0xff;
-		if (ji.wXpos < 0x4000U)
+		UINT8 cJoyFlag = 0xff;
+		JOYINFO ji;
+		if ((np2oscfg.JOYPAD1) && (::joyGetPos(JOYSTICKID1, &ji) == JOYERR_NOERROR))
 		{
-			s_sFlag &= ~JOY_LEFT_BIT;
+			if (ji.wXpos < 0x4000U)
+			{
+				cJoyFlag &= ~JOY_LEFT_BIT;
+			}
+			else if (ji.wXpos > 0xc000U)
+			{
+				cJoyFlag &= ~JOY_RIGHT_BIT;
+			}
+			if (ji.wYpos < 0x4000U)
+			{
+				cJoyFlag &= ~JOY_UP_BIT;
+			}
+			else if (ji.wYpos > 0xc000U)
+			{
+				cJoyFlag &= ~JOY_DOWN_BIT;
+			}
+			if (ji.wButtons & JOY_BUTTON1)
+			{
+				cJoyFlag &= s_sJoyPad1ButtonBit[0];
+			}
+			if (ji.wButtons & JOY_BUTTON2)
+			{
+				cJoyFlag &= s_sJoyPad1ButtonBit[1];
+			}
+			if (ji.wButtons & JOY_BUTTON3)
+			{
+				cJoyFlag &= s_sJoyPad1ButtonBit[2];
+			}
+			if (ji.wButtons & JOY_BUTTON4)
+			{
+				cJoyFlag &= s_sJoyPad1ButtonBit[3];
+			}
 		}
-		else if (ji.wXpos > 0xc000U)
-		{
-			s_sFlag &= ~JOY_RIGHT_BIT;
-		}
-		if (ji.wYpos < 0x4000U)
-		{
-			s_sFlag &= ~JOY_UP_BIT;
-		}
-		else if (ji.wYpos > 0xc000U)
-		{
-			s_sFlag &= ~JOY_DOWN_BIT;
-		}
-		if (ji.wButtons & JOY_BUTTON1)
-		{
-			s_sFlag &= s_sJoyPad1ButtonBit[0];
-		}
-		if (ji.wButtons & JOY_BUTTON2)
-		{
-			s_sFlag &= s_sJoyPad1ButtonBit[1];
-		}
-		if (ji.wButtons & JOY_BUTTON3)
-		{
-			s_sFlag &= s_sJoyPad1ButtonBit[2];
-		}
-		if (ji.wButtons & JOY_BUTTON4)
-		{
-			s_sFlag &= s_sJoyPad1ButtonBit[3];
-		}
+		s_cJoyFlag = cJoyFlag;
 	}
-	return s_sFlag;
+	return s_cJoyFlag;
 }
-
-// s_sFlag	bit:0		up
-// 			bit:1		down
-// 			bit:2		left
-// 			bit:3		right
-// 			bit:4		trigger1 (rapid)
-// 			bit:5		trigger2 (rapid)
-// 			bit:6		trigger1
-// 			bit:7		trigger2
-
