@@ -117,7 +117,7 @@ static void flushBuffer(RECSTAT _this)
  * @param[in] _this instance
  * @param[in] cbBuffer length
  */
-static const void *read(RECSTAT _this, UINT cbBuffer)
+static const void *readData(RECSTAT _this, UINT cbBuffer)
 {
 	const void *ptr = NULL;
 
@@ -143,7 +143,7 @@ static UINT8 readByte(RECSTAT _this)
 {
 	const UINT8* p;
 
-	p = read(_this, 1);
+	p = readData(_this, 1);
 	if (p != NULL)
 	{
 		return *p;
@@ -163,7 +163,7 @@ static BOOL readBuffer(RECSTAT _this, void* lpBuffer, UINT cbBuffer)
 {
 	const void *ptr;
 
-	ptr = read(_this, cbBuffer);
+	ptr = readData(_this, cbBuffer);
 	if (ptr != NULL)
 	{
 		memcpy(lpBuffer, ptr, cbBuffer);
@@ -361,7 +361,7 @@ BOOL recstat_sync(void)
 			}
 			else if (mode == kStatMouse)
 			{
-				const struct RecStatMouse* mouse = read(_this, sizeof(*mouse));
+				const struct RecStatMouse* mouse = readData(_this, sizeof(*mouse));
 				if (mouse == NULL)
 				{
 					break;
@@ -380,7 +380,7 @@ BOOL recstat_sync(void)
 				lpFilename = NULL;
 				if (fdd.cbFilename)
 				{
-					lpFilename = read(_this, fdd.cbFilename);
+					lpFilename = readData(_this, fdd.cbFilename);
 				}
 				diskdrv_setfddex(fdd.drv, lpFilename, fdd.ftype, fdd.readonly);
 			}

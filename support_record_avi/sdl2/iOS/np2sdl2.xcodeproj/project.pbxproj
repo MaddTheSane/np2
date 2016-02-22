@@ -226,6 +226,7 @@
 		BA7E84A719063AFB00041C04 /* sdrawq16.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839319063AFB00041C04 /* sdrawq16.c */; };
 		BA7E84A819063AFB00041C04 /* vram.c in Sources */ = {isa = PBXBuildFile; fileRef = BA7E839419063AFB00041C04 /* vram.c */; };
 		BA7E84AF190650A800041C04 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7E84AE190650A800041C04 /* main.m */; };
+		BAD909BD1C7AEFCB00A6BE1A /* recstat.c in Sources */ = {isa = PBXBuildFile; fileRef = BAD909BB1C7AEFCB00A6BE1A /* recstat.c */; };
 		FD779EDE0E26BA1200F39101 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD779EDD0E26BA1200F39101 /* CoreAudio.framework */; };
 		FD77A07D0E26BD8C00F39101 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = FD77A07C0E26BD8C00F39101 /* Icon.png */; };
 		FD77A07F0E26BDA900F39101 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = FD77A07E0E26BDA900F39101 /* Default.png */; };
@@ -690,6 +691,8 @@
 		BA7E84AC19063C1600041C04 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		BA7E84AD19063C1600041C04 /* compiler.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		BA7E84AE190650A800041C04 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BAD909BB1C7AEFCB00A6BE1A /* recstat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recstat.c; sourceTree = "<group>"; };
+		BAD909BC1C7AEFCB00A6BE1A /* recstat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = recstat.h; sourceTree = "<group>"; };
 		FD779EDD0E26BA1200F39101 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		FD77A07C0E26BD8C00F39101 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		FD77A07E0E26BDA900F39101 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -881,6 +884,8 @@
 				BA7E82FB19063AFA00041C04 /* np2ver.h */,
 				BA7E82FC19063AFA00041C04 /* pccore.c */,
 				BA7E82FD19063AFA00041C04 /* pccore.h */,
+				BAD909BB1C7AEFCB00A6BE1A /* recstat.c */,
+				BAD909BC1C7AEFCB00A6BE1A /* recstat.h */,
 				BA7E82FE19063AFA00041C04 /* sdl2 */,
 				BA7E833E19063AFB00041C04 /* sound */,
 				BA7E837719063AFB00041C04 /* statsave.c */,
@@ -1596,6 +1601,7 @@
 				BA7E842119063AFB00041C04 /* memory.c in Sources */,
 				BA7E842219063AFB00041C04 /* v30patch.c in Sources */,
 				BA7E848219063AFB00041C04 /* getsnd.c in Sources */,
+				BAD909BD1C7AEFCB00A6BE1A /* recstat.c in Sources */,
 				BA7E847119063AFB00041C04 /* timemng.c in Sources */,
 				BA7E846A19063AFB00041C04 /* sdlkbd.c in Sources */,
 				BA7E83AA19063AFB00041C04 /* board14.c in Sources */,

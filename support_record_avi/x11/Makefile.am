@@ -52,6 +52,7 @@ COMMON_SOURCES=	$(real_topsrcdir)/x11/main.c \
 		$(real_topsrcdir)/timing.c \
 		$(real_topsrcdir)/statsave.c \
 		$(real_topsrcdir)/keystat.c \
+		$(real_topsrcdir)/recstat.c \
 		\
 		$(real_topsrcdir)/common/strres.c \
 		$(real_topsrcdir)/common/milstr.c \
