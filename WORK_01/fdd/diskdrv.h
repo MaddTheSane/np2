@@ -26,8 +26,3 @@ void diskdrv_callback(void);
 #define diskdrv_readyfdd(d, f, r)	diskdrv_readyfddex(d, f, FTYPE_NONE, r)
 #define diskdrv_setfdd(d, f, r)		diskdrv_setfddex(d, f, FTYPE_NONE, r)
 
-
-// ---- old interface
-
-#define	diskdrv_sethdd(d, f)		diskdrv_setsxsi(d, f)
-

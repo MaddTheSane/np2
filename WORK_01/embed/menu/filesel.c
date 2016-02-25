@@ -426,7 +426,7 @@ const FSELPRM	*prm;
 	}
 #endif
 	if ((prm) && (selectfile(prm, path, NELEMENTS(path), p))) {
-		diskdrv_sethdd(drv, path);
+		diskdrv_setsxsi(drv, path);
 	}
 }
 
