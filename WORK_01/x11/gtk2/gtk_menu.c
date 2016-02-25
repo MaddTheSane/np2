@@ -42,7 +42,6 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "vram/scrnsave.h"
-#include "fdd/sxsi.h"
 
 #include "kdispwin.h"
 #include "toolwin.h"
@@ -985,7 +984,7 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 		if (path) {
 			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
 				file_cpyname(hddfolder, path, sizeof(hddfolder));
-				sxsi_devopen(0x02, path);
+				diskdrv_setsxsi(0x02, path);
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			g_free(path);
