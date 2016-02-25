@@ -338,9 +338,6 @@ IA32_SOURCES=	$(real_topsrcdir)/i386c/cpucore.c \
 		$(real_topsrcdir)/debugsub386.c
 
 IA32_CPPFLAGS=	-I$(real_topsrcdir)/i386c \
-		-I$(real_topsrcdir)/i386c/ia32 \
-		-I$(real_topsrcdir)/i386c/ia32/instructions \
-		-I$(real_topsrcdir)/i386c/ia32/instructions/fpu \
 		-DCPUCORE_IA32
 
 if CPUCORE_IA32
