@@ -604,7 +604,11 @@ SOURCE=..\I286X\V30PATCH.CPP
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\FDD\DISKDRV.C
+SOURCE=..\fdd\diskdrv.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\fdd\diskdrv.h
 # End Source File
 # Begin Source File
 
