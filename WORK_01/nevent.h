@@ -50,7 +50,6 @@ typedef enum tagNEventId NEVENTID;
 
 enum
 {
-	NEVENT_ENABLE		= 0x0001,
 	NEVENT_SETEVENT		= 0x0002,
 	NEVENT_WAIT			= 0x0004
 };
