@@ -33,48 +33,17 @@ void nevent_get1stevent(void)
 	CPU_REMCLOCK = CPU_BASECLOCK;
 }
 
-static void nevent_execute(void)
-{
-	UINT nEvents;
-	UINT i;
-	NEVENTID id;
-	NEVENTITEM item;
-
-	nEvents = 0;
-	for (i = 0; i < g_nevent.waitevents; i++)
-	{
-		id = g_nevent.waitevent[i];
-		item = &g_nevent.item[id];
-
-		/* コールバックの実行 */
-		if (item->proc != NULL)
-		{
-			item->proc(item);
-
-			/* 次回に持ち越しのイベントのチェック */
-			if (item->flag & NEVENT_WAIT)
-			{
-				g_nevent.waitevent[nEvents++] = id;
-			}
-		}
-		else {
-			item->flag &= ~(NEVENT_WAIT);
-		}
-		item->flag &= ~(NEVENT_SETEVENT);
-	}
-	g_nevent.waitevents = nEvents;
-}
-
 void nevent_progress(void)
 {
-	UINT nEvents;
+	UINT nEvents = 0;
 	SINT32 nextbase;
 	UINT i;
 	NEVENTID id;
 	NEVENTITEM item;
+	UINT nRaiseEvents = 0;
+	UINT nRaiseEventId[NEVENT_MAXEVENTS];
 
 	CPU_CLOCK += CPU_BASECLOCK;
-	nEvents = 0;
 	nextbase = NEVENT_MAXCLOCK;
 	for (i = 0; i < g_nevent.readyevents; i++)
 	{
@@ -93,9 +62,9 @@ void nevent_progress(void)
 		else
 		{
 			/* イベント発生 */
-			if (!(item->flag & (NEVENT_SETEVENT | NEVENT_WAIT)))
+			if (!(item->flag & NEVENT_SETEVENT))
 			{
-				g_nevent.waitevent[g_nevent.waitevents++] = id;
+				nRaiseEventId[nRaiseEvents++] = id;
 			}
 			item->flag |= NEVENT_SETEVENT;
 //			TRACEOUT(("event = %x", id));
@@ -104,10 +73,21 @@ void nevent_progress(void)
 	g_nevent.readyevents = nEvents;
 	CPU_BASECLOCK = nextbase;
 	CPU_REMCLOCK += nextbase;
-	nevent_execute();
 //	TRACEOUT(("nextbase = %d (%d)", nextbase, CPU_REMCLOCK));
-}
 
+	for (i = 0; i < nRaiseEvents; i++)
+	{
+		id = nRaiseEventId[i];
+		item = &g_nevent.item[id];
+
+		/* コールバックの実行 */
+		if (item->proc != NULL)
+		{
+			item->proc(item);
+		}
+		item->flag &= ~NEVENT_SETEVENT;
+	}
+}
 
 void nevent_reset(NEVENTID id)
 {
@@ -129,30 +109,6 @@ void nevent_reset(NEVENTID id)
 		for (; i < g_nevent.readyevents; i++)
 		{
 			g_nevent.level[i] = g_nevent.level[i + 1];
-		}
-	}
-}
-
-void nevent_waitreset(NEVENTID id)
-{
-	UINT i;
-
-	/* 現在進行してるイベントを検索 */
-	for (i = 0; i < g_nevent.waitevents; i++)
-	{
-		if (g_nevent.waitevent[i] == id)
-		{
-			break;
-		}
-	}
-	/* イベントは存在した？ */
-	if (i < g_nevent.waitevents)
-	{
-		/* 存在していたら削る */
-		g_nevent.waitevents--;
-		for (; i < g_nevent.waitevents; i++)
-		{
-			g_nevent.waitevent[i] = g_nevent.waitevent[i + 1];
 		}
 	}
 }

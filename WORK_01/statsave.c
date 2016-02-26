@@ -623,14 +623,11 @@ static int flagsave_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT		i;
 
 	nevt.readyevents = g_nevent.readyevents;
-	nevt.waitevents = g_nevent.waitevents;
+	nevt.waitevents = 0;
 
 	ret = statflag_write(sfh, &nevt, sizeof(nevt));
 	for (i=0; i<nevt.readyevents; i++) {
 		ret |= nevent_write(sfh, g_nevent.level[i]);
-	}
-	for (i=0; i<nevt.waitevents; i++) {
-		ret |= nevent_write(sfh, g_nevent.waitevent[i]);
 	}
 	(void)tbl;
 	return(ret);
@@ -676,15 +673,14 @@ static int flagload_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT		i;
 
 	ret = statflag_read(sfh, &nevt, sizeof(nevt));
+	if (nevt.waitevents != 0)
+	{
+		ret |= STATFLAG_FAILURE;
+	}
 
 	g_nevent.readyevents = 0;
-	g_nevent.waitevents = 0;
-
 	for (i=0; i<nevt.readyevents; i++) {
 		ret |= nevent_read(sfh, g_nevent.level, &g_nevent.readyevents);
-	}
-	for (i=0; i<nevt.waitevents; i++) {
-		ret |= nevent_read(sfh, g_nevent.waitevent, &g_nevent.waitevents);
 	}
 	(void)tbl;
 	return(ret);
