@@ -107,39 +107,37 @@ const OEMCHAR *diskdrv_getsxsi(REG8 drv)
  */
 void diskdrv_hddbind(void)
 {
-	UINT	i;
-	REG8	drv;
+	REG8 drv;
 
-	drv = 0;
-	for (i = 0; i < 2; i++)
+	for (drv = 0x00; drv < 0x02; drv++)
 	{
 		sxsi_devclose(drv);
-		sxsi_setdevtype(drv, SXSIDEV_HDD);
-		if (sxsi_devopen(drv, np2cfg.sasihdd[i]) == SUCCESS)
-		{
-		}
-		else
-		{
-			sxsi_setdevtype(drv, SXSIDEV_NC);
-		}
-		drv++;
 	}
 #if defined(SUPPORT_SCSI)
-	drv = 0x20;
-	for (i = 0; i < 4; i++)
+	for (drv = 0x20; drv < 0x24; drv++)
 	{
 		sxsi_devclose(drv);
+	}
+#endif /* defined(SUPPORT_SCSI) */
+
+	for (drv = 0x00; drv < 0x02; drv++)
+	{
 		sxsi_setdevtype(drv, SXSIDEV_HDD);
-		if (sxsi_devopen(drv, np2cfg.scsihdd[i]) == SUCCESS)
-		{
-		}
-		else 
+		if (sxsi_devopen(drv, np2cfg.sasihdd[drv & 0x0f]) != SUCCESS)
 		{
 			sxsi_setdevtype(drv, SXSIDEV_NC);
 		}
-		drv++;
 	}
-#endif
+#if defined(SUPPORT_SCSI)
+	for (drv = 0x20; drv < 0x24; drv++)
+	{
+		sxsi_setdevtype(drv, SXSIDEV_HDD);
+		if (sxsi_devopen(drv, np2cfg.scsihdd[drv & 0x0f]) != SUCCESS)
+		{
+			sxsi_setdevtype(drv, SXSIDEV_NC);
+		}
+	}
+#endif /* defined(SUPPORT_SCSI) */
 }
 
 /**
@@ -151,7 +149,6 @@ void diskdrv_hddbind(void)
  */
 void diskdrv_readyfddex(REG8 drv, const OEMCHAR *fname, UINT ftype, int readonly)
 {
-
 	if ((drv < 4) && (fdc.equip & (1 << drv)))
 	{
 		if ((fname != NULL) && (fname[0] != '\0'))
