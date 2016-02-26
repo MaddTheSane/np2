@@ -48,11 +48,6 @@ enum tagNEventId
 };
 typedef enum tagNEventId NEVENTID;
 
-enum
-{
-	NEVENT_SETEVENT		= 0x0002
-};
-
 /**
  * event position
  */

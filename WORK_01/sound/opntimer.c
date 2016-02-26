@@ -67,26 +67,23 @@ void fmport_a(NEVENTITEM item)
 	POPNA opna = (POPNA)item->userData;
 	BOOL intreq = FALSE;
 
-	if (item->flag & NEVENT_SETEVENT)
+	intreq = pcm86gen_intrq();
+	if (opna->s.reg[0x27] & 0x04)
 	{
-		intreq = pcm86gen_intrq();
-		if (opna->s.reg[0x27] & 0x04)
-		{
-			opna->s.status |= 0x01;
-			intreq = TRUE;
-		}
-		if ((intreq) && (opna->s.irq != 0xff))
-		{
-			pic_setirq(opna->s.irq);
-//			TRACEOUT(("fm int-A"));
-		}
+		opna->s.status |= 0x01;
+		intreq = TRUE;
+	}
+	if ((intreq) && (opna->s.irq != 0xff))
+	{
+		pic_setirq(opna->s.irq);
+//		TRACEOUT(("fm int-A"));
+	}
 
-		set_fmtimeraevent(opna, NEVENT_RELATIVE);
+	set_fmtimeraevent(opna, NEVENT_RELATIVE);
 
-		if ((opna->s.reg[0x27] & 0xc0) == 0x80)
-		{
-			opngen_csm(&opna->opngen);
-		}
+	if ((opna->s.reg[0x27] & 0xc0) == 0x80)
+	{
+		opngen_csm(&opna->opngen);
 	}
 }
 
@@ -99,22 +96,19 @@ void fmport_b(NEVENTITEM item)
 	POPNA opna = (POPNA)item->userData;
 	BOOL intreq = FALSE;
 
-	if (item->flag & NEVENT_SETEVENT)
+	intreq = pcm86gen_intrq();
+	if (opna->s.reg[0x27] & 0x08)
 	{
-		intreq = pcm86gen_intrq();
-		if (opna->s.reg[0x27] & 0x08)
-		{
-			opna->s.status |= 0x02;
-			intreq = TRUE;
-		}
-		if ((intreq) && (opna->s.irq != 0xff))
-		{
-			pic_setirq(opna->s.irq);
-//			TRACEOUT(("fm int-B"));
-		}
-
-		set_fmtimerbevent(opna, NEVENT_RELATIVE);
+		opna->s.status |= 0x02;
+		intreq = TRUE;
 	}
+	if ((intreq) && (opna->s.irq != 0xff))
+	{
+		pic_setirq(opna->s.irq);
+//		TRACEOUT(("fm int-B"));
+	}
+
+	set_fmtimerbevent(opna, NEVENT_RELATIVE);
 }
 
 /**

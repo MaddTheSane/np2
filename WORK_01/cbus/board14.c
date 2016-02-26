@@ -71,14 +71,11 @@ void musicgenint(NEVENTITEM item)
 {
 	PITCH	pitch;
 
-	if (item->flag & NEVENT_SETEVENT)
+	pitch = pit.ch + 3;
+	if ((pitch->ctrl & 0x0c) == 0x04)
 	{
-		pitch = pit.ch + 3;
-		if ((pitch->ctrl & 0x0c) == 0x04)
-		{
-			/* レートジェネレータ */
-			setmusicgenevent(pitch->value, NEVENT_RELATIVE);
-		}
+		/* レートジェネレータ */
+		setmusicgenevent(pitch->value, NEVENT_RELATIVE);
 	}
 	pic_setirq(0x0c);
 }

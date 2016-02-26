@@ -81,12 +81,9 @@ static void calc_mousexy(void) {
 
 void mouseint(NEVENTITEM item) {
 
-	if (item->flag & NEVENT_SETEVENT) {
-		if (!(mouseif.upd8255.portc & 0x10)) {
-			pic_setirq(0x0d);
-			nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing,
-												mouseint, NEVENT_RELATIVE);
-		}
+	if (!(mouseif.upd8255.portc & 0x10)) {
+		pic_setirq(0x0d);
+		nevent_set(NEVENT_MOUSE, mouseif.intrclock << mouseif.timing, mouseint, NEVENT_RELATIVE);
 	}
 }
 
