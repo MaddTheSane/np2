@@ -52,6 +52,8 @@ private:
 	class Gimic2 : public IGimic2
 	{
 	public:
+		Gimic2(CGimic* pDevice);
+
 		// IRealUnknown
 		virtual size_t AddRef();
 		virtual size_t Release();
@@ -69,6 +71,7 @@ private:
 		C86CtlErr getModuleType(ChipType* pnType);
 
 	private:
+		CGimic* m_pDevice;		/*!< device */
 		CGimic* GetDevice();
 	};
 
@@ -78,6 +81,8 @@ private:
 	class Chip3 : public IRealChip3
 	{
 	public:
+		Chip3(CGimic* pDevice);
+
 		// IRealUnknown
 		virtual size_t AddRef();
 		virtual size_t Release();
@@ -95,8 +100,8 @@ private:
 		virtual C86CtlErr getChipType(ChipType* pnType);
 
 	private:
+		CGimic* m_pDevice;		/*!< device */
 		UINT8 m_sReg[0x200];	/*!< register */
-
 		CGimic* GetDevice();
 	};
 
