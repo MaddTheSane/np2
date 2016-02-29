@@ -305,6 +305,16 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_RHYTHM)
 		{
+			if ((cCaps & OPNA_HAS_VR) && (nAddress >= 0x18) && (nAddress <= 0x1d))
+			{
+				switch (cData & 0xc0)
+				{
+					case 0x40:
+					case 0x80:
+						cData ^= 0xc0;
+						break;
+				}
+			}
 			if ((!pExt) || (!pExt->HasRhythm()))
 			{
 				rhythm_setreg(&opna->rhythm, nAddress, cData);
@@ -372,6 +382,16 @@ static void writeRegister(POPNA opna, UINT nAddress, REG8 cData)
 	}
 	else if (nAddress < 0xc0)
 	{
+		if ((cCaps & OPNA_HAS_VR) && ((nAddress & 0xfc) == 0xb4))
+		{
+			switch (cData & 0xc0)
+			{
+				case 0x40:
+				case 0x80:
+					cData ^= 0xc0;
+					break;
+			}
+		}
 		if (!pExt)
 		{
 			opngen_setreg(&opna->opngen, 0, nAddress, cData);
@@ -416,6 +436,16 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_ADPCM)
 		{
+			if ((cCaps & OPNA_HAS_VR) && (nAddress == 0x01))
+			{
+				switch (cData & 0xc0)
+				{
+					case 0x40:
+					case 0x80:
+						cData ^= 0xc0;
+						break;
+				}
+			}
 			adpcm_setreg(&opna->adpcm, nAddress, cData);
 			if ((pExt) && (pExt->HasADPCM()))
 			{
@@ -437,6 +467,16 @@ static void writeExtendedRegister(POPNA opna, UINT nAddress, REG8 cData)
 	{
 		if (cCaps & OPNA_HAS_EXTENDEDFM)
 		{
+			if ((cCaps & OPNA_HAS_VR) && ((nAddress & 0xfc) == 0xb4))
+			{
+				switch (cData & 0xc0)
+				{
+					case 0x40:
+					case 0x80:
+						cData ^= 0xc0;
+						break;
+				}
+			}
 			if (!pExt)
 			{
 				opngen_setreg(&opna->opngen, 3, nAddress, cData);
