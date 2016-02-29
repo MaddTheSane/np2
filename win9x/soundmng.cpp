@@ -594,12 +594,18 @@ LPDIRECTSOUNDBUFFER CDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 
 		DSBUFFERDESC dsbdesc;
 		ZeroMemory(&dsbdesc, sizeof(dsbdesc));
-		dsbdesc.dwSize = DSBUFFERDESC_SIZE;
+		dsbdesc.dwSize = sizeof(dsbdesc);
 		dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
 		dsbdesc.dwBufferBytes = nSize;
 		dsbdesc.lpwfxFormat = (LPWAVEFORMATEX)&pcmwf;
 
-		if (FAILED(m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL)))
+		HRESULT hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+		if (FAILED(hr))
+		{
+			dsbdesc.dwSize = (sizeof(DWORD) * 4) + sizeof(LPWAVEFORMATEX);
+			hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+		}
+		if (FAILED(hr))
 		{
 			break;
 		}
@@ -608,7 +614,7 @@ LPDIRECTSOUNDBUFFER CDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 		DWORD cbBlock1;
 		LPVOID lpBlock2;
 		DWORD cbBlock2;
-		HRESULT hr = lpDSBuffer->Lock(0, nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
+		hr = lpDSBuffer->Lock(0, nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
 		if (hr == DSERR_BUFFERLOST)
 		{
 			lpDSBuffer->Restore();
