@@ -32,7 +32,7 @@ void opl3_destruct(POPL3 opl3)
 {
 	CExternalOpl3* pExt = reinterpret_cast<CExternalOpl3*>(opl3->userdata);
 	CExternalChipManager::GetInstance()->Release(pExt);
-	opl3->userdata = NULL;
+	opl3->userdata = 0;
 }
 
 /**
@@ -55,7 +55,7 @@ void opl3_reset(POPL3 opl3, REG8 cCaps)
 		if (pExt)
 		{
 			CExternalChipManager::GetInstance()->Release(pExt);
-			opl3->userdata = NULL;
+			opl3->userdata = 0;
 		}
 	}
 }
