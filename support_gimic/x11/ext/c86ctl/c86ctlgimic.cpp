@@ -20,6 +20,8 @@ CGimic::CGimic(UINT nIndex)
 	, m_nChipType(CHIP_UNKNOWN)
 	, m_nQueIndex(0)
 	, m_nQueCount(0)
+	, m_gimic2(this)
+	, m_chip3(this)
 {
 }
 
@@ -374,12 +376,21 @@ bool CGimic::Task()
 /* IGimic2 */
 
 /**
+ * Constructor
+ * @param[in] pDevice The instance of the device
+ */
+CGimic::Gimic2::Gimic2(CGimic* pDevice)
+	: m_pDevice(pDevice)
+{
+}
+
+/**
  * Get the instance of the device
  * @return The instance
  */
 inline CGimic* CGimic::Gimic2::GetDevice()
 {
-	return reinterpret_cast<CGimic*>(reinterpret_cast<INTPTR>(this) - offsetof(CGimic, m_gimic2));
+	return m_pDevice;
 }
 
 /**
@@ -553,12 +564,21 @@ C86CtlErr CGimic::Gimic2::getModuleType(ChipType* pnType)
 /* IRealChip3 */
 
 /**
+ * Constructor
+ * @param[in] pDevice The instance of the device
+ */
+CGimic::Chip3::Chip3(CGimic* pDevice)
+	: m_pDevice(pDevice)
+{
+}
+
+/**
  * Get the instance of the device
  * @return The instance
  */
 inline CGimic* CGimic::Chip3::GetDevice()
 {
-	return reinterpret_cast<CGimic*>(reinterpret_cast<INTPTR>(this) - offsetof(CGimic, m_chip3));
+	return m_pDevice;
 }
 
 
