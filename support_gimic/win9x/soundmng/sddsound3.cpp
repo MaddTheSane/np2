@@ -207,13 +207,13 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 						DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
 	dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
 	dsbdesc.dwBufferBytes = m_dwHalfBufferSize * 2;
-	HRESULT r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
-	if (FAILED(r))
+	HRESULT hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
+	if (FAILED(hr))
 	{
 		dsbdesc.dwSize = (sizeof(DWORD) * 4) + sizeof(LPWAVEFORMATEX);
-		r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
+		hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &m_lpDSStream, NULL);
 	}
-	if (FAILED(r))
+	if (FAILED(hr))
 	{
 		DestroyStream();
 		return 0;
@@ -517,13 +517,13 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 		dsbdesc.dwBufferBytes = chunk.nSize;
 		dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
 
-		HRESULT r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
-		if (FAILED(r))
+		HRESULT hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+		if (FAILED(hr))
 		{
 			dsbdesc.dwSize = (sizeof(DWORD) * 4) + sizeof(LPWAVEFORMATEX);
-			r = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
+			hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
 		}
-		if (FAILED(r))
+		if (FAILED(hr))
 		{
 			break;
 		}
@@ -532,7 +532,7 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 		DWORD cbBlock1;
 		LPVOID lpBlock2;
 		DWORD cbBlock2;
-		HRESULT hr = lpDSBuffer->Lock(0, chunk.nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
+		hr = lpDSBuffer->Lock(0, chunk.nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
 		if (hr == DSERR_BUFFERLOST)
 		{
 			lpDSBuffer->Restore();
