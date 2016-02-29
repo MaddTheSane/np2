@@ -260,7 +260,7 @@ void bios_initialize(void) {
 	}
 
 #if defined(SUPPORT_PC9821)
-	getbiospath(path, OEMTEXT("bios9821.rom"), sizeof(path));
+	getbiospath(path, OEMTEXT("bios9821.rom"), NELEMENTS(path));
 	fh = file_open_rb(path);
 	if (fh != FILEH_INVALID) {
 		if (file_read(fh, mem + 0x0d8000, 0x2000) == 0x2000) {

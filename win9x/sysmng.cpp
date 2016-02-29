@@ -79,7 +79,7 @@ void sysmng_updatecaption(UINT8 flag) {
 			if (clock[0] == '\0') {
 				milstr_ncpy(clock, OEMTEXT(" -"), NELEMENTS(clock));
 			}
-			milstr_ncat(clock, work, sizeof(clock));
+			milstr_ncat(clock, work, NELEMENTS(clock));
 #if 0
 			OEMSPRINTF(work, OEMTEXT(" (debug: OPN %d / PSG %s)"),
 							opngen.playing,
