@@ -524,7 +524,6 @@ SOURCE=..\I386C\ia32\debug.c
 # Begin Source File
 
 SOURCE=..\I386C\ia32\disasm.c
-
 # End Source File
 # Begin Source File
 
@@ -585,7 +584,11 @@ SOURCE=..\i386c\cpumem.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\FDD\DISKDRV.C
+SOURCE=..\fdd\diskdrv.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\fdd\diskdrv.h
 # End Source File
 # Begin Source File
 

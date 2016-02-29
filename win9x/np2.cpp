@@ -529,7 +529,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_IDE0EJECT:
-			diskdrv_sethdd(0x00, NULL);
+			diskdrv_setsxsi(0x00, NULL);
 			break;
 
 		case IDM_IDE1OPEN:
@@ -539,7 +539,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_IDE1EJECT:
-			diskdrv_sethdd(0x01, NULL);
+			diskdrv_setsxsi(0x01, NULL);
 			break;
 
 #if defined(SUPPORT_IDEIO)
@@ -550,7 +550,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_IDE2EJECT:
-			diskdrv_sethdd(0x02, NULL);
+			diskdrv_setsxsi(0x02, NULL);
 			break;
 #endif
 
@@ -562,7 +562,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_SCSI0EJECT:
-			diskdrv_sethdd(0x20, NULL);
+			diskdrv_setsxsi(0x20, NULL);
 			break;
 
 		case IDM_SCSI1OPEN:
@@ -572,7 +572,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_SCSI1EJECT:
-			diskdrv_sethdd(0x21, NULL);
+			diskdrv_setsxsi(0x21, NULL);
 			break;
 
 		case IDM_SCSI2OPEN:
@@ -582,7 +582,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_SCSI2EJECT:
-			diskdrv_sethdd(0x22, NULL);
+			diskdrv_setsxsi(0x22, NULL);
 			break;
 
 		case IDM_SCSI3OPEN:
@@ -592,7 +592,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_SCSI3EJECT:
-			diskdrv_sethdd(0x23, NULL);
+			diskdrv_setsxsi(0x23, NULL);
 			break;
 #endif
 
