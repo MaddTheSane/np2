@@ -42,7 +42,6 @@
 #include "pc9861k.h"
 #include "s98.h"
 #include "vram/scrnsave.h"
-#include "fdd/sxsi.h"
 
 #include "kdispwin.h"
 #include "toolwin.h"
@@ -895,7 +894,7 @@ cb_ataopen(GtkAction *action, gpointer user_data)
 		if (path) {
 			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
 				file_cpyname(hddfolder, path, sizeof(hddfolder));
-				diskdrv_sethdd(2 * channel + drive, path);
+				diskdrv_setsxsi(2 * channel + drive, path);
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			g_free(path);
@@ -926,7 +925,7 @@ cb_ataremove(GtkAction *action, gpointer user_data)
 	drive = g_ascii_digit_value(name[4]);
 	if (channel == 0 && drive < 2) {
 		if (2 * channel + drive < 4) {
-			diskdrv_sethdd(2 * channel + drive, "");
+			diskdrv_setsxsi(2 * channel + drive, NULL);
 		}
 	}
 }
@@ -985,7 +984,7 @@ cb_atapiopen(GtkAction *action, gpointer user_data)
 		if (path) {
 			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
 				file_cpyname(hddfolder, path, sizeof(hddfolder));
-				sxsi_devopen(0x02, path);
+				diskdrv_setsxsi(0x02, path);
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			g_free(path);
@@ -1226,7 +1225,7 @@ cb_sasiopen(GtkAction *action, gpointer user_data)
 		if (path) {
 			if ((stat(path, &sb) == 0) && S_ISREG(sb.st_mode) && (sb.st_mode & S_IRUSR)) {
 				file_cpyname(hddfolder, path, sizeof(hddfolder));
-				diskdrv_sethdd(drive, path);
+				diskdrv_setsxsi(drive, path);
 				sysmng_update(SYS_UPDATEOSCFG);
 			}
 			g_free(path);
@@ -1250,7 +1249,7 @@ cb_sasiremove(GtkAction *action, gpointer user_data)
 	if ((strlen(name) >= 5) && (g_ascii_isdigit(name[4]))) {
 		drive = g_ascii_digit_value(name[4]) - 1;
 		if (drive < 2) {
-			diskdrv_sethdd(drive, "");
+			diskdrv_setsxsi(drive, NULL);
 		}
 	}
 }

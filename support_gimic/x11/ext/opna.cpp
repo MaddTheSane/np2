@@ -34,7 +34,7 @@ void opna_destruct(POPNA opna)
 {
 	CExternalOpna* pExt = reinterpret_cast<CExternalOpna*>(opna->userdata);
 	CExternalChipManager::GetInstance()->Release(pExt);
-	opna->userdata = reinterpret_cast<INTPTR>(NULL);
+	opna->userdata = 0;
 }
 
 /**
@@ -73,7 +73,7 @@ void opna_reset(POPNA opna, REG8 cCaps)
 		if (pExt)
 		{
 			CExternalChipManager::GetInstance()->Release(pExt);
-			opna->userdata = reinterpret_cast<INTPTR>(NULL);
+			opna->userdata = 0;
 		}
 	}
 }

@@ -17,7 +17,7 @@
 #include "mousemng.h"
 #include "scrnmng.h"
 // #include "sysmng.h"
-#include "np2class.h"
+#include "dialog\np2class.h"
 #include "pccore.h"
 #include "scrndraw.h"
 #include "palettes.h"

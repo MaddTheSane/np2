@@ -428,10 +428,6 @@ void pccore_reset(void) {
 
 	timing_reset();
 	soundmng_play();
-
-#if 0 && defined(SUPPORT_IDEIO)	// Test!
-	sxsi_devopen(0x02, OEMTEXT("e:\\pn\\pn.iso"));
-#endif
 }
 
 static void drawscreen(void) {

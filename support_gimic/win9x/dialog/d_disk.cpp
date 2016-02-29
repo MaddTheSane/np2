@@ -125,7 +125,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 		LPCTSTR lpImage = dlg.GetPathName();
 		file_cpyname(hddfolder, lpImage, _countof(hddfolder));
 		sysmng_update(SYS_UPDATEOSCFG);
-		diskdrv_sethdd(drv, lpImage);
+		diskdrv_setsxsi(drv, lpImage);
 	}
 }
 

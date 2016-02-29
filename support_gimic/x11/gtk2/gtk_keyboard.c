@@ -239,7 +239,7 @@ static const UINT8 xkeyconv_misc[256] = {
 static const UINT8 *xkeyconv = xkeyconv_jis;
 static UINT8 shift_stat = 0x00;
 
-BOOL
+BRESULT
 kbdmng_init(void)
 {
 
