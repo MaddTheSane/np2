@@ -5,6 +5,8 @@
 
 #pragma once
 
+#if defined(SUPPORT_VSTi)
+
 #include "cmmidiout.h"
 #include "sound.h"
 #include "vsthost\vstbuffer.h"
@@ -39,3 +41,5 @@ private:
 	static void SOUNDCALL GetPcm(CComMidiOutVst*, SINT32* lpBuffer, UINT nBufferCount);
 	void Process32(SINT32* lpBuffer, UINT nBufferCount);
 };
+
+#endif	// defined(SUPPORT_VSTi)

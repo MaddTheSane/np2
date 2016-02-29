@@ -754,7 +754,8 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ./debuguty/ \
+INPUT                  = ./commng/ \
+                         ./debuguty/ \
                          ./dialog/c_combodata.cpp \
                          ./dialog/c_combodata.h \
                          ./dialog/c_dipsw.cpp \

@@ -4,19 +4,30 @@
  */
 
 #include "compiler.h"
+
+#if defined(SUPPORT_VSTi)
+
 #include "cmmidioutvst.h"
 #include <shlwapi.h>
+#include "np2.h"
 #include "pccore.h"
 
 #pragma comment(lib, "shlwapi.lib")
 
-static void GetPath(LPTSTR lpModule, UINT cbModule)
+/**
+ * VSTi モジュール ファイル名を得る
+ * @param[out] lpModule VSTi モジュール ファイル名
+ * @param[in] cchModule VSTi モジュール ファイル名のバッファの長さ
+ */
+static void GetPath(LPTSTR lpModule, UINT cchModule)
 {
-	::ExpandEnvironmentStrings(TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll"), lpModule, cbModule);
+	::ExpandEnvironmentStrings(np2oscfg.szVSTiFile, lpModule, cchModule);
 }
 
 /**
- * IsEnabled?
+ * VSTi は有効か?
+ * @retval true 有効
+ * @retval false 無効
  */
 bool CComMidiOutVst::IsEnabled()
 {
@@ -45,7 +56,6 @@ CComMidiOutVst* CComMidiOutVst::CreateInstance()
 
 /**
  * コンストラクタ
- * @param[in] vermouth ハンドル
  */
 CComMidiOutVst::CComMidiOutVst()
 	: m_nBlockSize(128)
@@ -64,6 +74,9 @@ CComMidiOutVst::~CComMidiOutVst()
 
 /**
  * 初期化
+ * @param[in] lpPath パス
+ * @retval true 成功
+ * @retval false 失敗
  */
 bool CComMidiOutVst::Initialize(LPCTSTR lpPath)
 {
@@ -160,3 +173,5 @@ void CComMidiOutVst::Process32(SINT32* lpBuffer, UINT nBufferCount)
 		} while (--nSize);
 	}
 }
+
+#endif	// defined(SUPPORT_VSTi)
