@@ -33,7 +33,7 @@ void mouse_running(UINT8 flg);
 UINT8 mouse_btn(UINT8 btn);
 
 /* for X11 */
-int mousemng_initialize(void);
+BRESULT mousemng_initialize(void);
 void mousemng_term(void);
 void mousemng_set_ratio(UINT8);
 

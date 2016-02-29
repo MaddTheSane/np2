@@ -40,7 +40,7 @@ enum {
 	KEYBOARD_KC_NC = 0xff
 };
 
-BOOL kbdmng_init(void);
+BRESULT kbdmng_init(void);
 UINT8 kbdmng_getf12key(void);
 void kbdmng_resetf12(void);
 

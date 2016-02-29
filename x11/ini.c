@@ -382,7 +382,7 @@ ini_write(const char *path, const char *title, INITBL *tbl, UINT count, BOOL cre
 	INITBL	*p;
 	INITBL	*pterm;
 	FILEH	fh;
-	BOOL	set;
+	BRESULT	set;
 
 	fh = FILEH_INVALID;
 	if (!create) {
