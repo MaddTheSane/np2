@@ -48,16 +48,13 @@ BEGIN
     CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
                     68,44,10
     GROUPBOX        "声音",IDC_STATIC,8,88,166,46
-    LTEXT           "采样率",IDC_STATIC,14,101,50,8
-    CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,66,100,34,10
-    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
-                    34,10
-    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,100,
-                    34,10
+    LTEXT           "采样率",IDC_STATIC,14,102,50,8
+    COMBOBOX        IDC_SOUND_RATE,70,99,50,128,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Hz",IDC_STATIC,122,102,48,8
     LTEXT           "缓冲",IDC_STATIC,14,118,50,8
-    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
-    LTEXT           "ms",IDC_STATIC,102,118,16,8
+    EDITTEXT        IDC_SOUND_BUFFER,70,116,30,12,WS_GROUP
+    LTEXT           "milliseconds",IDC_STATIC,102,118,48,8
     CONTROL         "允许大小调整",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
     CONTROL         "关启MMX加速功能",IDC_DISABLEMMX,"Button",BS_AUTOCHECKBOX | 
@@ -92,16 +89,13 @@ BEGIN
     CONTROL         "PC-286",IDC_MODELEPSON,"Button",BS_AUTORADIOBUTTON,128,
                     68,44,10
     GROUPBOX        "声音",IDC_STATIC,8,88,166,46
-    LTEXT           "采样率",IDC_STATIC,14,101,50,8
-    CONTROL         "11KHz",IDC_RATE11,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP | WS_TABSTOP,66,100,34,10
-    CONTROL         "22KHz",IDC_RATE22,"Button",BS_AUTORADIOBUTTON,102,100,
-                    34,10
-    CONTROL         "44KHz",IDC_RATE44,"Button",BS_AUTORADIOBUTTON,138,100,
-                    34,10
+    LTEXT           "采样率",IDC_STATIC,14,102,50,8
+    COMBOBOX        IDC_SOUND_RATE,70,99,50,128,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Hz",IDC_STATIC,122,102,48,8
     LTEXT           "缓冲",IDC_STATIC,14,118,50,8
-    EDITTEXT        IDC_SOUNDBUF,66,116,30,12,WS_GROUP
-    LTEXT           "ms",IDC_STATIC,102,118,16,8
+    EDITTEXT        IDC_SOUND_BUFFER,70,116,30,12,WS_GROUP
+    LTEXT           "milliseconds",IDC_STATIC,102,118,48,8
     CONTROL         "允许大小调整",IDC_ALLOWRESIZE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,142,162,10
     CONTROL         "使用确认话框 (重新/退出时)",IDC_COMFIRM,"Button",
