@@ -7,7 +7,7 @@
 
 enum
 {
-	FMDIV_BITS		= 8,
+	FMDIV_BITS		= 10,
 	FMDIV_ENT		= (1 << FMDIV_BITS),
 	FMVOL_SFTBIT	= 4
 };
