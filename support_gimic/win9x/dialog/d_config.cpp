@@ -95,7 +95,7 @@ BOOL CConfigureDlg::OnInitDialog()
 	int nIndex = m_rate.FindItemData(np2cfg.samplingrate);
 	if (nIndex == CB_ERR)
 	{
-		m_rate.Add(np2cfg.samplingrate);
+		nIndex = m_rate.Add(np2cfg.samplingrate);
 	}
 	m_rate.SetCurSel(nIndex);
 
