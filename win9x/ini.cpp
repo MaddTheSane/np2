@@ -479,7 +479,7 @@ static const PFTBL s_IniItems[] =
 	PFSTR("SCSIHDD3", PFTYPE_STR,		np2cfg.scsihdd[3]),
 #endif
 
-	PFVAL("SampleHz", PFTYPE_UINT16,	&np2cfg.samplingrate),
+	PFVAL("SampleHz", PFTYPE_UINT32,	&np2cfg.samplingrate),
 	PFVAL("Latencys", PFTYPE_UINT16,	&np2cfg.delayms),
 	PFVAL("SNDboard", PFTYPE_HEX8,		&np2cfg.SOUND_SW),
 	PFAND("BEEP_vol", PFTYPE_UINT8,		&np2cfg.BEEP_VOL,		3),

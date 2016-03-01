@@ -165,7 +165,7 @@ void CConfigureDlg::OnOK()
 		update |= SYS_UPDATECFG;
 	}
 
-	UINT16 nSamplingRate;
+	UINT nSamplingRate;
 	if (IsDlgButtonChecked(IDC_RATE11) != BST_UNCHECKED)
 	{
 		nSamplingRate = 11025;
