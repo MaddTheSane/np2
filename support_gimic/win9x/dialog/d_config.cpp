@@ -30,6 +30,7 @@ protected:
 private:
 	CComboData m_baseClock;				//!< ベース クロック
 	CComboData m_multiple;				//!< 倍率
+	CComboData m_rate;					//!< レート
 	void SetClock(UINT nMultiple = 0);
 };
 
@@ -45,6 +46,9 @@ static const UINT32 s_mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
 
 //! クロック フォーマット
 static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
+
+//! サンプリング レート
+static const UINT32 s_nSamplingRate[] = {11025, 16000, 22050, 32000, 44100, 48000};
 
 /**
  * コンストラクタ
@@ -86,21 +90,16 @@ BOOL CConfigureDlg::OnInitDialog()
 	}
 	CheckDlgButton(nModel, BST_CHECKED);
 
-	UINT nSamplingRate;
-	if (np2cfg.samplingrate < 22050)
+	m_rate.SubclassDlgItem(IDC_SOUND_RATE, this);
+	m_rate.Add(s_nSamplingRate, _countof(s_nSamplingRate));
+	int nIndex = m_rate.FindItemData(np2cfg.samplingrate);
+	if (nIndex == CB_ERR)
 	{
-		nSamplingRate = IDC_RATE11;
+		m_rate.Add(np2cfg.samplingrate);
 	}
-	else if (np2cfg.samplingrate < 44100)
-	{
-		nSamplingRate = IDC_RATE22;
-	}
-	else
-	{
-		nSamplingRate = IDC_RATE44;
-	}
-	CheckDlgButton(nSamplingRate, BST_CHECKED);
-	SetDlgItemInt(IDC_SOUNDBUF, np2cfg.delayms, FALSE);
+	m_rate.SetCurSel(nIndex);
+
+	SetDlgItemInt(IDC_SOUND_BUFFER, np2cfg.delayms, FALSE);
 
 	CheckDlgButton(IDC_ALLOWRESIZE, (np2oscfg.thickframe) ? BST_CHECKED : BST_UNCHECKED);
 
@@ -165,19 +164,7 @@ void CConfigureDlg::OnOK()
 		update |= SYS_UPDATECFG;
 	}
 
-	UINT nSamplingRate;
-	if (IsDlgButtonChecked(IDC_RATE11) != BST_UNCHECKED)
-	{
-		nSamplingRate = 11025;
-	}
-	else if (IsDlgButtonChecked(IDC_RATE22) != BST_UNCHECKED)
-	{
-		nSamplingRate = 22050;
-	}
-	else
-	{
-		nSamplingRate = 44100;
-	}
+	const UINT nSamplingRate = m_rate.GetCurItemData(np2cfg.samplingrate);
 	if (np2cfg.samplingrate != nSamplingRate)
 	{
 		np2cfg.samplingrate = nSamplingRate;
@@ -185,12 +172,12 @@ void CConfigureDlg::OnOK()
 		soundrenewal = 1;
 	}
 
-	UINT16 nBuffer = GetDlgItemInt(IDC_SOUNDBUF, NULL, FALSE);
+	UINT nBuffer = GetDlgItemInt(IDC_SOUND_BUFFER, NULL, FALSE);
 	nBuffer = max(nBuffer, 40);
 	nBuffer = min(nBuffer, 1000);
-	if (np2cfg.delayms != nBuffer)
+	if (np2cfg.delayms != static_cast<UINT16>(nBuffer))
 	{
-		np2cfg.delayms = nBuffer;
+		np2cfg.delayms = static_cast<UINT16>(nBuffer);
 		update |= SYS_UPDATECFG | SYS_UPDATESBUF;
 		soundrenewal = 1;
 	}
