@@ -6,7 +6,7 @@
 #include "compiler.h"
 #include "resource.h"
 #include "c_midi.h"
-#include "commng.h"
+#include "commng\cmmidi.h"
 #if defined(MT32SOUND_DLL)
 #include "..\ext\mt32snd.h"
 #endif	// defined(MT32SOUND_DLL)
