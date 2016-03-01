@@ -13,7 +13,7 @@
 #include "soundmng.h"
 #if defined(SUPPORT_WAVEREC)
 #include "common/wavefile.h"
-#endif
+#endif	/* defined(SUPPORT_WAVEREC) */
 
 	SOUNDCFG	soundcfg;
 
@@ -32,8 +32,8 @@ typedef struct {
 	UINT	reserve;
 	UINT	remain;
 #if defined(SUPPORT_WAVEREC)
-	WAVEWR	rec;
-#endif
+	WAVEFILEH rec;
+#endif	/* defined(SUPPORT_WAVEREC) */
 	CBTBL	*cbreg;
 	CBTBL	cb[STREAM_CBMAX];
 } SNDSTREAM;
@@ -80,14 +80,14 @@ static void streamprepare(UINT samples) {
  */
 BRESULT sound_recstart(const OEMCHAR *lpFilename)
 {
-	WAVEWR rec;
+	WAVEFILEH rec;
 
 	sound_recstop();
 	if (sndstream.buffer == NULL)
 	{
 		return FAILURE;
 	}
-	rec = wavewr_open(lpFilename, soundcfg.rate, 16, 2);
+	rec = wavefile_create(lpFilename, soundcfg.rate, 16, 2);
 	sndstream.rec = rec;
 	if (rec)
 	{
@@ -101,11 +101,11 @@ BRESULT sound_recstart(const OEMCHAR *lpFilename)
  */
 void sound_recstop(void)
 {
-	WAVEWR rec;
+	WAVEFILEH rec;
 
 	rec = sndstream.rec;
 	sndstream.rec = NULL;
-	wavewr_close(rec);
+	wavefile_close(rec);
 }
 
 /**
@@ -163,7 +163,7 @@ static void streamfilewrite(UINT nSamples)
 			buf[i][0] = (UINT8)nSample;
 			buf[i][1] = (UINT8)(nSample >> 8);
 		}
-		wavewr_write(sndstream.rec, buf, nCount * 2 * sizeof(buf[0]));
+		wavefile_write(sndstream.rec, buf, nCount * 2 * sizeof(buf[0]));
 		nSamples -= nCount;
 	}
 }
@@ -204,7 +204,7 @@ static void filltailsample(UINT nCount)
 		} while (--nCount);
 	}
 }
-#endif
+#endif	/* defined(SUPPORT_WAVEREC) */
 
 
 // ----
@@ -267,7 +267,7 @@ void sound_destroy(void) {
 	if (sndstream.buffer) {
 #if defined(SUPPORT_WAVEREC)
 		sound_recstop();
-#endif
+#endif	/* defined(SUPPORT_WAVEREC) */
 		soundmng_stop();
 		streamreset();
 		soundmng_destroy();
@@ -351,7 +351,7 @@ void sound_sync(void) {
 		streamfilewrite(length);
 	}
 	else
-#endif
+#endif	/* defined(SUPPORT_WAVEREC) */
 		streamprepare(length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
@@ -384,7 +384,7 @@ const SINT32 *ret;
 				filltailsample(sndstream.remain - sndstream.reserve);
 			}
 			else
-#endif
+#endif	/* defined(SUPPORT_WAVEREC) */
 		{
 			streamprepare(sndstream.remain - sndstream.reserve);
 			soundcfg.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;

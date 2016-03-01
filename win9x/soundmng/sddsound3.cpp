@@ -7,7 +7,6 @@
 #include "sddsound3.h"
 #include "soundmng.h"
 #include "misc\extrom.h"
-#include "common\wavefile.h"
 
 #if !defined(__GNUC__)
 #pragma comment(lib, "dsound.lib")
@@ -19,6 +18,25 @@
 #ifndef DSBVOLUME_MIN
 #define DSBVOLUME_MIN		(-10000)					/*!< ヴォリューム最小値 */
 #endif
+
+/**
+ * @brief RIFF chunk
+ */
+struct RiffChunk
+{
+	UINT32 riff;				/*!< 'RIFF' */
+	UINT32 nFileSize;			/*!< fileSize */
+	UINT32 nFileType;			/*!< fileType */
+};
+
+/**
+ * @brief chunk
+ */
+struct Chunk
+{
+	UINT32 id;					/*!< chunkID */
+	UINT32 nSize;				/*!< chunkSize */
+};
 
 /**
  * コンストラクタ
@@ -343,48 +361,46 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 			break;
 		}
 
-		RIFF_HEADER riff;
+		RiffChunk riff;
 		if (extrom.Read(&riff, sizeof(riff)) != sizeof(riff))
 		{
 			break;
 		}
-		if ((riff.sig != WAVE_SIG('R','I','F','F')) || (riff.fmt != WAVE_SIG('W','A','V','E')))
+		if ((riff.riff != MAKEFOURCC('R','I','F','F')) || (riff.nFileType != MAKEFOURCC('W','A','V','E')))
 		{
 			break;
 		}
 
 		bool bValid = false;
-		WAVE_HEADER whead;
-		WAVE_INFOS info;
-		UINT nSize = 0;
+		Chunk chunk;
+		PCMWAVEFORMAT pcmwf;
 		while (true /*CONSTCOND*/)
 		{
-			if (extrom.Read(&whead, sizeof(whead)) != sizeof(whead))
+			if (extrom.Read(&chunk, sizeof(chunk)) != sizeof(chunk))
 			{
 				bValid = false;
 				break;
 			}
-			nSize = LOADINTELDWORD(whead.size);
-			if (whead.sig == WAVE_SIG('f','m','t',' '))
+			if (chunk.id == MAKEFOURCC('f','m','t',' '))
 			{
-				if (nSize >= sizeof(info))
+				if (chunk.nSize >= sizeof(pcmwf))
 				{
-					if (extrom.Read(&info, sizeof(info)) != sizeof(info))
+					if (extrom.Read(&pcmwf, sizeof(pcmwf)) != sizeof(pcmwf))
 					{
 						bValid = false;
 						break;
 					}
-					nSize -= sizeof(info);
+					chunk.nSize -= sizeof(pcmwf);
 					bValid = true;
 				}
 			}
-			else if (whead.sig == WAVE_SIG('d','a','t','a'))
+			else if (chunk.id == MAKEFOURCC('d','a','t','a'))
 			{
 				break;
 			}
-			if (nSize)
+			if (chunk.nSize)
 			{
-				extrom.Seek(nSize, FILE_CURRENT);
+				extrom.Seek(chunk.nSize, FILE_CURRENT);
 			}
 		}
 		if (!bValid)
@@ -392,24 +408,16 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 			break;
 		}
 
-		PCMWAVEFORMAT pcmwf;
-		ZeroMemory(&pcmwf, sizeof(pcmwf));
-		pcmwf.wf.wFormatTag = LOADINTELWORD(info.format);
-		if (pcmwf.wf.wFormatTag != 1)
+		if (pcmwf.wf.wFormatTag != WAVE_FORMAT_PCM)
 		{
 			break;
 		}
-		pcmwf.wf.nChannels = LOADINTELWORD(info.channel);
-		pcmwf.wf.nSamplesPerSec = LOADINTELDWORD(info.rate);
-		pcmwf.wBitsPerSample = LOADINTELWORD(info.bit);
-		pcmwf.wf.nBlockAlign = LOADINTELWORD(info.block);
-		pcmwf.wf.nAvgBytesPerSec = LOADINTELDWORD(info.rps);
 
 		DSBUFFERDESC dsbdesc;
 		ZeroMemory(&dsbdesc, sizeof(dsbdesc));
 		dsbdesc.dwSize = sizeof(dsbdesc);
 		dsbdesc.dwFlags = DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | DSBCAPS_STICKYFOCUS | DSBCAPS_GETCURRENTPOSITION2;
-		dsbdesc.dwBufferBytes = nSize;
+		dsbdesc.dwBufferBytes = chunk.nSize;
 		dsbdesc.lpwfxFormat = reinterpret_cast<LPWAVEFORMATEX>(&pcmwf);
 
 		HRESULT hr = m_lpDSound->CreateSoundBuffer(&dsbdesc, &lpDSBuffer, NULL);
@@ -427,11 +435,11 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 		DWORD cbBlock1;
 		LPVOID lpBlock2;
 		DWORD cbBlock2;
-		hr = lpDSBuffer->Lock(0, nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
+		hr = lpDSBuffer->Lock(0, chunk.nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
 		if (hr == DSERR_BUFFERLOST)
 		{
 			lpDSBuffer->Restore();
-			hr = lpDSBuffer->Lock(0, nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
+			hr = lpDSBuffer->Lock(0, chunk.nSize, &lpBlock1, &cbBlock1, &lpBlock2, &cbBlock2, 0);
 		}
 		if (FAILED(hr))
 		{
