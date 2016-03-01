@@ -48,7 +48,7 @@ static const UINT32 s_mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
 static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
 
 //! サンプリング レート
-static const UINT32 s_nSamplingRate[] = {11025, 16000, 22050, 32000, 44100, 48000};
+static const UINT32 s_nSamplingRate[] = {11025, 22050, 44100, 48000};
 
 /**
  * コンストラクタ
