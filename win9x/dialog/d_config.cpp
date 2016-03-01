@@ -113,6 +113,8 @@ BOOL CConfigureDlg::OnInitDialog()
 	{
 		CheckDlgButton(IDC_DISABLEMMX, (np2oscfg.disablemmx) ? BST_CHECKED : BST_UNCHECKED);
 	}
+#else	// !defined(_WIN64)
+	GetDlgItem(IDC_DISABLEMMX).EnableWindow(FALSE);
 #endif	// !defined(_WIN64)
 
 	CheckDlgButton(IDC_COMFIRM, (np2oscfg.comfirm) ? BST_CHECKED : BST_UNCHECKED);

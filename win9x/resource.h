@@ -8,7 +8,6 @@
 #define IDI_ICON1                       101
 #define IDI_ICON2                       102
 #define IDD_CONFIG                      111
-#define IDD_CONFIGNOMMX                 112
 #define IDD_NEWDISK                     121
 #define IDD_NEWHDDDISK                  122
 #define IDD_NEWSASI                     123
