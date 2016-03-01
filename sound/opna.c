@@ -84,7 +84,7 @@ static void restore(POPNA opna)
 		writeRegister(opna, i, opna->s.reg[i]);
 		writeExtendedRegister(opna, i, opna->s.reg[i + 0x100]);
 	}
-	for (i = 0xb7; i >= 0xa0; i--)
+	for (i = 0xb0; i < 0xb8; i++)
 	{
 		if ((i & 3) == 3)
 		{
@@ -92,6 +92,17 @@ static void restore(POPNA opna)
 		}
 		writeRegister(opna, i, opna->s.reg[i]);
 		writeExtendedRegister(opna, i, opna->s.reg[i + 0x100]);
+	}
+	for (i = 0; i < 8; i++)
+	{
+		if ((i & 3) == 3)
+		{
+			continue;
+		}
+		writeRegister(opna, i + 0xa4, opna->s.reg[i + 0xa4]);
+		writeRegister(opna, i + 0xa0, opna->s.reg[i + 0xa0]);
+		writeExtendedRegister(opna, i + 0xa4, opna->s.reg[i + 0x1a4]);
+		writeExtendedRegister(opna, i + 0xa0, opna->s.reg[i + 0x1a0]);
 	}
 	for (i = 0; i < 8; i++)
 	{
