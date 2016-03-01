@@ -1645,6 +1645,14 @@
 					</File>
 				</Filter>
 				<Filter
+					Name="soundmng"
+					>
+					<File
+						RelativePath=".\soundmng\sddsound3.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
 					Name="subwnd"
 					>
 					<File
@@ -2919,6 +2927,18 @@
 					</File>
 					<File
 						RelativePath=".\misc\WndProc.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="soundmng"
+					>
+					<File
+						RelativePath=".\soundmng\sdbase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\soundmng\sddsound3.h"
 						>
 					</File>
 				</Filter>

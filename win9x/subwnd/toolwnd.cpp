@@ -767,7 +767,7 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 
 				case IDM_TOOL_SKINSEL:
 					{
-						soundmng_disable(SNDPROC_TOOL);
+						CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 
 						std::tstring rExt(LoadTString(IDS_SKINEXT));
 						std::tstring rFilter(LoadTString(IDS_SKINFILTER));
@@ -778,7 +778,7 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 						dlg.m_ofn.nFilterIndex = 1;
 						const BOOL r = dlg.DoModal();
 
-						soundmng_enable(SNDPROC_TOOL);
+						CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 
 						if (r)
 						{
@@ -845,15 +845,15 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 
 #if 0
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Disable(SNDPROC_TOOL);
 			winlocex_destroy(toolwin.wlex);
 			toolwin.wlex = np2_winlocexallwin(hWnd);
 			break;
@@ -865,7 +865,7 @@ LRESULT CToolWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 		case WM_EXITSIZEMOVE:
 			winlocex_destroy(toolwin.wlex);
 			toolwin.wlex = NULL;
-			soundmng_enable(SNDPROC_TOOL);
+			CSoundMng::GetInstance()->Enable(SNDPROC_TOOL);
 			break;
 #endif
 

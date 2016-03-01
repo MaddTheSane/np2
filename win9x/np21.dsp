@@ -1664,6 +1664,22 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
+# Begin Group "soundmng"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\soundmng\sdbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.h
+# End Source File
+# End Group
 # Begin Group "subwnd"
 
 # PROP Default_Filter ""
@@ -1849,7 +1865,11 @@ SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SOUNDMNG.CPP
+SOURCE=.\soundmng.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng.h
 # End Source File
 # Begin Source File
 
