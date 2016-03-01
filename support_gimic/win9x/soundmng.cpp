@@ -12,13 +12,8 @@
 #if defined(MT32SOUND_DLL)
 #include "ext\mt32snd.h"
 #endif
-#if defined(SUPPORT_ASIO)
 #include "soundmng\sdasio.h"
-#endif	// defined(SUPPORT_ASIO)
 #include "soundmng\sddsound3.h"
-#if defined(SUPPORT_WASAPI)
-#include "soundmng\sdwasapi.h"
-#endif	// defined(SUPPORT_WASAPI)
 #include "common\parts.h"
 #include "sound\sound.h"
 #if defined(VERMOUTH_LIB)
@@ -49,18 +44,12 @@ void __fastcall satuation_s16mmx(SINT16 *dst, const SINT32 *src, UINT size);
 //! 唯一のインスタンスです
 CSoundMng CSoundMng::sm_instance;
 
-//! WAVE MAPPER
-	TCHAR g_szWaveMapper[] = TEXT("WAVE MAPPER");
-
 /**
  * 初期化
  */
 void CSoundMng::Initialize()
 {
 	CSoundDeviceDSound3::Initialize();
-#if defined(SUPPORT_WASAPI)
-	CSoundDeviceWasapi::Initialize();
-#endif	// defined(SUPPORT_WASAPI)
 
 #if defined(SUPPORT_ROMEO)
 	CExternalChipManager::GetInstance()->Initialize();
@@ -72,10 +61,6 @@ void CSoundMng::Initialize()
  */
 void CSoundMng::Deinitialize()
 {
-#if defined(SUPPORT_WASAPI)
-	CSoundDeviceWasapi::Deinitialize();
-#endif	// defined(SUPPORT_WASAPI)
-
 #if defined(SUPPORT_ROMEO)
 	CExternalChipManager::GetInstance()->Deinitialize();
 #endif	// defined(SUPPORT_ROMEO)
@@ -93,44 +78,33 @@ CSoundMng::CSoundMng()
 
 /**
  * オープン
- * @param[in] nType デバイス タイプ
- * @param[in] lpName デバイス名
+ * @param[in] lpDevice デバイス名
  * @param[in] hWnd ウィンドウ ハンドル
  * @retval true 成功
  * @retval false 失敗
  */
-bool CSoundMng::Open(DeviceType nType, LPCTSTR lpName, HWND hWnd)
+bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
 {
 	Close();
 
 	CSoundDeviceBase* pSoundDevice = NULL;
-	switch (nType)
+
+	// Asio
+	if (pSoundDevice == NULL)
 	{
-		case kDefault:
-			pSoundDevice = new CSoundDeviceDSound3;
-			lpName = NULL;
-			break;
-
-		case kDSound3:
-			pSoundDevice = new CSoundDeviceDSound3;
-			break;
-
-#if defined(SUPPORT_WASAPI)
-		case kWasapi:
-			pSoundDevice = new CSoundDeviceWasapi;
-			break;
-#endif	// defined(SUPPORT_WASAPI)
-
-#if defined(SUPPORT_ASIO)
-		case kAsio:
-			pSoundDevice = new CSoundDeviceAsio;
-			break;
-#endif	// defined(SUPPORT_ASIO)
+		pSoundDevice = new CSoundDeviceAsio();
+		if (!pSoundDevice->Open(lpDevice, hWnd))
+		{
+			delete pSoundDevice;
+			pSoundDevice = NULL;
+		}
 	}
 
-	if (pSoundDevice)
+	// DSound3
+	if (pSoundDevice == NULL)
 	{
-		if (!pSoundDevice->Open(lpName, hWnd))
+		pSoundDevice = new CSoundDeviceDSound3();
+		if (!pSoundDevice->Open(lpDevice, hWnd))
 		{
 			delete pSoundDevice;
 			pSoundDevice = NULL;

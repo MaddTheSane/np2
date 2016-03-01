@@ -33,8 +33,9 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum);
 #ifdef __cplusplus
 }
 
-#include <vector>
 #include "soundmng\sdbase.h"
+
+class CSoundDeviceBase;
 
 /**
  * サウンド プロシージャ
@@ -53,23 +54,12 @@ enum SoundProc
 class CSoundMng : public ISoundData
 {
 public:
-	/**
-	 * デバイス タイプ
-	 */
-	enum DeviceType
-	{
-		kDefault			= 0,	/*!< Default */
-		kDSound3,					/*!< Direct Sound3 */
-		kWasapi,					/*!< WASAPI */
-		kAsio						/*!< ASIO */
-	};
-
 	static CSoundMng* GetInstance();
 	static void Initialize();
 	static void Deinitialize();
 
 	CSoundMng();
-	bool Open(DeviceType nType, LPCTSTR lpName, HWND hWnd);
+	bool Open(LPCTSTR lpDevice, HWND hWnd);
 	void Close();
 	void Enable(SoundProc nProc);
 	void Disable(SoundProc nProc);

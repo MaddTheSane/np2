@@ -19,7 +19,7 @@ AsioDriverList::AsioDriverList()
 	EnumerateDrivers();
 	if (!empty())
 	{
-		::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		::CoInitialize(0);
 	}
 }
 

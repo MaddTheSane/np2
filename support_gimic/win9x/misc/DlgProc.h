@@ -124,14 +124,6 @@ public:
 	}
 
 	/**
-	 * コンボ ボックスのリスト ボックスとエディット コントロールからすべての項目を削除します。
-	 */
-	void ResetContent()
-	{
-		::SendMessage(m_hWnd, CB_RESETCONTENT, 0, 0);
-	}
-
-	/**
 	 * 32 ビット値をコンボ ボックスの指定項目に関連付けられる
 	 * @param[in] nIndex 項目に始まるインデックスを設定するためのメソッドが含まれます
 	 * @param[in] dwItemData 新しい値を項目に関連付けるに含まれています

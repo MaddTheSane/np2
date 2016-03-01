@@ -77,8 +77,7 @@ typedef struct {
 	UINT8	fscrnbpp;
 	UINT8	fscrnmod;
 
-	UINT8	cSoundDeviceType;
-	TCHAR	szSoundDeviceName[MAX_PATH];
+	TCHAR	szSoundDevice[MAX_PATH];
 
 #if defined(SUPPORT_VSTi)
 	TCHAR	szVSTiFile[MAX_PATH];

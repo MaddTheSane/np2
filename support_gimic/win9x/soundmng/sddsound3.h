@@ -52,9 +52,7 @@ private:
 
 	LPDIRECTSOUND m_lpDSound;					//!< Direct Sound インタフェイス
 	LPDIRECTSOUNDBUFFER m_lpDSStream;			//!< ストリーム バッファ
-	UINT m_nChannels;							//!< チャネル数
-	UINT m_nBufferSize;							//!< バッファ サイズ
-	UINT m_dwHalfBufferSize;					//!< バッファ バイト
+	UINT m_dwHalfBufferSize;					//!< バッファ サイズ
 	HANDLE m_hEvents[2];						//!< イベント
 	std::map<UINT, LPDIRECTSOUNDBUFFER> m_pcm;	//!< PCM バッファ
 

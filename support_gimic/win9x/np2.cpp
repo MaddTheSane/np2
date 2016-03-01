@@ -100,7 +100,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 #endif
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
-						0, TEXT(""),
+						TEXT(""),
 
 #if defined(SUPPORT_VSTi)
 						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll")
@@ -1646,7 +1646,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	CSoundMng::Initialize();
-	if (CSoundMng::GetInstance()->Open(static_cast<CSoundMng::DeviceType>(np2oscfg.cSoundDeviceType), np2oscfg.szSoundDeviceName, hWnd))
+	if (CSoundMng::GetInstance()->Open(np2oscfg.szSoundDevice, hWnd))
 	{
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));

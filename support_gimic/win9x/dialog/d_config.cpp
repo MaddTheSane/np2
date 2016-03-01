@@ -86,23 +86,20 @@ BOOL CConfigureDlg::OnInitDialog()
 	}
 	CheckDlgButton(nModel, BST_CHECKED);
 
-	UINT nSamplingRate = 0;
-	if (np2cfg.samplingrate == 11025)
+	UINT nSamplingRate;
+	if (np2cfg.samplingrate < 22050)
 	{
 		nSamplingRate = IDC_RATE11;
 	}
-	else if (np2cfg.samplingrate == 22050)
+	else if (np2cfg.samplingrate < 44100)
 	{
 		nSamplingRate = IDC_RATE22;
 	}
-	else if (np2cfg.samplingrate == 44100)
+	else
 	{
 		nSamplingRate = IDC_RATE44;
 	}
-	if (nSamplingRate)
-	{
-		CheckDlgButton(nSamplingRate, BST_CHECKED);
-	}
+	CheckDlgButton(nSamplingRate, BST_CHECKED);
 	SetDlgItemInt(IDC_SOUNDBUF, np2cfg.delayms, FALSE);
 
 	CheckDlgButton(IDC_ALLOWRESIZE, (np2oscfg.thickframe) ? BST_CHECKED : BST_UNCHECKED);
@@ -168,7 +165,7 @@ void CConfigureDlg::OnOK()
 		update |= SYS_UPDATECFG;
 	}
 
-	UINT nSamplingRate = 0;
+	UINT nSamplingRate;
 	if (IsDlgButtonChecked(IDC_RATE11) != BST_UNCHECKED)
 	{
 		nSamplingRate = 11025;
@@ -177,11 +174,11 @@ void CConfigureDlg::OnOK()
 	{
 		nSamplingRate = 22050;
 	}
-	else if (IsDlgButtonChecked(IDC_RATE44) != BST_UNCHECKED)
+	else
 	{
 		nSamplingRate = 44100;
 	}
-	if ((nSamplingRate) && (np2cfg.samplingrate != nSamplingRate))
+	if (np2cfg.samplingrate != nSamplingRate)
 	{
 		np2cfg.samplingrate = nSamplingRate;
 		update |= SYS_UPDATECFG | SYS_UPDATERATE;

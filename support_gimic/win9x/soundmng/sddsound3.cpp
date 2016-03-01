@@ -20,7 +20,7 @@
 #define DSBVOLUME_MIN		(-10000)					/*!< ヴォリューム最小値 */
 #endif
 
-//! デバイス リスト
+//!< デバイス リスト
 std::vector<DSound3Device> CSoundDeviceDSound3::sm_devices;
 
 /**
@@ -89,8 +89,6 @@ void CSoundDeviceDSound3::EnumerateDevices(std::vector<LPCTSTR>& devices)
 CSoundDeviceDSound3::CSoundDeviceDSound3()
 	: m_lpDSound(NULL)
 	, m_lpDSStream(NULL)
-	, m_nChannels(0)
-	, m_nBufferSize(0)
 	, m_dwHalfBufferSize(0)
 {
 	ZeroMemory(m_hEvents, sizeof(m_hEvents));
@@ -186,8 +184,7 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 		nBufferSize = nSamplingRate / 10;
 	}
 
-	m_nChannels = nChannels;
-	m_nBufferSize = nBufferSize;
+//	m_nBufferSize = nBufferSize;
 	m_dwHalfBufferSize = nBufferSize * nChannels * sizeof(short);
 
 	PCMWAVEFORMAT pcmwf;
@@ -264,9 +261,6 @@ void CSoundDeviceDSound3::DestroyStream()
 		m_lpDSStream = NULL;
 	}
 
-	m_nChannels = 0;
-	m_nBufferSize = 0;
-	m_dwHalfBufferSize = 0;
 	for (UINT i = 0; i < _countof(m_hEvents); i++)
 	{
 		if (m_hEvents[i])
@@ -379,14 +373,13 @@ void CSoundDeviceDSound3::FillStream(DWORD dwPosition)
 	}
 	if (SUCCEEDED(hr))
 	{
-		UINT nStreamLength = 0;
 		if (m_pSoundData)
 		{
-			nStreamLength = m_pSoundData->Get16(static_cast<SINT16*>(lpBlock1), m_nBufferSize);
+			m_pSoundData->Get16(static_cast<SINT16*>(lpBlock1), cbBlock1 / 4);
 		}
-		if (nStreamLength != m_nBufferSize)
+		else
 		{
-			ZeroMemory(static_cast<short*>(lpBlock1) + nStreamLength * m_nChannels, (m_nBufferSize - nStreamLength) * m_nChannels * sizeof(short));
+			ZeroMemory(lpBlock1, cbBlock1);
 		}
 		m_lpDSStream->Unlock(lpBlock1, cbBlock1, lpBlock2, cbBlock2);
 	}

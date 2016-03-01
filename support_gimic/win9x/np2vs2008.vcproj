@@ -2020,10 +2020,6 @@
 						RelativePath=".\soundmng\sddsound3.cpp"
 						>
 					</File>
-					<File
-						RelativePath=".\soundmng\sdwasapi.cpp"
-						>
-					</File>
 					<Filter
 						Name="asio"
 						>
@@ -3324,10 +3320,6 @@
 					</File>
 					<File
 						RelativePath=".\soundmng\sddsound3.h"
-						>
-					</File>
-					<File
-						RelativePath=".\soundmng\sdwasapi.h"
 						>
 					</File>
 					<Filter
