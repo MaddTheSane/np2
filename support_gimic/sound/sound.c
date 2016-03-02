@@ -275,6 +275,8 @@ void sound_destroy(void) {
 		_MFREE(sndstream.buffer);
 		sndstream.buffer = NULL;
 	}
+
+	soundcfg.rate = 0;
 }
 
 void sound_reset(void) {
