@@ -595,7 +595,8 @@ static const PFTBL s_IniItems[] =
 	PFVAL("fscrnbpp", PFRO_UINT8,		&np2oscfg.fscrnbpp),
 	PFVAL("fscrnmod", PFTYPE_HEX8,		&np2oscfg.fscrnmod),
 
-	PFSTR("sounddev", PFRO_STR,			np2oscfg.szSoundDevice),
+	PFVAL("snddev_t", PFTYPE_UINT8,		&np2oscfg.cSoundDeviceType),
+	PFSTR("snddev_n", PFTYPE_STR,		np2oscfg.szSoundDeviceName),
 
 #if defined(SUPPORT_VSTi)
 	PFSTR("VSTiFile", PFRO_STR,			np2oscfg.szVSTiFile),
