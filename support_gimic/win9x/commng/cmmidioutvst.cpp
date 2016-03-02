@@ -10,7 +10,7 @@
 #include "cmmidioutvst.h"
 #include <shlwapi.h>
 #include "np2.h"
-#include "pccore.h"
+#include "sound/sound.h"
 
 #pragma comment(lib, "shlwapi.lib")
 
@@ -80,7 +80,11 @@ CComMidiOutVst::~CComMidiOutVst()
  */
 bool CComMidiOutVst::Initialize(LPCTSTR lpPath)
 {
-	m_effect;
+	if (soundcfg.rate == 0)
+	{
+		return false;
+	}
+
 	if (!m_effect.Load(lpPath))
 	{
 		printf("Cloudn't attach VSTi.\n");
@@ -91,7 +95,7 @@ bool CComMidiOutVst::Initialize(LPCTSTR lpPath)
 	m_effect.open();
 
 	// サンプリング レートを設定
-	m_effect.setSampleRate(static_cast<float>(np2cfg.samplingrate));
+	m_effect.setSampleRate(static_cast<float>(soundcfg.rate));
 
 	// ブロックサイズを設定
 	m_effect.setBlockSize(m_nBlockSize);
