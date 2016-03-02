@@ -13,6 +13,14 @@ CSoundDeviceAsio* CSoundDeviceAsio::sm_pInstance;
 AsioDriverList CSoundDeviceAsio::sm_asioDriverList;
 
 /**
+ * 初期化
+ */
+void CSoundDeviceAsio::Initialize()
+{
+	sm_asioDriverList.EnumerateDrivers();
+}
+
+/**
  * 列挙
  * @param[out] devices デバイス リスト
  */

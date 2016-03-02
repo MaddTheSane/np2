@@ -15,6 +15,7 @@
 class CSoundDeviceAsio : public CSoundDeviceBase
 {
 public:
+	static void Initialize();
 	static void EnumerateDevices(std::vector<LPCTSTR>& devices);
 
 	CSoundDeviceAsio();

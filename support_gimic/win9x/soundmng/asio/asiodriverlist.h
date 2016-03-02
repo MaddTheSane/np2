@@ -25,11 +25,9 @@ struct AsioDriverInfo
 class AsioDriverList : public std::vector<AsioDriverInfo>
 {
 public:
-	AsioDriverList();
-	~AsioDriverList();
+	void EnumerateDrivers();
 	IASIO* OpenDriver(LPCTSTR lpDriverName);
 
 private:
-	void EnumerateDrivers();
 	static bool FindDrvPath(LPCTSTR lpClsId, LPTSTR lpDllPath, UINT cchDllPath);
 };

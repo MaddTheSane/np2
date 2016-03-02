@@ -51,7 +51,15 @@ CSoundMng CSoundMng::sm_instance;
  */
 void CSoundMng::Initialize()
 {
+#if defined(SUPPORT_ASIO)
+	::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+#endif	// defined(SUPPORT_ASIO)
+
 	CSoundDeviceDSound3::Initialize();
+
+#if defined(SUPPORT_ASIO)
+	CSoundDeviceAsio::Initialize();
+#endif	// defined(SUPPORT_ASIO)
 
 #if defined(SUPPORT_ROMEO)
 	CExternalChipManager::GetInstance()->Initialize();
@@ -66,6 +74,10 @@ void CSoundMng::Deinitialize()
 #if defined(SUPPORT_ROMEO)
 	CExternalChipManager::GetInstance()->Deinitialize();
 #endif	// defined(SUPPORT_ROMEO)
+
+#if defined(SUPPORT_ASIO)
+	::CoUninitialize();
+#endif	// defined(SUPPORT_ASIO)
 }
 
 /**

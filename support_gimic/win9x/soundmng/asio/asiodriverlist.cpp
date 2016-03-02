@@ -12,33 +12,11 @@
 #pragma comment(lib, "shlwapi.lib")
 
 /**
- * コンストラクタ
- */
-AsioDriverList::AsioDriverList()
-{
-	EnumerateDrivers();
-	if (!empty())
-	{
-		::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	}
-}
-
-/**
- * デストラクタ
- */
-AsioDriverList::~AsioDriverList()
-{
-	if (!empty())
-	{
-		::CoUninitialize();
-	}
-}
-
-/**
  * ドライバを列挙する
  */
 void AsioDriverList::EnumerateDrivers()
 {
+	clear();
 	CRegKey asio;
 	if (asio.Open(HKEY_LOCAL_MACHINE, TEXT("software\\asio"), KEY_ENUMERATE_SUB_KEYS) == ERROR_SUCCESS)
 	{
