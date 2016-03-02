@@ -12,7 +12,9 @@
 #if defined(MT32SOUND_DLL)
 #include "ext\mt32snd.h"
 #endif
+#if defined(SUPPORT_ASIO)
 #include "soundmng\sdasio.h"
+#endif	// defined(SUPPORT_ASIO)
 #include "soundmng\sddsound3.h"
 #include "common\parts.h"
 #include "sound\sound.h"
@@ -89,6 +91,7 @@ bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
 
 	CSoundDeviceBase* pSoundDevice = NULL;
 
+#if defined(SUPPORT_ASIO)
 	// Asio
 	if (pSoundDevice == NULL)
 	{
@@ -99,6 +102,7 @@ bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
 			pSoundDevice = NULL;
 		}
 	}
+#endif	// defined(SUPPORT_ASIO)
 
 	// DSound3
 	if (pSoundDevice == NULL)

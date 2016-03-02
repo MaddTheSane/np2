@@ -35,8 +35,6 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum);
 
 #include "soundmng\sdbase.h"
 
-class CSoundDeviceBase;
-
 /**
  * サウンド プロシージャ
  */
