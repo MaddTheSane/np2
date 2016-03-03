@@ -23,6 +23,9 @@
 #include "misc\tstring.h"
 #include "commng.h"
 #include "commng\cmmidiin32.h"
+#if defined(SUPPORT_VSTi)
+#include "commng\vsthost\vsteditwnd.h"
+#endif	// defined(SUPPORT_VSTi)
 #include "joymng.h"
 #include "mousemng.h"
 #include "scrnmng.h"
@@ -98,7 +101,12 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
 
-						CSoundMng::kDSound3, TEXT("")};
+						CSoundMng::kDSound3, TEXT(""),
+
+#if defined(SUPPORT_VSTi)
+						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll")
+#endif	// defined(SUPPORT_VSTi)
+					};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -1480,6 +1488,9 @@ static void ExecuteOneFrame(BOOL bDraw)
 #if defined(SUPPORT_DCLOCK)
 	DispClock::GetInstance()->Update();
 #endif
+#if defined(SUPPORT_VSTi)
+	CVstEditWnd::OnIdle();
+#endif	// defined(SUPPORT_VSTi)
 }
 
 static void framereset(UINT cnt) {
@@ -1527,6 +1538,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	_MEM_INIT();
 	CWndProc::Initialize(hInstance);
 	CSubWndBase::Initialize(hInstance);
+#if defined(SUPPORT_VSTi)
+	CVstEditWnd::Initialize(hInstance);
+#endif	// defined(SUPPORT_VSTi)
 
 	GetModuleFileName(NULL, modulefile, NELEMENTS(modulefile));
 	dosio_init();

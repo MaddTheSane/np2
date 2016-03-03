@@ -1409,6 +1409,42 @@ SOURCE=..\VRAM\VRAM.C
 # Begin Group "commng"
 
 # PROP Default_Filter ""
+# Begin Group "vsthost"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstbuffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstbuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteditwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteditwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteffect.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteffect.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstmidievent.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstmidievent.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\commng\cmbase.cpp
@@ -1460,6 +1496,14 @@ SOURCE=.\commng\cmmidioutvermouth.cpp
 # Begin Source File
 
 SOURCE=.\commng\cmmidioutvermouth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.h
 # End Source File
 # Begin Source File
 

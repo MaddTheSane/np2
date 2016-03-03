@@ -15,6 +15,9 @@
 #if defined(VERMOUTH_LIB)
 #include "cmmidioutvermouth.h"
 #endif	// defined(VERMOUTH_LIB)
+#if defined(SUPPORT_VSTi)
+#include "cmmidioutvst.h"
+#endif	// defined(SUPPORT_VSTi)
 #include "keydisp.h"
 
 #define MIDIOUTS(a, b, c)	(((c) << 16) + (b << 8) + (a))
@@ -22,6 +25,8 @@
 #define MIDIOUTS3(a)		((*(UINT32 *)(a)) & 0xffffff)
 
 const TCHAR cmmidi_midimapper[] = TEXT("MIDI MAPPER");
+const TCHAR cmmidi_midivst[] = TEXT("VSTHost-Sound Canvas VA");
+
 #if defined(VERMOUTH_LIB)
 const TCHAR cmmidi_vermouth[] = TEXT("VERMOUTH");
 #endif
@@ -289,6 +294,12 @@ bool CComMidi::Initialize(LPCTSTR lpMidiOut, LPCTSTR lpMidiIn, LPCTSTR lpModule)
 		m_pMidiOut = CComMidiOutMT32Sound::CreateInstance();
 	}
 #endif	// defined(MT32SOUND_DLL)
+#if defined(SUPPORT_VSTi)
+	if ((m_pMidiOut == NULL) && (!milstr_cmp(lpMidiOut, cmmidi_midivst)))
+	{
+		m_pMidiOut = CComMidiOutVst::CreateInstance();
+	}
+#endif	// defined(SUPPORT_VSTi)
 	if (m_pMidiOut == NULL)
 	{
 		m_pMidiOut = CComMidiOut32::CreateInstance(lpMidiOut);

@@ -598,6 +598,10 @@ static const PFTBL s_IniItems[] =
 	PFVAL("snddev_t", PFTYPE_UINT8,		&np2oscfg.cSoundDeviceType),
 	PFSTR("snddev_n", PFTYPE_STR,		np2oscfg.szSoundDeviceName),
 
+#if defined(SUPPORT_VSTi)
+	PFSTR("VSTiFile", PFRO_STR,			np2oscfg.szVSTiFile),
+#endif	// defined(SUPPORT_VSTi)
+
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)
 };
 
