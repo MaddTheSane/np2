@@ -1253,6 +1253,14 @@ SOURCE=..\SOUND\S98.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound\sndcsec.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\sndcsec.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\SOUND\SOUND.C
 # End Source File
 # Begin Source File
