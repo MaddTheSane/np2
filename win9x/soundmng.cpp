@@ -16,6 +16,9 @@
 #include "soundmng\sdasio.h"
 #endif	// defined(SUPPORT_ASIO)
 #include "soundmng\sddsound3.h"
+#if defined(SUPPORT_WASAPI)
+#include "soundmng\sdwasapi.h"
+#endif	// defined(SUPPORT_WASAPI)
 #include "common\parts.h"
 #include "sound\sound.h"
 #if defined(VERMOUTH_LIB)
@@ -51,11 +54,14 @@ CSoundMng CSoundMng::sm_instance;
  */
 void CSoundMng::Initialize()
 {
-#if defined(SUPPORT_ASIO)
+#if defined(SUPPORT_ASIO) || defined(SUPPORT_WASAPI)
 	::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-#endif	// defined(SUPPORT_ASIO)
+#endif	// defined(SUPPORT_ASIO) || defined(SUPPORT_WASAPI)
 
 	CSoundDeviceDSound3::Initialize();
+#if defined(SUPPORT_WASAPI)
+	CSoundDeviceWasapi::Initialize();
+#endif	// defined(SUPPORT_WASAPI)
 
 #if defined(SUPPORT_ASIO)
 	CSoundDeviceAsio::Initialize();
@@ -75,9 +81,13 @@ void CSoundMng::Deinitialize()
 	CExternalChipManager::GetInstance()->Deinitialize();
 #endif	// defined(SUPPORT_ROMEO)
 
-#if defined(SUPPORT_ASIO)
+#if defined(SUPPORT_WASAPI)
+	CSoundDeviceWasapi::Deinitialize();
+#endif	// defined(SUPPORT_WASAPI)
+
+#if defined(SUPPORT_ASIO) || defined(SUPPORT_WASAPI)
 	::CoUninitialize();
-#endif	// defined(SUPPORT_ASIO)
+#endif	// defined(SUPPORT_ASIO) || defined(SUPPORT_WASAPI)
 }
 
 /**
@@ -113,6 +123,12 @@ bool CSoundMng::Open(DeviceType nType, LPCTSTR lpName, HWND hWnd)
 		case kDSound3:
 			pSoundDevice = new CSoundDeviceDSound3;
 			break;
+
+#if defined(SUPPORT_WASAPI)
+		case kWasapi:
+			pSoundDevice = new CSoundDeviceWasapi;
+			break;
+#endif	// defined(SUPPORT_WASAPI)
 
 #if defined(SUPPORT_ASIO)
 		case kAsio:

@@ -15,6 +15,9 @@
 #include "soundmng/sdasio.h"
 #endif	// defined(SUPPORT_ASIO)
 #include "soundmng/sddsound3.h"
+#if defined(SUPPORT_WASAPI)
+#include "soundmng\sdwasapi.h"
+#endif	// defined(SUPPORT_WASAPI)
 #include "pccore.h"
 #include "common/strres.h"
 
@@ -39,6 +42,7 @@ private:
 	CComboData m_name;				//!< デバイス名
 	CComboData m_rate;				//!< レート
 	std::vector<LPCTSTR> m_dsound3;	//!< DSound3
+	std::vector<LPCTSTR> m_wasapi;	//!< WASAPI
 	std::vector<LPCTSTR> m_asio;	//!< ASIO
 	void SetClock(UINT nMultiple = 0);
 	void UpdateDeviceList();
@@ -104,6 +108,9 @@ BOOL CConfigureDlg::OnInitDialog()
 	m_type.SubclassDlgItem(IDC_SOUND_DEVICE_TYPE, this);
 
 	CSoundDeviceDSound3::EnumerateDevices(m_dsound3);
+#if defined(SUPPORT_WASAPI)
+	CSoundDeviceWasapi::EnumerateDevices(m_wasapi);
+#endif	// defined(SUPPORT_WASAPI)
 #if defined(SUPPORT_ASIO)
 	CSoundDeviceAsio::EnumerateDevices(m_asio);
 #endif	// defined(SUPPORT_ASIO)
@@ -116,6 +123,10 @@ BOOL CConfigureDlg::OnInitDialog()
 		{
 			case CSoundMng::kDSound3:
 				pDevices = &m_dsound3;
+				break;
+
+			case CSoundMng::kWasapi:
+				pDevices = &m_wasapi;
 				break;
 
 			case CSoundMng::kAsio:
@@ -136,6 +147,10 @@ BOOL CConfigureDlg::OnInitDialog()
 		}
 	}
 	m_type.Add(TEXT("Direct Sound"), CSoundMng::kDSound3);
+	if ((nType == CSoundMng::kWasapi) || (!m_wasapi.empty()))
+	{
+		m_type.Add(TEXT("WASAPI"), CSoundMng::kWasapi);
+	}
 	if ((nType == CSoundMng::kAsio) || (!m_asio.empty()))
 	{
 		m_type.Add(TEXT("ASIO"), CSoundMng::kAsio);
@@ -202,6 +217,10 @@ void CConfigureDlg::UpdateDeviceList()
 	{
 		case CSoundMng::kDSound3:
 			pDevices = &m_dsound3;
+			break;
+
+		case CSoundMng::kWasapi:
+			pDevices = &m_wasapi;
 			break;
 
 		case CSoundMng::kAsio:
