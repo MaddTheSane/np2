@@ -106,14 +106,18 @@ int CComboData::FindItemData(UINT32 nValue) const
 /**
  * カーソル設定
  * @param[in] nValue 値
+ * @retval true 成功
+ * @retval false 失敗
  */
-void CComboData::SetCurItemData(UINT32 nValue)
+bool CComboData::SetCurItemData(UINT32 nValue)
 {
 	const int nIndex = FindItemData(nValue);
-	if (nIndex != CB_ERR)
+	if (nIndex == CB_ERR)
 	{
-		SetCurSel(nIndex);
+		return false;
 	}
+	SetCurSel(nIndex);
+	return true;
 }
 
 /**

@@ -38,6 +38,6 @@ public:
 	int Add(UINT32 nValue, UINT32 nItemData);
 	int Add(LPCTSTR lpString, UINT32 nItemData);
 	int FindItemData(UINT32 nValue) const;
-	void SetCurItemData(UINT32 nValue);
+	bool SetCurItemData(UINT32 nValue);
 	UINT32 GetCurItemData(UINT32 nDefault) const;
 };

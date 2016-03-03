@@ -33,13 +33,13 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 private:
-	CComboData m_baseClock;				//!< ベース クロック
-	CComboData m_multiple;				//!< 倍率
-	CComboData m_type;					//!< タイプ
-	CComboData m_name;					//!< デバイス名
-	CComboData m_rate;					//!< レート
-	std::vector<LPCTSTR> m_asio;	//!< ASIO
+	CComboData m_baseClock;			//!< ベース クロック
+	CComboData m_multiple;			//!< 倍率
+	CComboData m_type;				//!< タイプ
+	CComboData m_name;				//!< デバイス名
+	CComboData m_rate;				//!< レート
 	std::vector<LPCTSTR> m_dsound3;	//!< DSound3
+	std::vector<LPCTSTR> m_asio;	//!< ASIO
 	void SetClock(UINT nMultiple = 0);
 	void UpdateDeviceList();
 };
@@ -101,10 +101,12 @@ BOOL CConfigureDlg::OnInitDialog()
 	CheckDlgButton(nModel, BST_CHECKED);
 
 	// サウンド関係
+	m_type.SubclassDlgItem(IDC_SOUND_DEVICE_TYPE, this);
+
+	CSoundDeviceDSound3::EnumerateDevices(m_dsound3);
 #if defined(SUPPORT_ASIO)
 	CSoundDeviceAsio::EnumerateDevices(m_asio);
 #endif	// defined(SUPPORT_ASIO)
-	CSoundDeviceDSound3::EnumerateDevices(m_dsound3);
 
 	const CSoundMng::DeviceType nType = static_cast<CSoundMng::DeviceType>(np2oscfg.cSoundDeviceType);
 	if (np2oscfg.szSoundDeviceName[0] != '\0')
@@ -133,15 +135,16 @@ BOOL CConfigureDlg::OnInitDialog()
 			}
 		}
 	}
-
-	m_type.SubclassDlgItem(IDC_SOUND_DEVICE_TYPE, this);
-	m_type.Add(TEXT("Default"), CSoundMng::kDefault);
 	m_type.Add(TEXT("Direct Sound"), CSoundMng::kDSound3);
 	if ((nType == CSoundMng::kAsio) || (!m_asio.empty()))
 	{
 		m_type.Add(TEXT("ASIO"), CSoundMng::kAsio);
 	}
-	m_type.SetCurItemData(nType);
+	if (!m_type.SetCurItemData(nType))
+	{
+		int nIndex = m_type.Add(TEXT("Unknown"), CSoundMng::kDefault);
+		m_type.SetCurSel(nIndex);
+	}
 
 	m_name.SubclassDlgItem(IDC_SOUND_DEVICE_NAME, this);
 	UpdateDeviceList();

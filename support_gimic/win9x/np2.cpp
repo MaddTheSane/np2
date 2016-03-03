@@ -101,7 +101,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
 
-						0, TEXT(""),
+						CSoundMng::kDSound3, TEXT(""),
 
 #if defined(SUPPORT_VSTi)
 						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll")
