@@ -277,7 +277,7 @@ void CConfigureDlg::OnOK()
 	{
 		np2oscfg.cSoundDeviceType = static_cast<UINT8>(nType);
 		::lstrcpyn(np2oscfg.szSoundDeviceName, szName, _countof(np2oscfg.szSoundDeviceName));
-		nUpdated |= SYS_UPDATEOSCFG;
+		nUpdated |= SYS_UPDATEOSCFG | SYS_UPDATESNDDEV;
 		soundrenewal = 1;
 	}
 
