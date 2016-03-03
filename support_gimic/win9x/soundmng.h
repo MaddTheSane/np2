@@ -59,6 +59,7 @@ public:
 	{
 		kDefault			= 0,	/*!< Default */
 		kDSound3,					/*!< Direct Sound3 */
+		kWasapi,					/*!< WASAPI */
 		kAsio						/*!< ASIO */
 	};
 
