@@ -92,35 +92,38 @@ CSoundMng::CSoundMng()
 
 /**
  * オープン
- * @param[in] lpDevice デバイス名
+ * @param[in] nType デバイス タイプ
+ * @param[in] lpName デバイス名
  * @param[in] hWnd ウィンドウ ハンドル
  * @retval true 成功
  * @retval false 失敗
  */
-bool CSoundMng::Open(LPCTSTR lpDevice, HWND hWnd)
+bool CSoundMng::Open(DeviceType nType, LPCTSTR lpName, HWND hWnd)
 {
 	Close();
 
 	CSoundDeviceBase* pSoundDevice = NULL;
+	switch (nType)
+	{
+		case kDefault:
+			pSoundDevice = new CSoundDeviceDSound3;
+			lpName = NULL;
+			break;
+
+		case kDSound3:
+			pSoundDevice = new CSoundDeviceDSound3;
+			break;
 
 #if defined(SUPPORT_ASIO)
-	// Asio
-	if (pSoundDevice == NULL)
-	{
-		pSoundDevice = new CSoundDeviceAsio();
-		if (!pSoundDevice->Open(lpDevice, hWnd))
-		{
-			delete pSoundDevice;
-			pSoundDevice = NULL;
-		}
-	}
+		case kAsio:
+			pSoundDevice = new CSoundDeviceAsio;
+			break;
 #endif	// defined(SUPPORT_ASIO)
+	}
 
-	// DSound3
-	if (pSoundDevice == NULL)
+	if (pSoundDevice)
 	{
-		pSoundDevice = new CSoundDeviceDSound3();
-		if (!pSoundDevice->Open(lpDevice, hWnd))
+		if (!pSoundDevice->Open(lpName, hWnd))
 		{
 			delete pSoundDevice;
 			pSoundDevice = NULL;

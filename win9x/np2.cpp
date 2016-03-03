@@ -97,7 +97,8 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 #endif
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						FSCRNMOD_SAMEBPP | FSCRNMOD_SAMERES | FSCRNMOD_ASPECTFIX8,
-						TEXT("")};
+
+						CSoundMng::kDSound3, TEXT("")};
 
 		OEMCHAR		fddfolder[MAX_PATH];
 		OEMCHAR		hddfolder[MAX_PATH];
@@ -391,6 +392,21 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 }
 #endif
 
+/**
+ * サウンドデバイスの再オープン
+ * @param[in] hWnd ウィンドウ ハンドル
+ */
+static void OpenSoundDevice(HWND hWnd)
+{
+	CSoundMng* pSoundMng = CSoundMng::GetInstance();
+	if (pSoundMng->Open(static_cast<CSoundMng::DeviceType>(np2oscfg.cSoundDeviceType), np2oscfg.szSoundDeviceName, hWnd))
+	{
+		pSoundMng->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
+		pSoundMng->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
+		pSoundMng->SetPCMVolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
+		pSoundMng->SetPCMVolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
+	}
+}
 
 // ---- proc
 
@@ -441,6 +457,11 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			}
 			if (b)
 			{
+				if (sys_updates & SYS_UPDATESNDDEV)
+				{
+					sys_updates &= ~SYS_UPDATESNDDEV;
+					OpenSoundDevice(hWnd);
+				}
 				pccore_cfgupdate();
 				pccore_reset();
 			}
@@ -1632,7 +1653,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 	CSoundMng::Initialize();
-	if (CSoundMng::GetInstance()->Open(np2oscfg.szSoundDevice, hWnd))
+	OpenSoundDevice(hWnd);
+
+	if (CSoundMng::GetInstance()->Open(static_cast<CSoundMng::DeviceType>(np2oscfg.cSoundDeviceType), np2oscfg.szSoundDeviceName, hWnd))
 	{
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
