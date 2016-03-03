@@ -74,14 +74,16 @@ public:
 	virtual UINT CreateStream(UINT nSamplingRate, UINT nChannels, UINT nBufferSize = 0) = 0;
 
 	/**
-	 * ストリームをリセット
-	 */
-	virtual void ResetStream() = 0;
-
-	/**
 	 * ストリームを破棄
 	 */
 	virtual void DestroyStream() = 0;
+
+	/**
+	 * ストリームをリセット
+	 */
+	virtual void ResetStream()
+	{
+	}
 
 	/**
 	 * ストリームの再生
@@ -102,20 +104,27 @@ public:
 	 * @retval true 成功
 	 * @retval false 失敗
 	 */
-	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename) = 0;
+	virtual bool LoadPCM(UINT nNum, LPCTSTR lpFilename)
+	{
+		return false;
+	}
 
 	/**
 	 * PCM をアンロード
 	 * @param[in] nNum PCM 番号
 	 */
-	virtual void UnloadPCM(UINT nNum) = 0;
+	virtual void UnloadPCM(UINT nNum)
+	{
+	}
 
 	/**
 	 * PCM ヴォリューム設定
 	 * @param[in] nNum PCM 番号
 	 * @param[in] nVolume ヴォリューム
 	 */
-	virtual void SetPCMVolume(UINT nNum, int nVolume) = 0;
+	virtual void SetPCMVolume(UINT nNum, int nVolume)
+	{
+	}
 
 	/**
 	 * PCM 再生
@@ -124,18 +133,25 @@ public:
 	 * @retval true 成功
 	 * @retval false 失敗
 	 */
-	virtual bool PlayPCM(UINT nNum, BOOL bLoop) = 0;
+	virtual bool PlayPCM(UINT nNum, BOOL bLoop)
+	{
+		return false;
+	}
 
 	/**
 	 * PCM 停止
 	 * @param[in] nNum PCM 番号
 	 */
-	virtual void StopPCM(UINT nNum) = 0;
+	virtual void StopPCM(UINT nNum)
+	{
+	}
 
 	/**
 	 * PCM をストップ
 	 */
-	virtual void StopAllPCM() = 0;
+	virtual void StopAllPCM()
+	{
+	}
 
 protected:
 	ISoundData* m_pSoundData;		/*!< サウンド データ インスタンス */

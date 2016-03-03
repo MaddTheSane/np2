@@ -171,6 +171,7 @@ typedef	signed __int64		SINT64;
 
 #define SOUND_CRITICAL
 #define	SOUNDRESERVE	20
+#define SUPPORT_ASIO
 
 #define	SUPPORT_TEXTCNV
 

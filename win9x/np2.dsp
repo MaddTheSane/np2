@@ -1837,6 +1837,30 @@ SOURCE=.\misc\WndProc.h
 # Begin Group "soundmng"
 
 # PROP Default_Filter ""
+# Begin Group "asio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiodriverlist.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiodriverlist.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiosdk.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\soundmng\sdasio.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sdasio.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\soundmng\sdbase.h

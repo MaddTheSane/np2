@@ -35,8 +35,6 @@ void soundmng_pcmstop(enum SoundPCMNumber nNum);
 
 #include "soundmng\sdbase.h"
 
-class CSoundDeviceBase;
-
 /**
  * サウンド プロシージャ
  */
@@ -59,7 +57,7 @@ public:
 	static void Deinitialize();
 
 	CSoundMng();
-	bool Open(HWND hWnd);
+	bool Open(LPCTSTR lpDevice, HWND hWnd);
 	void Close();
 	void Enable(SoundProc nProc);
 	void Disable(SoundProc nProc);
