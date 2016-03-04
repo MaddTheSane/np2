@@ -58,7 +58,7 @@ static joymng_devinfo_t **joydrv_initialize(void);
 static void joydrv_terminate(void);
 static void *joydrv_open(const char *dev);
 static void joydrv_close(void *hdl);
-static BOOL joydrv_getstat(void *hdl, JOYINFO_T *ji);
+static BRESULT joydrv_getstat(void *hdl, JOYINFO_T *ji);
 
 void
 joymng_initialize(void)
@@ -350,7 +350,7 @@ joydrv_close(void *hdl)
 	_MFREE(shdl);
 }
 
-static BOOL
+static BRESULT
 joydrv_getstat(void *hdl, JOYINFO_T *ji)
 {
 	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;

@@ -169,7 +169,13 @@ typedef	signed __int64		SINT64;
 #define	SUPPORT_STATSAVE	10
 #define	SUPPORT_ROMEO
 
+#define SOUND_CRITICAL
 #define	SOUNDRESERVE	20
+#define SUPPORT_VSTi
+#define SUPPORT_ASIO
+#if (_MSC_VER >= 1500)
+#define SUPPORT_WASAPI
+#endif	/* (_MSC_VER >= 1500) */
 
 #define	SUPPORT_TEXTCNV
 

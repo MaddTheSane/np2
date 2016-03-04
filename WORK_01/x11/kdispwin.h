@@ -21,7 +21,7 @@ typedef struct {
 
 extern KDISPCFG kdispcfg;
 
-BOOL kdispwin_initialize(void);
+BRESULT kdispwin_initialize(void);
 void kdispwin_create(void);
 void kdispwin_destroy(void);
 void kdispwin_draw(UINT8 cnt);

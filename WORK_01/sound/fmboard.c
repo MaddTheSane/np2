@@ -153,12 +153,10 @@ void fmboard_destruct(void)
  */
 void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 {
-	UINT8 cross;
 	UINT i;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
-	cross = pConfig->snd_x;										// ver0.30
 
 	if (g_nSoundID != nSoundID)
 	{
@@ -203,12 +201,10 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 
 		case SOUNDID_SPEAKBOARD:
 			boardspb_reset(pConfig);
-			cross ^= pConfig->spb_x;
 			break;
 
 		case SOUNDID_SPARKBOARD:
 			boardspr_reset(pConfig);
-			cross ^= pConfig->spb_x;
 			break;
 
 		case SOUNDID_AMD98:
@@ -237,7 +233,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 			break;
 	}
 	g_nSoundID = nSoundID;
-	soundmng_setreverse(cross);
+	soundmng_setreverse(pConfig->snd_x);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
 

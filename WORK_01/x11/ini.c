@@ -382,7 +382,7 @@ ini_write(const char *path, const char *title, INITBL *tbl, UINT count, BOOL cre
 	INITBL	*p;
 	INITBL	*pterm;
 	FILEH	fh;
-	BOOL	set;
+	BRESULT	set;
 
 	fh = FILEH_INVALID;
 	if (!create) {
@@ -538,7 +538,7 @@ static INITBL iniitem[] = {
 	{"HDD1FILE", INITYPE_STR,	np2cfg.sasihdd[0],	MAX_PATH},
 	{"HDD2FILE", INITYPE_STR,	np2cfg.sasihdd[1],	MAX_PATH},
 
-	{"SampleHz", INITYPE_UINT16,	&np2cfg.samplingrate,	0},
+	{"SampleHz", INITYPE_UINT32,	&np2cfg.samplingrate,	0},
 	{"Latencys", INITYPE_UINT16,	&np2cfg.delayms,	0},
 	{"SNDboard", INITYPE_HEX8,	&np2cfg.SOUND_SW,	0},
 	{"BEEP_vol", INIAND_UINT8,	&np2cfg.BEEP_VOL,	3},

@@ -10,7 +10,7 @@
 #include "c_dipsw.h"
 #include "c_midi.h"
 #include "np2class.h"
-#include "commng.h"
+#include "commng\cmserial.h"
 #include "dosio.h"
 #include "np2.h"
 #include "sysmng.h"

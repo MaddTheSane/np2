@@ -198,6 +198,11 @@ bool CSpfmLight::reset()
 		return true;
 	}
 
+	if (!m_serial.IsOpened())
+	{
+		return false;
+	}
+
 	m_queGuard.Enter();
 	m_nQueIndex = 0;
 	m_nQueCount = 0;
@@ -209,7 +214,7 @@ bool CSpfmLight::reset()
 	if (Write(reset, sizeof(reset), nUntil) == sizeof(reset))
 	{
 		unsigned char buffer[2];
-		m_bReseted = (Read(buffer, sizeof(buffer), nUntil) == sizeof(buffer));
+		m_bReseted = (Read(buffer, sizeof(buffer), nUntil) == sizeof(buffer)) && (buffer[0] == 'O') && (buffer[1] == 'K');
 	}
 	m_ttyGuard.Leave();
 

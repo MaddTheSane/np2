@@ -118,15 +118,15 @@ LRESULT CSubWndBase::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_ENTERMENULOOP:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_EXITMENULOOP:
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_ENTERSIZEMOVE:
-			soundmng_disable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Disable(SNDPROC_SUBWIND);
 			winlocex_destroy(m_wlex);
 			m_wlex = np2_winlocexallwin(m_hWnd);
 			break;
@@ -138,7 +138,7 @@ LRESULT CSubWndBase::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 		case WM_EXITSIZEMOVE:
 			::winlocex_destroy(m_wlex);
 			m_wlex = NULL;
-			soundmng_enable(SNDPROC_SUBWIND);
+			CSoundMng::GetInstance()->Enable(SNDPROC_SUBWIND);
 			break;
 
 		case WM_CLOSE:

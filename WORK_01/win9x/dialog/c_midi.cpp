@@ -6,7 +6,10 @@
 #include "compiler.h"
 #include "resource.h"
 #include "c_midi.h"
-#include "commng.h"
+#include "commng\cmmidi.h"
+#if defined(SUPPORT_VSTi)
+#include "commng\cmmidioutvst.h"
+#endif	// defined(SUPPORT_VSTi)
 #if defined(MT32SOUND_DLL)
 #include "..\ext\mt32snd.h"
 #endif	// defined(MT32SOUND_DLL)
@@ -57,6 +60,13 @@ void CComboMidiDevice::EnumerateMidiOut()
 		AddString(cmmidi_mt32sound);
 	}
 #endif	// defined(MT32SOUND_DLL)
+
+#if defined(SUPPORT_VSTi)
+	if (CComMidiOutVst::IsEnabled())
+	{
+		AddString(cmmidi_midivst);
+	}
+#endif	// defined(SUPPORT_VSTi)
 
 	const UINT nDevs = ::midiOutGetNumDevs();
 	for (UINT i = 0; i <nDevs; i++)

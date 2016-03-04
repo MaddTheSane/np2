@@ -45,7 +45,7 @@ typedef struct {
 } _FNTMNG, *FNTMNG;
 
 
-BOOL
+BRESULT
 fontmng_init(void)
 {
 
@@ -214,7 +214,7 @@ getfont1(FNTMNG fhdl, FNTDAT fdat, const char *str, int len)
 	}
 }
 
-BOOL
+BRESULT
 fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;
@@ -243,7 +243,7 @@ fontmng_getsize(void *hdl, const char *str, POINT_T *pt)
 	return SUCCESS;
 }
 
-BOOL
+BRESULT
 fontmng_getdrawsize(void *hdl, const char *str, POINT_T *pt)
 {
 	FNTMNG fhdl = (FNTMNG)hdl;

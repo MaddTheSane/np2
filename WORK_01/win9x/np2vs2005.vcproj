@@ -56,7 +56,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x86;.\dialog;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i286x;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -309,7 +309,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\;.\x64;.\dialog;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
+				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i286c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -1687,18 +1687,6 @@
 				Name="win9x"
 				>
 				<File
-					RelativePath=".\cmmidi.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\cmpara.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\cmserial.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\commng.cpp"
 					>
 				</File>
@@ -1774,6 +1762,70 @@
 					RelativePath=".\winloc.cpp"
 					>
 				</File>
+				<Filter
+					Name="commng"
+					>
+					<File
+						RelativePath=".\commng\cmbase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidi.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiin32.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout32.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutmt32sound.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvermouth.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvst.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmnull.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmpara.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmserial.cpp"
+						>
+					</File>
+					<Filter
+						Name="vsthost"
+						>
+						<File
+							RelativePath=".\commng\vsthost\vstbuffer.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwnd.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteffect.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vstmidievent.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 				<Filter
 					Name="debuguty"
 					>
@@ -1965,6 +2017,26 @@
 						RelativePath=".\misc\WndProc.cpp"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="soundmng"
+					>
+					<File
+						RelativePath=".\soundmng\sdasio.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\soundmng\sddsound3.cpp"
+						>
+					</File>
+					<Filter
+						Name="asio"
+						>
+						<File
+							RelativePath=".\soundmng\asio\asiodriverlist.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="subwnd"
@@ -2905,18 +2977,6 @@
 				Name="win9x"
 				>
 				<File
-					RelativePath=".\cmmidi.h"
-					>
-				</File>
-				<File
-					RelativePath=".\cmpara.h"
-					>
-				</File>
-				<File
-					RelativePath=".\cmserial.h"
-					>
-				</File>
-				<File
 					RelativePath=".\commng.h"
 					>
 				</File>
@@ -2996,6 +3056,78 @@
 					RelativePath=".\winloc.h"
 					>
 				</File>
+				<Filter
+					Name="commng"
+					>
+					<File
+						RelativePath=".\commng\cmbase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidi.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiin32.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidiout32.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutmt32sound.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvermouth.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmmidioutvst.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmnull.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmpara.h"
+						>
+					</File>
+					<File
+						RelativePath=".\commng\cmserial.h"
+						>
+					</File>
+					<Filter
+						Name="vsthost"
+						>
+						<File
+							RelativePath=".\commng\vsthost\vstbuffer.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwnd.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteditwndbase.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vsteffect.h"
+							>
+						</File>
+						<File
+							RelativePath=".\commng\vsthost\vstmidievent.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
 				<Filter
 					Name="debuguty"
 					>
@@ -3183,6 +3315,34 @@
 						RelativePath=".\misc\WndProc.h"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="soundmng"
+					>
+					<File
+						RelativePath=".\soundmng\sdasio.h"
+						>
+					</File>
+					<File
+						RelativePath=".\soundmng\sdbase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\soundmng\sddsound3.h"
+						>
+					</File>
+					<Filter
+						Name="asio"
+						>
+						<File
+							RelativePath=".\soundmng\asio\asiodriverlist.h"
+							>
+						</File>
+						<File
+							RelativePath=".\soundmng\asio\asiosdk.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="subwnd"
