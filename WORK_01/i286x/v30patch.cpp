@@ -460,7 +460,7 @@ I286 v30shift_ea8_data8(void) {					// C0: shift EA8, DATA8
 		memory_eareg8:
 				I286CLOCK(8)
 				call	p_ea_dst[eax*4]
-				cmp		ecx, I286_MEMWRITEMAX
+				cmp		ecx, I286_RAWMEMMAX
 				jnc		extmem_eareg8
 				lea		edx, I286_MEM[ecx]
 				movzx	ecx, bl
@@ -666,7 +666,7 @@ I286 v30shift_ea16_data8(void) {				// C1: shift EA16, DATA8
 		memory_eareg16:
 				I286CLOCK(8)
 				call	p_ea_dst[eax*4]
-				cmp		ecx, (I286_MEMWRITEMAX-1)
+				cmp		ecx, (I286_RAWMEMMAX-1)
 				jnc		extmem_eareg16
 				lea		edx, I286_MEM[ecx]
 				movzx	ecx, bl
@@ -711,7 +711,7 @@ I286 v30shift_ea8_cl(void) {					// D2: shift EA8, cl
 		memory_eareg8:
 				I286CLOCK(8)
 				call	p_ea_dst[eax*4]
-				cmp		ecx, I286_MEMWRITEMAX
+				cmp		ecx, I286_RAWMEMMAX
 				jnc		extmem_eareg8
 				lea		edx, I286_MEM[ecx]
 				movzx	ecx, I286_CL
@@ -748,7 +748,7 @@ I286 v30shift_ea16_cl(void) {					// D3: shift EA16, cl
 		memory_eareg16:
 				I286CLOCK(8)
 				call	p_ea_dst[eax*4]
-				cmp		ecx, (I286_MEMWRITEMAX-1)
+				cmp		ecx, (I286_RAWMEMMAX-1)
 				jnc		extmem_eareg16
 				lea		edx, I286_MEM[ecx]
 				movzx	ecx, I286_CL

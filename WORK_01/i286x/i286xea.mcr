@@ -30,7 +30,7 @@
 			memory_eareg8:										\
 				I286CLOCK(memclk)								\
 				__asm {	call	p_ea_dst[eax*4]				}	\
-				__asm {	cmp		ecx, I286_MEMWRITEMAX		}	\
+				__asm {	cmp		ecx, I286_RAWMEMMAX		}	\
 				__asm {	jae		extmem_eareg8				}	\
 				__asm {	mov		dl, I286_REG[ebp]			}
 
@@ -61,7 +61,7 @@
 			memory_eareg16:										\
 				I286CLOCK(memclk)								\
 				__asm {	call	p_ea_dst[eax*4]				}	\
-				__asm {	cmp		ecx, (I286_MEMWRITEMAX-1)	}	\
+				__asm {	cmp		ecx, (I286_RAWMEMMAX-1)	}	\
 				__asm {	jae		extmem_eareg16				}	\
 				__asm {	mov		dx, I286_REG[ebp]			}
 
@@ -141,7 +141,7 @@
 			memory_eareg8:										\
 				I286CLOCK(memclk)								\
 				__asm {	call	p_ea_dst[eax*4]				}	\
-				__asm {	cmp		ecx, I286_MEMWRITEMAX		}	\
+				__asm {	cmp		ecx, I286_RAWMEMMAX		}	\
 				__asm {	jae		extmem_eareg8				}
 
 									// dest: ecx
@@ -164,7 +164,7 @@
 			memory_eareg16:										\
 				I286CLOCK(memclk)								\
 				__asm {	call	p_ea_dst[eax*4]				}	\
-				__asm {	cmp		ecx, (I286_MEMWRITEMAX-1)	}	\
+				__asm {	cmp		ecx, (I286_RAWMEMMAX-1)	}	\
 				__asm {	jae		extmem_eareg16				}
 
 									// dest: ecx
