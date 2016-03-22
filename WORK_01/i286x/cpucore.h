@@ -19,11 +19,11 @@
 
 #if !defined(CPUDEBUG)
 enum {
-	I286_RAWMEMMAX	= 0xa0000
+	I286_MEMWRITEMAX	= 0xa0000
 };
 #else									// ダイレクトアクセス範囲を狭める
 enum {
-	I286_RAWMEMMAX	= 0x00400
+	I286_MEMWRITEMAX	= 0xa0000
 };
 #endif
 
