@@ -918,7 +918,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	pcm86gen_update();
 	if (nSaveFlags & FLAG_PCM86)
 	{
-		fmboard_extenable((REG8)(g_pcm86.extfunc & 1));
+		fmboard_extenable((REG8)(g_pcm86.soundflags & 1));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
