@@ -243,7 +243,6 @@ void pcm86io_setopt(REG8 cDipSw)
 {
 	g_pcm86.soundflags = ((~cDipSw) >> 1) & 0x70;
 	g_pcm86.irq = s_irqtable[(cDipSw >> 2) & 7];
-TRACEOUT(("irq: %d (%02x)", g_pcm86.irq, cDipSw));
 }
 
 void pcm86io_bind(void) {
