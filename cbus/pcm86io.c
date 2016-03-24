@@ -241,7 +241,7 @@ static REG8 IOINPCALL pcm86_inpdummy(UINT port) {
  */
 void pcm86io_setopt(REG8 cDipSw)
 {
-	g_pcm86.irq = s_irqtable[(cDipSw >> 3) & 7];
+	g_pcm86.irq = s_irqtable[(cDipSw >> 2) & 7];
 }
 
 void pcm86io_bind(void) {
