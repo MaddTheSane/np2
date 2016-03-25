@@ -678,6 +678,23 @@ static void unlock_file(INTRST intrst) {
 	TRACEOUT(("hostdrv: unlock_file"));
 }
 
+/* 0C */
+static void get_diskspace(INTRST intrst)
+{
+	_SDACDS sc;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
+		return;
+	}
+
+	intrst->r.b.flag_l &= ~C_FLAG;
+	STOREINTELWORD(intrst->r.w.ax, 0xf840);
+	STOREINTELWORD(intrst->r.w.bx, 0x8000);
+	STOREINTELWORD(intrst->r.w.cx, 0x0200);
+	STOREINTELWORD(intrst->r.w.dx, 0x8000);
+}
+
 /* 0E */
 static void set_fileattr(INTRST intrst) {
 
@@ -1189,7 +1206,7 @@ static const HDINTRFN intr_func[] = {
 		write_file,			/* 09 */
 		lock_file,			/* 0A */
 		unlock_file,		/* 0B */
-		NULL,	//	get_diskspace,		/* 0C */
+		get_diskspace,		/* 0C */
 		NULL,
 		set_fileattr,		/* 0E */
 		get_fileattr,		/* 0F */
