@@ -66,7 +66,6 @@ typedef void (*NEVENTCB)(NEVENTITEM item);
 struct _neventitem
 {
 	SINT32		clock;
-	UINT32		flag;
 	NEVENTCB	proc;
 	INTPTR		userData;
 };
