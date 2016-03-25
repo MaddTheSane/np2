@@ -83,7 +83,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 	PCCORE	pccore = {	PCBASECLOCK25, PCBASEMULTIPLE,
 						0, PCMODEL_VX, 0, 0, {0x3e, 0x73, 0x7b}, 0,
 						SOUNDID_NONE, 0,
-						PCBASECLOCK25 * PCBASEMULTIPLE};
+						PCBASECLOCK25 * PCBASEMULTIPLE, 0};
 	PCSTAT	pcstat = {3, TRUE, FALSE, FALSE};
 
 //	UINT8	screenupdate = 3;
@@ -670,6 +670,8 @@ void pccore_exec(BOOL draw) {
 		pccore_cfgupdate();
 		pccore_reset();
 	}
+
+	pccore.frames++;
 
 #if defined(TRACE)
 	execcnt++;
