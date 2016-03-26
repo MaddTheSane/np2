@@ -44,15 +44,15 @@ void pcm86_reset(void)
 	PCM86 pcm86 = &g_pcm86;
 
 	memset(pcm86, 0, sizeof(*pcm86));
-	pcm86->fifosize = 0x80;
-	pcm86->dactrl = 0x32;
-	pcm86->stepmask = (1 << 2) - 1;
-	pcm86->stepbit = 2;
+	pcm86->nFifoSize = 0x80;
+	pcm86->cDacCtrl = 0x32;
+	pcm86->nStepMask = (1 << 2) - 1;
+	pcm86->cStepBits = 2;
 	pcm86->stepclock = (pccore.baseclock << 6);
 	pcm86->stepclock /= 44100;
 	pcm86->stepclock *= pccore.multiple;
 	pcm86->rescue = (PCM86_RESCUE * 32) << 2;
-	pcm86->irq = 0xff;
+	pcm86->cIrqLevel = 0xff;
 }
 
 void pcm86gen_update(void)
@@ -60,7 +60,7 @@ void pcm86gen_update(void)
 	PCM86 pcm86 = &g_pcm86;
 
 	pcm86->volume = pcm86cfg.vol * pcm86->vol5;
-	pcm86_setpcmrate(pcm86->fifo);
+	pcm86_setpcmrate(pcm86->cFifoCtrl);
 }
 
 void pcm86_setpcmrate(REG8 val)
@@ -83,17 +83,17 @@ void pcm86_cb(NEVENTITEM item)
 {
 	PCM86 pcm86 = &g_pcm86;
 
-	if (pcm86->reqirq)
+	if (pcm86->cReqIrq)
 	{
 		sound_sync();
 //		RECALC_NOWCLKP;
-		if (pcm86->virbuf <= pcm86->fifosize)
+		if (pcm86->virbuf <= pcm86->nFifoSize)
 		{
-			pcm86->reqirq = 0;
-			pcm86->irqflag = 1;
-			if (pcm86->irq != 0xff)
+			pcm86->cReqIrq = 0;
+			pcm86->cIrqFlag = 1;
+			if (pcm86->cIrqLevel != 0xff)
 			{
-				pic_setirq(pcm86->irq);
+				pic_setirq(pcm86->cIrqLevel);
 			}
 		}
 		else
@@ -110,21 +110,21 @@ void pcm86_setnextintr(void) {
 	SINT32	cnt;
 	SINT32	clk;
 
-	if (pcm86->fifo & 0x80)
+	if (pcm86->cFifoCtrl & 0x80)
 	{
-		cnt = pcm86->virbuf - pcm86->fifosize;
+		cnt = pcm86->virbuf - pcm86->nFifoSize;
 		if (cnt > 0)
 		{
-			cnt += pcm86->stepmask;
-			cnt >>= pcm86->stepbit;
+			cnt += pcm86->nStepMask;
+			cnt >>= pcm86->cStepBits;
 //			cnt += 4;								/* ‚¿‚å‚Á‚Æ‰„‘Ø‚³‚¹‚é */
 			/* ‚±‚±‚Å clk = pccore.realclock * cnt / 86pcm_rate */
 			/* clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple */
 			if (pccore.cpumode & CPUMODE_8MHZ) {
-				clk = clk20_128[pcm86->fifo & 7];
+				clk = clk20_128[pcm86->cFifoCtrl & 7];
 			}
 			else {
-				clk = clk25_128[pcm86->fifo & 7];
+				clk = clk25_128[pcm86->cFifoCtrl & 7];
 			}
 			/* cnt‚ÍÅ‘å 8000h ‚Å 32bit‚ÅŽû‚Ü‚é‚æ‚¤‚Éc */
 			clk *= cnt;
@@ -156,13 +156,13 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 	{
 		bufs &= ~3;
 		pcm86->virbuf += bufs;
-		if (pcm86->virbuf <= pcm86->fifosize)
+		if (pcm86->virbuf <= pcm86->nFifoSize)
 		{
-			pcm86->reqirq = 0;
-			pcm86->irqflag = 1;
-			if (pcm86->irq != 0xff)
+			pcm86->cReqIrq = 0;
+			pcm86->cIrqFlag = 1;
+			if (pcm86->cIrqLevel != 0xff)
 			{
-				pic_setirq(pcm86->irq);
+				pic_setirq(pcm86->cIrqLevel);
 			}
 		}
 		else
@@ -186,17 +186,17 @@ BOOL pcm86gen_intrq(void)
 {
 	PCM86 pcm86 = &g_pcm86;
 
-	if (pcm86->irqflag)
+	if (pcm86->cIrqFlag)
 	{
 		return TRUE;
 	}
-	if (pcm86->fifo & 0x20)
+	if (pcm86->cFifoCtrl & 0x20)
 	{
 		sound_sync();
-		if ((pcm86->reqirq) && (pcm86->virbuf <= pcm86->fifosize))
+		if ((pcm86->cReqIrq) && (pcm86->virbuf <= pcm86->nFifoSize))
 		{
-			pcm86->reqirq = 0;
-			pcm86->irqflag = 1;
+			pcm86->cReqIrq = 0;
+			pcm86->cIrqFlag = 1;
 			return TRUE;
 		}
 	}

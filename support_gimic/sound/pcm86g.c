@@ -332,9 +332,9 @@ pm8_bufempty:
 
 void SOUNDCALL pcm86gen_getpcm(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 {
-	if ((nCount) && (pcm86->fifo & 0x80) && (pcm86->div))
+	if ((nCount) && (pcm86->cFifoCtrl & 0x80) && (pcm86->div))
 	{
-		switch (pcm86->dactrl & 0x70)
+		switch (pcm86->cDacCtrl & 0x70)
 		{
 			case 0x00:						/* 16bit-none */
 				break;
