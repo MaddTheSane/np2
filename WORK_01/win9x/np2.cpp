@@ -1638,7 +1638,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	sysmenu_initialize(GetSystemMenu(hWnd, FALSE));
 
-	HMENU hMenu = GetMenu(hWnd);
+	HMENU hMenu = np2class_gethmenu(hWnd);
 	xmenu_initialize(hMenu);
 	xmenu_update(hMenu);
 	if (file_attr_c(np2help) == -1)								// ver0.30
