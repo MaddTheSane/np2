@@ -1,104 +1,104 @@
-Xnp2 - ねこープロジェクトII for X Window System
+Xnp2 - �˂��[�v���W�F�N�gII for X Window System
 
 
-1. はじめに
+1. �͂��߂�
 
-  ねこープロジェクトII はぷにゅ氏により作成された Windows 上で動作する
-  i286 CPU を塔載した PC-9801 シリーズのエミュレータです。
+  �˂��[�v���W�F�N�gII �͂Ղɂ㎁�ɂ��쐬���ꂽ Windows ��œ��삷��
+  i286 CPU �𓃍ڂ��� PC-9801 �V���[�Y�̃G�~�����[�^�ł��B
 
-  Xnp2 はねこープロジェクトII を UNIX 系 OS で動作する様に移植したものです。
-
-
-2. 動作環境
-
-  X Window System が動作する UNIX 系 OS で動作します。
+  Xnp2 �͂˂��[�v���W�F�N�gII �� UNIX �n OS �œ��삷��l�ɈڐA�������̂ł��B
 
 
-3. 必要なソフトウェア
+2. �����
 
-  3.1. コンパイル時に必要なソフトウェア
+  X Window System �����삷�� UNIX �n OS �œ��삵�܂��B
 
-    ・gcc
-    ・GTK+ 2.6 以降
 
-    以下は動作には必須ではありませんが、音を鳴らす場合等に必要になります。
+3. �K�v�ȃ\�t�g�E�F�A
 
-    ・SDL (サウンド・ジョイスティックを使用する場合に必要です。)
-      バージョンは 1.2.x もしくは 2.0.x に対応しています。
-    ・SDL_mixer (フロッピーのシーク音等の PCM を再生する場合に必要です。)
-    ・libusb 1.0 (C86BOX を使って FM 音源を再生する場合に必要です。)
-    ・XFree86-VidModeExtension (画面解像度を変更するフルスクリーン機能を使用する場合に必要)
+  3.1. �R���p�C�����ɕK�v�ȃ\�t�g�E�F�A
 
-  3.2. 実行時に必要なソフトウェア
+    �Egcc
+    �EGTK+ 2.6 �ȍ~
 
-    画面解像度を変更しないフルスクリーン機能を使用する場合には、使用している
-    ウィンドウマネージャが NETWM 規格に準拠している必要があります。
+    �ȉ��͓���ɂ͕K�{�ł͂���܂��񂪁A����炷�ꍇ���ɕK�v�ɂȂ�܂��B
 
-    NETWM 規格については以下の URL を参照してください。
+    �ESDL (�T�E���h�E�W���C�X�e�B�b�N���g�p����ꍇ�ɕK�v�ł��B)
+      �o�[�W������ 1.2.x �������� 2.0.x �ɑΉ����Ă��܂��B
+    �ESDL_mixer (�t���b�s�[�̃V�[�N������ PCM ���Đ�����ꍇ�ɕK�v�ł��B)
+    �Elibusb 1.0 (C86BOX ���g���� FM �������Đ�����ꍇ�ɕK�v�ł��B)
+    �EXFree86-VidModeExtension (��ʉ𑜓x��ύX����t���X�N���[���@�\���g�p����ꍇ�ɕK�v)
+
+  3.2. ���s���ɕK�v�ȃ\�t�g�E�F�A
+
+    ��ʉ𑜓x��ύX���Ȃ��t���X�N���[���@�\���g�p����ꍇ�ɂ́A�g�p���Ă���
+    �E�B���h�E�}�l�[�W���� NETWM �K�i�ɏ������Ă���K�v������܂��B
+
+    NETWM �K�i�ɂ��Ă͈ȉ��� URL ���Q�Ƃ��Ă��������B
 
       http://freedesktop.org/wiki/Standards/wm-spec
 
 
-4. インストール
+4. �C���X�g�[��
 
-  Xnp2 のインストールはコマンドラインから以下の様に行います。
+  Xnp2 �̃C���X�g�[���̓R�}���h���C������ȉ��̗l�ɍs���܂��B
 
     $ ./configure
     $ make
     $ su
     # make install
 
-  ※configure で指定できるオプションについては ./configure --help を実行して
-    表示されるヘルプを参照してください。
+  ��configure �Ŏw��ł���I�v�V�����ɂ��Ă� ./configure --help �����s����
+    �\�������w���v���Q�Ƃ��Ă��������B
 
 
-5. 実行
+5. ���s
 
-  5.1. 実行方法
+  5.1. ���s���@
 
-    プログラムの実行はコマンドラインから以下の様に行います。
+    �v���O�����̎��s�̓R�}���h���C������ȉ��̗l�ɍs���܂��B
 
       $ xnp2
 
-    また、起動時にフロッピーディスクドライブにディスクイメージを挿入したい場合、
-    以下の様にディスクイメージを引数に指定してください。
+    �܂��A�N�����Ƀt���b�s�[�f�B�X�N�h���C�u�Ƀf�B�X�N�C���[�W��}���������ꍇ�A
+    �ȉ��̗l�Ƀf�B�X�N�C���[�W�������Ɏw�肵�Ă��������B
 
-      例: FDD1 に system.d88、FDD2 に data.d88 を挿入して起動
+      ��: FDD1 �� system.d88�AFDD2 �� data.d88 ��}�����ċN��
 
         $ xnp2 system.d88 data.d88
 
-  5.2. 初期設定
+  5.2. �����ݒ�
 
-   1) CPU クロックの設定
-     メニューから [Emulate -> Configure...] を選択し、設定ダイアログを
-     表示します。
-     CPU クロックの既定値は PC-9801VX 相当の 10MHz になっています。
-     処理落ちが発生してしまう様でしたら、クロックの設定を変更してクロック値を
-     下げてください。
+   1) CPU �N���b�N�̐ݒ�
+     ���j���[���� [Emulate -> Configure...] ��I�����A�ݒ�_�C�A���O��
+     �\�����܂��B
+     CPU �N���b�N�̊���l�� PC-9801VX ������ 10MHz �ɂȂ��Ă��܂��B
+     �����������������Ă��܂��l�ł�����A�N���b�N�̐ݒ��ύX���ăN���b�N�l��
+     �����Ă��������B
 
-   2) サウンドの設定 (サウンド使用時のみ)
-      CPU クロックの設定と同じダイアログで設定できます。
-      サンプリングレートは処理速度に余裕があれば 44KHz に設定してください。
-      サウンドバッファは処理が追い付く最低の値を設定してください。
-      環境にもよりますが、速いマシンであれば 50～100 ms、通常で 200ms 位が
-      目安です。
+   2) �T�E���h�̐ݒ� (�T�E���h�g�p���̂�)
+      CPU �N���b�N�̐ݒ�Ɠ����_�C�A���O�Őݒ�ł��܂��B
+      �T���v�����O���[�g�͏������x�ɗ]�T������� 44KHz �ɐݒ肵�Ă��������B
+      �T�E���h�o�b�t�@�͏������ǂ��t���Œ�̒l��ݒ肵�Ă��������B
+      ���ɂ����܂����A�����}�V���ł���� 50�`100 ms�A�ʏ�� 200ms �ʂ�
+      �ڈ��ł��B
 
-   3) 設定の反映
-     1) ～ 2) を行った後、[Emulate -> Reset] で設定の反映を行います。
-     サウンド使用時に起動音が鳴らない場合には、プログラムを一旦終了してから
-     再度起動し直してください。
+   3) �ݒ�̔��f
+     1) �` 2) ���s������A[Emulate -> Reset] �Őݒ�̔��f���s���܂��B
+     �T�E���h�g�p���ɋN��������Ȃ��ꍇ�ɂ́A�v���O��������U�I�����Ă���
+     �ēx�N���������Ă��������B
 
-  5.3. 操作方法
+  5.3. ������@
 
-    5.3.1. マウス
-      3 ボタンマウスを使用している場合、中ボタンのクリックで X <-> PC-9801 間の
-      マウス操作の切替を行います。
+    5.3.1. �}�E�X
+      3 �{�^���}�E�X���g�p���Ă���ꍇ�A���{�^���̃N���b�N�� X <-> PC-9801 �Ԃ�
+      �}�E�X����̐ؑւ��s���܂��B
 
-    5.3.2. キーボード
-      キーボードは日本語 106 キーボードを使用する事を想定しています。
-      ただし、PC-9801 キーボードとはキーボードレイアウトが異なる為、
-      一部のキーを入れ換えてあります。入れ換えられているキーについては
-      以下の表を参照してください。
+    5.3.2. �L�[�{�[�h
+      �L�[�{�[�h�͓��{�� 106 �L�[�{�[�h���g�p���鎖��z�肵�Ă��܂��B
+      �������APC-9801 �L�[�{�[�h�Ƃ̓L�[�{�[�h���C�A�E�g���قȂ�ׁA
+      �ꕔ�̃L�[����ꊷ���Ă���܂��B���ꊷ�����Ă���L�[�ɂ��Ă�
+      �ȉ��̕\���Q�Ƃ��Ă��������B
 
       +-------------------------+----------------------------+
       |         PC-9801         |            106             |
@@ -106,145 +106,145 @@ Xnp2 - ねこープロジェクトII for X Window System
       | GRPH                    | Alt                        |
       | HELP                    | End, F12(*)                |
       | CAPS                    | ScrollLock                 |
-      | NFER                    | 無変換                     |
-      | XFER                    | 変換/前候補/全候補         |
+      | NFER                    | ���ϊ�                     |
+      | XFER                    | �ϊ�/�O���/�S���         |
       | STOP                    | Pause/Break, F12(*)        |
       | COPY                    | PrintScreen/SysRq, F12(*)  |
-      | カナ                    | カタカナ/ひらがな/ローマ字 |
-      | テンキーの = [イコール] | F12(*)                     |
-      | テンキーの , [カンマ]   | F12(*)                     |
+      | �J�i                    | �J�^�J�i/�Ђ炪��/���[�}�� |
+      | �e���L�[�� = [�C�R�[��] | F12(*)                     |
+      | �e���L�[�� , [�J���}]   | F12(*)                     |
       +-------------------------+----------------------------+
-      (*) F12 キーのキー割り当てはメニューから変更できます。
+      (*) F12 �L�[�̃L�[���蓖�Ă̓��j���[����ύX�ł��܂��B
 
-      日本語 106 配列では無いキーボードでは入力できないキーがありますが、
-      その場合にはソフトウェアキーボードから入力してください。
-      ソフトウェアキーボードはメニューから Other -> Software Keyboard で
-      表示されます。使い終ったソフトウェアキーボードは表示すると同じ手順を
-      再度行う事で表示されなくなります。
+      ���{�� 106 �z��ł͖����L�[�{�[�h�ł͓��͂ł��Ȃ��L�[������܂����A
+      ���̏ꍇ�ɂ̓\�t�g�E�F�A�L�[�{�[�h������͂��Ă��������B
+      �\�t�g�E�F�A�L�[�{�[�h�̓��j���[���� Other -> Software Keyboard ��
+      �\������܂��B�g���I�����\�t�g�E�F�A�L�[�{�[�h�͕\������Ɠ����菇��
+      �ēx�s�����ŕ\������Ȃ��Ȃ�܂��B
 
 
-6. ディスクイメージ
+6. �f�B�X�N�C���[�W
 
-  Xnp2 では、直接 FDD からデータの読み書きは行なわずにディスクイメージより
-  データの読み書きを行います。また、ハードディスクもフロッピーディスクと
-  同様にディスクイメージよりデータを読み書きを行います。
+  Xnp2 �ł́A���� FDD ����f�[�^�̓ǂݏ����͍s�Ȃ킸�Ƀf�B�X�N�C���[�W���
+  �f�[�^�̓ǂݏ������s���܂��B�܂��A�n�[�h�f�B�X�N���t���b�s�[�f�B�X�N��
+  ���l�Ƀf�B�X�N�C���[�W���f�[�^��ǂݏ������s���܂��B
 
-  6.1. フロッピーディスクイメージ
+  6.1. �t���b�s�[�f�B�X�N�C���[�W
 
-    Xnp2 ではベタ形式および D88 形式のフォーマットが利用できます。
+    Xnp2 �ł̓x�^�`������� D88 �`���̃t�H�[�}�b�g�����p�ł��܂��B
 
-    6.1.1. フロッピーディスクイメージの使用方法
+    6.1.1. �t���b�s�[�f�B�X�N�C���[�W�̎g�p���@
 
-      フロッピーディスクイメージを使用するには、メニューから
-      [FDD -> Drive[12] -> Open...] を選択すると表示されるファイル選択
-      ダイアログで使用するディスクイメージを選択してください。
+      �t���b�s�[�f�B�X�N�C���[�W���g�p����ɂ́A���j���[����
+      [FDD -> Drive[12] -> Open...] ��I������ƕ\�������t�@�C���I��
+      �_�C�A���O�Ŏg�p����f�B�X�N�C���[�W��I�����Ă��������B
 
-    6.1.2. フロッピーディスクからイメージ作成
+    6.1.2. �t���b�s�[�f�B�X�N����C���[�W�쐬
 
-      (注) イメージを作成する際にはフロッピーディスクを書き込み禁止に
-           してください。
+      (��) �C���[�W���쐬����ۂɂ̓t���b�s�[�f�B�X�N���������݋֎~��
+           ���Ă��������B
 
-      UNIX 上では dd を使用してフロッピーディスクからベタ形式のディスク
-      イメージを作成する事が可能です。ただし 1.25MB のディスクを扱うには
-      フロッピーディスクドライブと OS が 1.25MB フォーマットに対応して
-      いる事が必要です。
+      UNIX ��ł� dd ���g�p���ăt���b�s�[�f�B�X�N����x�^�`���̃f�B�X�N
+      �C���[�W���쐬���鎖���\�ł��B������ 1.25MB �̃f�B�X�N�������ɂ�
+      �t���b�s�[�f�B�X�N�h���C�u�� OS �� 1.25MB �t�H�[�}�b�g�ɑΉ�����
+      ���鎖���K�v�ł��B
 
-      以下の様なコマンドでフロッピーデバイスからファイルに書き出す事で
-      ディスクイメージが作成できます。
-      (フロッピーデバイスのパスは各 OS で違うので、使用している OS の
-       デバイスパスに置き換えてください。)
+      �ȉ��̗l�ȃR�}���h�Ńt���b�s�[�f�o�C�X����t�@�C���ɏ����o������
+      �f�B�X�N�C���[�W���쐬�ł��܂��B
+      (�t���b�s�[�f�o�C�X�̃p�X�͊e OS �ňႤ�̂ŁA�g�p���Ă��� OS ��
+       �f�o�C�X�p�X�ɒu�������Ă��������B)
 
         dd if=/dev/rfd0d of=diskimg.xdf
 
-      MS-DOS や Windows でのディスクイメージの作成方法については、
-      以下の章で示されているヘルプを参照してください。
+      MS-DOS �� Windows �ł̃f�B�X�N�C���[�W�̍쐬���@�ɂ��ẮA
+      �ȉ��̏͂Ŏ�����Ă���w���v���Q�Ƃ��Ă��������B
 
-    6.1.3. 新規フロッピーディスクイメージ作成
+    6.1.3. �V�K�t���b�s�[�f�B�X�N�C���[�W�쐬
 
-      Xnp2 の機能を使用すると D88 形式のディスクイメージを作成できます。
+      Xnp2 �̋@�\���g�p����� D88 �`���̃f�B�X�N�C���[�W���쐬�ł��܂��B
 
-      1) [Emulate -> New Disk...] を選択すると、ファイル選択ダイアログが表示
-         されます。
+      1) [Emulate -> New Disk...] ��I������ƁA�t�@�C���I���_�C�A���O���\��
+         ����܂��B
 
-      2) ディスクイメージを作成するディレクトリとディスクイメージファイル名を
-         設定し、「OK」ボタンを押します。
+      2) �f�B�X�N�C���[�W���쐬����f�B���N�g���ƃf�B�X�N�C���[�W�t�@�C������
+         �ݒ肵�A�uOK�v�{�^���������܂��B
 
-      3) 新規フロッピーディスクイメージダイアログが表示されるので、作成する
-         ディスクイメージの種別とラベルを設定します。
+      3) �V�K�t���b�s�[�f�B�X�N�C���[�W�_�C�A���O���\�������̂ŁA�쐬����
+         �f�B�X�N�C���[�W�̎�ʂƃ��x����ݒ肵�܂��B
 
-  6.2. ハードディスクイメージ
+  6.2. �n�[�h�f�B�X�N�C���[�W
 
-    Xnp2 では THD 形式(T98)、NHD 形式(T98-Next)、HDI 形式(Anex86) の
-    SASI ハードディスクイメージが利用できます。
+    Xnp2 �ł� THD �`��(T98)�ANHD �`��(T98-Next)�AHDI �`��(Anex86) ��
+    SASI �n�[�h�f�B�X�N�C���[�W�����p�ł��܂��B
 
-    6.2.1. ハードディスクイメージの使用方法
+    6.2.1. �n�[�h�f�B�X�N�C���[�W�̎g�p���@
 
-      ハードディスクイメージを使用するには、メニューから
-      [HardDisk -> SASI[12] -> Open...] を選択すると表示されるファイル選択
-      ダイアログで使用するディスクイメージを選択してください。
-      選択したハードディスクイメージ使用するには [Emulate -> Reset] を実行
-      してください。
+      �n�[�h�f�B�X�N�C���[�W���g�p����ɂ́A���j���[����
+      [HardDisk -> SASI[12] -> Open...] ��I������ƕ\�������t�@�C���I��
+      �_�C�A���O�Ŏg�p����f�B�X�N�C���[�W��I�����Ă��������B
+      �I�������n�[�h�f�B�X�N�C���[�W�g�p����ɂ� [Emulate -> Reset] �����s
+      ���Ă��������B
 
-    6.2.2. 新規ハードディスクイメージ作成
+    6.2.2. �V�K�n�[�h�f�B�X�N�C���[�W�쐬
 
-      Xnp2 の機能を使用すると THD 形式のディスクイメージを作成できます。
+      Xnp2 �̋@�\���g�p����� THD �`���̃f�B�X�N�C���[�W���쐬�ł��܂��B
 
-      1) [Emulate -> New Disk...] を選択すると、ファイル選択ダイアログが表示
-         されます。
+      1) [Emulate -> New Disk...] ��I������ƁA�t�@�C���I���_�C�A���O���\��
+         ����܂��B
 
-      2) ファイル選択ダイアログの [他のフォルダ] をクリックし、ダイアログを
-         拡張します。
+      2) �t�@�C���I���_�C�A���O�� [���̃t�H���_] ���N���b�N���A�_�C�A���O��
+         �g�����܂��B
 
-      3) 作成するディスク形式、ディスクイメージを作成するディレクトリと
-         ディスクイメージファイル名を設定し、「OK」ボタンを押します。
+      3) �쐬����f�B�X�N�`���A�f�B�X�N�C���[�W���쐬����f�B���N�g����
+         �f�B�X�N�C���[�W�t�@�C������ݒ肵�A�uOK�v�{�^���������܂��B
 
-      4) 新規ハードディスクイメージダイアログが表示されるので、作成する
-         ディスクイメージの容量を設定します。
+      4) �V�K�n�[�h�f�B�X�N�C���[�W�_�C�A���O���\�������̂ŁA�쐬����
+         �f�B�X�N�C���[�W�̗e�ʂ�ݒ肵�܂��B
 
 
-7. コマンドラインオプション
+7. �R�}���h���C���I�v�V����
 
     --config-file <filename>
-      起動時に読み込む設定ファイルを指定します。また、このオプションが指定
-      されるとホームディレクトリとして、設定ファイルの存在するディレクトリ
-      を使用します。非指定時には $(HOME)/.np2/np2rc を使用します。
+      �N�����ɓǂݍ��ސݒ�t�@�C�����w�肵�܂��B�܂��A���̃I�v�V�������w��
+      �����ƃz�[���f�B���N�g���Ƃ��āA�ݒ�t�@�C���̑��݂���f�B���N�g��
+      ���g�p���܂��B��w�莞�ɂ� $(HOME)/.np2/np2rc ���g�p���܂��B
 
     --timidity-config <filename>
-      Xnp2 に内蔵されている TiMidity 互換のソフトウェア MIDI 音源で使用する
-      音源設定ファイルを指定します。非指定時は $(HOME)/.np2/timidity.cfg を
-      使用します。
+      Xnp2 �ɓ�������Ă��� TiMidity �݊��̃\�t�g�E�F�A MIDI �����Ŏg�p����
+      �����ݒ�t�@�C�����w�肵�܂��B��w�莞�� $(HOME)/.np2/timidity.cfg ��
+      �g�p���܂��B
 
 
-8. USB 接続 FM 音源
+8. USB �ڑ� FM ����
 
-  8.1. サポート機器
+  8.1. �T�|�[�g�@��
 
-    Xnp2 では USB 接続 FM 音源をサポートしています。
-    現在サポートしている機器は以下となります。
+    Xnp2 �ł� USB �ڑ� FM �������T�|�[�g���Ă��܂��B
+    ���݃T�|�[�g���Ă���@��͈ȉ��ƂȂ�܂��B
 
-    ・SPFM Light (http://www.pyonpyon.jp/~gasshi/fm/spfmlight.html)
-      RE:birth モジュール RE1-YM2608 との組み合わせで動作確認済み
+    �ESPFM Light (http://www.pyonpyon.jp/~gasshi/fm/spfmlight.html)
+      RE:birth ���W���[�� RE1-YM2608 �Ƃ̑g�ݍ��킹�œ���m�F�ς�
 
-    ・C86BOX (http://c86box.com/)
-      PC-9801-86 との組み合わせで動作確認済み
+    �EC86BOX (http://c86box.com/)
+      PC-9801-86 �Ƃ̑g�ݍ��킹�œ���m�F�ς�
 
-  8.2. 使用方法
+  8.2. �g�p���@
 
-    これらの機器を使用するためには Xnp2 を root ユーザで実行する、もしくは
-    機器にアクセスするためのデバイスファイルをユーザから読み書きできる権限を
-    付与する必要があります。
-    Xnp2 を root ユーザで実行するのはお勧めしておりませんので、以下の方法で
-    通常のユーザからアクセスできるようにしてください。
+    �����̋@����g�p���邽�߂ɂ� Xnp2 �� root ���[�U�Ŏ��s����A��������
+    �@��ɃA�N�Z�X���邽�߂̃f�o�C�X�t�@�C�������[�U����ǂݏ����ł��錠����
+    �t�^����K�v������܂��B
+    Xnp2 �� root ���[�U�Ŏ��s����̂͂����߂��Ă���܂���̂ŁA�ȉ��̕��@��
+    �ʏ�̃��[�U����A�N�Z�X�ł���悤�ɂ��Ă��������B
 
     8.2.1. Linux
 
-      お使いの OS が Linux で udev を使用している場合、/etc/udev/rurles.d に
-      以下の内容を記載したファイルを作成する事により、機器を接続した際に
-      機器にアクセスするためのデバイスファイルが自動的に一般ユーザから
-      読み書きできる設定が行われるようになります。
+      ���g���� OS �� Linux �� udev ���g�p���Ă���ꍇ�A/etc/udev/rurles.d ��
+      �ȉ��̓��e���L�ڂ����t�@�C�����쐬���鎖�ɂ��A�@���ڑ������ۂ�
+      �@��ɃA�N�Z�X���邽�߂̃f�o�C�X�t�@�C���������I�Ɉ�ʃ��[�U����
+      �ǂݏ����ł���ݒ肪�s����悤�ɂȂ�܂��B
 
-      ファイル名: /etc/udev/rules.d/70-external-fm-sound.rules
-      ----- ここから
+      �t�@�C����: /etc/udev/rules.d/70-external-fm-sound.rules
+      ----- ��������
       ACTION!="add", GOTO="external_fm_sound_end"
       SUBSYSTEM=="tty", IMPORT{parent}="ID_VENDOR_ID", IMPORT{parent}="ID_MODEL_ID"
       # C86BOX
@@ -252,78 +252,78 @@ Xnp2 - ねこープロジェクトII for X Window System
       # SPFM Light (a.k.a. FTDI FT232RL)
       SUBSYSTEM=="tty", KERNEL=="ttyUSB*", ENV{ID_VENDOR_ID}=="0403", ENV{ID_MODEL_ID}=="6001", MODE="0666"
       LABEL="external_fm_sound_end"
-      ----- ここまで
+      ----- �����܂�
 
     8.2.2. NetBSD
 
-      8.2.2.1. ログイン時設定
+      8.2.2.1. ���O�C�����ݒ�
 
-        /etc/ttyaction に以下の内容を追加する事により、ログイン時にデバイス
-        ファイルの権限が自動的にログインユーザ、もしくは一般ユーザから
-        アクセスできるようになります。
+        /etc/ttyaction �Ɉȉ��̓��e��ǉ����鎖�ɂ��A���O�C�����Ƀf�o�C�X
+        �t�@�C���̌����������I�Ƀ��O�C�����[�U�A�������͈�ʃ��[�U����
+        �A�N�Z�X�ł���悤�ɂȂ�܂��B
 
-        ----- ここから
+        ----- ��������
         ttyE0   *       chown ${USER}:wheel /dev/ugen[0-9]*.* /dev/usb /dev/usb[0-9]*
         ttyE0   *       chmod go-rw /dev/ttyU*
         ttyE0   login   chmod go+rw /dev/ttyU*
         console *       chown ${USER}:wheel /dev/ugen[0-9]*.* /dev/usb /dev/usb[0-9]*
         console *       chmod go-rw /dev/ttyU*
         console login   chmod go+rw /dev/ttyU*
-        ----- ここまで
+        ----- �����܂�
 
-      8.2.2.2. chmod 実行
+      8.2.2.2. chmod ���s
 
-        root ユーザで必要なデバイスファイルの権限を設定します。
-        ただし MAKEDEV すると元のアクセス権限に戻ってしまいます。
+        root ���[�U�ŕK�v�ȃf�o�C�X�t�@�C���̌�����ݒ肵�܂��B
+        ������ MAKEDEV ����ƌ��̃A�N�Z�X�����ɖ߂��Ă��܂��܂��B
 
         # chmod go+rw /dev/ugen* /dev/ttyU*
 
-    8.2.3. その他 OS
+    8.2.3. ���̑� OS
 
-      お使いの OS のマニュアルや Web ページを参考にしてください。
+      ���g���� OS �̃}�j���A���� Web �y�[�W���Q�l�ɂ��Ă��������B
 
 
-9. 備考
+9. ���l
 
-  ・man page がインストールされていれば man xnp2 でマニュアルが表示されます。
+  �Eman page ���C���X�g�[������Ă���� man xnp2 �Ń}�j���A�����\������܂��B
 
-  ・このマニュアルや man page に書かれている以上の情報が欲しい場合は、
-    以下の URL にあるヘルプを参照すると見つかるかもしれません。
+  �E���̃}�j���A���� man page �ɏ�����Ă���ȏ�̏�񂪗~�����ꍇ�́A
+    �ȉ��� URL �ɂ���w���v���Q�Ƃ���ƌ����邩������܂���B
 
       Xnp2 help URL: http://www.nonakap.org/np2/html/help/ja/
 
 
-10. 問題点
+10. ���_
 
-  ・解像度変更をするフルスクリーン機能を使用している際に、元の画面解像度が
-    640x480以外の場合に仮想画面がスクロールしてしまう。
+  �E�𑜓x�ύX������t���X�N���[���@�\���g�p���Ă���ۂɁA���̉�ʉ𑜓x��
+    640x480�ȊO�̏ꍇ�ɉ��z��ʂ��X�N���[�����Ă��܂��B
 
-  ・NetBSD では SPFM Light が使用できない。
-    SPFM Light との通信に使用する uftdi(4) が 1.5Mbps の通信速度に対応して
-    いないため。
-
-
-11. 免責事項・著作権
-
-  11.1. 免責事項
-
-    Xnp2 は無保証です。Xnp2 の使用によって得られたいかなる利益・損害に対しても
-    作者は責任を負いません。
-
-  11.2. 著作権
-
-    本ソフトウェアの著作権、その他の知的財産権は、日本法に準拠する為、
-    ねこさん開発ちーむが所有しています。
-
-    ねこープロジェクトのソースコードは修正 BSD ライセンスです。Xnp2 固有部分の
-    ソースコードも修正 BSD ライセンスとします。再配布時の著作権表示の義務は
-    ありません。
+  �ENetBSD �ł� SPFM Light ���g�p�ł��Ȃ��B
+    SPFM Light �Ƃ̒ʐM�Ɏg�p���� uftdi(4) �� 1.5Mbps �̒ʐM���x�ɑΉ�����
+    ���Ȃ����߁B
 
 
-12. 連絡先
+11. �Ɛӎ����E���쌠
 
-  本ソフトウェアの配布元は http://www.nonakap.org/np2/ です。
+  11.1. �Ɛӎ���
 
-  本ソフトウェアに関する問い合わせは
-   NONAKA Kimihiro (埜中公博) / nonakap@gmail.com
-  まで電子メールにてお願いします。
+    Xnp2 �͖��ۏ؂ł��BXnp2 �̎g�p�ɂ���ē���ꂽ�����Ȃ闘�v�E���Q�ɑ΂��Ă�
+    ��҂͐ӔC�𕉂��܂���B
+
+  11.2. ���쌠
+
+    �{�\�t�g�E�F�A�̒��쌠�A���̑��̒m�I���Y���́A���{�@�ɏ�������ׁA
+    �˂�����J�����[�ނ����L���Ă��܂��B
+
+    �˂��[�v���W�F�N�g�̃\�[�X�R�[�h�͏C�� BSD ���C�Z���X�ł��BXnp2 �ŗL������
+    �\�[�X�R�[�h���C�� BSD ���C�Z���X�Ƃ��܂��B�Ĕz�z���̒��쌠�\���̋`����
+    ����܂���B
+
+
+12. �A����
+
+  �{�\�t�g�E�F�A�̔z�z���� http://www.nonakap.org/np2/ �ł��B
+
+  �{�\�t�g�E�F�A�Ɋւ���₢���킹��
+   NONAKA Kimihiro (�W������) / nonakap@gmail.com
+  �܂œd�q���[���ɂĂ��肢���܂��B

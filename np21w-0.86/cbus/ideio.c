@@ -63,7 +63,7 @@ static BRESULT setidentify(IDEDRV drv) {
 	UINT32	size;
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
-	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
+	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY) && drv->device != IDETYPE_CDROM)) {
 		return(FAILURE);
 	}
 
@@ -219,9 +219,9 @@ static void incsec(IDEDRV drv) {
 	}
 }
 
-static long getcursec(const IDEDRV drv) {
+static FILEPOS getcursec(const IDEDRV drv) {
 
-	long	ret;
+	FILEPOS	ret;
 
 	if (!(drv->dr & IDEDEV_LBA)) {
 		ret = drv->cy;
@@ -240,7 +240,7 @@ static long getcursec(const IDEDRV drv) {
 
 static void readsec(IDEDRV drv) {
 
-	long	sec;
+	FILEPOS	sec;
 
 	if (drv->device != IDETYPE_HDD) {
 		goto read_err;
@@ -507,7 +507,10 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 				cmdabort(drv);
 			}
 			break;
-
+		case 0x40:		// read verify
+			drv->status = drv->status & ~IDESTAT_BSY;
+			setintr(drv);
+			break;
 		case 0x91:		// set parameters
 			TRACEOUT(("ideio: set parameters dh=%x sec=%x",
 											drv->dr | drv->hd, drv->sc));
@@ -602,6 +605,16 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			}
 			break;
 
+		case 0xe0:		// STANDBY IMMEDIATE
+			TRACEOUT(("ideio: STANDBY IMMEDIATE dr = %.2x", drv->dr));
+			//cmdabort(drv);
+			break;
+
+		case 0xe1:		// idle immediate
+			TRACEOUT(("ideio: idle immediate dr = %.2x", drv->dr));
+			//cmdabort(drv);
+			break;
+
 		case 0xe7:		// flush cache
 			TRACEOUT(("ideio: flush cache"));
 			drv->status = IDESTAT_DRDY;
@@ -626,6 +639,21 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			cmdabort(drv);
 			break;
 
+		case 0xde:		// media lock
+			TRACEOUT(("ideio: media lock dev=%d", drv->device));
+			//cmdabort(drv);
+			break;
+
+		case 0xdf:		// media unlock
+			TRACEOUT(("ideio: media unlock dev=%d", drv->device));
+			//cmdabort(drv);
+			break;
+
+		case 0xf8:		// READ NATIVE MAX ADDRESS
+			TRACEOUT(("ideio: READ NATIVE MAX ADDRESS reg = %.2x", drv->wp));
+			cmdabort(drv);
+			break;
+			
 		default:
 			panic("ideio: unknown command %.2x", dat);
 			break;
@@ -825,7 +853,7 @@ void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 
 	IDEDRV	drv;
 	UINT8	*p;
-	long	sec;
+	FILEPOS	sec;
 
 	drv = getidedrv();
 	if ((drv != NULL) &&
@@ -855,6 +883,8 @@ void IOOUTCALL ideio_w16(UINT port, REG16 value) {
 					drv->sc--;
 					if (drv->sc) {
 						writesec(drv);
+					}else{
+						setintr(drv);
 					}
 					break;
 

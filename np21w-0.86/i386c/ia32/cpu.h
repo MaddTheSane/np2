@@ -685,20 +685,20 @@ void dbg_printf(const char *str, ...);
 #define	FPU_REG(i)		FPU_STAT.reg[i]
 
 /* FPU status register */
-#define	FP_IE_FLAG	(1 << 0)	/* ÁÑ°Âäπ„Å™Âãï‰Ωú */
-#define	FP_DE_FLAG	(1 << 1)	/* „Éá„Éé„Éº„Éû„É©„Ç§„Ç∫„Éâ„Éª„Ç™„Éö„É©„É≥„Éâ */
-#define	FP_ZE_FLAG	(1 << 2)	/* „Çº„É≠„Å´„Çà„ÇãÈô§ÁÆó */
-#define	FP_OE_FLAG	(1 << 3)	/* „Ç™„Éº„Éê„Éº„Éï„É≠„Éº */
-#define	FP_UE_FLAG	(1 << 4)	/* „Ç¢„É≥„ÉÄ„Éº„Éï„É≠„Éº */
-#define	FP_PE_FLAG	(1 << 5)	/* Á≤æÂ∫¶ */
-#define	FP_SF_FLAG	(1 << 6)	/* „Çπ„Çø„ÉÉ„ÇØ„Éï„Ç©„É´„Éà */
-#define	FP_ES_FLAG	(1 << 7)	/* „Ç®„É©„Éº„Çµ„Éû„É™„Çπ„ÉÜ„Éº„Çø„Çπ */
-#define	FP_C0_FLAG	(1 << 8)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
-#define	FP_C1_FLAG	(1 << 9)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
-#define	FP_C2_FLAG	(1 << 10)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
-#define	FP_TOP_FLAG	(7 << 11)	/* „Çπ„Çø„ÉÉ„ÇØ„Éù„Ç§„É≥„Éà„ÅÆ„Éà„ÉÉ„Éó */
-#define	FP_C3_FLAG	(1 << 14)	/* Êù°‰ª∂„Ç≥„Éº„Éâ */
-#define	FP_B_FLAG	(1 << 15)	/* FPU „Éì„Ç∏„Éº */
+#define	FP_IE_FLAG	(1 << 0)	/* ñ≥å¯Ç»ìÆçÏ */
+#define	FP_DE_FLAG	(1 << 1)	/* ÉfÉmÅ[É}ÉâÉCÉYÉhÅEÉIÉyÉâÉìÉh */
+#define	FP_ZE_FLAG	(1 << 2)	/* É[ÉçÇ…ÇÊÇÈèúéZ */
+#define	FP_OE_FLAG	(1 << 3)	/* ÉIÅ[ÉoÅ[ÉtÉçÅ[ */
+#define	FP_UE_FLAG	(1 << 4)	/* ÉAÉìÉ_Å[ÉtÉçÅ[ */
+#define	FP_PE_FLAG	(1 << 5)	/* ê∏ìx */
+#define	FP_SF_FLAG	(1 << 6)	/* ÉXÉ^ÉbÉNÉtÉHÉãÉg */
+#define	FP_ES_FLAG	(1 << 7)	/* ÉGÉâÅ[ÉTÉ}ÉäÉXÉeÅ[É^ÉX */
+#define	FP_C0_FLAG	(1 << 8)	/* èåèÉRÅ[Éh */
+#define	FP_C1_FLAG	(1 << 9)	/* èåèÉRÅ[Éh */
+#define	FP_C2_FLAG	(1 << 10)	/* èåèÉRÅ[Éh */
+#define	FP_TOP_FLAG	(7 << 11)	/* ÉXÉ^ÉbÉNÉ|ÉCÉìÉgÇÃÉgÉbÉv */
+#define	FP_C3_FLAG	(1 << 14)	/* èåèÉRÅ[Éh */
+#define	FP_B_FLAG	(1 << 15)	/* FPU ÉrÉWÅ[ */
 
 #define	FP_TOP_SHIFT	11
 #define	FP_TOP_GET()	((FPU_STATUSWORD & FP_TOP_FLAG) >> FP_TOP_SHIFT)
@@ -714,12 +714,12 @@ do { \
 } while (/*CONSTCOND*/0)
 
 /* FPU control register */
-#define	FP_CTRL_PC_SHIFT	8	/* Á≤æÂ∫¶Âà∂Âæ° */
-#define	FP_CTRL_RC_SHIFT	10	/* ‰∏∏„ÇÅÂà∂Âæ° */
+#define	FP_CTRL_PC_SHIFT	8	/* ê∏ìxêßå‰ */
+#define	FP_CTRL_RC_SHIFT	10	/* ä€Çﬂêßå‰ */
 
-#define	FP_CTRL_PC_24		0	/* ÂçòÁ≤æÂ∫¶ */
-#define	FP_CTRL_PC_53		1	/* ÂÄçÁ≤æÂ∫¶ */
-#define	FP_CTRL_PC_64		3	/* Êã°ÂºµÁ≤æÂ∫¶ */
+#define	FP_CTRL_PC_24		0	/* íPê∏ìx */
+#define	FP_CTRL_PC_53		1	/* î{ê∏ìx */
+#define	FP_CTRL_PC_64		3	/* ägí£ê∏ìx */
 
 #define	FP_CTRL_RC_NEAREST_EVEN	0
 #define	FP_CTRL_RC_DOWN		1

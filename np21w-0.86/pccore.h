@@ -136,12 +136,27 @@ struct tagNP2Config
 	UINT8	hdrvacc;
 
 	OEMCHAR	sasihdd[2][MAX_PATH];									// ver0.74
+#if defined(SUPPORT_IDEIO)
+	OEMCHAR	idecd[2][MAX_PATH];										// ver0.85w
+#endif
 #if defined(SUPPORT_SCSI)
 	OEMCHAR	scsihdd[4][MAX_PATH];									// ver0.74
 #endif
 	OEMCHAR	fontfile[MAX_PATH];
 	OEMCHAR	biospath[MAX_PATH];
 	OEMCHAR	hdrvroot[MAX_PATH];
+	
+#ifdef SUPPORT_LGY98
+	UINT8	uselgy98;
+	UINT16	lgy98io;
+	UINT8	lgy98irq;
+	OEMCHAR	lgy98tap[MAX_PATH];
+#endif
+#ifdef SUPPORT_CL_GD5430
+	UINT8	usegd5430;
+	UINT8	gd5430type;
+#endif
+
 };
 typedef struct tagNP2Config  NP2CFG;		/*!< The define of config */
 

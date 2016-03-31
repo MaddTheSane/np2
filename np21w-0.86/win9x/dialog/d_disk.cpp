@@ -409,7 +409,7 @@ void dialog_newdisk(HWND hWnd)
 	}
 	else if (!file_cmpname(ext, str_nhd))
 	{
-		CNewHddDlg dlg(hWnd, 5, 512);
+		CNewHddDlg dlg(hWnd, 5, NHD_MAXSIZE);
 		if (dlg.DoModal() == IDOK)
 		{
 			newdisk_nhd(lpPath, dlg.GetSize());

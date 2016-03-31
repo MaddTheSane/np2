@@ -526,6 +526,31 @@ BEGIN
                     ES_WANTRETURN | WS_VSCROLL
 END
 
+IDD_LGY98 DIALOGEX 0, 0, 184, 124
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "LGY-98"
+FONT 9, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enabled",IDC_LGY98ENABLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,8,40,10
+    LTEXT           "I/O port",IDC_STATIC,8,26,30,8
+    COMBOBOX        IDC_LGY98IO,40,24,40,52,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Interrupt",IDC_STATIC,104,26,30,8
+    COMBOBOX        IDC_LGY98INT,136,24,40,52,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "TAP device name",IDC_STATIC,8,43,76,8
+    COMBOBOX        IDC_LGY98TAP,8,52,168,12,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Defaults",IDC_LGY98DEF,136,102,40,14
+END
+
+IDD_GD5430 DIALOGEX 0, 0, 184, 124
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "CL-GD5430"
+FONT 9, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Enabled",IDC_GD5430ENABLED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,8,40,10
+    LTEXT           "Type",IDC_STATIC,8,26,30,8
+    COMBOBOX        IDC_GD5430TYPE,40,24,136,52,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Defaults",IDC_GD5430DEF,136,102,40,14
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -694,6 +719,22 @@ BEGIN
         TOPMARGIN, 8
         BOTTOMMARGIN, 100
     END
+
+    IDD_LGY98, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_GD5430, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 176
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 112
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -850,6 +891,12 @@ BEGIN
             MENUITEM "&1.6MB",                      IDM_MEM16
             MENUITEM "&3.6MB",                      IDM_MEM36
             MENUITEM "&7.6MB",                      IDM_MEM76
+            MENUITEM "&11.6MB",                     IDM_MEM116
+            MENUITEM "&13.6MB",                     IDM_MEM136
+            MENUITEM "&16.6MB",                     IDM_MEM166
+            MENUITEM "&32.6MB",                     IDM_MEM326
+            MENUITEM "&64.6MB",                     IDM_MEM646
+            MENUITEM "&120.6MB",                    IDM_MEM1206
         END
         MENUITEM "&Mouse",                      IDM_MOUSE
         MENUITEM SEPARATOR
@@ -859,6 +906,10 @@ BEGIN
         MENUITEM "MIDI &panic",                 IDM_MIDIPANIC
         MENUITEM SEPARATOR
         MENUITEM "So&und option...",            IDM_SNDOPT
+        MENUITEM SEPARATOR
+        MENUITEM "&Network option...",          IDM_NETOPT
+        MENUITEM SEPARATOR
+        MENUITEM "&Window Accelerator option...", IDM_WABOPT
     END
     POPUP "&Other"
     BEGIN
@@ -875,6 +926,7 @@ BEGIN
         MENUITEM "Joy re&verse",                IDM_JOYX
         MENUITEM "Joy &rapid",                  IDM_RAPID
         MENUITEM "&Mouse rapid",                IDM_MSRAPID
+        MENUITEM "&ITF work",                   IDM_ITFWORK
         MENUITEM SEPARATOR
         MENUITEM "&Help...",                    IDM_HELP
         MENUITEM "&About...",                   IDM_ABOUT
@@ -968,6 +1020,12 @@ BEGIN
         MENUITEM "&Open...",                    IDM_IDE2OPEN
         MENUITEM SEPARATOR
         MENUITEM "&Eject",                      IDM_IDE2EJECT
+    END
+    POPUP "IDE #3"
+    BEGIN
+        MENUITEM "&Open...",                    IDM_IDE3OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eject",                      IDM_IDE3EJECT
     END
 END
 
@@ -1118,6 +1176,7 @@ END
 
 NP2BMP                  BITMAP  DISCARDABLE     "..\\nekop2.bmp"
 NP2TOOL                 BITMAP  DISCARDABLE     "..\\np2tool.bmp"
+NP21TOOL                BITMAP  DISCARDABLE     "..\\np21tool.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1134,6 +1193,7 @@ IDI_ICON2               ICON    DISCARDABLE     "..\\np2debug.ico"
 
 SEEKWAV                 EXTROM  DISCARDABLE     "..\\fddseek.wav"
 SEEK1WAV                EXTROM  DISCARDABLE     "..\\fddseek1.wav"
+RELAY1WAV               EXTROM  DISCARDABLE     "..\\relay1.wav"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1170,6 +1230,8 @@ BEGIN
     IDS_SCREENOPTION        "Screen option"
     IDS_SOUNDOPTION         "Sound board option"
     IDS_SERIALOPTION        "Serial option"
+    IDS_NETWORKOPTION       "Network option"
+    IDS_WABOPTION           "Window Accelerator board option"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1275,6 +1337,14 @@ BEGIN
     IDS_5X                  "5x"
     IDS_6X                  "6x"
     IDS_7X                  "7x"
+    IDS_00D0                "00D0"
+    IDS_10D0                "10D0"
+    IDS_20D0                "20D0"
+    IDS_30D0                "30D0"
+    IDS_40D0                "40D0"
+    IDS_50D0                "50D0"
+    IDS_60D0                "60D0"
+    IDS_70D0                "70D0"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1290,6 +1360,16 @@ BEGIN
     IDS_ASYNC               "Async"
     IDS_ASYNC16X            "Async 16x"
     IDS_ASYNC64X            "Async 64x"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_GD5430_XE           "PC-9821Xe built-in"
+    IDS_GD5430_CB           "PC-9821Cb built-in"
+    IDS_GD5430_CF           "PC-9821Cf built-in"
+    IDS_GD5430_XE10         "PC-9821Xe10,Xa7e,Xb10 built-in"
+    IDS_GD5430_CB2          "PC-9821Cb2 built-in"
+    IDS_GD5430_CX2          "PC-9821Cx2 built-in"
 END
 
 STRINGTABLE DISCARDABLE 

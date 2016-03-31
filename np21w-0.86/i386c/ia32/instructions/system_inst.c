@@ -274,7 +274,7 @@ MOV_CdRd(void)
 			 * 31 = PG (pageing)
 			 */
 
-			/* ä¸‹å·» p.182 å‰²ã‚Šè¾¼ã¿ 13 - ä¸€èˆ¬ä¿è­·ä¾‹å¤– */
+			/* ‰ºŠª p.182 Š„‚è‚İ 13 - ˆê”Ê•ÛŒì—áŠO */
 			if ((src & (CPU_CR0_PE|CPU_CR0_PG)) == (UINT32)CPU_CR0_PG) {
 				EXCEPTION(GP_EXCEPTION, 0);
 			}
@@ -1075,7 +1075,7 @@ WRMSR(void)
 
 	idx = CPU_ECX;
 	switch (idx) {
-		/* MTRR ã¸ã®æ›¸ãè¾¼ã¿æ™‚ tlb_flush(1); */
+		/* MTRR ‚Ö‚Ì‘‚«‚İ tlb_flush(1); */
 
 	default:
 		EXCEPTION(GP_EXCEPTION, 0);
@@ -1086,8 +1086,12 @@ WRMSR(void)
 void
 RDTSC(void)
 {
+	static LARGE_INTEGER li = {0};
+	QueryPerformanceCounter(&li);
+	CPU_STATSAVE.cpu_regs.reg[CPU_EDX_INDEX].d = li.HighPart;
+	CPU_STATSAVE.cpu_regs.reg[CPU_EAX_INDEX].d = li.LowPart;
 
-	ia32_panic("RDTSC: not implemented yet!");
+	//ia32_panic("RDTSC: not implemented yet!");
 }
 
 void

@@ -8,6 +8,9 @@
 #include	"ideio.h"
 #include	"cs4231io.h"
 #include	"iocore16.tbl"
+#ifdef SUPPORT_LGY98
+#include	"network/lgy98.h"
+#endif
 
 
 	_ARTIC		artic;
@@ -62,6 +65,7 @@ typedef struct {
 static	_IOCORE		iocore;
 static	UINT8		ioterminate[0x100];
 
+extern UINT lgy98_baseaddr;
 
 // ----
 
@@ -515,6 +519,13 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 
 	IOFUNC	iof;
 
+#if defined(SUPPORT_PC9821)
+	if((port&0xff) == 0xf0 && (port&0xff00) != 0x0000){
+		// Win2000デバイス検出リセット対策（根拠無し）
+		CPU_REMCLOCK -= iocore.busclock;
+		return;
+	}
+#endif
 //	TRACEOUT(("iocore_out8(%.2x, %.2x)", port, dat));
 	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
@@ -526,6 +537,13 @@ REG8 IOINPCALL iocore_inp8(UINT port) {
 	IOFUNC	iof;
 	REG8	ret;
 
+#if defined(SUPPORT_PC9821)
+	if((port&0xff) == 0xf0 && (port&0xff00) != 0x0000){
+		// Win2000デバイス検出リセット対策（根拠無し）
+		CPU_REMCLOCK -= iocore.busclock;
+		return 0xff;
+	}
+#endif
 	CPU_REMCLOCK -= iocore.busclock;
 	iof = iocore.base[(port >> 8) & 0xff];
 	ret = iof->ioinp[port & 0xff](port);
@@ -542,6 +560,12 @@ void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 #if defined(SUPPORT_IDEIO)
 	if (port == 0x0640) {
 		ideio_w16(port, dat);
+		return;
+	}
+#endif
+#if defined(SUPPORT_LGY98)
+	if (port == lgy98_baseaddr + 0x200) {
+		lgy98_ob200_16(port, dat);
 		return;
 	}
 #endif
@@ -579,6 +603,11 @@ REG16 IOINPCALL iocore_inp16(UINT port) {
 #if defined(SUPPORT_IDEIO)
 	if (port == 0x0640) {
 		return(ideio_r16(port));
+	}
+#endif
+#if defined(SUPPORT_LGY98)
+	if (port == lgy98_baseaddr + 0x200) {
+		return(lgy98_ib200_16(port));
 	}
 #endif
 	if ((port & 0xfffc) == 0x005c) {

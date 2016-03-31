@@ -56,11 +56,11 @@ typedef struct {
 } FLINFO;
 
 
-/* DOSIO:é–¢æ•°ã®æº–å‚™ */
+/* DOSIO:ŠÖ”‚Ì€”õ */
 void dosio_init(void);
 void dosio_term(void);
 
-/* ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
+/* ƒtƒ@ƒCƒ‹‘€ì */
 FILEH file_open(const OEMCHAR *path);
 FILEH file_open_rb(const OEMCHAR *path);
 FILEH file_create(const OEMCHAR *path);
@@ -74,7 +74,7 @@ short file_delete(const OEMCHAR *path);
 short file_attr(const OEMCHAR *path);
 short file_dircreate(const OEMCHAR *path);
 
-/* ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
+/* ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì */
 void file_setcd(const OEMCHAR *exepath);
 char *file_getcd(const OEMCHAR *sjis);
 FILEH file_open_c(const OEMCHAR *sjis);

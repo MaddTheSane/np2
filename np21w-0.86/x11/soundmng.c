@@ -1165,7 +1165,7 @@ sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 	struct sndbuf *sndbuf;
 
 #if !defined(USE_SDLMIXER) && SDL_VERSION_ATLEAST(2, 0, 0)
-	/* SDL2 ã‹ã‚‰ SDL å´ã§ stream ã‚’ç„¡éŸ³ã§åˆæœŸåŒ–ã—ãªããªã£ãŸ */
+	/* SDL2 ‚©‚ç SDL ‘¤‚Å stream ‚ğ–³‰¹‚Å‰Šú‰»‚µ‚È‚­‚È‚Á‚½ */
 	memset(stream, sound_silence, len);
 #endif
 

@@ -467,7 +467,7 @@ static const PFTBL s_IniItems[] =
 
 	PFEXT("DIPswtch", PFTYPE_BIN,		np2cfg.dipsw,			3),
 	PFEXT("MEMswtch", PFTYPE_BIN,		np2cfg.memsw,			8),
-	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			63),
+	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			255),
 	PFVAL("ITF_WORK", PFRO_BOOL,		&np2cfg.ITF_WORK),
 
 	PFSTR("HDD1FILE", PFTYPE_STR,		np2cfg.sasihdd[0]),
@@ -536,6 +536,17 @@ static const PFTBL s_IniItems[] =
 	PFEXT("FDDRIVE2", PFRO_BITMAP,		&np2cfg.fddequip,		1),
 	PFEXT("FDDRIVE3", PFRO_BITMAP,		&np2cfg.fddequip,		2),
 	PFEXT("FDDRIVE4", PFRO_BITMAP,		&np2cfg.fddequip,		3),
+
+#if defined(SUPPORT_LGY98)
+	PFVAL("USELGY98", PFTYPE_BOOL,		&np2cfg.uselgy98),
+	PFVAL("LGY98_IO", PFTYPE_UINT16,	&np2cfg.lgy98io),
+	PFVAL("LGY98IRQ", PFTYPE_UINT8,		&np2cfg.lgy98irq),
+	PFSTR("LGY98TAP", PFTYPE_STR,		np2cfg.lgy98tap),
+#endif
+#if defined(SUPPORT_CL_GD5430)
+	PFVAL("USEGD5430", PFTYPE_BOOL,		&np2cfg.usegd5430),
+	PFVAL("GD5430TYPE",PFTYPE_UINT8,	&np2cfg.gd5430type),
+#endif
 
 	// OSàÀë∂ÅH
 	PFVAL("keyboard", PFRO_KB,			&np2oscfg.KEYBOARD),

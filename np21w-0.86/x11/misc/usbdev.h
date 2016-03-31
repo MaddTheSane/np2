@@ -1,6 +1,6 @@
 /**
  * @file	usbdev.h
- * @brief	USB ã‚¢ã‚¯ã‚»ã‚¹ ã‚¯ãƒ©ã‚¹ã®å®£è¨€ãŠã‚ˆã³ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å®šç¾©ã‚’ã—ã¾ã™
+ * @brief	USB ƒAƒNƒZƒX ƒNƒ‰ƒX‚ÌéŒ¾‚¨‚æ‚ÑƒCƒ“ƒ^[ƒtƒFƒCƒX‚Ì’è‹`‚ğ‚µ‚Ü‚·
  */
 
 #pragma once
@@ -12,7 +12,7 @@
 #endif
 
 /**
- * @brief USB ã‚¢ã‚¯ã‚»ã‚¹ ã‚¯ãƒ©ã‚¹
+ * @brief USB ƒAƒNƒZƒX ƒNƒ‰ƒX
  */
 class CUsbDev
 {
@@ -35,9 +35,9 @@ private:
 };
 
 /**
- * ã‚ªãƒ¼ãƒ—ãƒ³æ¸ˆ?
- * @retval true ã‚ªãƒ¼ãƒ—ãƒ³æ¸ˆ
- * @retval false æœªã‚ªãƒ¼ãƒ—ãƒ³
+ * ƒI[ƒvƒ“Ï?
+ * @retval true ƒI[ƒvƒ“Ï
+ * @retval false –¢ƒI[ƒvƒ“
  */
 inline bool CUsbDev::IsOpened() const
 {

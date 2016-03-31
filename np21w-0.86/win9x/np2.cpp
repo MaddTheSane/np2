@@ -64,6 +64,16 @@
 #include "subwnd\dclock.h"
 #endif
 #include "recvideo.h"
+#if defined(SUPPORT_IDEIO)
+#include "ideio.h"
+#endif
+#if defined(SUPPORT_LGY98)
+#include "network/net.h"
+#include "network/lgy98.h"
+#endif
+#if defined(SUPPORT_CL_GD5430)
+#include "video/video.h"
+#endif
 
 #ifdef BETA_RELEASE
 #define		OPENING_WAIT		1500
@@ -71,6 +81,7 @@
 
 static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 		HWND		g_hWndMain;
+		HINSTANCE	g_hInstance;
 #if !defined(_WIN64)
 		int			mmxflag;
 #endif
@@ -411,8 +422,10 @@ static void OpenSoundDevice(HWND hWnd)
 	{
 		pSoundMng->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
 		pSoundMng->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
+		pSoundMng->LoadPCM(SOUND_RELAY1, TEXT("RELAY1WAV"));
 		pSoundMng->SetPCMVolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		pSoundMng->SetPCMVolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
+		pSoundMng->SetPCMVolume(SOUND_RELAY1, np2cfg.MOTORVOL);
 	}
 }
 
@@ -582,6 +595,16 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 
 		case IDM_IDE2EJECT:
 			diskdrv_setsxsi(0x02, NULL);
+			break;
+			
+		case IDM_IDE3OPEN:
+			winuienter();
+			dialog_changehdd(hWnd, 0x03);
+			winuileave();
+			break;
+
+		case IDM_IDE3EJECT:
+			diskdrv_setsxsi(0x03, NULL);
 			break;
 #endif
 
@@ -922,6 +945,26 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
 			break;
 
+		case IDM_MEM166:
+			np2cfg.EXTMEM = 16;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
+			break;
+
+		case IDM_MEM326:
+			np2cfg.EXTMEM = 32;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
+			break;
+
+		case IDM_MEM646:
+			np2cfg.EXTMEM = 64;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
+			break;
+
+		case IDM_MEM1206:
+			np2cfg.EXTMEM = 120;
+			update |= SYS_UPDATECFG | SYS_UPDATEMEMORY;
+			break;
+
 		case IDM_MOUSE:
 			mousemng_toggle(MOUSEPROC_SYSTEM);
 			np2oscfg.MOUSE_SW = !np2oscfg.MOUSE_SW;
@@ -952,6 +995,20 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 
+#if defined(SUPPORT_LGY98)
+		case IDM_NETOPT:
+			winuienter();
+			dialog_netopt(hWnd);
+			winuileave();
+			break;
+#endif
+#if defined(SUPPORT_CL_GD5430)
+		case IDM_WABOPT:
+			winuienter();
+			dialog_wabopt(hWnd);
+			winuileave();
+			break;
+#endif
 		case IDM_BMPSAVE:
 			winuienter();
 			dialog_writebmp(hWnd);
@@ -1021,6 +1078,11 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuienter();
 			dialog_about(hWnd);
 			winuileave();
+			break;
+
+		case IDM_ITFWORK:
+			np2cfg.ITF_WORK = !np2cfg.ITF_WORK;
+			update |= SYS_UPDATECFG;
 			break;
 
 		default:
@@ -1557,15 +1619,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	szClassName[0] = (TCHAR)np2oscfg.winid[0];
 	szClassName[1] = (TCHAR)np2oscfg.winid[1];
 	szClassName[2] = (TCHAR)np2oscfg.winid[2];
-
+	
+#ifndef ALLOW_MULTIRUN
 	if ((hWnd = FindWindow(szClassName, NULL)) != NULL) {
 		ShowWindow(hWnd, SW_RESTORE);
 		SetForegroundWindow(hWnd);
 		dosio_term();
 		return(FALSE);
 	}
+#endif
 
-	hInstance = LoadExternalResource(hInstance);
+	g_hInstance = hInstance = LoadExternalResource(hInstance);
 	CWndProc::SetResourceHandle(hInstance);
 
 #if !defined(_WIN64)
@@ -1673,8 +1737,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	{
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK, TEXT("SEEKWAV"));
 		CSoundMng::GetInstance()->LoadPCM(SOUND_PCMSEEK1, TEXT("SEEK1WAV"));
+		CSoundMng::GetInstance()->LoadPCM(SOUND_RELAY1, TEXT("RELAY1WAV"));
 		CSoundMng::GetInstance()->SetPCMVolume(SOUND_PCMSEEK, np2cfg.MOTORVOL);
 		CSoundMng::GetInstance()->SetPCMVolume(SOUND_PCMSEEK1, np2cfg.MOTORVOL);
+		CSoundMng::GetInstance()->SetPCMVolume(SOUND_RELAY1, np2cfg.MOTORVOL);
 	}
 
 	if (np2oscfg.MOUSE_SW) {										// ver0.30
@@ -1693,6 +1759,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #endif
 
 	scrndraw_redraw();
+
+#ifdef SUPPORT_LGY98
+	lgy98_init();
+#endif
+#ifdef SUPPORT_CL_GD5430
+	np2vga_init(g_hInstance, g_hWndMain);
+	pc98_cirrus_vga_init();
+#endif
 
 	pccore_reset();
 
@@ -1825,6 +1899,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			DispatchMessage(&msg);
 		}
 	}
+
+#ifdef SUPPORT_CL_GD5430
+	np2vga_shutdown();
+	pc98_cirrus_vga_shutdown();
+#endif
+#ifdef SUPPORT_LGY98
+	lgy98_shutdown();
+#endif
+
 	toolwin_destroy();
 	kdispwin_destroy();
 	skbdwin_destroy();

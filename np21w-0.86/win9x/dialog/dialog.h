@@ -39,3 +39,13 @@ void dialog_sndopt(HWND hwndParent);
 
 // d_soundlog.cpp
 void dialog_soundlog(HWND hWnd);
+
+// d_network.cpp
+#if defined(SUPPORT_LGY98)
+void dialog_netopt(HWND hWnd);
+#endif
+
+// d_wab.cpp
+#if defined(SUPPORT_CL_GD5430)
+void dialog_wabopt(HWND hWnd);
+#endif

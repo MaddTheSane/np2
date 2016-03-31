@@ -27,7 +27,7 @@ dosio_term(void)
 	/* nothing to do */
 }
 
-/* ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
+/* ƒtƒ@ƒCƒ‹‘€ì */
 FILEH
 file_open(const OEMCHAR *path)
 {
@@ -160,7 +160,7 @@ file_dircreate(const OEMCHAR *path)
 }
 
 
-/* ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
+/* ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì */
 void
 file_setcd(const OEMCHAR *exepath)
 {

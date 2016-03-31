@@ -259,7 +259,7 @@ void CConfigureDlg::OnOK()
 
 	UINT nMultiple = GetDlgItemInt(IDC_MULTIPLE, NULL, FALSE);
 	nMultiple = max(nMultiple, 1);
-	nMultiple = min(nMultiple, 32);
+	nMultiple = min(nMultiple, 256);
 	if (np2cfg.multiple != nMultiple)
 	{
 		np2cfg.multiple = nMultiple;
@@ -405,7 +405,7 @@ void CConfigureDlg::SetClock(UINT nMultiple)
 		nMultiple = GetDlgItemInt(IDC_MULTIPLE, NULL, FALSE);
 	}
 	nMultiple = max(nMultiple, 1);
-	nMultiple = min(nMultiple, 32);
+	nMultiple = min(nMultiple, 256);
 
 	const UINT nClock = (nBaseClock / 100) * nMultiple;
 

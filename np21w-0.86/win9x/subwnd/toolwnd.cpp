@@ -133,8 +133,13 @@ static HBITMAP skinload(const OEMCHAR *path)
 	}
 	if (ret == NULL)
 	{
+#ifdef SUPPORT_PC9821
+		HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP21TOOL"), RT_BITMAP);
+		ret = ::LoadBitmap(hInstance, TEXT("NP21TOOL"));
+#else
 		HINSTANCE hInstance = CWndProc::FindResourceHandle(TEXT("NP2TOOL"), RT_BITMAP);
 		ret = ::LoadBitmap(hInstance, TEXT("NP2TOOL"));
+#endif
 	}
 	return ret;
 }

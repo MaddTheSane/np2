@@ -30,7 +30,7 @@ void viewmem_read(VIEWMEM_T *cfg, UINT32 adrs, UINT8 *buf, UINT32 size) {
 		}
 	}
 
-	// CG-Window„ÅØÁÑ°Ë¶ñ
+	// CG-WindowÇÕñ≥éã
 	if (adrs < 0xa5000) {
 		if ((adrs + size) <= 0xa5000) {
 			ZeroMemory(buf, size);

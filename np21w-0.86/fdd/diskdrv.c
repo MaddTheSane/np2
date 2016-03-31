@@ -126,6 +126,10 @@ void diskdrv_hddbind(void)
 		if (sxsi_devopen(drv, np2cfg.sasihdd[drv & 0x0f]) != SUCCESS)
 		{
 			sxsi_setdevtype(drv, SXSIDEV_NC);
+			if(np2cfg.sasihdd[drv & 0x0f]!=NULL && np2cfg.sasihdd[drv & 0x0f][0]!='\0')
+			{
+				msgbox("HD image file open error" ,"file open error"); 
+			}
 		}
 	}
 #if defined(SUPPORT_SCSI)

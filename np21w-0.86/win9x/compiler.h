@@ -156,9 +156,9 @@ typedef	signed __int64		SINT64;
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
-#if defined(TRACE)
-#define	SUPPORT_IDEIO
-#endif
+//#if defined(TRACE)
+//#define	SUPPORT_IDEIO
+//#endif
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 #if !defined(_WIN64)
@@ -181,6 +181,16 @@ typedef	signed __int64		SINT64;
 
 #if defined(CPUCORE_IA32)
 #pragma warning(disable: 4819)
+#endif
+
+#if defined(SUPPORT_LARGE_HDD)
+typedef INT64	FILEPOS;
+typedef INT64	FILELEN;
+#define	NHD_MAXSIZE	32000
+#else
+typedef long	FILEPOS;
+typedef long	FILELEN;
+#define	NHD_MAXSIZE	2000
 #endif
 
 

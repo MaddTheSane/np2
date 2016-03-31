@@ -1,6 +1,6 @@
 .TH Xnp2 1 "Jan 13, 2016"
 .SH NAME
-Xnp2 \- PC-9801 シリーズエミュレータ
+Xnp2 \- PC-9801 �V���[�Y�G�~�����[�^
 .SH SYNOPSIS
 .B xnp2
 [
@@ -23,112 +23,112 @@ Xnp2 \- PC-9801 シリーズエミュレータ
 ]
 .SH DESCRIPTION
 .B Xnp2
-は UNIX プラットフォーム向けの PC-9801 シリーズエミュレータです。
+�� UNIX �v���b�g�t�H�[�������� PC-9801 �V���[�Y�G�~�����[�^�ł��B
 .SH OPTIONS
 .TP
 .B \--config
-起動時に読み込む設定ファイルを指定します。
-非指定時は $(HOME)/.np2/np2rc を読み込みます。
+�N�����ɓǂݍ��ސݒ�t�@�C�����w�肵�܂��B
+��w�莞�� $(HOME)/.np2/np2rc ��ǂݍ��݂܂��B
 .TP
 .B \--timidity-config
 .B Xnp2
-に内蔵されている TiMidity 互換のソフトウェア MIDI 音源で使用する音源設定
-ファイルを指定します。
-非指定時は $(HOME)/.np2/timidity.cfg を読み込みます。
+�ɓ�������Ă��� TiMidity �݊��̃\�t�g�E�F�A MIDI �����Ŏg�p���鉹���ݒ�
+�t�@�C�����w�肵�܂��B
+��w�莞�� $(HOME)/.np2/timidity.cfg ��ǂݍ��݂܂��B
 .SH EXAMPLES
 .nf
-設定ファイル np2.cfg を指定
+�ݒ�t�@�C�� np2.cfg ���w��
 .ft B
 xnp2 --config np2.cfg
 .ft R
 
-TiMidity 音源設定ファイル /usr/local/lib/timidity/timidity.cfg を指定
+TiMidity �����ݒ�t�@�C�� /usr/local/lib/timidity/timidity.cfg ���w��
 .ft B
 xnp2 --timidity-config /usr/local/lib/timidity/timidity.cfg
 .ft R
 
-FDD1 にイメージファイル system.d88、FDD2 に data.d88 を挿入して起動
+FDD1 �ɃC���[�W�t�@�C�� system.d88�AFDD2 �� data.d88 ��}�����ċN��
 .ft B
 xnp2 system.d88 data.d88
 .ft R
 .fi
 .SH COMMAND
 .TP
-.B マウス中ボタン
-X と Xnp2 間のマウス操作の切替
+.B �}�E�X���{�^��
+X �� Xnp2 �Ԃ̃}�E�X����̐ؑ�
 .SH FILES
 .TP
 .B $(HOME)/.np2/np2rc
-設定ファイル
+�ݒ�t�@�C��
 .TP
 .B $(HOME)/.np2/font.tmp
-フォントが検出できない場合に生成されるフォントビットマップファイル
+�t�H���g�����o�ł��Ȃ��ꍇ�ɐ��������t�H���g�r�b�g�}�b�v�t�@�C��
 .TP
 .B $(HOME)/.np2/bios.rom
-実機の BIOS ROM
+���@�� BIOS ROM
 .TP
 .B $(HOME)/.np2/FONT.ROM
-実機のフォント ROM
+���@�̃t�H���g ROM
 .TP
 .B $(HOME)/.np2/sound26.rom
-PC-9801-26K に搭載されている BIOS ROM
+PC-9801-26K �ɓ��ڂ���Ă��� BIOS ROM
 .TP
 .B $(HOME)/.np2/sound86.rom
-PC-9801-86 に搭載されている BIOS ROM
+PC-9801-86 �ɓ��ڂ���Ă��� BIOS ROM
 .TP
 .B $(HOME)/.np2/sound118.rom
-PC-9801-118 に搭載されている BIOS ROM
+PC-9801-118 �ɓ��ڂ���Ă��� BIOS ROM
 .TP
 .B $(HOME)/.np2/soundSPB.rom
-スピークボードに搭載されている BIOS ROM
+�X�s�[�N�{�[�h�ɓ��ڂ���Ă��� BIOS ROM
 .TP
 .B $(HOME)/.np2/SCCI.ini
-SCCI (Sound Chip Common Interface) 設定ファイル
+SCCI (Sound Chip Common Interface) �ݒ�t�@�C��
 .TP
 .B $(HOME)/.np2/timidity.cfg
-内蔵 TiMidity 互換ソフトウェア MIDI 音源用の音源設定ファイル
+���� TiMidity �݊��\�t�g�E�F�A MIDI �����p�̉����ݒ�t�@�C��
 .TP
 .B $(HOME)/.np2/2608_bd.wav
-OPNA に搭載されているリズム音源 (バスドラム)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�o�X�h����)
 .TP
 .B $(HOME)/.np2/2608_sd.wav
-OPNA に搭載されているリズム音源 (スネアドラム)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�X�l�A�h����)
 .TP
 .B $(HOME)/.np2/2608_top.wav
-OPNA に搭載されているリズム音源 (シンバル)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�V���o��)
 .TP
 .B $(HOME)/.np2/2608_hh.wav
-OPNA に搭載されているリズム音源 (ハイハット)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�n�C�n�b�g)
 .TP
 .B $(HOME)/.np2/2608_tom.wav
-OPNA に搭載されているリズム音源 (タム)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�^��)
 .TP
 .B $(HOME)/.np2/2608_rim.wav
-OPNA に搭載されているリズム音源 (リムショット)
+OPNA �ɓ��ڂ���Ă��郊�Y������ (�����V���b�g)
 .TP
 .B @PKGDATADIR@/np2tool.d88
-hostdrv 機能を使用するために必要なドライバとドキュメントが入っている D88 形式ディスクイメージ
+hostdrv �@�\���g�p���邽�߂ɕK�v�ȃh���C�o�ƃh�L�������g�������Ă��� D88 �`���f�B�X�N�C���[�W
 .TP
 .B @PKGDATADIR@/fddseek.wav
-フロッピーシーク時に再生される PCM ファイル
+�t���b�s�[�V�[�N���ɍĐ������ PCM �t�@�C��
 .TP
 .B @PKGDATADIR@/fddseek1.wav
-フロッピーシーク時に再生される PCM ファイル
+�t���b�s�[�V�[�N���ɍĐ������ PCM �t�@�C��
 .SH AUTHOR
-Yui <np2@yui.ne.jp>, Windows 上で動作するオリジナルの
-.B ねこープロジェクト
-の開発者。
-また、MacOS 8.x, MacOS 9 への移植も手掛けました。
+Yui <np2@yui.ne.jp>, Windows ��œ��삷��I���W�i����
+.B �˂��[�v���W�F�N�g
+�̊J���ҁB
+�܂��AMacOS 8.x, MacOS 9 �ւ̈ڐA����|���܂����B
 .br
 NONAKA Kimihiro <nonakap@gmail.com>,
-.B ねこープロジェクト
-を UNIX プラットフォームに移植した
+.B �˂��[�v���W�F�N�g
+�� UNIX �v���b�g�t�H�[���ɈڐA����
 .B Xnp2
-を開発しました。
+���J�����܂����B
 .br
 tk800 <tk_np2x@yahoo.co.jp>,
-.B ねこープロジェクト
-を MacOS X に移植した Neko Project IIx を開発しました。
+.B �˂��[�v���W�F�N�g
+�� MacOS X �ɈڐA���� Neko Project IIx ���J�����܂����B
 .SH "SEE ALSO"
 .B Xnp2
-の最新版等の情報は http://www.nonakap.org/np2/ を参照してください。
+�̍ŐV�œ��̏��� http://www.nonakap.org/np2/ ���Q�Ƃ��Ă��������B
