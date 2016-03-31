@@ -1779,9 +1779,6 @@
     <ClInclude Include="..\network\net.h">
       <Filter>ヘッダー ファイル\network</Filter>
     </ClInclude>
-    <ClInclude Include="memtool.h">
-      <Filter>ソース ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\video\cirrus_vga_rop.h">
       <Filter>ヘッダー ファイル\video</Filter>
     </ClInclude>
@@ -1799,6 +1796,9 @@
     </ClInclude>
     <ClInclude Include="..\network\lgy98dev.h">
       <Filter>ヘッダー ファイル\network</Filter>
+    </ClInclude>
+    <ClInclude Include="memtool.h">
+      <Filter>ヘッダー ファイル\win9x</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

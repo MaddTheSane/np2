@@ -83,7 +83,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NASM>
-      <IncludePaths>.\x86\;..\i386c\x86\;..\io\x86\</IncludePaths>
+      <AdditionalOptions>-I.\x86\ -I..\i386c\x86\ -I..\io\x86\</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </NASM>
     <ClCompile>
@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NASM>
-      <IncludePaths>.\x86\;..\i386c\x86\;..\io\x86\</IncludePaths>
+      <AdditionalOptions>-I.\x86\ -I..\i386c\x86\ -I..\io\x86\</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </NASM>
     <ClCompile>
