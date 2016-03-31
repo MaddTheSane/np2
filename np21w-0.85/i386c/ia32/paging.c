@@ -107,6 +107,7 @@
  * |  p  |  u  |  u  |  w  |  w  | o |
  * +-----+-----------+-----+-----+---+
  */
+//#define USE_PAGE_ACCESS_TABLE
 #if !defined(USE_PAGE_ACCESS_TABLE)
 #define	page_access	0xd0ddd0ff
 #else	/* USE_PAGE_ACCESS_TABLE */
@@ -645,13 +646,13 @@ static UINT32 MEMCALL
 paging(UINT32 laddr, int ucrw)
 {
 	struct tlb_entry *ep;
-	UINT32 paddr;		/* physical address */
-	UINT32 pde_addr;	/* page directory entry address */
-	UINT32 pde;		/* page directory entry */
-	UINT32 pte_addr;	/* page table entry address */
-	UINT32 pte;		/* page table entry */
-	UINT bit;
-	UINT err;
+	register UINT32 paddr;		/* physical address */
+	register UINT32 pde_addr;	/* page directory entry address */
+	register UINT32 pde;		/* page directory entry */
+	register UINT32 pte_addr;	/* page table entry address */
+	register UINT32 pte;		/* page table entry */
+	register UINT bit;
+	register UINT err;
 
 	ep = tlb_lookup(laddr, ucrw);
 	if (ep != NULL)
@@ -711,7 +712,7 @@ paging(UINT32 laddr, int ucrw)
 		cpu_memorywrite_d(pte_addr, pte);
 	}
 
-	tlb_update(laddr, pte, (bit & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE)) + ((ucrw & CPU_PAGE_CODE) ? 1 : 0));
+	tlb_update(laddr, pte, (bit & (CPU_PTE_WRITABLE|CPU_PTE_USER_MODE)) + ((ucrw & CPU_PAGE_CODE)>>1/* ? 1 : 0*/));
 
 	return paddr;
 
@@ -774,22 +775,26 @@ tlb_init(void)
 void MEMCALL
 tlb_flush(BOOL allflush)
 {
+	tlb_t *tt;
 	struct tlb_entry *ep;
-	int i;
-	int n;
+	register int i;
+	register int n;
 
 	if (allflush) {
 		tlb_init();
 		return;
 	}
 
+	tt = tlb;
 	for (n = 0; n < NTLB; n++) {
+		ep = tt->entry;
 		for (i = 0; i < NENTRY ; i++) {
-			ep = &tlb[n].entry[i];
 			if (TLB_IS_VALID(ep) && !TLB_IS_GLOBAL(ep)) {
 				TLB_SET_INVALID(ep);
 			}
+			ep++;
 		}
+		tt++;
 	}
 }
 
@@ -797,8 +802,8 @@ void MEMCALL
 tlb_flush_page(UINT32 laddr)
 {
 	struct tlb_entry *ep;
-	int idx;
-	int n;
+	register int idx;
+	register int n;
 
 	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
 
@@ -816,11 +821,11 @@ struct tlb_entry * MEMCALL
 tlb_lookup(UINT32 laddr, int ucrw)
 {
 	struct tlb_entry *ep;
-	UINT bit;
-	int idx;
-	int n;
+	register UINT bit;
+	register int idx;
+	register int n;
 
-	n = (ucrw & CPU_PAGE_CODE) ? 1 : 0;
+	n = (ucrw & CPU_PAGE_CODE)>>1;// ? 1 : 0;
 	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
 	ep = &tlb[n].entry[idx];
 
@@ -848,8 +853,8 @@ static void MEMCALL
 tlb_update(UINT32 laddr, UINT entry, int bit)
 {
 	struct tlb_entry *ep;
-	int idx;
-	int n;
+	register int idx;
+	register int n;
 
 	n = bit & 1;
 	idx = (laddr >> TLB_ENTRY_SHIFT) & TLB_ENTRY_MASK;
