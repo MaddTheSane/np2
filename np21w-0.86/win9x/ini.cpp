@@ -544,12 +544,17 @@ static const PFTBL s_IniItems[] =
 	PFEXT("FDDRIVE2", PFRO_BITMAP,		&np2cfg.fddequip,		1),
 	PFEXT("FDDRIVE3", PFRO_BITMAP,		&np2cfg.fddequip,		2),
 	PFEXT("FDDRIVE4", PFRO_BITMAP,		&np2cfg.fddequip,		3),
-
+	
+#if defined(SUPPORT_NET)
+	PFSTR("NP2NETTAP", PFTYPE_STR,		np2cfg.np2nettap),
+#endif
 #if defined(SUPPORT_LGY98)
 	PFVAL("USELGY98", PFTYPE_BOOL,		&np2cfg.uselgy98),
 	PFVAL("LGY98_IO", PFTYPE_UINT16,	&np2cfg.lgy98io),
 	PFVAL("LGY98IRQ", PFTYPE_UINT8,		&np2cfg.lgy98irq),
-	PFSTR("LGY98TAP", PFTYPE_STR,		np2cfg.lgy98tap),
+#endif
+#if defined(SUPPORT_WAB)
+	PFVAL("WAB_ANSW", PFTYPE_UINT8,		&np2cfg.wabasw),
 #endif
 #if defined(SUPPORT_CL_GD5430)
 	PFVAL("USEGD5430", PFTYPE_BOOL,		&np2cfg.usegd5430),

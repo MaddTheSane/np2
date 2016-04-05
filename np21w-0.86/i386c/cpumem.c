@@ -16,7 +16,7 @@
 #include	"vram.h"
 #include	"font/font.h"
 #if defined(SUPPORT_CL_GD5430)
-#include	"video/video.h"
+#include	"wab/cirrus_vga_extern.h"
 #endif
 #if defined(SUPPORT_IDEIO)
 #include	"fdd/sxsi.h"
@@ -324,10 +324,10 @@ static const MEMFNF memfnf = {
 // ----
 #if defined(SUPPORT_CL_GD5430)
 #define VRAMWINDOW_SIZE	0x200000  // VRAM マッピングサイズ
-#define EXT_WINDOW_SIZE	0x400000  // 謎
+#define EXT_WINDOW_SIZE	0xF00000  // 謎
 #define EXT_WINDOW_SHFT	0x000000  // 謎
 #define BBLTWINDOW_ADSH	0x1000000 // VRAM BITBLT
-#define BBLTWINDOW_SIZE	0x400000  // VRAM BITBLT マッピングサイズ
+#define BBLTWINDOW_SIZE	0x000000  // VRAM BITBLT マッピングサイズ
 #define MMIOWINDOW_ADDR	0xF80000  // MMIO マッピングアドレス（場所不明）
 #define MMIOWINDOW_SIZE	0x0//10000   // MMIO マッピングアドレス（サイズ不明）
 #define VRA2WINDOW_ADDR	0xF20000  // VRAMウィンドウ マッピングアドレス（場所不明）

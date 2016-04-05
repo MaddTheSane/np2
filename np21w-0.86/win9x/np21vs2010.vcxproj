@@ -147,7 +147,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -181,7 +181,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -371,8 +371,8 @@
     <ClCompile Include="..\sound\cs4231c.c" />
     <ClCompile Include="..\sound\cs4231g.c" />
     <ClCompile Include="..\sound\fmboard.c" />
-    <ClCompile Include="..\video\cirrus_vga.c" />
-    <ClCompile Include="..\video\video.c" />
+    <ClCompile Include="..\wab\cirrus_vga.c" />
+    <ClCompile Include="..\wab\wab.c" />
     <ClCompile Include="dialog\d_ide.cpp" />
     <ClCompile Include="dialog\d_network.cpp" />
     <ClCompile Include="dialog\d_wab.cpp" />
@@ -717,11 +717,12 @@
     <ClInclude Include="..\sound\vermouth\vermouth.h" />
     <ClInclude Include="..\trap\inttrap.h" />
     <ClInclude Include="..\trap\steptrap.h" />
-    <ClInclude Include="..\video\cirrus_vga.h" />
-    <ClInclude Include="..\video\cirrus_vga_rop.h" />
-    <ClInclude Include="..\video\cirrus_vga_rop2.h" />
-    <ClInclude Include="..\video\vga_int.h" />
-    <ClInclude Include="..\video\video.h" />
+    <ClInclude Include="..\wab\cirrus_vga.h" />
+    <ClInclude Include="..\wab\cirrus_vga_extern.h" />
+    <ClInclude Include="..\wab\cirrus_vga_rop.h" />
+    <ClInclude Include="..\wab\cirrus_vga_rop2.h" />
+    <ClInclude Include="..\wab\vga_int.h" />
+    <ClInclude Include="..\wab\wab.h" />
     <ClInclude Include="..\vram\dispsync.h" />
     <ClInclude Include="..\vram\makegrex.h" />
     <ClInclude Include="..\vram\makegrph.h" />

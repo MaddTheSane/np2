@@ -41,7 +41,7 @@ void dialog_sndopt(HWND hwndParent);
 void dialog_soundlog(HWND hWnd);
 
 // d_network.cpp
-#if defined(SUPPORT_LGY98)
+#if defined(SUPPORT_NET)
 void dialog_netopt(HWND hWnd);
 #endif
 

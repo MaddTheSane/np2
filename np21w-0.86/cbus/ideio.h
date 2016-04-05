@@ -172,6 +172,8 @@ extern	IDEIO	ideio;
 
 void IOOUTCALL ideio_w16(UINT port, REG16 value);
 REG16 IOINPCALL ideio_r16(UINT port);
+void IOOUTCALL ideio_w32(UINT port, UINT32 value);
+UINT32 IOINPCALL ideio_r32(UINT port);
 
 void ideio_reset(const NP2CFG *pConfig);
 void ideio_bind(void);

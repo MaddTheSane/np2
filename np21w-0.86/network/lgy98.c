@@ -125,15 +125,7 @@
 #define ENTSR_CDH 0x40	/* The collision detect "heartbeat" signal was lost. */
 #define ENTSR_OWC 0x80  /* There was an out-of-window collision. */
 
-#define NP2NET_TAP_DEVICE_PATH_FMT "\\\\.\\Global\\%s.tap"
-#define NP2NET_TAP_BUFMAX 2048
 
-#define TAP_CONTROL_CODE(request,method) \
-  CTL_CODE (FILE_DEVICE_UNKNOWN, request, method, FILE_ANY_ACCESS)
- 
-#define TAP_IOCTL_SET_MEDIA_STATUS \
-  TAP_CONTROL_CODE (6, METHOD_BUFFERED)
- 
 	LGY98	lgy98;
 
 UINT lgy98_baseaddr = 0x10D0;
@@ -245,6 +237,26 @@ static void ne2000_dma_update(LGY98 *s, int len)
     } else {
         s->rcnt -= len;
     }
+}
+
+void ne2000_send_packet(VLANClientState *vc1, const UINT8 *buf, int size)
+{
+    VLANState *vlan = vc1->vlan;
+    //VLANClientState *vc;
+
+    if (vc1->link_down)
+        return;
+
+#ifdef DEBUG_NET
+    printf("vlan %d send:\n", vlan->id);
+    hex_dump(stdout, buf, size);
+#endif
+	np2net.send_packet((UCHAR*)buf, size);
+    /*for(vc = vlan->first_client; vc != NULL; vc = vc->next) {
+        if (vc != vc1 && !vc->link_down) {
+            vc->fd_read(vc->opaque, buf, size);
+        }
+    }*/
 }
 
 
@@ -434,7 +446,7 @@ static void IOOUTCALL lgy98_ob000(UINT addr, REG8 dat) {
                     index -= NE2000_PMEM_SIZE;
                 /* fail safe: check range on the transmitted length  */
                 if (index + s->tcnt <= NE2000_PMEM_END) {
-                    np2net_send_packet(s->vc, s->mem + index, s->tcnt);
+                    ne2000_send_packet(s->vc, s->mem + index, s->tcnt);
                 }
                 /* signal end of transfer */
                 s->tsr = ENTSR_PTX;
@@ -767,32 +779,21 @@ VLANClientState *np2net_new_vlan_client(VLANState *vlan,
     return vc;
 }
 
+
 void lgy98_reset(const NP2CFG *pConfig){
-	if(!np2cfg.uselgy98) return;
-    //register_ioport_write(base, 16, 1, ne2000_ioport_write, s);
-    //register_ioport_read(base, 16, 1, ne2000_ioport_read, s);
 
-    //register_ioport_write(base + 0x200, 1, 1, ne2000_asic_ioport_write, s);
-    //register_ioport_read(base + 0x200, 1, 1, ne2000_asic_ioport_read, s);
-    //register_ioport_write(base + 0x200, 2, 2, ne2000_asic_ioport_write, s);
-    //register_ioport_read(base + 0x200, 2, 2, ne2000_asic_ioport_read, s);
-
-    //register_ioport_write(base + 0x300, 16, 1, pc98_ne2000_ioport_write, s);
-    //register_ioport_read(base + 0x300, 16, 1, pc98_ne2000_ioport_read, s);
-
-    //register_ioport_write(base + 0x18, 1, 1, ne2000_reset_ioport_write, s);
-    //register_ioport_read(base + 0x18, 1, 1, ne2000_reset_ioport_read, s);
-	
-	//if(np2net_reset()){
-	//	TRACEOUT(("LGY-98: disabled"));
-	//	return;
-	//}
 }
+// パケット受信時に呼ばれる
+static void lgy98_recieve_packet(const UINT8 *buf, int size)
+{
+	lgy98.vc->fd_read(&lgy98, buf, size);
+}
+
 void lgy98_bind(void){
 	int i;
 	UINT base = 0x10D0;
 	REG8 irq = 5;
-	//REG8 macaddr[6] = {0x52, 0x54, 0x00, 0x12, 0x34, 0x56};
+	REG8 macaddr[6] = {0x52, 0x54, 0x00, 0x12, 0x34, 0x56};
     VLANState *vlan;
 	//NICInfo *nd;
 
@@ -805,11 +806,11 @@ void lgy98_bind(void){
     vlan = np2net_find_vlan(0);
 
 	lgy98_baseaddr = base;
-	
-	if(np2net_reset(np2cfg.lgy98tap)){
-		TRACEOUT(("LGY-98: reset falied"));
-		return;
-	}
+	//
+	//if(np2net_reset(np2cfg.lgy98tap)){
+	//	TRACEOUT(("LGY-98: reset falied"));
+	//	return;
+	//}
 
     //np2net_check_nic_model(nd, "ne2k_isa");
 
@@ -817,8 +818,7 @@ void lgy98_bind(void){
 	
 	lgy98.base = base;
 	lgy98.irq = irq;
-	//memcpy(lgy98.macaddr, macaddr, 6);
-	np2net_getmacaddr(lgy98.macaddr);
+	memcpy(lgy98.macaddr, macaddr, 6);
 	for(i=0;i<16;i++){
 		iocore_attachout(base + i, lgy98_ob000);
 		iocore_attachinp(base + i, lgy98_ib000);
@@ -842,26 +842,9 @@ void lgy98_bind(void){
     lgy98.vc = np2net_new_vlan_client(vlan, "ne2k_isa", "ne2k_isa.1",
                                           ne2000_receive, ne2000_can_receive,
                                           pc98_ne2000_cleanup, &lgy98);
-	
-	np2net_setVC(lgy98.vc);
+
+	np2net.recieve_packet = lgy98_recieve_packet;
 	
 }
-
-
-void lgy98_init(void){
-    /*// winsock 2.2を利用する
-	if (WSAStartup(MAKEWORD(2, 2), &np2net_wsaData) != 0)
-    {
-        TRACEOUT(("LGY-98: WSAStartup failed!"));
-        return;
-    }*/
-	
-	np2net_init();
-}
-void lgy98_shutdown(void){
-	np2net_shutdown();
-	//WSACleanup();
-}
-
 
 #endif	/* SUPPORT_LGY98 */

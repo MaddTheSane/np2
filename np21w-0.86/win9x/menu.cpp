@@ -277,7 +277,7 @@ void xmenu_initialize(HMENU hMenu)
 	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
 #endif
 
-#ifndef SUPPORT_LGY98
+#ifndef SUPPORT_NET
 	EnableMenuItem(hMenu, IDM_NETOPT, MF_BYCOMMAND|MFS_GRAYED);
 #endif
 	

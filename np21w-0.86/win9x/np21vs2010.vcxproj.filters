@@ -223,14 +223,14 @@
     <Filter Include="ソース ファイル\network">
       <UniqueIdentifier>{ef108be8-b194-4c86-9a2b-01299709ad99}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\video">
-      <UniqueIdentifier>{c6a36e01-203b-4576-a270-de55ce1b8cc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\video">
-      <UniqueIdentifier>{7648f04e-fc36-4fb6-9373-470660420b8a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\network">
       <UniqueIdentifier>{c1faa46b-b49c-43b6-8412-754cf6b67083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\wab">
+      <UniqueIdentifier>{7648f04e-fc36-4fb6-9373-470660420b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\wab">
+      <UniqueIdentifier>{c6a36e01-203b-4576-a270-de55ce1b8cc3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1113,12 +1113,6 @@
     <ClCompile Include="dialog\d_wab.cpp">
       <Filter>ソース ファイル\win9x\dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\video\cirrus_vga.c">
-      <Filter>ソース ファイル\video</Filter>
-    </ClCompile>
-    <ClCompile Include="..\video\video.c">
-      <Filter>ソース ファイル\video</Filter>
-    </ClCompile>
     <ClCompile Include="..\network\lgy98.c">
       <Filter>ソース ファイル\network</Filter>
     </ClCompile>
@@ -1127,6 +1121,12 @@
     </ClCompile>
     <ClCompile Include="dialog\d_ide.cpp">
       <Filter>ソース ファイル\win9x\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wab\cirrus_vga.c">
+      <Filter>ソース ファイル\wab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wab\wab.c">
+      <Filter>ソース ファイル\wab</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1966,20 +1966,23 @@
     <ClInclude Include="..\network\lgy98.h">
       <Filter>ヘッダー ファイル\network</Filter>
     </ClInclude>
-    <ClInclude Include="..\video\vga_int.h">
-      <Filter>ヘッダー ファイル\video</Filter>
+    <ClInclude Include="..\wab\cirrus_vga.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
-    <ClInclude Include="..\video\video.h">
-      <Filter>ヘッダー ファイル\video</Filter>
+    <ClInclude Include="..\wab\cirrus_vga_extern.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
-    <ClInclude Include="..\video\cirrus_vga_rop.h">
-      <Filter>ヘッダー ファイル\video</Filter>
+    <ClInclude Include="..\wab\cirrus_vga_rop.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
-    <ClInclude Include="..\video\cirrus_vga_rop2.h">
-      <Filter>ヘッダー ファイル\video</Filter>
+    <ClInclude Include="..\wab\cirrus_vga_rop2.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
-    <ClInclude Include="..\video\cirrus_vga.h">
-      <Filter>ヘッダー ファイル\video</Filter>
+    <ClInclude Include="..\wab\vga_int.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wab\wab.h">
+      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

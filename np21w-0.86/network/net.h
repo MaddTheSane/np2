@@ -1,47 +1,28 @@
+/**
+ * @file	net.h
+ * @brief	Virtual LAN Interface
+ *
+ * @author	$Author: SimK $
+ */
 
-#if defined(SUPPORT_LGY98)
+typedef void NP2NET_PacketHandler(const UINT8 *buf, int size);
 
-typedef void IOReadHandler(void *opaque, const UINT8 *buf, int size);
-typedef int IOCanRWHandler(void *opaque);
-//typedef ssize_t (IOReadvHandler)(void *, const struct iovec *, int);
-typedef void (NetCleanup) (struct tagVLANClientState *);
-typedef void (LinkStatusChanged)(struct tagVLANClientState *);
+// send_packetはデータをLANに送信したいときに外から呼ばれます。データを送信する関数を作ってセットしてやってください。
+// recieve_packetはLANからデータを受信したときに呼んでください。この関数はリセット時にデバイスがセットしに来るので作る必要はありません。
+// 現在はTAPデバイスのみのサポートですが、send_packetとrecieve_packetに相当する物を作ってやればTAP以外でもOKなはず
+typedef struct {
+	NP2NET_PacketHandler	*send_packet;
+	NP2NET_PacketHandler	*recieve_packet;
+} NP2NET;
 
-struct tagVLANState {
-    int id;
-    struct tagVLANClientState *first_client;
-    struct tagVLANState *next;
-    unsigned int nb_guest_devs, nb_host_devs;
-};
+#ifdef __cplusplus
+extern "C" void np2net_init(void);
+extern "C" void np2net_shutdown(void);
+#else
+extern void np2net_init(void);
+extern void np2net_shutdown(void);
+#endif
+void np2net_reset(const NP2CFG *pConfig);
+void np2net_bind(void);
 
-struct tagVLANClientState{
-    IOReadHandler *fd_read;
-    //LGY98_IOReadvHandler *fd_readv;
-    /* Packets may still be sent if this returns zero.  It's used to
-       rate-limit the slirp code.  */
-    IOCanRWHandler *fd_can_read;
-    NetCleanup *cleanup;
-    LinkStatusChanged *link_status_changed;
-    int link_down;
-    void *opaque;
-    struct tagVLANClientState *next;
-    struct tagVLANState *vlan;
-    char *model;
-    char *name;
-    char info_str[256];
-};
-
-typedef struct tagVLANState VLANState;
-typedef struct tagVLANClientState VLANClientState;
-
-void np2net_setVC(VLANClientState *vc1);
-void np2net_init();
-int np2net_reset(TCHAR* tapname);
-void np2net_shutdown();
-void np2net_getmacaddr(REG8 *macaddr);
-void np2net_suspend();
-void np2net_resume();
-
-void np2net_send_packet(VLANClientState *vc1, const UINT8 *buf, int size);
-
-#endif	/* SUPPORT_LGY98 */
+extern	NP2NET	np2net;

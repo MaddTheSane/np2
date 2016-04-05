@@ -152,6 +152,14 @@ void diskdrv_hddbind(void)
 				}
 			}
 		}
+		else if(np2cfg.idetype[drv]==SXSIDEV_CDROM)
+		{
+			SXSIDEV sxsi = sxsi_getptr(drv);
+			if (sxsicd_open(sxsi, np2cfg.idecd[drv & 0x0f]) == SUCCESS) {
+				file_cpyname(sxsi->fname, np2cfg.idecd[drv & 0x0f], NELEMENTS(sxsi->fname));
+				sxsi->flag = SXSIFLAG_READY | SXSIFLAG_FILEOPENED;
+			}
+		}
 #else
 		sxsi_setdevtype(drv, SXSIDEV_HDD);
 		if (sxsi_devopen(drv, np2cfg.sasihdd[drv & 0x0f]) != SUCCESS)

@@ -67,12 +67,14 @@
 #if defined(SUPPORT_IDEIO)
 #include "ideio.h"
 #endif
-#if defined(SUPPORT_LGY98)
+#if defined(SUPPORT_NET)
 #include "network/net.h"
-#include "network/lgy98.h"
+#endif
+#if defined(SUPPORT_WAB)
+#include "wab/wab.h"
 #endif
 #if defined(SUPPORT_CL_GD5430)
-#include "video/video.h"
+#include "wab/cirrus_vga_extern.h"
 #endif
 
 #ifdef BETA_RELEASE
@@ -1005,7 +1007,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			winuileave();
 			break;
 
-#if defined(SUPPORT_LGY98)
+#if defined(SUPPORT_NET)
 		case IDM_NETOPT:
 			winuienter();
 			dialog_netopt(hWnd);
@@ -1769,12 +1771,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #endif
 
 	scrndraw_redraw();
-
-#ifdef SUPPORT_LGY98
-	lgy98_init();
+	
+#ifdef SUPPORT_NET
+	np2net_init();
+#endif
+#ifdef SUPPORT_WAB
+	np2wab_init(g_hInstance, g_hWndMain);
 #endif
 #ifdef SUPPORT_CL_GD5430
-	np2vga_init(g_hInstance, g_hWndMain);
 	pc98_cirrus_vga_init();
 #endif
 
@@ -1911,11 +1915,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 
 #ifdef SUPPORT_CL_GD5430
-	np2vga_shutdown();
 	pc98_cirrus_vga_shutdown();
 #endif
-#ifdef SUPPORT_LGY98
-	lgy98_shutdown();
+#ifdef SUPPORT_WAB
+	np2wab_shutdown();
+#endif
+#ifdef SUPPORT_NET
+	np2net_shutdown();
 #endif
 
 	toolwin_destroy();

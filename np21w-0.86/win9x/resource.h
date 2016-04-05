@@ -27,7 +27,9 @@
 #define IDD_CALENDAR                    161
 #define IDD_ABOUT                       171
 #define IDD_LGY98                       180
+#define IDD_NETWORK                     181
 #define IDD_GD5430                      190
+#define IDD_WAB                         191
 #define IDD_IDE                         199
 #define IDR_SYS                         201
 #define IDR_SYSKEYDISP                  202
@@ -228,12 +230,12 @@
 #define IDC_LGY98ENABLED                19001
 #define IDC_LGY98IO                     19002
 #define IDC_LGY98INT                    19003
-#define IDC_LGY98TAP                    19004
+#define IDC_NETTAP                      19004
 #define IDC_LGY98DEF                    19005
 #define IDC_GD5430ENABLED               19011
 #define IDC_GD5430TYPE                  19012
 #define IDC_GD5430DEF                   19013
-#define IDC_GD5430ASWITCH               19014
+#define IDC_WABASWITCH                  19014
 #define IDC_IDE1TYPE                    19100
 #define IDC_IDE2TYPE                    19101
 #define IDC_IDE3TYPE                    19102

@@ -20,25 +20,17 @@
 #include "pccore.h"
 #include "iocore.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
+#if defined(SUPPORT_NET)
 
 /**
- * @brief LGY-98 設定ページ
+ * @brief ネットワーク基本設定ページ
  * @param[in] hwndParent 親ウィンドウ
  */
-class CLgy98Page : public CPropPageProc
+class CNetworkPage : public CPropPageProc
 {
 public:
-	CLgy98Page();
-	virtual ~CLgy98Page();
+	CNetworkPage();
+	virtual ~CNetworkPage();
 
 protected:
 	virtual BOOL OnInitDialog();
@@ -47,62 +39,22 @@ protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-	UINT8 m_enabled;			//!< 有効フラグ
-	UINT8 m_port;				//!< PORT設定値
-	UINT8 m_int;				//!< INT設定値
 	TCHAR m_tap[300];			//!< TAP名
-	CWndProc m_chkenabled;		//!< ENABLED
-	CComboData m_cmbport;		//!< IO
-	CComboData m_cmbint;		//!< INT
 	CComboData m_cmbtap;		//!< TAP NAME
-	CWndProc m_btnreset;		//!< RESET
-	UINT8 ConvertIrq2Int(UINT8 cValue);
-	UINT8 ConvertInt2Irq(UINT8 cValue);
-	void SetPort(UINT8 cValue);
-	UINT8 GetPort() const;
-	void SetInt(UINT8 cValue);
-	UINT8 GetInt() const;
 	void SetNetWorkDeviceNames();
-};
-
-/**
- * ポートリスト
- */
-static const CComboData::Entry s_port[] =
-{
-	{MAKEINTRESOURCE(IDS_00D0),		0x00},
-	{MAKEINTRESOURCE(IDS_10D0),		0x10},
-	{MAKEINTRESOURCE(IDS_20D0),		0x20},
-	{MAKEINTRESOURCE(IDS_30D0),		0x30},
-	{MAKEINTRESOURCE(IDS_40D0),		0x40},
-	{MAKEINTRESOURCE(IDS_50D0),		0x50},
-	{MAKEINTRESOURCE(IDS_60D0),		0x60},
-	{MAKEINTRESOURCE(IDS_70D0),		0x70},
-};
-
-/**
- * 割り込みリスト
- */
-static const CComboData::Entry s_int[] =
-{
-	{MAKEINTRESOURCE(IDS_INT0),		0},
-	{MAKEINTRESOURCE(IDS_INT1),		1},
-	{MAKEINTRESOURCE(IDS_INT2),		2},
-	{MAKEINTRESOURCE(IDS_INT5),		5},
 };
 
 /**
  * コンストラクタ
  */
-CLgy98Page::CLgy98Page()
-	: CPropPageProc(IDD_LGY98)
-	, m_port((UINT8)IDS_10D0), m_int((UINT8)IDS_INT1)
+CNetworkPage::CNetworkPage()
+	: CPropPageProc(IDD_NETWORK)
 {
 }
 /**
  * デストラクタ
  */
-CLgy98Page::~CLgy98Page()
+CNetworkPage::~CNetworkPage()
 {
 }
 
@@ -111,31 +63,14 @@ CLgy98Page::~CLgy98Page()
  * @retval TRUE 最初のコントロールに入力フォーカスを設定
  * @retval FALSE 既に設定済
  */
-BOOL CLgy98Page::OnInitDialog()
+BOOL CNetworkPage::OnInitDialog()
 {
-	m_enabled = np2cfg.uselgy98;
-	m_port = (UINT8)(np2cfg.lgy98io>>8);
-	m_int = ConvertIrq2Int(np2cfg.lgy98irq);
-	_tcscpy(m_tap, np2cfg.lgy98tap);
+	_tcscpy(m_tap, np2cfg.np2nettap);
 
-	m_chkenabled.SubclassDlgItem(IDC_LGY98ENABLED, this);
-	if(m_enabled)
-		m_chkenabled.SendMessage(BM_SETCHECK , BST_CHECKED , 0);
-	else
-		m_chkenabled.SendMessage(BM_SETCHECK , BST_UNCHECKED , 0);
-
-	m_cmbport.SubclassDlgItem(IDC_LGY98IO, this);
-	m_cmbport.Add(s_port, _countof(s_port));
-	SetPort(m_port);
-	
-	m_cmbint.SubclassDlgItem(IDC_LGY98INT, this);
-	m_cmbint.Add(s_int, _countof(s_int));
-	SetInt(m_int);
-	
-	m_cmbtap.SubclassDlgItem(IDC_LGY98TAP, this);
+	m_cmbtap.SubclassDlgItem(IDC_NETTAP, this);
 	SetNetWorkDeviceNames();
 
-	m_cmbport.SetFocus();
+	m_cmbtap.SetFocus();
 
 	return FALSE;
 }
@@ -143,19 +78,13 @@ BOOL CLgy98Page::OnInitDialog()
 /**
  * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
  */
-void CLgy98Page::OnOK()
+void CNetworkPage::OnOK()
 {
 	UINT update = 0;
 
-	if (np2cfg.uselgy98 != m_enabled 
-		|| (np2cfg.lgy98io>>8) != m_port 
-		|| np2cfg.lgy98irq != ConvertInt2Irq(m_int)
-		|| _tcscmp(np2cfg.lgy98tap, m_tap)!=0)
+	if (_tcscmp(np2cfg.np2nettap, m_tap)!=0)
 	{
-		np2cfg.uselgy98 = m_enabled;
-		np2cfg.lgy98io = (m_port<<8)|0xD0;
-		np2cfg.lgy98irq = ConvertInt2Irq(m_int);
-		_tcscpy(np2cfg.lgy98tap, m_tap);
+		_tcscpy(np2cfg.np2nettap, m_tap);
 		update |= SYS_UPDATECFG;
 	}
 	::sysmng_update(update);
@@ -167,31 +96,12 @@ void CLgy98Page::OnOK()
  * @param[in] lParam パラメタ
  * @retval TRUE アプリケーションがこのメッセージを処理した
  */
-BOOL CLgy98Page::OnCommand(WPARAM wParam, LPARAM lParam)
+BOOL CNetworkPage::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	switch (LOWORD(wParam))
 	{
-		case IDC_LGY98ENABLED:
-			m_enabled = (m_chkenabled.SendMessage(BM_GETCHECK , 0 , 0) ? 1 : 0);
-			return TRUE;
-
-		case IDC_LGY98IO:
-			m_port = GetPort();
-			return TRUE;
-
-		case IDC_LGY98INT:
-			m_int = GetInt();
-			return TRUE;
-			
-		case IDC_LGY98TAP:
+		case IDC_NETTAP:
 			m_cmbtap.GetWindowTextW(m_tap, NELEMENTS(m_tap));
-			return TRUE;
-
-		case IDC_LGY98DEF:
-			m_port = 0x10;
-			m_int = 1;
-			SetPort(m_port);
-			SetInt(m_int);
 			return TRUE;
 	}
 	return FALSE;
@@ -204,7 +114,7 @@ BOOL CLgy98Page::OnCommand(WPARAM wParam, LPARAM lParam)
  * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
  * @return メッセージに依存する値を返します
  */
-LRESULT CLgy98Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CNetworkPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
 	//switch (nMsg)
 	//{
@@ -213,84 +123,10 @@ LRESULT CLgy98Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 }
 
 /**
- * IRQ -> INT変換
- * @return INT
- */
-UINT8 CLgy98Page::ConvertIrq2Int(UINT8 cValue) 
-{
-	switch(cValue){
-	case 3:
-		return 0;
-	case 5:
-		return 1;
-	case 6:
-		return 2;
-	case 12:
-		return 5;
-	}
-	return 0;
-}
-/**
- * INT -> IRQ変換
- * @return IRQ
- */
-UINT8 CLgy98Page::ConvertInt2Irq(UINT8 cValue) 
-{
-	switch(cValue){
-	case 0:
-		return 3;
-	case 1:
-		return 5;
-	case 2:
-		return 6;
-	case 5:
-		return 12;
-	}
-	return 0;
-}
-
-/**
- * I/O を設定
- * @param[in] cValue 設定
- */
-void CLgy98Page::SetPort(UINT8 cValue)
-{
-	m_cmbport.SetCurItemData(cValue);
-}
-
-/**
- * I/O を取得
- * @return I/O
- */
-UINT8 CLgy98Page::GetPort() const
-{
-	return m_cmbport.GetCurItemData(0x01);
-}
-
-/**
- * INT を設定
- * @param[in] cValue 設定
- */
-void CLgy98Page::SetInt(UINT8 cValue)
-{
-	m_cmbint.SetCurItemData(cValue);
-}
-
-/**
- * INT を取得
- * @return INT
- */
-UINT8 CLgy98Page::GetInt() const
-{
-	return m_cmbint.GetCurItemData(0x01);
-}
-
-
-/**
  * ネットワークデバイス表示名をコンボボックスデータに放り込む
  * 参考文献: http://dsas.blog.klab.org/archives/51012690.html
  */
-void CLgy98Page::SetNetWorkDeviceNames()
+void CNetworkPage::SetNetWorkDeviceNames()
 {
 	CONST TCHAR *SUBKEY = _T("SYSTEM\\CurrentControlSet\\Control\\Network");
  
@@ -405,6 +241,251 @@ void CLgy98Page::SetNetWorkDeviceNames()
 	return;
 }
 
+#if defined(SUPPORT_LGY98)
+
+/**
+ * @brief LGY-98 設定ページ
+ * @param[in] hwndParent 親ウィンドウ
+ */
+class CLgy98Page : public CPropPageProc
+{
+public:
+	CLgy98Page();
+	virtual ~CLgy98Page();
+
+protected:
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+
+private:
+	UINT8 m_enabled;			//!< 有効フラグ
+	UINT8 m_port;				//!< PORT設定値
+	UINT8 m_int;				//!< INT設定値
+	CWndProc m_chkenabled;		//!< ENABLED
+	CComboData m_cmbport;		//!< IO
+	CComboData m_cmbint;		//!< INT
+	CWndProc m_btnreset;		//!< RESET
+	UINT8 ConvertIrq2Int(UINT8 cValue);
+	UINT8 ConvertInt2Irq(UINT8 cValue);
+	void SetPort(UINT8 cValue);
+	UINT8 GetPort() const;
+	void SetInt(UINT8 cValue);
+	UINT8 GetInt() const;
+};
+
+/**
+ * ポートリスト
+ */
+static const CComboData::Entry s_port[] =
+{
+	{MAKEINTRESOURCE(IDS_00D0),		0x00},
+	{MAKEINTRESOURCE(IDS_10D0),		0x10},
+	{MAKEINTRESOURCE(IDS_20D0),		0x20},
+	{MAKEINTRESOURCE(IDS_30D0),		0x30},
+	{MAKEINTRESOURCE(IDS_40D0),		0x40},
+	{MAKEINTRESOURCE(IDS_50D0),		0x50},
+	{MAKEINTRESOURCE(IDS_60D0),		0x60},
+	{MAKEINTRESOURCE(IDS_70D0),		0x70},
+};
+
+/**
+ * 割り込みリスト
+ */
+static const CComboData::Entry s_int[] =
+{
+	{MAKEINTRESOURCE(IDS_INT0),		0},
+	{MAKEINTRESOURCE(IDS_INT1),		1},
+	{MAKEINTRESOURCE(IDS_INT2),		2},
+	{MAKEINTRESOURCE(IDS_INT5),		5},
+};
+
+/**
+ * コンストラクタ
+ */
+CLgy98Page::CLgy98Page()
+	: CPropPageProc(IDD_LGY98)
+	, m_port((UINT8)IDS_10D0), m_int((UINT8)IDS_INT1)
+{
+}
+/**
+ * デストラクタ
+ */
+CLgy98Page::~CLgy98Page()
+{
+}
+
+/**
+ * このメソッドは WM_INITDIALOG のメッセージに応答して呼び出されます
+ * @retval TRUE 最初のコントロールに入力フォーカスを設定
+ * @retval FALSE 既に設定済
+ */
+BOOL CLgy98Page::OnInitDialog()
+{
+	m_enabled = np2cfg.uselgy98;
+	m_port = (UINT8)(np2cfg.lgy98io>>8);
+	m_int = ConvertIrq2Int(np2cfg.lgy98irq);
+
+	m_chkenabled.SubclassDlgItem(IDC_LGY98ENABLED, this);
+	if(m_enabled)
+		m_chkenabled.SendMessage(BM_SETCHECK , BST_CHECKED , 0);
+	else
+		m_chkenabled.SendMessage(BM_SETCHECK , BST_UNCHECKED , 0);
+
+	m_cmbport.SubclassDlgItem(IDC_LGY98IO, this);
+	m_cmbport.Add(s_port, _countof(s_port));
+	SetPort(m_port);
+	
+	m_cmbint.SubclassDlgItem(IDC_LGY98INT, this);
+	m_cmbint.Add(s_int, _countof(s_int));
+	SetInt(m_int);
+	
+	m_cmbport.SetFocus();
+
+	return FALSE;
+}
+
+/**
+ * ユーザーが OK のボタン (IDOK ID がのボタン) をクリックすると呼び出されます
+ */
+void CLgy98Page::OnOK()
+{
+	UINT update = 0;
+
+	if (np2cfg.uselgy98 != m_enabled 
+		|| (np2cfg.lgy98io>>8) != m_port 
+		|| np2cfg.lgy98irq != ConvertInt2Irq(m_int))
+	{
+		np2cfg.uselgy98 = m_enabled;
+		np2cfg.lgy98io = (m_port<<8)|0xD0;
+		np2cfg.lgy98irq = ConvertInt2Irq(m_int);
+		update |= SYS_UPDATECFG;
+	}
+	::sysmng_update(update);
+}
+
+/**
+ * ユーザーがメニューの項目を選択したときに、フレームワークによって呼び出されます
+ * @param[in] wParam パラメタ
+ * @param[in] lParam パラメタ
+ * @retval TRUE アプリケーションがこのメッセージを処理した
+ */
+BOOL CLgy98Page::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	switch (LOWORD(wParam))
+	{
+		case IDC_LGY98ENABLED:
+			m_enabled = (m_chkenabled.SendMessage(BM_GETCHECK , 0 , 0) ? 1 : 0);
+			return TRUE;
+
+		case IDC_LGY98IO:
+			m_port = GetPort();
+			return TRUE;
+
+		case IDC_LGY98INT:
+			m_int = GetInt();
+			return TRUE;
+			
+		case IDC_LGY98DEF:
+			m_port = 0x10;
+			m_int = 1;
+			SetPort(m_port);
+			SetInt(m_int);
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/**
+ * CWndProc オブジェクトの Windows プロシージャ (WindowProc) が用意されています
+ * @param[in] nMsg 処理される Windows メッセージを指定します
+ * @param[in] wParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @param[in] lParam メッセージの処理で使う付加情報を提供します。このパラメータの値はメッセージに依存します
+ * @return メッセージに依存する値を返します
+ */
+LRESULT CLgy98Page::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
+{
+	//switch (nMsg)
+	//{
+	//}
+	return CDlgProc::WindowProc(nMsg, wParam, lParam);
+}
+
+/**
+ * IRQ -> INT変換
+ * @return INT
+ */
+UINT8 CLgy98Page::ConvertIrq2Int(UINT8 cValue) 
+{
+	switch(cValue){
+	case 3:
+		return 0;
+	case 5:
+		return 1;
+	case 6:
+		return 2;
+	case 12:
+		return 5;
+	}
+	return 0;
+}
+/**
+ * INT -> IRQ変換
+ * @return IRQ
+ */
+UINT8 CLgy98Page::ConvertInt2Irq(UINT8 cValue) 
+{
+	switch(cValue){
+	case 0:
+		return 3;
+	case 1:
+		return 5;
+	case 2:
+		return 6;
+	case 5:
+		return 12;
+	}
+	return 0;
+}
+
+/**
+ * I/O を設定
+ * @param[in] cValue 設定
+ */
+void CLgy98Page::SetPort(UINT8 cValue)
+{
+	m_cmbport.SetCurItemData(cValue);
+}
+
+/**
+ * I/O を取得
+ * @return I/O
+ */
+UINT8 CLgy98Page::GetPort() const
+{
+	return m_cmbport.GetCurItemData(0x01);
+}
+
+/**
+ * INT を設定
+ * @param[in] cValue 設定
+ */
+void CLgy98Page::SetInt(UINT8 cValue)
+{
+	m_cmbint.SetCurItemData(cValue);
+}
+
+/**
+ * INT を取得
+ * @return INT
+ */
+UINT8 CLgy98Page::GetInt() const
+{
+	return m_cmbint.GetCurItemData(0x01);
+}
+
+#endif
 
 /**
  * コンフィグ ダイアログ
@@ -413,10 +494,15 @@ void CLgy98Page::SetNetWorkDeviceNames()
 void dialog_netopt(HWND hwndParent)
 {
 	CPropSheetProc prop(IDS_NETWORKOPTION, hwndParent);
-
+	
+	CNetworkPage network;
+	prop.AddPage(&network);
+	
+#if defined(SUPPORT_LGY98)
 	CLgy98Page lgy98;
 	prop.AddPage(&lgy98);
-
+#endif
+	
 	prop.m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_USEHICON | PSH_USECALLBACK;
 	prop.m_psh.hIcon = LoadIcon(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(IDI_ICON2));
 	prop.m_psh.pfnCallback = np2class_propetysheet;
@@ -424,3 +510,5 @@ void dialog_netopt(HWND hwndParent)
 
 	InvalidateRect(hwndParent, NULL, TRUE);
 }
+
+#endif

@@ -48,8 +48,8 @@
 #include	"timing.h"
 #include	"keystat.h"
 #include	"debugsub.h"
-#if defined(SUPPORT_CL_GD5430)
-#include	"video/video.h"
+#if defined(SUPPORT_WAB)
+#include	"wab/wab.h"
 #endif
 
 
@@ -88,8 +88,14 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 				{OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
 #endif
 				OEMTEXT(""), OEMTEXT(""), OEMTEXT(""),
+#if defined(SUPPORT_NET)
+				OEMTEXT(""),
+#endif
 #if defined(SUPPORT_LGY98)
-				0, 0x10D0, 5, OEMTEXT("TAP1"),
+				0, 0x10D0, 5,
+#endif
+#if defined(SUPPORT_WAB)
+				0,
 #endif
 #if defined(SUPPORT_CL_GD5430)
 				0, 0x5B,
@@ -673,8 +679,8 @@ void pccore_exec(BOOL draw) {
 		pic_irq();
 		if (CPU_RESETREQ) {
 			CPU_RESETREQ = 0;
-#if defined(SUPPORT_CL_GD5430)
-			np2vga_resetRelay();
+#if defined(SUPPORT_WAB)
+			np2wab_setRelayState(0); // XXX:
 #endif
 			CPU_SHUT();
 		}

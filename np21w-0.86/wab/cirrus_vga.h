@@ -1,4 +1,31 @@
-
+/*
+ * QEMU Cirrus CLGD 54xx VGA Emulator.
+ *
+ * Copyright (c) 2004 Fabrice Bellard
+ * Copyright (c) 2004 Makoto Suzuki (suzu)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+/*
+ * Reference: Finn Thogersons' VGADOC4b
+ *   available at http://home.worldonline.dk/~finth/
+ */
 
 #pragma once
 /*
@@ -36,6 +63,71 @@
 #define IO_MEM_UNASSIGNED  (2 << IO_MEM_SHIFT)
 #define IO_MEM_NOTDIRTY    (3 << IO_MEM_SHIFT)
 
+typedef unsigned long console_ch_t;
+
+typedef void (*vga_hw_update_ptr)(void *);
+typedef void (*vga_hw_invalidate_ptr)(void *);
+typedef void (*vga_hw_screen_dump_ptr)(void *, const char *);
+typedef void (*vga_hw_text_update_ptr)(void *, console_ch_t *);
+
+typedef struct PixelFormat {
+    uint8_t bits_per_pixel;
+    uint8_t bytes_per_pixel;
+    uint8_t depth; /* color depth in bits */
+    uint32_t_ rmask, gmask, bmask, amask;
+    uint8_t rshift, gshift, bshift, ashift;
+    uint8_t rmax, gmax, bmax, amax;
+    uint8_t rbits, gbits, bbits, abits;
+} PixelFormat;
+
+typedef struct DisplaySurface {
+    uint8_t flags;
+    int width;
+    int height;
+    int linesize;        /* bytes per line */
+    uint8_t *data;
+
+    struct PixelFormat pf;
+} DisplaySurface;
+
+typedef struct DisplayChangeListener {
+    int idle;
+    uint64_t gui_timer_interval;
+
+    void (*dpy_update)(struct DisplayState *s, int x, int y, int w, int h);
+    void (*dpy_resize)(struct DisplayState *s);
+    void (*dpy_setdata)(struct DisplayState *s);
+    void (*dpy_refresh)(struct DisplayState *s);
+    void (*dpy_copy)(struct DisplayState *s, int src_x, int src_y,
+                     int dst_x, int dst_y, int w, int h);
+    void (*dpy_fill)(struct DisplayState *s, int x, int y,
+                     int w, int h, uint32_t_ c);
+    void (*dpy_text_cursor)(struct DisplayState *s, int x, int y);
+
+    struct DisplayChangeListener *next;
+} DisplayChangeListener;
+
+struct DisplayState {
+    struct DisplaySurface *surface;
+    void *opaque;
+    //struct QEMUTimer *gui_timer;
+
+    struct DisplayChangeListener* listeners;
+
+    void (*mouse_set)(int x, int y, int on);
+    void (*cursor_define)(int width, int height, int bpp, int hot_x, int hot_y,
+                          uint8_t *image, uint8_t *mask);
+
+    struct DisplayState *next;
+};
+typedef struct DisplayState DisplayState;
+
+DisplayState *graphic_console_init(vga_hw_update_ptr update,
+                                   vga_hw_invalidate_ptr invalidate,
+                                   vga_hw_screen_dump_ptr screen_dump,
+                                   vga_hw_text_update_ptr text_update,
+								   void *opaque);
+
 typedef void CPUWriteMemoryFunc(void *opaque, target_phys_addr_t addr, uint32_t_ value);
 typedef uint32_t_ CPUReadMemoryFunc(void *opaque, target_phys_addr_t addr);
 
@@ -48,6 +140,8 @@ struct QEMUFile {
 	int dummy;
 };
 typedef struct QEMUFile QEMUFile;
+
+
 
 /// ‚Â‚­‚ç‚ñ‚Æ‚¢‚©‚ñ‚Ë
 target_phys_addr_t isa_mem_base = 0;

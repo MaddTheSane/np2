@@ -149,16 +149,20 @@ struct tagNP2Config
 	OEMCHAR	biospath[MAX_PATH];
 	OEMCHAR	hdrvroot[MAX_PATH];
 	
+#ifdef SUPPORT_NET
+	OEMCHAR	np2nettap[MAX_PATH];
+#endif
 #ifdef SUPPORT_LGY98
 	UINT8	uselgy98;
 	UINT16	lgy98io;
 	UINT8	lgy98irq;
-	OEMCHAR	lgy98tap[MAX_PATH];
+#endif
+#ifdef SUPPORT_NET
+	UINT8	wabasw;
 #endif
 #ifdef SUPPORT_CL_GD5430
 	UINT8	usegd5430;
 	UINT8	gd5430type;
-	UINT8	gd5430asw;
 #endif
 
 };
