@@ -284,7 +284,7 @@ void np2vga_resetRelay()
 {
 	ShowWindow(g_hWndVGA, SW_HIDE);
 	if(ga_relay){
-		soundmng_pcmplay(SOUND_RELAY1, FALSE);
+		if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 		ga_relay = 0;
 	}
 }

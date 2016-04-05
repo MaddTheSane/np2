@@ -4040,11 +4040,11 @@ static void IOOUTCALL cirrusvga_ofa3(UINT port, REG8 dat) {
 		if((!!ga_relay) != (!!(dat&0x2))){
 			ga_relay = (dat&0x2 ? 0x3 : 0x0);
 			if(dat){
-				soundmng_pcmplay(SOUND_RELAY1, FALSE);
+				if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 				ShowWindow(ga_hWnd, SW_SHOWNOACTIVATE);
 				SetWindowPos(ga_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING | SWP_SHOWWINDOW);
 			}else{
-				soundmng_pcmplay(SOUND_RELAY1, FALSE);
+				if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 				ShowWindow(ga_hWnd, SW_HIDE);
 			}
 		}
@@ -4093,16 +4093,17 @@ static void IOOUTCALL cirrusvga_ofab(UINT port, REG8 dat) {
 		break;
 	case 0x02:
 		ga_VRAMWindowAddr = (dat<<24);
+		cirrusvga->vram_offset = ga_VRAMWindowAddr;
 		break;
 	case 0x03:
 		if((!!ga_relay) != (!!(dat&0x2))){
 			ga_relay = (dat&0x2 ? 0x3 : 0x0);
 			if(dat){
-				soundmng_pcmplay(SOUND_RELAY1, FALSE);
+				if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 				ShowWindow(ga_hWnd, SW_SHOWNOACTIVATE);
 				SetWindowPos(ga_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING | SWP_SHOWWINDOW);
 			}else{
-				soundmng_pcmplay(SOUND_RELAY1, FALSE);
+				if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 				ShowWindow(ga_hWnd, SW_HIDE);
 			}
 		}
@@ -4137,11 +4138,11 @@ static void IOOUTCALL cirrusvga_ofac(UINT port, REG8 dat) {
 	if(ga_relay != dat){
 		ga_relay = dat;
 		if(dat&0x3){
-			soundmng_pcmplay(SOUND_RELAY1, FALSE);
+			if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 			ShowWindow(ga_hWnd, SW_SHOWNOACTIVATE);
 			SetWindowPos(ga_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING | SWP_SHOWWINDOW);
 		}else{
-			soundmng_pcmplay(SOUND_RELAY1, FALSE);
+			if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 			ShowWindow(ga_hWnd, SW_HIDE);
 		}
 	}
@@ -4303,7 +4304,7 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
 	
 	ShowWindow(ga_hWnd, SW_HIDE);
 	if(ga_relay){
-		soundmng_pcmplay(SOUND_RELAY1, FALSE);
+		if(!np2cfg.gd5430asw) soundmng_pcmplay(SOUND_RELAY1, FALSE);
 		ga_relay = 0;
 	}
 	cirrusvga_mmioenable = 0;
