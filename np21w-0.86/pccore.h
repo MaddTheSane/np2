@@ -158,6 +158,7 @@ struct tagNP2Config
 #ifdef SUPPORT_CL_GD5430
 	UINT8	usegd5430;
 	UINT8	gd5430type;
+	UINT8	gd5430asw;
 #endif
 
 };
