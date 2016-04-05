@@ -606,6 +606,12 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 		case IDM_IDE3EJECT:
 			diskdrv_setsxsi(0x03, NULL);
 			break;
+			
+		case IDM_IDEOPT:
+			winuienter();
+			dialog_ideopt(hWnd);
+			winuileave();
+			break;
 #endif
 
 #if defined(SUPPORT_SCSI)
@@ -663,12 +669,16 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_ROLLEFT:
+#if 0 // XXX: çƒÇ—ìÆÇ≠ÇÊÇ§Ç…ÇµÇΩÇ¢
 			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATELEFT);
 			break;
+#endif
 
 		case IDM_ROLRIGHT:
+#if 0 // XXX: çƒÇ—ìÆÇ≠ÇÊÇ§Ç…ÇµÇΩÇ¢
 			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATERIGHT);
 			break;
+#endif
 
 		case IDM_DISPSYNC:
 			np2cfg.DISPSYNC = !np2cfg.DISPSYNC;

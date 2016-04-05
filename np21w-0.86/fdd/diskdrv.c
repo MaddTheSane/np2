@@ -36,11 +36,21 @@ void diskdrv_setsxsi(REG8 drv, const OEMCHAR *fname)
 	if (!(drv & 0x20))
 	{
 		/* SASI or IDE */
+#if defined(SUPPORT_IDEIO)
+		if (num < 4)
+		{
+			if(sxsi_getdevtype(num)!=SXSIDEV_CDROM){
+				p = np2cfg.sasihdd[num];
+				leng = NELEMENTS(np2cfg.sasihdd[0]);
+			}
+		}
+#else
 		if (num < 2)
 		{
 			p = np2cfg.sasihdd[num];
 			leng = NELEMENTS(np2cfg.sasihdd[0]);
 		}
+#endif
 	}
 #if defined(SUPPORT_SCSI)
 	else
@@ -109,10 +119,17 @@ void diskdrv_hddbind(void)
 {
 	REG8 drv;
 
+#if defined(SUPPORT_IDEIO)
+	for (drv = 0x00; drv < 0x04; drv++)
+	{
+		sxsi_devclose(drv);
+	}
+#else
 	for (drv = 0x00; drv < 0x02; drv++)
 	{
 		sxsi_devclose(drv);
 	}
+#endif
 #if defined(SUPPORT_SCSI)
 	for (drv = 0x20; drv < 0x24; drv++)
 	{
@@ -120,8 +137,22 @@ void diskdrv_hddbind(void)
 	}
 #endif /* defined(SUPPORT_SCSI) */
 
-	for (drv = 0x00; drv < 0x02; drv++)
+	for (drv = 0x00; drv < 0x04; drv++)
 	{
+#if defined(SUPPORT_IDEIO)
+		sxsi_setdevtype(drv, np2cfg.idetype[drv]);
+		if(np2cfg.idetype[drv]==SXSIDEV_HDD)
+		{
+			if (sxsi_devopen(drv, np2cfg.sasihdd[drv & 0x0f]) != SUCCESS)
+			{
+				sxsi_setdevtype(drv, SXSIDEV_NC);
+				if(np2cfg.sasihdd[drv & 0x0f]!=NULL && np2cfg.sasihdd[drv & 0x0f][0]!='\0')
+				{
+					msgbox("HD image file open error" ,"file open error"); 
+				}
+			}
+		}
+#else
 		sxsi_setdevtype(drv, SXSIDEV_HDD);
 		if (sxsi_devopen(drv, np2cfg.sasihdd[drv & 0x0f]) != SUCCESS)
 		{
@@ -131,6 +162,7 @@ void diskdrv_hddbind(void)
 				msgbox("HD image file open error" ,"file open error"); 
 			}
 		}
+#endif
 	}
 #if defined(SUPPORT_SCSI)
 	for (drv = 0x20; drv < 0x24; drv++)

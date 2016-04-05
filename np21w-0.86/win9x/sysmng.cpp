@@ -5,6 +5,9 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"fdd/fddfile.h"
+#ifdef SUPPORT_IDEIO
+#include	"fdd/sxsi.h"
+#endif
 
 	UINT	sys_updates;
 
@@ -47,6 +50,9 @@ BOOL sysmng_workclockrenewal(void) {
 
 void sysmng_updatecaption(UINT8 flag) {
 
+#ifdef SUPPORT_IDEIO
+	int i, cddrvnum = 1;
+#endif
 	OEMCHAR	work[512];
 
 	if (flag & 1) {
@@ -62,15 +68,15 @@ void sysmng_updatecaption(UINT8 flag) {
 															NELEMENTS(title));
 		}
 #ifdef SUPPORT_IDEIO
-		if (_tcslen(np2cfg.idecd[0])) {
-			milstr_ncat(title, OEMTEXT("  CD1:"), NELEMENTS(title));
-			milstr_ncat(title, file_getname(np2cfg.idecd[0]),
-															NELEMENTS(title));
-		}
-		if (_tcslen(np2cfg.idecd[1])){//sxsi_getdevtype(3)!=SXSIDEV_NC) {
-			milstr_ncat(title, OEMTEXT("  CD2:"), NELEMENTS(title));
-			milstr_ncat(title, file_getname(np2cfg.idecd[1]),
-															NELEMENTS(title));
+		for(i=0;i<4;i++){
+			if(sxsi_getdevtype(i)==SXSIDEV_CDROM){
+				OEMSPRINTF(work, OEMTEXT("  CD%d:"), cddrvnum);
+				if (sxsi_getdevtype(i)==SXSIDEV_CDROM && *(np2cfg.idecd[i])) {
+					milstr_ncat(title, work, NELEMENTS(title));
+					milstr_ncat(title, file_getname(np2cfg.idecd[i]), NELEMENTS(title));
+				}
+				cddrvnum++;
+			}
 		}
 #endif
 	}

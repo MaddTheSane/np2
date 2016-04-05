@@ -17,6 +17,7 @@
 #include "fdd/diskdrv.h"
 #include "fdd/fddfile.h"
 #include "fdd/newdisk.h"
+#include "fdd/sxsi.h"
 
 /**
  * FDD 選択ダイアログ
@@ -69,6 +70,25 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 
 	if (!(drv & 0x20))			// SASI/IDE
 	{
+#if defined(SUPPORT_IDEIO)
+		if (num < 4)
+		{
+			if(sxsi_getdevtype(drv)!=SXSIDEV_CDROM)
+			{
+				nTitle = IDS_SASITITLE;
+				nExt = IDS_HDDEXT;
+				nFilter = IDS_HDDFILTER;
+				nIndex = 4;
+			}
+			else
+			{
+				nTitle = IDS_ISOTITLE;
+				nExt = IDS_ISOEXT;
+				nFilter = IDS_ISOFILTER;
+				nIndex = 3;
+			}
+		}
+#else
 		if (num < 2)
 		{
 #if defined(SUPPORT_SASI)
@@ -80,15 +100,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 			nFilter = IDS_HDDFILTER;
 			nIndex = 4;
 		}
-#if defined(SUPPORT_IDEIO)
-		else if (num == 2)
-		{
-			nTitle = IDS_ISOTITLE;
-			nExt = IDS_ISOEXT;
-			nFilter = IDS_ISOFILTER;
-			nIndex = 3;
-		}
-#endif	// defined(SUPPORT_IDEIO)
+#endif
 	}
 #if defined(SUPPORT_SCSI)
 	else						// SCSI

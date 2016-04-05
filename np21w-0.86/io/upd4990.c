@@ -90,6 +90,51 @@ static void IOOUTCALL upd4990_o20(UINT port, REG8 dat) {
 	(void)port;
 }
 
+int io22value = 0;
+static void IOOUTCALL upd4990_o22(UINT port, REG8 dat) {
+	io22value = dat;
+	(void)port;
+}
+
+#ifdef SUPPORT_HRTIMER
+static REG8 IOOUTCALL upd4990_i22(UINT port) {
+	return io22value;
+}
+
+static void IOOUTCALL upd4990_o128(UINT port, REG8 dat) {
+	REG8 dattmp = dat & 0x3;
+	switch(dattmp){
+	case 0:
+		hrtimerdiv = 64;
+		break;
+	case 1:
+		hrtimerdiv = 32;
+		break;
+	case 2:
+		hrtimerdiv = 0;
+		break;
+	case 3:
+		hrtimerdiv = 16;
+		break;
+	}
+	(void)port;
+}
+
+static REG8 IOOUTCALL upd4990_i128(UINT port) {
+	switch(hrtimerdiv){
+	case 64:
+		return(0x80);
+	case 32:
+		return(0x81);
+	case 0:
+		return(0x82);
+	case 16:
+		return(0x83);
+	}
+	return(0x81);
+}
+#endif
+
 
 // ---- I/F
 
@@ -105,5 +150,11 @@ void uPD4990_reset(const NP2CFG *pConfig) {
 void uPD4990_bind(void) {
 
 	iocore_attachsysoutex(0x0020, 0x0cf1, updo20, 1);
+#ifdef SUPPORT_HRTIMER
+	iocore_attachout(0x0022, upd4990_o22);
+	iocore_attachinp(0x0022, upd4990_i22);
+	iocore_attachout(0x0128, upd4990_o128);
+	iocore_attachinp(0x0128, upd4990_i128);
+#endif
 }
 

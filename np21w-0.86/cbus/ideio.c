@@ -78,6 +78,7 @@ static BRESULT setidentify(IDEDRV drv) {
 		for (i=0; i<10; i++) {
 			tmp[10+i] = (serial[i*2] << 8) + serial[i*2+1];
 		}
+		tmp[10+2] = '0'+drv->sxsidrv; // シリアル番号はユニークにしておかないと駄目っぽい
 		tmp[22] = 4;
 		for (i=0; i<4; i++) {
 			tmp[23+i] = (firm[i*2] << 8) + firm[i*2+1];
@@ -113,6 +114,7 @@ static BRESULT setidentify(IDEDRV drv) {
 		for (i=0; i<10; i++) {
 			tmp[10+i] = (cdrom_serial[i*2] << 8) + cdrom_serial[i*2+1];
 		}
+		tmp[10+2] = '0'+drv->sxsidrv; // シリアル番号はユニークにしておかないと駄目っぽい
 		for (i=0; i<4; i++) {
 			tmp[23+i] = (cdrom_firm[i*2] << 8) + cdrom_firm[i*2+1];
 		}
@@ -172,6 +174,10 @@ static void drvreset(IDEDRV drv) {
 		drv->sn = 0x01;
 		drv->cy = 0x0000;
 		drv->status = IDESTAT_DRDY;
+
+		drv->ctrl = drv->ctrl & ~IDECTRL_SRST;
+		drv->status = drv->status & ~0x0d;
+		drv->error = 0x01;
 	}
 }
 
@@ -397,10 +403,15 @@ static void IOOUTCALL ideio_o64c(UINT port, REG8 dat) {
 	}
 #endif
 	drvnum = (dat >> 4) & 1;
+	if(dev->drivesel != drvnum){
+		dev->drv[drvnum].status = dev->drv[drvnum].status & ~(IDESTAT_DRQ|IDESTAT_BSY);
+		dev->drv[drvnum].error = 1;
+	}
 	dev->drivesel = drvnum;
 	dev->drv[drvnum].dr = dat & 0xf0;
 	dev->drv[drvnum].hd = dat & 0x0f;
 	TRACEOUT(("ideio set DRHD %.2x [%.4x:%.8x]", dat, CPU_CS, CPU_EIP));
+
 	(void)port;
 }
 
@@ -511,8 +522,8 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 			drv->status = drv->status & ~IDESTAT_BSY;
 			setintr(drv);
 			break;
-		case 0x91:		// set parameters
-			TRACEOUT(("ideio: set parameters dh=%x sec=%x",
+		case 0x91:		// INITIALIZE DEVICE PARAMETERS
+			TRACEOUT(("ideio: INITIALIZE DEVICE PARAMETERS dh=%x sec=%x",
 											drv->dr | drv->hd, drv->sc));
 			if (drv->device == IDETYPE_HDD) {
 				drv->surfaces = drv->hd + 1;
@@ -612,6 +623,8 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 
 		case 0xe1:		// idle immediate
 			TRACEOUT(("ideio: idle immediate dr = %.2x", drv->dr));
+			drv->status = drv->status & ~0x20;
+			drv->error = 0;
 			//cmdabort(drv);
 			break;
 
@@ -699,7 +712,7 @@ static void IOOUTCALL ideio_o74c(UINT port, REG8 dat) {
 }
 
 static void IOOUTCALL ideio_o74e(UINT port, REG8 dat) {
-
+	
 	TRACEOUT(("ideio %.4x,%.2x [%.4x:%.8x]", port, dat, CPU_CS, CPU_EIP));
 	(void)port;
 	(void)dat;
@@ -844,6 +857,24 @@ static REG8 IOINPCALL ideio_i74c(UINT port) {
 	else {
 		return(0xff);
 	}
+}
+
+static REG8 IOINPCALL ideio_i74e(UINT port) {
+	
+	IDEDEV	dev;
+	IDEDRV	drv;
+	REG8 ret;
+
+	dev = getidedev();
+	drv = getidedrv();
+	ret = 0xc0;
+	ret |= (~(drv->hd) & 0x0f) << 2;
+	if (dev->drivesel == 0) {
+		ret |= 2; /* master */
+	} else {
+		ret |= 1; /* slave */
+	}
+	return ret;
 }
 
 
@@ -1026,8 +1057,8 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 	ZeroMemory(drv, sizeof(_IDEDRV));
 	drv->sxsidrv = sxsidrv;
 	sxsi = sxsi_getptr(sxsidrv);
-	if ((sxsi != NULL) &&
-		(sxsi->devtype == SXSIDEV_HDD) && (sxsi->flag & SXSIFLAG_READY)) {
+	if ((sxsi != NULL) && (np2cfg.idetype[sxsidrv] == SXSIDEV_HDD) && 
+			(sxsi->devtype == SXSIDEV_HDD) && (sxsi->flag & SXSIFLAG_READY)) {
 		drv->status = IDESTAT_DRDY | IDESTAT_DSC;
 		drv->error = IDEERR_AMNF;
 		drv->device = IDETYPE_HDD;
@@ -1035,7 +1066,8 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 		drv->sectors = sxsi->sectors;
 		drv->mulmode = IDEIO_MULTIPLE_MAX;
 	}
-	else if ((sxsi != NULL) && (sxsi->devtype == SXSIDEV_CDROM)) {
+	else if ((sxsi != NULL) && (np2cfg.idetype[sxsidrv] == SXSIDEV_CDROM) && 
+			(sxsi->devtype == SXSIDEV_CDROM)) {
 		drv->device = IDETYPE_CDROM;
 		drvreset(drv);
 		drv->error = 0;
@@ -1061,7 +1093,14 @@ void ideio_reset(const NP2CFG *pConfig) {
 	for (i=0; i<4; i++) {
 		drv = ideio.dev[i >> 1].drv + (i & 1);
 		devinit(drv, i);
+		drv->ctrl = drv->ctrl & ~IDECTRL_SRST;
+		drv->status = drv->status & ~0x0d;
+		drv->error = 0x01;
 	}
+	//ideio.dev[0].drv[0].ctrl = ideio.dev[0].drv[0].ctrl & ~IDECTRL_SRST;
+	//ideio.dev[0].drv[1].ctrl = ideio.dev[0].drv[1].ctrl & ~IDECTRL_SRST;
+	//ideio.dev[1].drv[0].ctrl = ideio.dev[0].drv[0].ctrl & ~IDECTRL_SRST;
+	//ideio.dev[1].drv[1].ctrl = ideio.dev[0].drv[1].ctrl & ~IDECTRL_SRST;
 
 	CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
 	TRACEOUT(("use simulate ide.rom"));
@@ -1070,6 +1109,9 @@ void ideio_reset(const NP2CFG *pConfig) {
 }
 
 void ideio_bind(void) {
+
+	REG8	i;
+	IDEDRV	drv;
 
 	if (pccore.hddif & PCHDD_IDE) {
 #if 1
@@ -1098,6 +1140,7 @@ void ideio_bind(void) {
 		iocore_attachout(0x074c, ideio_o74c);
 		iocore_attachout(0x074e, ideio_o74e);
 		iocore_attachinp(0x074c, ideio_i74c);
+		iocore_attachinp(0x074e, ideio_i74e);
 	}
 }
 

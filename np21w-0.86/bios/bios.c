@@ -327,7 +327,6 @@ void bios_initialize(void) {
 	CopyMemory(mem + 0x1e8000, mem + 0x0e8000, 0x10000);
 }
 
-
 static void bios_itfcall(void) {
 
 	int		i;
@@ -339,7 +338,7 @@ static void bios_itfcall(void) {
 	bios_reinitbyswitch();
 	bios0x18_0c();
 
-	if (!np2cfg.ITF_WORK) {
+	if (!np2cfg.ITF_WORK || GetKeyState(VK_PAUSE)<0) {
 		for (i=0; i<8; i++) {
 			mem[MEMX_MSW + (i*4)] = msw_default[i];
 		}

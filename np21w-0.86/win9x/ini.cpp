@@ -468,7 +468,7 @@ static const PFTBL s_IniItems[] =
 	PFEXT("DIPswtch", PFTYPE_BIN,		np2cfg.dipsw,			3),
 	PFEXT("MEMswtch", PFTYPE_BIN,		np2cfg.memsw,			8),
 	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			255),
-	PFVAL("ITF_WORK", PFRO_BOOL,		&np2cfg.ITF_WORK),
+	PFVAL("ITF_WORK", PFTYPE_BOOL,		&np2cfg.ITF_WORK),
 
 	PFSTR("HDD1FILE", PFTYPE_STR,		np2cfg.sasihdd[0]),
 	PFSTR("HDD2FILE", PFTYPE_STR,		np2cfg.sasihdd[1]),
@@ -477,6 +477,14 @@ static const PFTBL s_IniItems[] =
 	PFSTR("SCSIHDD1", PFTYPE_STR,		np2cfg.scsihdd[1]),
 	PFSTR("SCSIHDD2", PFTYPE_STR,		np2cfg.scsihdd[2]),
 	PFSTR("SCSIHDD3", PFTYPE_STR,		np2cfg.scsihdd[3]),
+#endif
+#if defined(SUPPORT_IDEIO)
+	PFSTR("HDD3FILE", PFTYPE_STR,		np2cfg.sasihdd[2]),
+	PFSTR("HDD4FILE", PFTYPE_STR,		np2cfg.sasihdd[3]),
+	PFVAL("IDE1TYPE", PFTYPE_UINT8,		&np2cfg.idetype[0]),
+	PFVAL("IDE2TYPE", PFTYPE_UINT8,		&np2cfg.idetype[1]),
+	PFVAL("IDE3TYPE", PFTYPE_UINT8,		&np2cfg.idetype[2]),
+	PFVAL("IDE4TYPE", PFTYPE_UINT8,		&np2cfg.idetype[3]),
 #endif
 
 	PFVAL("SampleHz", PFTYPE_UINT32,	&np2cfg.samplingrate),

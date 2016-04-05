@@ -28,6 +28,7 @@
 #define IDD_ABOUT                       171
 #define IDD_LGY98                       180
 #define IDD_GD5430                      190
+#define IDD_IDE                         199
 #define IDR_SYS                         201
 #define IDR_SYSKEYDISP                  202
 #define IDR_SYSSOFTKBD                  203
@@ -51,6 +52,7 @@
 #define IDR_KEYDISP                     321
 #define IDR_VIEW                        331
 #define IDR_TRACE                       341
+#define IDR_IDE                         400
 #define RESOURCE_VERSION                830
 #define IDC_BASECLOCK                   11101
 #define IDC_MULTIPLE                    11102
@@ -230,7 +232,11 @@
 #define IDC_LGY98DEF                    19005
 #define IDC_GD5430ENABLED               19011
 #define IDC_GD5430TYPE                  19012
-#define IDC_GD5430DEF                  19013
+#define IDC_GD5430DEF                   19013
+#define IDC_IDE1TYPE                    19100
+#define IDC_IDE2TYPE                    19101
+#define IDC_IDE3TYPE                    19102
+#define IDC_IDE4TYPE                    19103
 #define IDS_APP_NAME2                   30001
 #define IDS_APP_NAME21                  30002
 #define IDS_FILENAME_HELP               30003
@@ -326,6 +332,9 @@
 #define IDS_GD5430_XE10                 30604
 #define IDS_GD5430_CB2                  30605
 #define IDS_GD5430_CX2                  30606
+#define IDS_IDETYPE_NONE                30700
+#define IDS_IDETYPE_HDD                 30701
+#define IDS_IDETYPE_CDROM               30702
 #define IDS_FONTTITLE                   31001
 #define IDS_FONTEXT                     31002
 #define IDS_FONTFILTER                  31003
@@ -524,6 +533,7 @@
 #define IDM_ITFWORK                     40714
 #define IDM_ALTENTER                    40721
 #define IDM_ALTF4                       40722
+#define IDM_IDEOPT                      40800
 #define IDM_CLOSE                       41001
 #define IDM_TOOL_SKIN                   41101
 #define IDM_TOOL_SKINSEL                41111

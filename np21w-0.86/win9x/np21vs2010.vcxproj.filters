@@ -1125,14 +1125,9 @@
     <ClCompile Include="..\network\net.c">
       <Filter>ソース ファイル\network</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <YASM Include="x64\makegrph.x64">
-      <Filter>ソース ファイル\win9x\x64</Filter>
-    </YASM>
-    <YASM Include="x64\parts.x64">
-      <Filter>ソース ファイル\win9x\x64</Filter>
-    </YASM>
+    <ClCompile Include="dialog\d_ide.cpp">
+      <Filter>ソース ファイル\win9x\dialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <NASM Include="x86\cputype.x86">
@@ -2017,5 +2012,13 @@
     <None Include="resources\nekop2.bmp">
       <Filter>リソース ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="x64\makegrph.x64">
+      <Filter>ソース ファイル\win9x\x64</Filter>
+    </CustomBuild>
+    <CustomBuild Include="x64\parts.x64">
+      <Filter>ソース ファイル\win9x\x64</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

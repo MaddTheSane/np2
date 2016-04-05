@@ -58,12 +58,7 @@ static void changescreen(UINT8 newmode) {
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
-	PAINTSTRUCT	ps;
 	RECT		rc;
-	HDC			hdc;
-	BOOL		b;
-	UINT		update;
-	HWND		subwin;
 
 	switch (msg) {
 		case WM_CREATE:
@@ -89,21 +84,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam){
 			break;
 
 		case WM_KEYDOWN:
+			SendMessage(hWndMain, msg, wParam, lParam); // •KŽEŠÛ“Š‚°
 			break;
 
 		case WM_KEYUP:
+			SendMessage(hWndMain, msg, wParam, lParam); // •KŽEŠÛ“Š‚°
 			break;
 
 		case WM_SYSKEYDOWN:
-			if (lParam & 0x20000000) {								// ver0.30
-				if ((wParam == VK_RETURN)) {
-					changescreen(ga_scrnmode ^ SCRNMODE_FULLSCREEN);
-					break;
-				}
-			}
+			//if (lParam & 0x20000000) {
+			//	if ((wParam == VK_RETURN)) {
+			//		changescreen(ga_scrnmode ^ SCRNMODE_FULLSCREEN);
+			//		break;
+			//	}
+			//}
+			SendMessage(hWndMain, msg, wParam, lParam); // •KŽEŠÛ“Š‚°
 			break;
 
 		case WM_SYSKEYUP:
+			SendMessage(hWndMain, msg, wParam, lParam); // •KŽEŠÛ“Š‚°
 			break;
 
 		case WM_MOUSEMOVE:
@@ -252,7 +251,7 @@ void np2vga_init(HINSTANCE hInstance, HWND g_hWndMain)
 void np2vga_shutdown()
 {
 	ga_exitThread = 1;
-	WaitForSingleObject(ga_hThread, 8000);
+	WaitForSingleObject(ga_hThread, INFINITE);
 	bmpInfo.bmiHeader.biWidth = bmpInfo.bmiHeader.biHeight = 0;
 	ga_hThread = NULL;
 	ReleaseDC(g_hWndVGA, g_hDC);

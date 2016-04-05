@@ -89,7 +89,7 @@ static void IOOUTCALL defout8(UINT port, REG8 dat) {
 		dipsw_w8(port, dat);
 		return;
 	}
-//	TRACEOUT(("defout8 - %x %x %.4x %.4x", port, dat, CPU_CS, CPU_IP));
+	//TRACEOUT(("defout8 - %x %x %.4x %.4x", port, dat, CPU_CS, CPU_IP));
 }
 
 static REG8 IOINPCALL definp8(UINT port) {
@@ -109,7 +109,7 @@ static REG8 IOINPCALL definp8(UINT port) {
 	if ((port & 0xf0ff) == 0x801e) {
 		return(dipsw_r8(port));
 	}
-//	TRACEOUT(("definp8 - %x %.4x %.4x", port, CPU_CS, CPU_IP));
+	//TRACEOUT(("definp8 - %x %.4x %.4x", port, CPU_CS, CPU_IP));
 	return(0xff);
 }
 

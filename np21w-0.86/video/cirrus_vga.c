@@ -50,6 +50,8 @@ REG8 cirrusvga_regindex = 0;
 REG8 cirrusvga_mmioenable = 0;
 REG8 cirrusvga_paletteChanged = 1;
 
+uint8_t* vramptr;
+
 BITMAPINFO *ga_bmpInfo;
 HWND ga_hWnd = NULL;
 HDC ga_hdc = NULL;
@@ -3810,7 +3812,7 @@ void cirrusvga_drawGraphic(){
 	ga_bmpInfo->bmiHeader.biHeight = 1; // ‰¼ƒZƒbƒg
 	ga_bmpInfo->bmiHeader.biPlanes = 1;
 	ga_bmpInfo->bmiHeader.biBitCount = bpp;
-	vga_draw_graphic((VGAState *)cirrusvga, 1);
+	//vga_draw_graphic((VGAState *)cirrusvga, 1);
 	scalemode = ga_wndwidth!=width || ga_wndheight!=height;
 	if(lastscalemode!=scalemode){
 		if(scalemode){
@@ -4134,7 +4136,7 @@ static void IOOUTCALL cirrusvga_ofac(UINT port, REG8 dat) {
 	dat = dat & ~0xfc;
 	if(ga_relay != dat){
 		ga_relay = dat;
-		if(dat){
+		if(dat&0x3){
 			soundmng_pcmplay(SOUND_RELAY1, FALSE);
 			ShowWindow(ga_hWnd, SW_SHOWNOACTIVATE);
 			SetWindowPos(ga_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING | SWP_SHOWWINDOW);
@@ -4151,25 +4153,16 @@ static REG8 IOINPCALL cirrusvga_ifac(UINT port) {
 	return 0xfc | ga_relay;
 }
 
+int cirrusvga_videoenable = 0x00;
 static void IOOUTCALL cirrusvga_off82(UINT port, REG8 dat) {
 	TRACEOUT(("CIRRUS VGA: out %04X d=%02X", port, dat));
-	if(ga_relay != dat){
-		ga_relay = dat;
-		if(dat){
-			soundmng_pcmplay(SOUND_RELAY1, FALSE);
-			ShowWindow(ga_hWnd, SW_SHOWNOACTIVATE);
-			SetWindowPos(ga_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE | SWP_NOSENDCHANGING | SWP_SHOWWINDOW);
-		}else{
-			soundmng_pcmplay(SOUND_RELAY1, FALSE);
-			ShowWindow(ga_hWnd, SW_HIDE);
-		}
-	}
+	cirrusvga_videoenable = dat & 0x1;
 	(void)port;
 	(void)dat;
 }
 static REG8 IOINPCALL cirrusvga_iff82(UINT port) {
 	TRACEOUT(("CIRRUS VGA: inp %04X", port));
-	return ga_relay;
+	return cirrusvga_videoenable;
 }
 
 
@@ -4288,7 +4281,7 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
 	//s->cirrus_mmio_io_addr = 0xF80000;
 
     s->real_vram_size = (s->device_id == CIRRUS_ID_CLGD5446) ? 4096 * 1024 : 2048 * 1024;
-	s->vram_ptr = (uint8_t*)malloc(s->real_vram_size);
+	s->vram_ptr = vramptr;
     s->vram_offset = 0;
     s->vram_size = s->real_vram_size;
 
@@ -4332,6 +4325,8 @@ void pc98_cirrus_vga_init()
     hBmpBuf = CreateCompatibleBitmap(hdc, 1024, 768);
     hdcBuf = CreateCompatibleDC(NULL);
     SelectObject(hdcBuf, hBmpBuf);
+
+	vramptr = (uint8_t*)malloc(4096 * 1024);
 	//ga_hpal = 
 	//vga_common_init((VGAState *)s, vga_ram_base, vga_ram_offset, vga_ram_size);
 }
@@ -4356,6 +4351,7 @@ void pc98_cirrus_vga_shutdown()
 	DeleteDC(hdcBuf);
 	DeleteObject(hBmpBuf);
 	free(ga_bmpInfo);
+	free(vramptr);
 }
 void pc98_cirrus_vga_resetscreensize()
 {

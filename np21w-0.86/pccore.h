@@ -135,9 +135,12 @@ struct tagNP2Config
 	UINT8	PROTECTMEM;
 	UINT8	hdrvacc;
 
-	OEMCHAR	sasihdd[2][MAX_PATH];									// ver0.74
 #if defined(SUPPORT_IDEIO)
-	OEMCHAR	idecd[2][MAX_PATH];										// ver0.85w
+	OEMCHAR	sasihdd[4][MAX_PATH];									// ver0.86w
+	UINT8	idetype[4];												// ver0.86w
+	OEMCHAR	idecd[4][MAX_PATH];										// ver0.85w
+#else
+	OEMCHAR	sasihdd[2][MAX_PATH];									// ver0.74
 #endif
 #if defined(SUPPORT_SCSI)
 	OEMCHAR	scsihdd[4][MAX_PATH];									// ver0.74
@@ -217,6 +220,10 @@ void pccore_reset(void);
 void pccore_exec(BOOL draw);
 
 void pccore_postevent(UINT32 event);
+
+#ifdef SUPPORT_HRTIMER
+extern long long hrtimerdiv;
+#endif
 
 #ifdef __cplusplus
 }

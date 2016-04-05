@@ -77,8 +77,11 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 				1, 0x82,
 				0, {0x17, 0x04, 0x1f}, {0x0c, 0x0c, 0x02, 0x10, 0x3f, 0x3f},
 				3, 1, 80, 0, 0,
-				{OEMTEXT(""), OEMTEXT("")},
 #if defined(SUPPORT_IDEIO)
+				{OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")}, 
+				{SXSIDEV_HDD, SXSIDEV_HDD, SXSIDEV_CDROM, SXSIDEV_HDD}, 
+				{OEMTEXT(""), OEMTEXT(""), OEMTEXT(""), OEMTEXT("")},
+#else
 				{OEMTEXT(""), OEMTEXT("")},
 #endif
 #if defined(SUPPORT_SCSI)
@@ -105,7 +108,12 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 //	BOOL	drawframe;
 	UINT	drawcount = 0;
 //	BOOL	hardwarereset = FALSE;
-
+	
+#if defined(SUPPORT_HRTIMER)
+	LARGE_INTEGER hrtimer = {0}; 
+	LARGE_INTEGER hrtimerfreq = {0}; 
+	long long hrtimerdiv = 32; 
+#endif
 
 // ---------------------------------------------------------------------------
 
@@ -170,8 +178,10 @@ static void pccore_set(const NP2CFG *pConfig)
 	{
 		pccore.hddif |= PCHDD_IDE;
 #if defined(SUPPORT_IDEIO)
-		sxsi_setdevtype(0x02, SXSIDEV_CDROM);
-		sxsi_setdevtype(0x03, SXSIDEV_CDROM);
+		sxsi_setdevtype(0x00, np2cfg.idetype[0]==SXSIDEV_CDROM ? SXSIDEV_CDROM : SXSIDEV_NC);
+		sxsi_setdevtype(0x01, np2cfg.idetype[1]==SXSIDEV_CDROM ? SXSIDEV_CDROM : SXSIDEV_NC);
+		sxsi_setdevtype(0x02, np2cfg.idetype[2]==SXSIDEV_CDROM ? SXSIDEV_CDROM : SXSIDEV_NC);
+		sxsi_setdevtype(0x03, np2cfg.idetype[3]==SXSIDEV_CDROM ? SXSIDEV_CDROM : SXSIDEV_NC);
 #endif
 	}
 	else
@@ -443,6 +453,11 @@ void pccore_reset(void) {
 
 	timing_reset();
 	soundmng_play();
+	
+#if defined(SUPPORT_HRTIMER)
+	hrtimerdiv = 32;
+	QueryPerformanceCounter(&hrtimer);
+#endif
 }
 
 static void drawscreen(void) {
@@ -632,6 +647,9 @@ void pccore_postevent(UINT32 event) {	// yet!
 }
 
 void pccore_exec(BOOL draw) {
+#if defined(SUPPORT_HRTIMER)
+	static LARGE_INTEGER hrtmp = {0}; 
+#endif
 
 	pcstat.drawframe = (UINT8)draw;
 //	keystat_sync();
@@ -672,6 +690,16 @@ void pccore_exec(BOOL draw) {
 #else
 		while(CPU_REMCLOCK > 0) {
 			CPU_STEPEXEC();
+		}
+#endif
+#if defined(SUPPORT_HRTIMER)
+		if(hrtimerdiv){
+			QueryPerformanceFrequency(&hrtimerfreq);
+			QueryPerformanceCounter(&hrtmp);
+			if(hrtmp.QuadPart - hrtimer.QuadPart >= hrtimerfreq.QuadPart/hrtimerdiv){
+				pic_setirq(15);
+				hrtimer.QuadPart += hrtimerfreq.QuadPart/hrtimerdiv;
+			}
 		}
 #endif
 		nevent_progress();

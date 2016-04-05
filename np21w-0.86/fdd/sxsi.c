@@ -274,7 +274,7 @@ BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *fname) {
 				ideio_notify(sxsi->drv, 0);
 				file_cpyname(sxsi->fname, _T("\0\0\0\0"), 1);
 				sxsi->flag = 0;
-				file_cpyname(np2cfg.idecd[num-2], _T("\0\0\0\0"), 1);
+				file_cpyname(np2cfg.idecd[num], _T("\0\0\0\0"), 1);
 				sysmng_updatecaption(1);
 				return(SUCCESS);
 			}
@@ -293,11 +293,11 @@ BRESULT sxsi_devopen(REG8 drv, const OEMCHAR *fname) {
 				r = sxsicd_open(sxsi, fname);
 				if (r == SUCCESS) {
 					int num = drv & 0x0f;
-					file_cpyname(np2cfg.idecd[num-2], fname, NELEMENTS(cdchange_fname));
+					file_cpyname(np2cfg.idecd[num], fname, NELEMENTS(cdchange_fname));
 					sysmng_updatecaption(1);
 				}else{
 					int num = drv & 0x0f;
-					file_cpyname(np2cfg.idecd[num-2], _T("\0\0\0\0"), 1);
+					file_cpyname(np2cfg.idecd[num], _T("\0\0\0\0"), 1);
 					sysmng_updatecaption(1);
 				}
 			}

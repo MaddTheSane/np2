@@ -79,6 +79,8 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\VST3 SDK;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28November 2008%29\Lib\x86;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28November 2008%29\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\VST3 SDK;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28November 2008%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NASM>
@@ -87,14 +89,14 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
@@ -145,7 +147,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -154,6 +156,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;SUPPORT_PC9821;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -169,6 +172,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <YASM>
       <IncludePaths>.\x64;..\i386c\x64;..\io\x64</IncludePaths>
+      <ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
     </YASM>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -177,7 +181,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -185,6 +189,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_WIN64;_UNICODE;UNICODE;SUPPORT_PC9821;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -368,6 +373,7 @@
     <ClCompile Include="..\sound\fmboard.c" />
     <ClCompile Include="..\video\cirrus_vga.c" />
     <ClCompile Include="..\video\video.c" />
+    <ClCompile Include="dialog\d_ide.cpp" />
     <ClCompile Include="dialog\d_network.cpp" />
     <ClCompile Include="dialog\d_wab.cpp" />
     <ClCompile Include="ext\opl3.cpp" />
@@ -511,14 +517,20 @@
     <ClCompile Include="..\zlib\zutil.c" />
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="x64\makegrph.x64">
+    <CustomBuild Include="x64\makegrph.x64">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="x64\parts.x64">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">yasm -Xvc -f x64 -l "" -i "$(ProjectDir)." -o $(IntDir)%(Filename).obj %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="x64\parts.x64">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </YASM>
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">yasm -Xvc -f x64 -l "" -i "$(ProjectDir)." -o $(IntDir)%(Filename).obj %(FullPath)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename).obj</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <NASM Include="x86\cputype.x86">

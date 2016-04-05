@@ -186,7 +186,7 @@ typedef	signed __int64		SINT64;
 #if defined(SUPPORT_LARGE_HDD)
 typedef INT64	FILEPOS;
 typedef INT64	FILELEN;
-#define	NHD_MAXSIZE	32000
+#define	NHD_MAXSIZE	8000
 #else
 typedef long	FILEPOS;
 typedef long	FILELEN;

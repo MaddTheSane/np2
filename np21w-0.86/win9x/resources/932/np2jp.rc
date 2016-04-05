@@ -127,8 +127,8 @@ FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "LCDディスプレイ",IDC_LCD,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,8,156,10
     CONTROL         "色反転",IDC_LCDX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,24,144,10
-    CONTROL         "Use skipline revisions",IDC_SKIPLINE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,40,156,10
-    LTEXT           "Ratio",IDC_STATIC,20,55,22,8
+    CONTROL         "スキップラインを中間色で埋める",IDC_SKIPLINE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,40,156,10
+    LTEXT           "明るさ",IDC_STATIC,20,55,22,8
     CONTROL         "Slider1",IDC_SKIPLIGHT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,44,55,96,10
     RTEXT           "",IDC_LIGHTSTR,144,54,20,10,SS_SUNKEN
 END
@@ -154,7 +154,7 @@ BEGIN
     CONTROL         "uPD7220",IDC_GDC7220,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,20,20,50,10
     CONTROL         "uPD72020",IDC_GDC72020,"Button",BS_AUTORADIOBUTTON,72,20,50,10
     GROUPBOX        "グラフィックチャージャ",IDC_GCBOX,8,42,156,28
-    CONTROL         "None",IDC_GRCGNON,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,20,54,34,10
+    CONTROL         "なし",IDC_GRCGNON,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,20,54,34,10
     CONTROL         "GRCG",IDC_GRCG,"Button",BS_AUTORADIOBUTTON,54,54,34,10
     CONTROL         "GRCG+",IDC_GRCG2,"Button",BS_AUTORADIOBUTTON,88,54,40,10
     CONTROL         "EGC",IDC_EGC,"Button",BS_AUTORADIOBUTTON,128,54,34,10
@@ -453,6 +453,24 @@ BEGIN
     PUSHBUTTON      "既定値",IDC_GD5430DEF,136,102,40,14
 END
 
+IDD_IDE DIALOGEX 0, 0, 195, 101
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IDE機器設定"
+CLASS "np2dialog"
+FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x0
+BEGIN
+    LTEXT           "プライマリ",IDC_STATIC,40,8,64,8
+    LTEXT           "セカンダリ",IDC_STATIC,118,8,68,8
+    LTEXT           "マスター",IDC_STATIC,8,26,29,8
+    LTEXT           "スレーブ",IDC_STATIC,8,56,29,8
+    COMBOBOX        IDC_IDE1TYPE,40,24,64,14,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_IDE2TYPE,40,54,64,14,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_IDE3TYPE,118,24,64,52,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_IDE4TYPE,118,54,64,52,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "&OK",IDOK,92,75,44,14,WS_GROUP
+    PUSHBUTTON      "キャンセル",IDCANCEL,140,75,44,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -637,6 +655,14 @@ BEGIN
         TOPMARGIN, 8
         BOTTOMMARGIN, 112
     END
+
+    IDD_IDE, DIALOG
+    BEGIN
+        LEFTMARGIN, 8
+        RIGHTMARGIN, 184
+        TOPMARGIN, 8
+        BOTTOMMARGIN, 89
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -734,7 +760,7 @@ BEGIN
         MENUITEM "画面右回転(&R)",              IDM_ROLRIGHT
         MENUITEM SEPARATOR
         MENUITEM "画面同期(&D)",                IDM_DISPSYNC
-        MENUITEM "Real &palettes",              IDM_RASTER
+        MENUITEM "擬似多色パレット再現(&P)",    IDM_RASTER
         MENUITEM "CPUウェイト無し(&N)",         IDM_NOWAIT
         MENUITEM "自動フレームスキップ(&A)",    IDM_AUTOFPS
         MENUITEM "フレームスキップ無し(&U)",    IDM_60FPS
@@ -742,7 +768,7 @@ BEGIN
         MENUITEM "1/&3フレーム",                IDM_20FPS
         MENUITEM "1/&4フレーム",                IDM_15FPS
         MENUITEM SEPARATOR
-        MENUITEM "画面設定(&S)...",           IDM_SCREENOPT
+        MENUITEM "画面設定(&S)...",             IDM_SCREENOPT
     END
     POPUP "デバイス(&D)"
     BEGIN
@@ -825,9 +851,9 @@ BEGIN
         END
         MENUITEM "CPUクロック表示(&C)",         IDM_DISPCLOCK
         MENUITEM "フレームレート表示(&F)",      IDM_DISPFRAME
-        MENUITEM "Joy re&verse",                IDM_JOYX
-        MENUITEM "Joy &rapid",                  IDM_RAPID
-        MENUITEM "&Mouse rapid",                IDM_MSRAPID
+        MENUITEM "ジョイスティックボタン反転(&V)",  IDM_JOYX
+        MENUITEM "ジョイスティックボタン連打(&R)",  IDM_RAPID
+        MENUITEM "マウスボタン連打(&M)",        IDM_MSRAPID
         MENUITEM "&ITFエミュレーション",        IDM_ITFWORK
         MENUITEM SEPARATOR
         MENUITEM "ヘルプ(&H)...",               IDM_HELP
@@ -929,6 +955,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "取り出し(&E)...",                      IDM_IDE3EJECT
     END
+    MENUITEM "&IDE option...",              IDM_IDEOPT
 END
 
 IDR_SASIMENU MENU
@@ -1065,7 +1092,7 @@ BEGIN
     MENUITEM "TRACE",                       IDM_TRACE_TRACE
     MENUITEM "VERBOSE",                     IDM_TRACE_VERBOSE
     MENUITEM SEPARATOR
-    MENUITEM "画面にログ表示",              IDM_TRACE_ENABLE
+    MENUITEM "トレース有効",                IDM_TRACE_ENABLE
     MENUITEM "ファイルに出力",              IDM_TRACE_FILEOUT
     MENUITEM "ログ消去",                    IDM_TRACE_CLEAR
     MENUITEM SEPARATOR
@@ -1271,6 +1298,13 @@ BEGIN
     IDS_GD5430_XE10         "PC-9821Xe10,Xa7e,Xb10内蔵"
     IDS_GD5430_CB2          "PC-9821Cb2内蔵"
     IDS_GD5430_CX2          "PC-9821Cx2内蔵"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_IDETYPE_NONE        "なし"
+    IDS_IDETYPE_HDD         "HDD"
+    IDS_IDETYPE_CDROM       "CD-ROM"
 END
 
 STRINGTABLE

@@ -18,6 +18,9 @@
 #if defined(SUPPORT_CL_GD5430)
 #include	"video/video.h"
 #endif
+#if defined(SUPPORT_IDEIO)
+#include	"fdd/sxsi.h"
+#endif
 
 
 	UINT8	mem[0x200000];
@@ -326,9 +329,9 @@ static const MEMFNF memfnf = {
 #define BBLTWINDOW_ADSH	0x1000000 // VRAM BITBLT
 #define BBLTWINDOW_SIZE	0x400000  // VRAM BITBLT マッピングサイズ
 #define MMIOWINDOW_ADDR	0xF80000  // MMIO マッピングアドレス（場所不明）
-#define MMIOWINDOW_SIZE	0x0       // MMIO マッピングアドレス（サイズ不明）
+#define MMIOWINDOW_SIZE	0x0//10000   // MMIO マッピングアドレス（サイズ不明）
 #define VRA2WINDOW_ADDR	0xF20000  // VRAMウィンドウ マッピングアドレス（場所不明）
-#define VRA2WINDOW_SIZE	0x0       // VRAMウィンドウ マッピングアドレス（サイズ不明）
+#define VRA2WINDOW_SIZE	0x0//1000    // VRAMウィンドウ マッピングアドレス（サイズ不明）
 #endif
 
 REG8 MEMCALL memp_read8(UINT32 address) {
@@ -356,6 +359,36 @@ REG8 MEMCALL memp_read8(UINT32 address) {
 		}
 	}
 #endif
+	if(0xF8E80 <= address && address <= 0xF8E80+0x003F){
+		if (address == 0xF8E80+0x0000) 
+			return 0x98;
+		if (address == 0xF8E80+0x0001) 
+			return 0x21;
+		if (address == 0xF8E80+0x0002) 
+			return 0x1d;
+		if (address == 0xF8E80+0x0003) 
+			return 0x23;
+		if (address == 0xF8E80+0x0004) 
+			return 0x2C;
+		if (address == 0xF8E80+0x0005) 
+			return 0xb1;
+		if (address == 0xF8E80+0x0010) 
+			return (sxsi_getdevtype(3)!=SXSIDEV_NC ? 0x8 : 0x0)|(sxsi_getdevtype(2)!=SXSIDEV_NC ? 0x4 : 0x0)|
+				   (sxsi_getdevtype(1)!=SXSIDEV_NC ? 0x2 : 0x0)|(sxsi_getdevtype(0)!=SXSIDEV_NC ? 0x1 : 0x0);
+			//return 0x0F;
+		if (address == 0xF8E80+0x0011) 
+			return 0x80;
+		if (address == 0xF8E80+0x003F) 
+			return 0x21; // PC-9821 Xa7,9,10,12/C 
+	}
+	//if(sxsi_getdevtype(0)==SXSIDEV_HDD){
+		//if(address == 0x457) return 0x90|0x42;
+		//if(address == 0x45d) return 0x08|0x10|mem[0x45d];
+		//if(address == 0x55d) return 0x01|0x02|mem[0x55d];
+		//if(address == 0x5b0) return 0x00;
+		//if(address == 0x480) return 0x80|mem[0x55d];
+	//}
+
 	if (address < I286_MEMREADMAX) {
 		if(address==0x0481) 
 			return 0x40;
@@ -419,7 +452,12 @@ REG16 MEMCALL memp_read16(UINT32 address) {
 		}
 	}
 #endif
-
+	
+	if(0xF8E80 <= address && address <= 0xF8E80+0x003F){
+		ret = memp_read8(address + 0);
+		ret += (REG16)(memp_read8(address + 1) << 8);
+		return(ret);
+	}
 	if (address < (I286_MEMREADMAX - 1)) {
 		return(LOADINTELWORD(mem + address));
 	}
@@ -487,7 +525,14 @@ UINT32 MEMCALL memp_read32(UINT32 address) {
 		}
 	}
 #endif
-
+	
+	if(0xF8E80 <= address && address <= 0xF8E80+0x003F){
+		ret = memp_read8(address + 0);
+		ret += (UINT32)memp_read8(address + 1) << 8;
+		ret += (UINT32)memp_read8(address + 2) << 16;
+		ret += (UINT32)memp_read8(address + 3) << 24;
+		return(ret);
+	}
 	if (address < (I286_MEMREADMAX - 3)) {
 		return(LOADINTELDWORD(mem + address));
 	}
@@ -539,7 +584,6 @@ void MEMCALL memp_write8(UINT32 address, REG8 value) {
 		}
 	}
 #endif
-
 	if (address < I286_MEMWRITEMAX) {
 		mem[address] = (UINT8)value;
 	}

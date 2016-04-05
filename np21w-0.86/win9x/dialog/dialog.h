@@ -49,3 +49,8 @@ void dialog_netopt(HWND hWnd);
 #if defined(SUPPORT_CL_GD5430)
 void dialog_wabopt(HWND hWnd);
 #endif
+
+// d_ide.cpp
+#if defined(SUPPORT_IDEIO)
+void dialog_ideopt(HWND hwndParent);
+#endif
