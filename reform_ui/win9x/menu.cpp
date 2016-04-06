@@ -149,27 +149,6 @@ static int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
 }
 
 /**
- * メニュー追加
- * @param[in] hMenu メニューのハンドル
- * @param[in] uPosition 新しい項目の直前に位置する項目
- * @param[in] uFlags オプション
- * @param[in] uIDNewItem 識別子、メニュー、サブメニューのいずれか
- * @param[in] lpNewItem メニュー 文字列
- * @return 関数が成功すると、0 以外の値が返ります
- */
-static BOOL InsertMenuString(HMENU hMenu, UINT uPosition, UINT uFlags, UINT_PTR uIDNewItem, UINT uStringID)
-{
-	std::tstring rString(LoadTString(uStringID));
-
-	BOOL bResult = FALSE;
-	if (!rString.empty())
-	{
-		bResult = InsertMenu(hMenu, uPosition, uFlags, uIDNewItem, rString.c_str());
-	}
-	return bResult;
-}
-
-/**
  * メニュー追加 (単純コピー)
  * @param[in] popup コピー先
  * @param[in] menubar コピー元
@@ -270,7 +249,9 @@ void xmenu_initialize(HMENU hMenu)
 #if defined(SUPPORT_SCSI)
 		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SCSIMENU, TRUE);
 #endif
-		InsertMenuString(hMenu, nPos, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hmenuSub, IDS_HDD);
+
+		std::tstring rString(LoadTString(IDS_HDD));
+		InsertMenu(hMenu, nPos, MF_BYPOSITION | MF_POPUP, reinterpret_cast<INT_PTR>(hmenuSub), rString.c_str());
 	}
 
 #if defined(SUPPORT_PX)
