@@ -20,6 +20,123 @@
 #endif
 
 /**
+ * メニュー内の指定された位置に、新しいメニュー項目を挿入します
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uItem 識別子または位置
+ * @param[in] fByPosition uItem パラメータの意味
+ * @param[in] hPopup 追加するメニュー
+ * @return 追加した項目数
+ */
+static UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup)
+{
+	int nCount = GetMenuItemCount(hPopup);
+	UINT nAdded = 0;
+	for (int i = 0; i < nCount; i++)
+	{
+		TCHAR szString[128];
+
+		MENUITEMINFO mii;
+		ZeroMemory(&mii, sizeof(mii));
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU | MIIM_DATA;
+		mii.dwTypeData = szString;
+		mii.cch = _countof(szString);
+		if (!GetMenuItemInfo(hPopup, i, TRUE, &mii))
+		{
+			continue;
+		}
+		if (mii.hSubMenu)
+		{
+			HMENU hSubMenu = CreatePopupMenu();
+			InsertMenuPopup(hSubMenu, 0, TRUE, mii.hSubMenu);
+			mii.hSubMenu = hSubMenu;
+		}
+		if (InsertMenuItem(hMenu, uItem, fByPosition, &mii))
+		{
+			nAdded++;
+			if (fByPosition)
+			{
+				uItem++;
+			}
+		}
+	}
+	return nAdded;
+}
+
+/**
+ * メニュー内の指定された位置に、新しいメニュー項目を挿入します
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uItem 識別子または位置
+ * @param[in] fByPosition uItem パラメータの意味
+ * @param[in] nMenuID 追加するメニュー ID
+ * @return 追加した項目数
+ */
+UINT InsertMenuResource(HMENU hMenu, UINT uItem, BOOL fByPosition, UINT nMenuID)
+{
+	HMENU hSubMenu = LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(nMenuID));
+	const UINT nAdded = InsertMenuPopup(hMenu, uItem, fByPosition, hSubMenu);
+	::DestroyMenu(hSubMenu);
+	return nAdded;
+}
+
+/**
+ * メニューを追加する
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uFlags オプション
+ * @param[in] uIDNewItem 識別子、メニュー、サブメニューのいずれか
+ * @retval 関数が成功すると、0 以外の値が返ります
+ */
+static BOOL AppendMenuString(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem)
+{
+	std::tstring rString(LoadTString(uIDNewItem));
+	if (rString.empty())
+	{
+		return FALSE;
+	}
+
+	if (uFlags & MF_POPUP)
+	{
+		HMENU hSubMenu = LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(uIDNewItem));
+		if (hSubMenu == NULL)
+		{
+			return FALSE;
+		}
+		uIDNewItem = reinterpret_cast<UINT_PTR>(hSubMenu);
+	}
+	return AppendMenu(hMenu, uFlags, uIDNewItem, rString.c_str());
+}
+
+/**
+ * メニューを挿入する
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uItem 挿入するべきメニュー項目の直後に位置するメニュー項目の識別子または位置を指定します
+ * @param[in] uFlags オプション
+ * @param[in] uIDNewItem 識別子、メニュー、サブメニューのいずれか
+ * @retval 関数が成功すると、0 以外の値が返ります
+ */
+static BOOL InsertMenuString(HMENU hMenu, UINT uItem, UINT uFlags, UINT_PTR uIDNewItem)
+{
+	std::tstring rString(LoadTString(uIDNewItem));
+	if (rString.empty())
+	{
+		return FALSE;
+	}
+
+	if (uFlags & MF_POPUP)
+	{
+		HMENU hSubMenu = LoadMenu(CWndProc::GetResourceHandle(), MAKEINTRESOURCE(uIDNewItem));
+		if (hSubMenu == NULL)
+		{
+			return FALSE;
+		}
+		uIDNewItem = reinterpret_cast<UINT_PTR>(hSubMenu);
+	}
+	return InsertMenu(hMenu, uItem, uFlags, uIDNewItem, rString.c_str());
+}
+
+
+
+/**
  * 検索
  * @param[in] hMenu メニュー ハンドル
  * @param[in] uID ID
@@ -129,26 +246,6 @@ int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
 }
 
 /**
- * メニュー追加
- * @param[in] hMenu メニュー ハンドル
- * @param[in] uByID メニュー位置
- * @param[in] uID メニュー ID
- * @return 追加数
- */
-static int menu_addmenubyid(HMENU hMenu, UINT uByID, UINT uID)
-{
-	int nCount = 0;
-
-	HMENU hmenuSub;
-	int nSubPos;
-	if (menu_searchmenu(hMenu, uByID, &hmenuSub, &nSubPos))
-	{
-		nCount = menu_addmenures(hmenuSub, nSubPos + 1, uID, FALSE);
-	}
-	return nCount;
-}
-
-/**
  * メニュー追加 (単純コピー)
  * @param[in] popup コピー先
  * @param[in] menubar コピー元
@@ -168,22 +265,24 @@ void menu_addmenubar(HMENU popup, HMENU menubar)
  */
 void sysmenu_initialize(HMENU hMenu)
 {
-	UINT uPos = 0;
+	UINT nPos = 0;
 
 #if defined(SUPPORT_KEYDISP)
-	uPos += menu_addmenures(hMenu, uPos, IDR_SYSKEYDISP, FALSE);
-#endif
-#if defined(SUPPORT_SOFTKBD)
-	uPos += menu_addmenures(hMenu, uPos, IDR_SYSSOFTKBD, FALSE);
-#endif
+	nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_SYSKEYDISP);
+#endif	// defined(SUPPORT_KEYDISP)
 
-	uPos += menu_addmenures(hMenu, uPos, IDR_SYS, FALSE);
+#if defined(SUPPORT_SOFTKBD)
+	nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_SYSSOFTKBD);
+#endif	// defined(SUPPORT_KEYDISP)
+
+	nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_SYS);
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
-		uPos += menu_addmenures(hMenu, uPos, IDR_SYSDEBUG32, FALSE);
-#endif
-		uPos += menu_addmenures(hMenu, uPos, IDR_SYSDEBUG, FALSE);
+		nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_SYSDEBUG32);
+#endif	// defined(CPUCORE_IA32) && defined(SUPPORT_MEMDBG32)
+
+		nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_SYSDEBUG);
 	}
 }
 
@@ -221,11 +320,12 @@ void sysmenu_update(HMENU hMenu)
  */
 void xmenu_initialize(HMENU hMenu)
 {
-	int nPos = 1;
+	UINT nPos = 1;
+
 #if defined(SUPPORT_STATSAVE)
 	if (np2oscfg.statsave)
 	{
-		nPos += menu_addmenures(hMenu, nPos, IDR_STAT, FALSE);
+		nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_STAT);
 	}
 #endif
 
@@ -233,37 +333,42 @@ void xmenu_initialize(HMENU hMenu)
 	{
 		if (np2cfg.fddequip & (1 << i))
 		{
-			nPos += menu_addmenures(hMenu, nPos, IDR_FDD1MENU + i, FALSE);
+			nPos += InsertMenuResource(hMenu, nPos, TRUE, IDR_FDD1MENU + i);
 		}
 	}
 
-	HMENU hmenuSub = CreatePopupMenu();
-	if (hmenuSub)
+	HMENU hMenuSub = CreatePopupMenu();
+	if (hMenuSub)
 	{
-		int nSubPos = 0;
+		UINT nSubPos = 0;
 #if defined(SUPPORT_IDEIO)
-		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_IDEMENU, FALSE);
-#else
-		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SASIMENU, FALSE);
-#endif
+		nSubPos += InsertMenuResource(hMenuSub, nSubPos, TRUE, IDR_IDEMENU);
+#else	// defined(SUPPORT_IDEIO)
+		nSubPos += InsertMenuResource(hMenuSub, nSubPos, TRUE, IDR_SASIMENU);
+#endif	// defined(SUPPORT_IDEIO)
+
 #if defined(SUPPORT_SCSI)
-		nSubPos += menu_addmenures(hmenuSub, nSubPos, IDR_SCSIMENU, TRUE);
-#endif
+		if (nSubPos)
+		{
+			nSubPos += InsertMenu(hMenuSub, nSubPos, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		}
+		nSubPos += InsertMenuResource(hMenuSub, nSubPos, TRUE, IDR_SCSIMENU);
+#endif	// defined(SUPPORT_SCSI)
 
 		std::tstring rString(LoadTString(IDS_HDD));
-		InsertMenu(hMenu, nPos, MF_BYPOSITION | MF_POPUP, reinterpret_cast<INT_PTR>(hmenuSub), rString.c_str());
+		InsertMenu(hMenu, nPos, MF_BYPOSITION | MF_POPUP, reinterpret_cast<INT_PTR>(hMenuSub), rString.c_str());
 	}
 
 #if defined(SUPPORT_PX)
-	(void)menu_addmenubyid(hMenu, IDM_SPARKBOARD, IDR_PXMENU);
-#endif
+	InsertMenuResource(hMenu, IDM_SOUNDORCHESTRA, FALSE, IDR_PXMENU);
+#endif	// defined(SUPPORT_PX)
 
 	if (np2oscfg.I286SAVE)
 	{
 #if defined(SUPPORT_PC9821)
-		(void)menu_addmenubyid(hMenu, IDM_MSRAPID, IDR_CPUSAVE32);
+		InsertMenuResource(hMenu, IDM_CALENDAR, FALSE, IDR_CPUSAVE32);
 #else	//	defined(SUPPORT_PC9821)
-		(void)menu_addmenubyid(hMenu, IDM_MSRAPID, IDR_CPUSAVE16);
+		InsertMenuResource(hMenu, IDM_CALENDAR, FALSE, IDR_CPUSAVE16);
 #endif	//	defined(SUPPORT_PC9821)
 	}
 }
