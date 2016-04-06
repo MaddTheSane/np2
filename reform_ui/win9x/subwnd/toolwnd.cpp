@@ -653,10 +653,12 @@ void CToolWnd::OpenPopUp(LPARAM lParam)
 	HMENU hMenu = CreatePopupMenu();
 	if (!winui_en)
 	{
-		menu_addmenu(hMenu, 0, np2class_gethmenu(g_hWndMain), FALSE);
+		InsertMenuPopup(hMenu, 0, TRUE, np2class_gethmenu(g_hWndMain));
 	}
-	menu_addmenures(hMenu, -1, IDR_TOOLWIN, FALSE);
-	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
+	AppendMenuResource(hMenu, IDR_TOOLWIN);
+	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenuResource(hMenu, IDR_CLOSE);
+
 	setSkinMruMenu(hMenu);
 	xmenu_update(hMenu);
 	POINT pt;
@@ -673,7 +675,7 @@ int CToolWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	setSkinMruMenu(np2class_gethmenu(m_hWnd));
 
 	HMENU hMenu = GetSystemMenu(FALSE);
-	int nCount = menu_addmenures(hMenu, 0, IDR_TOOLWIN, FALSE);
+	UINT nCount = InsertMenuResource(hMenu, 0, TRUE, IDR_TOOLWIN);
 	if (nCount)
 	{
 		InsertMenu(hMenu, nCount, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);

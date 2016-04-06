@@ -27,7 +27,7 @@
  * @param[in] hPopup 追加するメニュー
  * @return 追加した項目数
  */
-static UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup)
+UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup)
 {
 	int nCount = GetMenuItemCount(hPopup);
 	UINT nAdded = 0;
@@ -61,6 +61,17 @@ static UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPo
 		}
 	}
 	return nAdded;
+}
+
+/**
+ * 新しいメニュー項目を追加します
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] nMenuID 追加するメニュー ID
+ * @return 追加した項目数
+ */
+UINT AppendMenuResource(HMENU hMenu, UINT nMenuID)
+{
+	return InsertMenuResource(hMenu, GetMenuItemCount(hMenu), TRUE, nMenuID);
 }
 
 /**
@@ -175,84 +186,6 @@ bool menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
 		}
 	}
 	return false;
-}
-
-/**
- * メニュー追加
- * @param[in] hMenu メニュー ハンドル
- * @param[in] nPos 追加する位置
- * @param[in] hmenuAdd 追加するメニュー
- * @param[in] bSeparator セパレータを追加する
- * @return 追加数
- */
-int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator)
-{
-	if (nPos < 0)
-	{
-		nPos = GetMenuItemCount(hMenu);
-	}
-	int nCount = GetMenuItemCount(hmenuAdd);
-	int nAdded = 0;
-	for (int i = 0; i < nCount; i++)
-	{
-		MENUITEMINFO mii;
-		ZeroMemory(&mii, sizeof(mii));
-
-		TCHAR szString[128];
-		mii.cbSize = sizeof(mii);
-		mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU | MIIM_DATA;
-		mii.dwTypeData = szString;
-		mii.cch = _countof(szString);
-		if (GetMenuItemInfo(hmenuAdd, i, TRUE, &mii))
-		{
-			if (mii.hSubMenu)
-			{
-				HMENU hmenuSub = CreatePopupMenu();
-				(void)menu_addmenu(hmenuSub, 0, mii.hSubMenu, FALSE);
-				mii.hSubMenu = hmenuSub;
-			}
-			if (bSeparator)
-			{
-				bSeparator = FALSE;
-				InsertMenu(hMenu, nPos + nAdded, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-				nAdded++;
-			}
-			InsertMenuItem(hMenu, nPos + nAdded, TRUE, &mii);
-			nAdded++;
-		}
-	}
-	return nAdded;
-}
-
-/**
- * メニュー追加
- * @param[in] hMenu メニュー ハンドル
- * @param[in] nPos 追加する位置
- * @param[in] uID メニュー ID
- * @param[in] bSeparator セパレータを追加する
- * @return 追加数
- */
-int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator)
-{
-	int nCount = 0;
-	HINSTANCE hInstance = CWndProc::FindResourceHandle(MAKEINTRESOURCE(uID), RT_MENU);
-	HMENU hmenuAdd = LoadMenu(hInstance, MAKEINTRESOURCE(uID));
-	if (hmenuAdd)
-	{
-		nCount = menu_addmenu(hMenu, nPos, hmenuAdd, bSeparator);
-		DestroyMenu(hmenuAdd);
-	}
-	return nCount;
-}
-
-/**
- * メニュー追加 (単純コピー)
- * @param[in] popup コピー先
- * @param[in] menubar コピー元
- */
-void menu_addmenubar(HMENU popup, HMENU menubar)
-{
-	(void)menu_addmenu(popup, 0, menubar, FALSE);
 }
 
 
