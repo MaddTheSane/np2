@@ -145,18 +145,14 @@ static BOOL InsertMenuString(HMENU hMenu, UINT uItem, UINT uFlags, UINT_PTR uIDN
 	return InsertMenu(hMenu, uItem, uFlags, uIDNewItem, rString.c_str());
 }
 
-
-
 /**
- * 検索
+ * メニュー オーナーを検索
  * @param[in] hMenu メニュー ハンドル
- * @param[in] uID ID
- * @param[out] phmenuRet 見つかったメニュー
+ * @param[in] uItem メニュー アイテム
  * @param[out] pnPos 見つかった位置
- * @retval true 見つかった
- * @retval false 見つからなかった
+ * @return メニュー ハンドル
  */
-bool menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
+HMENU GetMenuOwner(HMENU hMenu, UINT uItem, int* pnPos)
 {
 	int nCount = GetMenuItemCount(hMenu);
 	for (int i = 0; i < nCount; i++)
@@ -167,25 +163,25 @@ bool menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos)
 		mii.fMask = MIIM_ID | MIIM_SUBMENU;
 		if (GetMenuItemInfo(hMenu, i, TRUE, &mii))
 		{
-			if (mii.wID == uID)
+			if (mii.wID == uItem)
 			{
-				if (phmenuRet)
-				{
-					*phmenuRet = hMenu;
-				}
 				if (pnPos)
 				{
 					*pnPos = i;
 				}
-				return true;
+				return hMenu;
 			}
-			else if ((mii.hSubMenu) && (menu_searchmenu(mii.hSubMenu, uID, phmenuRet, pnPos)))
+			else if (mii.hSubMenu)
 			{
-				return true;
+				HMENU hFoundMenu = GetMenuOwner(mii.hSubMenu, uItem, pnPos);
+				if (hFoundMenu)
+				{
+					return hFoundMenu;
+				}
 			}
 		}
 	}
-	return false;
+	return NULL;
 }
 
 
