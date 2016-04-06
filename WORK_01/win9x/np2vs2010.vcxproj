@@ -122,6 +122,9 @@
     <YASM>
       <AdditionalOptions>-I.\x64 -I..\i286c\x64 -I..\io\x64 %(AdditionalOptions)</AdditionalOptions>
     </YASM>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -168,6 +171,9 @@
     <YASM>
       <AdditionalOptions>-I.\x64 -I..\i286c\x64 -I..\io\x64 %(AdditionalOptions)</AdditionalOptions>
     </YASM>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WIN64;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\bios\bios.c" />
