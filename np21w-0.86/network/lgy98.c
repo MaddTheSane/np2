@@ -801,7 +801,7 @@ void lgy98_bind(void){
 	if(np2cfg.lgy98io) base = np2cfg.lgy98io;
 	if(np2cfg.lgy98irq) irq = np2cfg.lgy98irq;
 	
-	TRACEOUT(("LGY-98: I/O:%04X, IRQ:%d, TAP:%s", base, irq, np2cfg.lgy98tap));
+	TRACEOUT(("LGY-98: I/O:%04X, IRQ:%d, TAP:%s", base, irq, np2cfg.np2nettap));
 
     vlan = np2net_find_vlan(0);
 

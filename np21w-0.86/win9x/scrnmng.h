@@ -92,6 +92,9 @@ void scrnmng_entersizing(void);
 void scrnmng_sizing(UINT side, RECT *rect);
 void scrnmng_exitsizing(void);
 
+void scrnmng_updatefsres(void);
+void scrnmng_blthdc(HDC hdc);
+
 #if defined(SUPPORT_DCLOCK)
 BOOL scrnmng_isdispclockclick(const POINT *pt);
 void scrnmng_dispclock(void);

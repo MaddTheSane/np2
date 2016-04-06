@@ -6,6 +6,11 @@
  * @date	$Date: 2011/02/17 10:36:05 $
  */
 
+#if defined(SUPPORT_WIN2000HOST)
+#define WINVER2 0x0500
+#include "commonfix.h"
+#endif
+
 #include "compiler.h"
 #include <time.h>
 #include <winsock.h>
@@ -117,8 +122,9 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 						CSoundMng::kDSound3, TEXT(""),
 
 #if defined(SUPPORT_VSTi)
-						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll")
+						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll"),
 #endif	// defined(SUPPORT_VSTi)
+						0
 					};
 
 		OEMCHAR		fddfolder[MAX_PATH];
@@ -1382,7 +1388,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_SYSKEYDOWN:
+#ifdef HOOK_SYSKEY
+			if (GetAsyncKeyState (VK_RMENU) >> ((sizeof(SHORT) * 8) - 1)) {								// ver0.86 rev6	
+#else
 			if (lParam & 0x20000000) {								// ver0.30
+#endif
 				if ((np2oscfg.shortcut & 1) && (wParam == VK_RETURN)) {
 					changescreen(g_scrnmode ^ SCRNMODE_FULLSCREEN);
 					break;
@@ -1544,6 +1554,71 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return(0L);
 }
 
+#ifdef HOOK_SYSKEY
+HHOOK hHook = NULL;
+// システムショートカットキー
+LRESULT CALLBACK LowLevelKeyboardProc (INT nCode, WPARAM wParam, LPARAM lParam)
+{
+    // By returning a non-zero value from the hook procedure, the
+    // message does not get passed to the target window
+    KBDLLHOOKSTRUCT *pkbhs = (KBDLLHOOKSTRUCT *) lParam;
+    BOOL bControlKeyDown = 0;
+    BOOL bShiftKeyDown = 0;
+    BOOL bAltKeyDown = 0;
+
+    switch (nCode)
+    {
+        case HC_ACTION:
+        {
+			if(GetForegroundWindow()==g_hWndMain){
+				KBDLLHOOKSTRUCT *kbstruct = (KBDLLHOOKSTRUCT*)lParam;
+				// Check to see if the CTRL key is pressed
+				bControlKeyDown = GetAsyncKeyState (VK_LCONTROL) >> ((sizeof(SHORT) * 8) - 1);
+				bShiftKeyDown = GetAsyncKeyState (VK_LSHIFT) >> ((sizeof(SHORT) * 8) - 1);
+				bAltKeyDown = GetAsyncKeyState (VK_LMENU) >> ((sizeof(SHORT) * 8) - 1);
+            
+				// Disable CTRL+ESC, ALT+TAB, ALT+ESC
+				if (pkbhs->vkCode == VK_ESCAPE && bControlKeyDown
+					|| pkbhs->vkCode == VK_TAB && bAltKeyDown
+					|| pkbhs->vkCode == VK_ESCAPE && bAltKeyDown){
+
+					switch((int)wParam){
+					case WM_KEYDOWN:
+					case WM_SYSKEYDOWN:
+						winkbd_keydown(kbstruct->vkCode, ((kbstruct->flags)<<24)|(kbstruct->scanCode<<16));
+						break;
+					case WM_KEYUP:
+					case WM_SYSKEYUP:
+						winkbd_keyup(kbstruct->vkCode, ((kbstruct->flags)<<24)|(kbstruct->scanCode<<16));
+						break;
+					}
+					return 1;
+				}
+				if(pkbhs->vkCode == VK_SCROLL && bAltKeyDown && bControlKeyDown){
+					// Ctrl+Alt+ScrollLock → Ctrl+Alt+Delete
+					switch((int)wParam){
+					case WM_KEYDOWN:
+					case WM_SYSKEYDOWN:
+						keystat_keydown(0x39);
+						break;
+					case WM_KEYUP:
+					case WM_SYSKEYUP:
+						keystat_keyup(0x39);
+						break;
+					}
+					return 1;
+				}
+			}
+            break;
+        }
+
+        default:
+            break;
+    }
+    return CallNextHookEx (hHook, nCode, wParam, lParam);
+}
+#endif
+
 /**
  * 1フレーム実行
  * @param[in] bDraw 描画フラグ
@@ -1608,6 +1683,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	UINT32		tick;
 #endif
 	BOOL		xrollkey;
+	
+#if defined(SUPPORT_WIN2000HOST)
+	initialize_findacx();
+#endif
 
 	_MEM_INIT();
 	CWndProc::Initialize(hInstance);
@@ -1781,6 +1860,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 #ifdef SUPPORT_CL_GD5430
 	pc98_cirrus_vga_init();
 #endif
+#ifdef HOOK_SYSKEY
+	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, hInstance, 0);
+#endif
 
 	pccore_reset();
 
@@ -1913,7 +1995,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			DispatchMessage(&msg);
 		}
 	}
-
+	
+#ifdef HOOK_SYSKEY
+	UnhookWindowsHookEx(hHook);
+#endif
 #ifdef SUPPORT_CL_GD5430
 	pc98_cirrus_vga_shutdown();
 #endif

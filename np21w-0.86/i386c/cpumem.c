@@ -324,14 +324,14 @@ static const MEMFNF memfnf = {
 // ----
 #if defined(SUPPORT_CL_GD5430)
 #define VRAMWINDOW_SIZE	0x200000  // VRAM マッピングサイズ
-#define EXT_WINDOW_SIZE	0xF00000  // 謎
+#define EXT_WINDOW_SIZE	0x200000  // 謎
 #define EXT_WINDOW_SHFT	0x000000  // 謎
-#define BBLTWINDOW_ADSH	0x1000000 // VRAM BITBLT
-#define BBLTWINDOW_SIZE	0x000000  // VRAM BITBLT マッピングサイズ
+#define BBLTWINDOW_ADSH	0xF0000000 // VRAM BITBLT
+#define BBLTWINDOW_SIZE	0x100000  // VRAM BITBLT マッピングサイズ
 #define MMIOWINDOW_ADDR	0xF80000  // MMIO マッピングアドレス（場所不明）
-#define MMIOWINDOW_SIZE	0x0//10000   // MMIO マッピングアドレス（サイズ不明）
+#define MMIOWINDOW_SIZE	0x0   // MMIO マッピングサイズ（サイズ不明）
 #define VRA2WINDOW_ADDR	0xF20000  // VRAMウィンドウ マッピングアドレス（場所不明）
-#define VRA2WINDOW_SIZE	0x0//1000    // VRAMウィンドウ マッピングアドレス（サイズ不明）
+#define VRA2WINDOW_SIZE	0x0   // VRAMウィンドウ マッピングサイズ（サイズ不明）
 #endif
 
 REG8 MEMCALL memp_read8(UINT32 address) {
@@ -360,24 +360,24 @@ REG8 MEMCALL memp_read8(UINT32 address) {
 	}
 #endif
 	if(0xF8E80 <= address && address <= 0xF8E80+0x003F){
-		if (address == 0xF8E80+0x0000) 
-			return 0x98;
-		if (address == 0xF8E80+0x0001) 
-			return 0x21;
-		if (address == 0xF8E80+0x0002) 
-			return 0x1d;
-		if (address == 0xF8E80+0x0003) 
-			return 0x23;
-		if (address == 0xF8E80+0x0004) 
-			return 0x2C;
-		if (address == 0xF8E80+0x0005) 
-			return 0xb1;
+		//if (address == 0xF8E80+0x0000) 
+		//	return 0x98;
+		//if (address == 0xF8E80+0x0001) 
+		//	return 0x21;
+		//if (address == 0xF8E80+0x0002) 
+		//	return 0x1d;
+		//if (address == 0xF8E80+0x0003) 
+		//	return 0x23;
+		//if (address == 0xF8E80+0x0004) 
+		//	return 0x2C;
+		//if (address == 0xF8E80+0x0005) 
+		//	return 0xb1;
 		if (address == 0xF8E80+0x0010) 
 			return (sxsi_getdevtype(3)!=SXSIDEV_NC ? 0x8 : 0x0)|(sxsi_getdevtype(2)!=SXSIDEV_NC ? 0x4 : 0x0)|
 				   (sxsi_getdevtype(1)!=SXSIDEV_NC ? 0x2 : 0x0)|(sxsi_getdevtype(0)!=SXSIDEV_NC ? 0x1 : 0x0);
 			//return 0x0F;
 		if (address == 0xF8E80+0x0011) 
-			return 0x80;
+			return mem[address] & ~0x20; // 0x20のビットがONだとWin2000でマウスがカクカクする？
 		if (address == 0xF8E80+0x003F) 
 			return 0x21; // PC-9821 Xa7,9,10,12/C 
 	}

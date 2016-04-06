@@ -50,7 +50,6 @@ REG8 cirrusvga_regindexA2 = 0;
 REG8 cirrusvga_regindex = 0;
 //REG8 cirrusvga_iomap = 0x0F;
 REG8 cirrusvga_mmioenable = 0;
-REG8 cirrusvga_paletteChanged = 1;
 
 int g_cirrus_linear_map_enabled = 0;
 CPUWriteMemoryFunc **g_cirrus_linear_write = NULL;
@@ -62,12 +61,11 @@ DisplayState ds = {0};
 BITMAPINFO *ga_bmpInfo;
 HPALETTE ga_hpal = NULL;
 
-HBITMAP hBmpBuf;
-HDC     hdcBuf;
-
 BITMAPINFO bmpInfo = {0};
 void *cirrusvga_opaque = NULL;
 UINT32 ga_VRAMWindowAddr = (0x0F<<24);
+
+static HCURSOR ga_hFakeCursor = NULL; // ハードウェアカーソル（仮）
 
 static void cpu_register_physical_memory(target_phys_addr_t start_addr, ram_addr_t size, ram_addr_t phys_offset){
 	//cpu_register_physical_memory_offset(start_addr, size, phys_offset, 0);
@@ -508,7 +506,7 @@ static unsigned int rgb_to_pixel32bgr_dup(unsigned int r, unsigned int g, unsign
 
 static int ds_get_linesize(DisplayState *ds)
 {
-    return ds->surface->linesize;
+    return np2wab.realWidth*4;
 }
 
 static uint8_t* ds_get_data(DisplayState *ds)
@@ -518,22 +516,22 @@ static uint8_t* ds_get_data(DisplayState *ds)
 
 static int ds_get_width(DisplayState *ds)
 {
-    return ds->surface->width;
+    return np2wab.realWidth;//ds->surface->width;
 }
 
 static int ds_get_height(DisplayState *ds)
 {
-    return ds->surface->height;
+    return np2wab.realHeight;//ds->surface->height;
 }
 
 static int ds_get_bits_per_pixel(DisplayState *ds)
 {
-    return ds->surface->pf.bits_per_pixel;
+    return 32;//ds->surface->pf.bits_per_pixel;
 }
 
 static int ds_get_bytes_per_pixel(DisplayState *ds)
 {
-    return ds->surface->pf.bytes_per_pixel;
+    return 4;//ds->surface->pf.bytes_per_pixel;
 }
 
 static void dpy_update(DisplayState *s, int x, int y, int w, int h)
@@ -1000,28 +998,29 @@ static void cirrus_do_copy(CirrusVGAState *s, int dst, int src, int w, int h)
        our x/y to be the upper left corner (instead of the lower
        right corner) */
     if (s->cirrus_blt_dstpitch < 0) {
-	sx -= (s->cirrus_blt_width / depth) - 1;
-	dx -= (s->cirrus_blt_width / depth) - 1;
-	sy -= s->cirrus_blt_height - 1;
-	dy -= s->cirrus_blt_height - 1;
+		sx -= (s->cirrus_blt_width / depth) - 1;
+		dx -= (s->cirrus_blt_width / depth) - 1;
+		sy -= s->cirrus_blt_height - 1;
+		dy -= s->cirrus_blt_height - 1;
     }
 
     /* are we in the visible portion of memory? */
     if (sx >= 0 && sy >= 0 && dx >= 0 && dy >= 0 &&
-	(sx + w) <= width && (sy + h) <= height &&
-	(dx + w) <= width && (dy + h) <= height) {
-	notify = 1;
+		(sx + w) <= width && (sy + h) <= height &&
+		(dx + w) <= width && (dy + h) <= height) {
+		notify = 1;
     }
 
     /* make to sure only copy if it's a plain copy ROP */
     if (*s->cirrus_rop != cirrus_bitblt_rop_fwd_src &&
-	*s->cirrus_rop != cirrus_bitblt_rop_bkwd_src)
-	notify = 0;
+		*s->cirrus_rop != cirrus_bitblt_rop_bkwd_src)
+		notify = 0;
 
     /* we have to flush all pending changes so that the copy
        is generated at the appropriate moment in time */
-    if (notify)
-	vga_hw_update();
+    if (notify){
+		vga_hw_update();
+	}
 
     (*s->cirrus_rop) (s, s->vram_ptr +
 		      (s->cirrus_blt_dstaddr & s->cirrus_addr_mask),
@@ -1030,11 +1029,12 @@ static void cirrus_do_copy(CirrusVGAState *s, int dst, int src, int w, int h)
 		      s->cirrus_blt_dstpitch, s->cirrus_blt_srcpitch,
 		      s->cirrus_blt_width, s->cirrus_blt_height);
 
-    if (notify)
-	qemu_console_copy(s->ds,
-			  sx, sy, dx, dy,
-			  s->cirrus_blt_width / depth,
-			  s->cirrus_blt_height);
+    if (notify){
+		qemu_console_copy(s->ds,
+				  sx, sy, dx, dy,
+				  s->cirrus_blt_width / depth,
+				  s->cirrus_blt_height);
+	}
 
     /* we don't have to notify the display that this portion has
        changed since qemu_console_copy implies this */
@@ -2551,78 +2551,78 @@ static int get_depth_index(DisplayState *s)
 }
 static void cirrus_cursor_draw_line(VGAState *s1, uint8_t *d1, int scr_y)
 {
-    CirrusVGAState *s = (CirrusVGAState *)s1;
-    int w, h, bpp, x1, x2, poffset;
-    unsigned int color0, color1;
-    const uint8_t *palette, *src;
-    uint32_t_ content;
+    //CirrusVGAState *s = (CirrusVGAState *)s1;
+    //int w, h, bpp, x1, x2, poffset;
+    //unsigned int color0, color1;
+    //const uint8_t *palette, *src;
+    //uint32_t_ content;
 
-    if (!(s->sr[0x12] & CIRRUS_CURSOR_SHOW))
-        return;
-    /* fast test to see if the cursor intersects with the scan line */
-    if (s->sr[0x12] & CIRRUS_CURSOR_LARGE) {
-        h = 64;
-    } else {
-        h = 32;
-    }
-    if ((uint32_t_)scr_y < s->hw_cursor_y ||
-        (uint32_t_)scr_y >= (s->hw_cursor_y + h))
-        return;
+    //if (!(s->sr[0x12] & CIRRUS_CURSOR_SHOW))
+    //    return;
+    ///* fast test to see if the cursor intersects with the scan line */
+    //if (s->sr[0x12] & CIRRUS_CURSOR_LARGE) {
+    //    h = 64;
+    //} else {
+    //    h = 32;
+    //}
+    //if ((uint32_t_)scr_y < s->hw_cursor_y ||
+    //    (uint32_t_)scr_y >= (s->hw_cursor_y + h))
+    //    return;
 
-    src = s->vram_ptr + s->real_vram_size - 16 * 1024;
-    if (s->sr[0x12] & CIRRUS_CURSOR_LARGE) {
-        src += (s->sr[0x13] & 0x3c) * 256;
-        src += (scr_y - s->hw_cursor_y) * 16;
-        poffset = 8;
-        content = ((uint32_t_ *)src)[0] |
-            ((uint32_t_ *)src)[1] |
-            ((uint32_t_ *)src)[2] |
-            ((uint32_t_ *)src)[3];
-    } else {
-        src += (s->sr[0x13] & 0x3f) * 256;
-        src += (scr_y - s->hw_cursor_y) * 4;
-        poffset = 128;
-        content = ((uint32_t_ *)src)[0] |
-            ((uint32_t_ *)(src + 128))[0];
-    }
-    /* if nothing to draw, no need to continue */
-    if (!content)
-        return;
-    w = h;
+    //src = s->vram_ptr + s->real_vram_size - 16 * 1024;
+    //if (s->sr[0x12] & CIRRUS_CURSOR_LARGE) {
+    //    src += (s->sr[0x13] & 0x3c) * 256;
+    //    src += (scr_y - s->hw_cursor_y) * 16;
+    //    poffset = 8;
+    //    content = ((uint32_t_ *)src)[0] |
+    //        ((uint32_t_ *)src)[1] |
+    //        ((uint32_t_ *)src)[2] |
+    //        ((uint32_t_ *)src)[3];
+    //} else {
+    //    src += (s->sr[0x13] & 0x3f) * 256;
+    //    src += (scr_y - s->hw_cursor_y) * 4;
+    //    poffset = 128;
+    //    content = ((uint32_t_ *)src)[0] |
+    //        ((uint32_t_ *)(src + 128))[0];
+    //}
+    ///* if nothing to draw, no need to continue */
+    //if (!content)
+    //    return;
+    //w = h;
 
-    x1 = s->hw_cursor_x;
-    if ((uint32_t_)x1 >= s->last_scr_width)
-        return;
-    x2 = s->hw_cursor_x + w;
-    if ((uint32_t_)x2 > s->last_scr_width)
-        x2 = s->last_scr_width;
-    w = x2 - x1;
-    palette = s->cirrus_hidden_palette;
-    s->rgb_to_pixel = rgb_to_pixel_dup_table[get_depth_index(s->ds)];
-    color0 = s->rgb_to_pixel(c6_to_8(palette[0x0 * 3]),
-                             c6_to_8(palette[0x0 * 3 + 1]),
-                             c6_to_8(palette[0x0 * 3 + 2]));
-    color1 = s->rgb_to_pixel(c6_to_8(palette[0xf * 3]),
-                             c6_to_8(palette[0xf * 3 + 1]),
-                             c6_to_8(palette[0xf * 3 + 2]));
-    bpp = ((ds_get_bits_per_pixel(s->ds) + 7) >> 3);
-    d1 += x1 * bpp;
-    switch(ds_get_bits_per_pixel(s->ds)) {
-    default:
-        break;
-    case 8:
-        vga_draw_cursor_line_8(d1, src, poffset, w, color0, color1, 0xff);
-        break;
-    case 15:
-        vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0x7fff);
-        break;
-    case 16:
-        vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0xffff);
-        break;
-    case 32:
-        vga_draw_cursor_line_32(d1, src, poffset, w, color0, color1, 0xffffff);
-        break;
-    }
+    //x1 = s->hw_cursor_x;
+    //if ((uint32_t_)x1 >= s->last_scr_width)
+    //    return;
+    //x2 = s->hw_cursor_x + w;
+    //if ((uint32_t_)x2 > s->last_scr_width)
+    //    x2 = s->last_scr_width;
+    //w = x2 - x1;
+    //palette = s->cirrus_hidden_palette;
+    //s->rgb_to_pixel = rgb_to_pixel_dup_table[get_depth_index(s->ds)];
+    //color0 = s->rgb_to_pixel(c6_to_8(palette[0x0 * 3]),
+    //                         c6_to_8(palette[0x0 * 3 + 1]),
+    //                         c6_to_8(palette[0x0 * 3 + 2]));
+    //color1 = s->rgb_to_pixel(c6_to_8(palette[0xf * 3]),
+    //                         c6_to_8(palette[0xf * 3 + 1]),
+    //                         c6_to_8(palette[0xf * 3 + 2]));
+    //bpp = ((ds_get_bits_per_pixel(s->ds) + 7) >> 3);
+    //d1 += x1 * bpp;
+    //switch(ds_get_bits_per_pixel(s->ds)) {
+    //default:
+    //    break;
+    //case 8:
+    //    vga_draw_cursor_line_8(d1, src, poffset, w, color0, color1, 0xff);
+    //    break;
+    //case 15:
+    //    vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0x7fff);
+    //    break;
+    //case 16:
+    //    vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0xffff);
+    //    break;
+    //case 32:
+    //    vga_draw_cursor_line_32(d1, src, poffset, w, color0, color1, 0xffffff);
+    //    break;
+    //}
 }
 
 /***************************************
@@ -3256,7 +3256,7 @@ static void vga_ioport_write(void *opaque, uint32_t_ addr, uint32_t_ val)
 			memcpy(&s->palette[s->dac_write_index * 3], s->dac_cache, 3);
 			s->dac_sub_index = 0;
 			s->dac_write_index++;
-			cirrusvga_paletteChanged = 1; // パレット変えました
+			np2wab.paletteChanged = 1; // パレット変えました
 		}
 		break;
     case 0x3ce:
@@ -3564,230 +3564,112 @@ void cirrus_reset(void *opaque)
     /* Win2K seems to assume that the pattern buffer is at 0xff
        initially ! */
     memset(s->vram_ptr, 0xff, s->real_vram_size);
-    //memset(s->vram_ptr+s->real_vram_size/2, 0xa0, s->real_vram_size/2);
 
     s->cirrus_hidden_dac_lockindex = 5;
     s->cirrus_hidden_dac_data = 0;
 }
 
-static void vga_draw_graphic(VGAState *s, int full_update)
-{
-    int y1, y, update, page_min, page_max, linesize, y_start, double_scan, mask, depth;
-    int width, height, shift_control, line_offset, page0, page1, bwidth, bits;
-    int disp_width, multi_scan, multi_run;
-    uint8_t *d;
-    uint32_t_ v, addr1, addr;
-    vga_draw_line_func *vga_draw_line;
 
-    //full_update |= update_basic_params(s);
+//void vga_draw_cursor_line_8(uint8_t *d1,
+//                            const uint8_t *src1,
+//                            int poffset, int w,
+//                            unsigned int color0,
+//                            unsigned int color1,
+//                            unsigned int color_xor)
+//{
+//    const uint8_t *plane0, *plane1;
+//    int x, b0, b1;
+//    uint8_t *d;
+//
+//    d = d1;
+//    plane0 = src1;
+//    plane1 = src1 + poffset;
+//    for(x = 0; x < w; x++) {
+//        b0 = (plane0[x >> 3] >> (7 - (x & 7))) & 1;
+//        b1 = (plane1[x >> 3] >> (7 - (x & 7))) & 1;
+//        switch(b0 | (b1 << 1)) {
+//        case 0:
+//            break;
+//        case 1:
+//            d[0] ^= color_xor;
+//            break;
+//        case 2:
+//            d[0] = color0;
+//            break;
+//        case 3:
+//            d[0] = color1;
+//            break;
+//        }
+//        d += 1;
+//    }
+//}
+//void vga_draw_cursor_line_16(uint8_t *d1,
+//                            const uint8_t *src1,
+//                            int poffset, int w,
+//                            unsigned int color0,
+//                            unsigned int color1,
+//                            unsigned int color_xor)
+//{
+//    const uint8_t *plane0, *plane1;
+//    int x, b0, b1;
+//    uint8_t *d;
+//
+//    d = d1;
+//    plane0 = src1;
+//    plane1 = src1 + poffset;
+//    for(x = 0; x < w; x++) {
+//        b0 = (plane0[x >> 3] >> (7 - (x & 7))) & 1;
+//        b1 = (plane1[x >> 3] >> (7 - (x & 7))) & 1;
+//        switch(b0 | (b1 << 1)) {
+//        case 0:
+//            break;
+//        case 1:
+//            ((uint16_t_ *)d)[0] ^= color_xor;
+//            break;
+//        case 2:
+//            ((uint16_t_ *)d)[0] = color0;
+//            break;
+//        case 3:
+//            ((uint16_t_ *)d)[0] = color1;
+//            break;
+//        }
+//        d += 2;
+//    }
+//}
+//void vga_draw_cursor_line_32(uint8_t *d1,
+//                            const uint8_t *src1,
+//                            int poffset, int w,
+//                            unsigned int color0,
+//                            unsigned int color1,
+//                            unsigned int color_xor)
+//{
+//    const uint8_t *plane0, *plane1;
+//    int x, b0, b1;
+//    uint8_t *d;
+//
+//    d = d1;
+//    plane0 = src1;
+//    plane1 = src1 + poffset;
+//    for(x = 0; x < w; x++) {
+//        b0 = (plane0[x >> 3] >> (7 - (x & 7))) & 1;
+//        b1 = (plane1[x >> 3] >> (7 - (x & 7))) & 1;
+//        switch(b0 | (b1 << 1)) {
+//        case 0:
+//            break;
+//        case 1:
+//            ((uint32_t_ *)d)[0] ^= color_xor;
+//            break;
+//        case 2:
+//            ((uint32_t_ *)d)[0] = color0;
+//            break;
+//        case 3:
+//            ((uint32_t_ *)d)[0] = color1;
+//            break;
+//        }
+//        d += 4;
+//    }
+//}
 
-    //if (!full_update)
-    //    vga_sync_dirty_bitmap(s);
-
-    s->get_resolution(s, &width, &height);
-    disp_width = width;
-
-    shift_control = (s->gr[0x05] >> 5) & 3;
-    double_scan = (s->cr[0x09] >> 7);
-    if (shift_control != 1) {
-        multi_scan = (((s->cr[0x09] & 0x1f) + 1) << double_scan) - 1;
-    } else {
-        /* in CGA modes, multi_scan is ignored */
-        /* XXX: is it correct ? */
-        multi_scan = double_scan;
-    }
-    multi_run = multi_scan;
-    if (shift_control != s->shift_control ||
-        double_scan != s->double_scan) {
-        full_update = 1;
-        s->shift_control = shift_control;
-        s->double_scan = double_scan;
-    }
-
-    if (shift_control == 0) {
-        if (s->sr[0x01] & 8) {
-            disp_width <<= 1;
-        }
-    } else if (shift_control == 1) {
-        if (s->sr[0x01] & 8) {
-            disp_width <<= 1;
-        }
-    }
-
-    depth = s->get_bpp(s);
-    if (s->line_offset != s->last_line_offset ||
-        disp_width != s->last_width ||
-        height != s->last_height ||
-        s->last_depth != depth) {
-#if defined(WORDS_BIGENDIAN) == defined(TARGET_WORDS_BIGENDIAN)
-        if (depth == 16 || depth == 32) {
-#else
-        if (depth == 32) {
-#endif
-//            if (is_graphic_console()) {
-//                qemu_free_displaysurface(s->ds->surface);
-//                s->ds->surface = qemu_create_displaysurface_from(disp_width, height, depth,
-//                                                               s->line_offset,
-//                                                               s->vram_ptr + (s->start_addr * 4));
-//#if defined(WORDS_BIGENDIAN) != defined(TARGET_WORDS_BIGENDIAN)
-//                s->ds->surface->pf = qemu_different_endianness_pixelformat(depth);
-//#endif
-//                dpy_resize(s->ds);
-//            } else {
-//                qemu_console_resize(s->ds, disp_width, height);
-//            }
-        } else {
-            //qemu_console_resize(s->ds, disp_width, height);
-        }
-        s->last_scr_width = disp_width;
-        s->last_scr_height = height;
-        s->last_width = disp_width;
-        s->last_height = height;
-        s->last_line_offset = s->line_offset;
-        s->last_depth = depth;
-        full_update = 1;
-    //} else if (is_graphic_console() && is_buffer_shared(s->ds->surface) &&
-    //           (full_update || s->ds->surface->data != s->vram_ptr + (s->start_addr * 4))) {
-    //    s->ds->surface->data = s->vram_ptr + (s->start_addr * 4);
-    //    dpy_setdata(s->ds);
-    }
-
-    //s->rgb_to_pixel = rgb_to_pixel_dup_table[get_depth_index(s->ds)];
-
-    //if (shift_control == 0) {
-    //    full_update |= update_palette16(s);
-    //    if (s->sr[0x01] & 8) {
-    //        v = VGA_DRAW_LINE4D2;
-    //    } else {
-    //        v = VGA_DRAW_LINE4;
-    //    }
-    //    bits = 4;
-    //} else if (shift_control == 1) {
-    //    full_update |= update_palette16(s);
-    //    if (s->sr[0x01] & 8) {
-    //        v = VGA_DRAW_LINE2D2;
-    //    } else {
-    //        v = VGA_DRAW_LINE2;
-    //    }
-    //    bits = 4;
-    //} else {
-    //    switch(s->get_bpp(s)) {
-    //    default:
-    //    case 0:
-    //        full_update |= update_palette256(s);
-    //        v = VGA_DRAW_LINE8D2;
-    //        bits = 4;
-    //        break;
-    //    case 8:
-    //        full_update |= update_palette256(s);
-    //        v = VGA_DRAW_LINE8;
-    //        bits = 8;
-    //        break;
-    //    case 15:
-    //        v = VGA_DRAW_LINE15;
-    //        bits = 16;
-    //        break;
-    //    case 16:
-    //        v = VGA_DRAW_LINE16;
-    //        bits = 16;
-    //        break;
-    //    case 24:
-    //        v = VGA_DRAW_LINE24;
-    //        bits = 24;
-    //        break;
-    //    case 32:
-    //        v = VGA_DRAW_LINE32;
-    //        bits = 32;
-    //        break;
-    //    }
-    //}
-    //vga_draw_line = vga_draw_line_table[v * NB_DEPTHS + get_depth_index(s->ds)];
-
-    //if (!is_buffer_shared(s->ds->surface) && s->cursor_invalidate)
-    //    s->cursor_invalidate(s);
-
-    line_offset = s->line_offset;
-#if 0
-    printf("w=%d h=%d v=%d line_offset=%d cr[0x09]=0x%02x cr[0x17]=0x%02x linecmp=%d sr[0x01]=0x%02x\n",
-           width, height, v, line_offset, s->cr[9], s->cr[0x17], s->line_compare, s->sr[0x01]);
-#endif
-    //addr1 = (s->start_addr * 4);
-    //bwidth = (width * bits + 7) / 8;
-    //y_start = -1;
-    //page_min = 0x7fffffff;
-    //page_max = -1;
-    //d = ds_get_data(s->ds);
-    //linesize = ds_get_linesize(s->ds);
-    //y1 = 0;
-    //for(y = 0; y < height; y++) {
-    //    addr = addr1;
-    //    if (!(s->cr[0x17] & 1)) {
-    //        int shift;
-    //        /* CGA compatibility handling */
-    //        shift = 14 + ((s->cr[0x17] >> 6) & 1);
-    //        addr = (addr & ~(1 << shift)) | ((y1 & 1) << shift);
-    //    }
-    //    if (!(s->cr[0x17] & 2)) {
-    //        addr = (addr & ~0x8000) | ((y1 & 2) << 14);
-    //    }
-    //    page0 = s->vram_offset + (addr & TARGET_PAGE_MASK);
-    //    page1 = s->vram_offset + ((addr + bwidth - 1) & TARGET_PAGE_MASK);
-    //    update = full_update;// |
-    //        //cpu_physical_memory_get_dirty(page0, VGA_DIRTY_FLAG) |
-    //        //cpu_physical_memory_get_dirty(page1, VGA_DIRTY_FLAG);
-    //    if ((page1 - page0) > TARGET_PAGE_SIZE) {
-    //        /* if wide line, can use another page */
-    //        //update |= cpu_physical_memory_get_dirty(page0 + TARGET_PAGE_SIZE,
-    //        //                                        VGA_DIRTY_FLAG);
-    //    }
-    //    /* explicit invalidation for the hardware cursor */
-    //    update |= (s->invalidated_y_table[y >> 5] >> (y & 0x1f)) & 1;
-    //    if (update) {
-    //        if (y_start < 0)
-    //            y_start = y;
-    //        if (page0 < page_min)
-    //            page_min = page0;
-    //        if (page1 > page_max)
-    //            page_max = page1;
-    //        if (1/*!(is_buffer_shared(s->ds->surface))*/) {
-    //            vga_draw_line(s, d, s->vram_ptr + addr, width);
-    //            if (s->cursor_draw_line)
-    //                s->cursor_draw_line(s, d, y);
-    //        }
-    //    } else {
-    //        if (y_start >= 0) {
-    //            /* flush to display */
-    //            dpy_update(s->ds, 0, y_start,
-    //                       disp_width, y - y_start);
-    //            y_start = -1;
-    //        }
-    //    }
-    //    if (!multi_run) {
-    //        mask = (s->cr[0x17] & 3) ^ 3;
-    //        if ((y1 & mask) == mask)
-    //            addr1 += line_offset;
-    //        y1++;
-    //        multi_run = multi_scan;
-    //    } else {
-    //        multi_run--;
-    //    }
-    //    /* line compare acts on the displayed lines */
-    //    if (y == s->line_compare)
-    //        addr1 = 0;
-    //    d += linesize;
-    //}
-    //if (y_start >= 0) {
-    //    /* flush to display */
-    //    dpy_update(s->ds, 0, y_start,
-    //               disp_width, y - y_start);
-    //}
-    /* reset modified pages */
-    //if (page_max != -1) {
-    //    cpu_physical_memory_reset_dirty(page_min, page_max + TARGET_PAGE_SIZE,
-    //                                    VGA_DIRTY_FLAG);
-    //}
-    memset(s->invalidated_y_table, 0, ((height + 31) >> 5) * 4);
-}
 
 LOGPALETTE * NewLogPal(const uint8_t *pCirrusPalette , int iSize) {
 	LOGPALETTE *lpPalette;
@@ -3807,13 +3689,11 @@ LOGPALETTE * NewLogPal(const uint8_t *pCirrusPalette , int iSize) {
 }
 //　画面表示(仮)　本当はQEMUのオリジナルのコードを移植すべきなんだけど･･･
 void cirrusvga_drawGraphic(){
-	int i, y, width, height, bpp;
+	int i, width, height, bpp;
 	LOGPALETTE * lpPalette;
-	static HPALETTE hPalette, oldpalette;
-	HWND hWnd = np2wab.hWndWAB;
-	HDC hdc = np2wab.hDCWAB;
-	static int lastscalemode = 0;
-	int scalemode = 0;
+	static HPALETTE hPalette = NULL, oldPalette = NULL;
+	HDC hdc = np2wab.hDCBuf;
+	static int waitscreenchange = 0;
 	int r;
 	int scanW = 0;
 	int scanpixW = 0;
@@ -3825,6 +3705,7 @@ void cirrusvga_drawGraphic(){
 	np2wab.realWidth = width;
 	np2wab.realHeight = height;
     
+
 	//　謎の表示幅調整（2^nにパディングされることがあるらしいけど条件が分からないので無理矢理）
 	scanW = width*bpp/8;
 	if(scanW<=512 ) scanW = 512;
@@ -3861,49 +3742,28 @@ void cirrusvga_drawGraphic(){
 		scanW = width*2;
 	}
 
-	ga_bmpInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	if(ga_bmpInfo->bmiHeader.biWidth != width || ga_bmpInfo->bmiHeader.biHeight != height){
-		// 解像度が変わっていたらウィンドウサイズも変える
-		np2wab_setScreenSize(width, height);
-		cirrusvga_paletteChanged = 1;
-	}
 	if(ga_bmpInfo->bmiHeader.biBitCount!=8 && bpp==8){
-		cirrusvga_paletteChanged = 1;
+		np2wab.paletteChanged = 1;
 	}
+
+	ga_bmpInfo->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	ga_bmpInfo->bmiHeader.biWidth = width; // 仮セット
 	ga_bmpInfo->bmiHeader.biHeight = 1; // 仮セット
 	ga_bmpInfo->bmiHeader.biPlanes = 1;
 	ga_bmpInfo->bmiHeader.biBitCount = bpp;
-	//vga_draw_graphic((VGAState *)cirrusvga, 1);
-	scalemode = np2wab.wndWidth!=width || np2wab.wndHeight!=height;
-	if(lastscalemode!=scalemode){
-		if(scalemode){
-			SetStretchBltMode(np2wab.hDCWAB, HALFTONE);
-		}else{
-			SetStretchBltMode(np2wab.hDCWAB, BLACKONWHITE);
-		}
-		lastscalemode = scalemode;
-		cirrusvga_paletteChanged = 1;
-	}
-	if(scalemode){
-		hdc = hdcBuf;
-	}
 	if(bpp<=8){
-		if(cirrusvga_paletteChanged){
-			//for(i=0;i<256;i++){
-			//	//ga_bmpInfo->bmiColors[i].rgbReserved = cirrusvga->palette[i*3];
-			//	ga_bmpInfo->bmiColors[i].rgbRed = c6_to_8(cirrusvga->palette[i*3]);
-			//	ga_bmpInfo->bmiColors[i].rgbGreen = c6_to_8(cirrusvga->palette[i*3+1]);
-			//	ga_bmpInfo->bmiColors[i].rgbBlue = c6_to_8(cirrusvga->palette[i*3+2]);
-			//}
-			//　256パレットが所々色化けするのは何故だろう
+		if(np2wab.paletteChanged){
 			lpPalette = NewLogPal(cirrusvga->palette , 1<<bpp);
+			if(hPalette){
+				SelectPalette(hdc , oldPalette , FALSE);
+				DeleteObject(hPalette);
+			}
 			hPalette = CreatePalette(lpPalette);
 			free(lpPalette);
-			oldpalette = SelectPalette(hdc , hPalette , FALSE);
-			cirrusvga_paletteChanged = 0;
+			hPalette = SelectPalette(hdc , hPalette , FALSE);
+			RealizePalette(hdc);
+			np2wab.paletteChanged = 0;
 		}
-		RealizePalette(hdc);
 		// 256モードなら素直に転送して良し
 		ga_bmpInfo->bmiHeader.biWidth = scanpixW;
 		ga_bmpInfo->bmiHeader.biHeight = -height;
@@ -3941,33 +3801,87 @@ void cirrusvga_drawGraphic(){
 			}
 		}
 	}
-	if(scalemode){
-		if(np2wab.wndWidth * height != width * np2wab.wndHeight){
-			int dstw = width * np2wab.wndHeight / height;
-			int dsth = np2wab.wndHeight;
-			int mgnw = (np2wab.wndWidth - dstw);
-			int shx = 0;
-			if(mgnw&0x1) shx = 1;
-			mgnw = mgnw>>1;
-			// 横長決め打ち
-			BitBlt(np2wab.hDCWAB, 0, 0, mgnw, np2wab.wndHeight, NULL, 0, 0, BLACKNESS);
-			BitBlt(np2wab.hDCWAB, np2wab.wndWidth-mgnw-shx, 0, mgnw+shx, np2wab.wndHeight, NULL, 0, 0, BLACKNESS);
-			StretchBlt(np2wab.hDCWAB, mgnw, 0, dstw, dsth, hdcBuf, 0, 0, width, height, SRCCOPY);
-		}else{
-			StretchBlt(np2wab.hDCWAB, 0, 0, np2wab.wndWidth, np2wab.wndHeight, hdcBuf, 0, 0, width, height, SRCCOPY);
-		}
-	}
 	ga_bmpInfo->bmiHeader.biWidth = width; // 前回の解像度を保存
 	ga_bmpInfo->bmiHeader.biHeight = height; // 前回の解像度を保存
     if ((cirrusvga->sr[0x12] & CIRRUS_CURSOR_SHOW)){
-		HCURSOR hCursor = GetCursor();
-		DrawIcon(hdc, cirrusvga->hw_cursor_x, cirrusvga->hw_cursor_y, hCursor);
+		//ハードウェアカーソルは上手くいかないので仮
+		DrawIcon(hdc, cirrusvga->hw_cursor_x, cirrusvga->hw_cursor_y, ga_hFakeCursor);
+		//int y, w;
+		//int sy, ey, shy = 0;
+		//int sx, ex, shx = 0;
+		//int poffset;
+		//int cursize = 32;
+		//unsigned int color0, color1;
+		//uint8_t *d1 = cirrusvga->vram_ptr;
+		//uint8_t *palette, *src;
+		//uint32_t_ content;
+		//if (cirrusvga->sr[0x12] & CIRRUS_CURSOR_LARGE) {
+		//	cursize = 64;
+		//}
+		//sy = cirrusvga->hw_cursor_y;
+		//ey = cirrusvga->hw_cursor_y+cursize;
+		//sx = cirrusvga->hw_cursor_x;
+		//ex = cirrusvga->hw_cursor_x+cursize;
+		//if(sy < 0){
+		//	shy = -sy;
+		//	sy = 0;
+		//}
+		//if(sx < 0){
+		//	shx = -sx;
+		//	sx = 0;
+		//}
+		//if(ey > height) ey = height;
+		//if(ex > width ) ex = width;
+		//for(y=sy;y<ey;y++){
+		//	d1 = cirrusvga->vram_ptr + y * width * bpp/8;
+		//	src = cirrusvga->vram_ptr + cirrusvga->real_vram_size - 16 * 1024;
+		//	if (cirrusvga->sr[0x12] & CIRRUS_CURSOR_LARGE) {
+		//		src += (cirrusvga->sr[0x13] & 0x3c) * 256;
+		//		src += (y - cirrusvga->hw_cursor_y) * 16;
+		//		poffset = 8;
+		//		content = ((uint32_t_ *)src)[0] |
+		//			((uint32_t_ *)src)[1] |
+		//			((uint32_t_ *)src)[2] |
+		//			((uint32_t_ *)src)[3];
+		//	} else {
+		//		src += (cirrusvga->sr[0x13] & 0x3f) * 256;
+		//		src += (y - cirrusvga->hw_cursor_y) * 4;
+		//		poffset = 128;
+		//		content = ((uint32_t_ *)src)[0] |
+		//				  ((uint32_t_ *)(src + 128))[0];
+		//	}
+		//	if (content){
+		//		w = ex - sx;
+		//		palette = cirrusvga->cirrus_hidden_palette;
+		//		cirrusvga->rgb_to_pixel = rgb_to_pixel_dup_table[get_depth_index(cirrusvga->ds)];
+		//		color0 = cirrusvga->rgb_to_pixel(c6_to_8(palette[0x0 * 3]),
+		//								 c6_to_8(palette[0x0 * 3 + 1]),
+		//								 c6_to_8(palette[0x0 * 3 + 2]));
+		//		color1 = cirrusvga->rgb_to_pixel(c6_to_8(palette[0xf * 3]),
+		//								 c6_to_8(palette[0xf * 3 + 1]),
+		//								 c6_to_8(palette[0xf * 3 + 2]));
+		//		d1 += sx * bpp / 8;
+		//		switch(bpp) {
+		//		default:
+		//			break;
+		//		case 8:
+		//			vga_draw_cursor_line_8(d1, src, poffset, w, color0, color1, 0xff);
+		//			break;
+		//		case 15:
+		//			vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0x7fff);
+		//			break;
+		//		case 16:
+		//			vga_draw_cursor_line_16(d1, src, poffset, w, color0, color1, 0xffff);
+		//			break;
+		//		case 32:
+		//			vga_draw_cursor_line_32(d1, src, poffset, w, color0, color1, 0xffffff);
+		//			break;
+		//		}
+		//	}
+		//}
 	}
- //   for(y = 0; y < height; y++) {
-	//	if (cirrusvga->cursor_draw_line){
-	//		cirrusvga->cursor_draw_line((VGAState*)cirrusvga, cirrusvga->vram_ptr+640*4*y, y);
-	//	}
-	//}
+	
+    memset(cirrusvga->invalidated_y_table, 0, 64*4);
 }
 
 static void cirrus_init_common(CirrusVGAState * s, int device_id, int is_pci)
@@ -4331,24 +4245,18 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
 	np2wab_setRelayState(0);
 
 	cirrusvga_mmioenable = 0;
-	cirrusvga_paletteChanged = 1;
+	np2wab.paletteChanged = 1;
     //register_savevm("cirrus_vga", 0, 2, cirrus_vga_save, cirrus_vga_load, s);// XXX:
 }
 
 
 void pc98_cirrus_vga_init(void)
 {
-	RECT rc;
-	HDC hdc;
 	UINT i;
 	WORD* PalIndexes;
 	ga_bmpInfo = (BITMAPINFO*)calloc(1, sizeof(BITMAPINFO)+sizeof(WORD)*256);	
 	PalIndexes = (WORD*)((char*)ga_bmpInfo + sizeof(BITMAPINFOHEADER));
 	for (i = 0; i < 256; ++i) PalIndexes[i] = i;
-    hdc = GetDC(np2wab.hWndWAB);
-    hBmpBuf = CreateCompatibleBitmap(hdc, 1024, 768); // XXX: 1024x768以上にならないのでこれで十分
-    hdcBuf = CreateCompatibleDC(NULL);
-    SelectObject(hdcBuf, hBmpBuf);
 
 	vramptr = (uint8_t*)malloc(4096 * 1024);
 	
@@ -4358,6 +4266,7 @@ void pc98_cirrus_vga_init(void)
 	ds.cursor_define = np2vga_ds_cursor_define;
 	ds.next = NULL;
 
+	ga_hFakeCursor = LoadCursor(NULL, IDC_ARROW);
 }
 void pc98_cirrus_vga_bind(void)
 {
@@ -4374,14 +4283,15 @@ void pc98_cirrus_vga_bind(void)
 	
 	np2wab.drawframe = cirrusvga_drawGraphic;
 
+	ga_bmpInfo->bmiHeader.biWidth = 0;
+	ga_bmpInfo->bmiHeader.biHeight = 0;
+
 	TRACEOUT(("CL-GD5430: PC-9821 Xe10 Window Accelerator Enabled"));
 }
 void pc98_cirrus_vga_shutdown(void)
 {
 	//DeleteObject(ga_hpal);
 	np2wab.drawframe = NULL;
-	DeleteDC(hdcBuf);
-	DeleteObject(hBmpBuf);
 	free(ga_bmpInfo);
 	free(vramptr);
 }

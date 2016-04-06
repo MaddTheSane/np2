@@ -19,6 +19,7 @@
 #include "misc\PropProc.h"
 #include "pccore.h"
 #include "iocore.h"
+#include "wab/wab.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -47,7 +48,11 @@ protected:
 
 private:
 	UINT8 m_awitch;				//!< アナログスイッチモード
+	UINT8 m_multiwindow;		//!< 別窓モード
+	UINT8 m_multithread;		//!< マルチスレッドモード
 	CWndProc m_chkawitch;		//!< ANALOG SWITCH IC
+	CWndProc m_chkmultiwindow;	//!< MULTI WINDOW
+	CWndProc m_chkmultithread;	//!< MULTI THREAD
 };
 
 /**
@@ -72,11 +77,26 @@ CWABPage::~CWABPage()
 BOOL CWABPage::OnInitDialog()
 {
 	m_awitch = np2cfg.wabasw;
+	m_multiwindow = np2wabcfg.multiwindow;
+	m_multithread = np2wabcfg.multithread;
+
 	m_chkawitch.SubclassDlgItem(IDC_WABASWITCH, this);
 	if(m_awitch)
 		m_chkawitch.SendMessage(BM_SETCHECK , BST_CHECKED , 0);
 	else
 		m_chkawitch.SendMessage(BM_SETCHECK , BST_UNCHECKED , 0);
+
+	m_chkmultiwindow.SubclassDlgItem(IDC_WABMULTIWIN, this);
+	if(m_multiwindow)
+		m_chkmultiwindow.SendMessage(BM_SETCHECK , BST_CHECKED , 0);
+	else
+		m_chkmultiwindow.SendMessage(BM_SETCHECK , BST_UNCHECKED , 0);
+
+	m_chkmultithread.SubclassDlgItem(IDC_WABMULTHREAD, this);
+	if(m_multithread)
+		m_chkmultithread.SendMessage(BM_SETCHECK , BST_CHECKED , 0);
+	else
+		m_chkmultithread.SendMessage(BM_SETCHECK , BST_UNCHECKED , 0);
 	
 
 	m_chkawitch.SetFocus();
@@ -91,9 +111,11 @@ void CWABPage::OnOK()
 {
 	UINT update = 0;
 
-	if (np2cfg.wabasw != m_awitch)
+	if (np2cfg.wabasw != m_awitch || np2wabcfg.multiwindow != m_multiwindow || np2wabcfg.multithread != m_multithread)
 	{
 		np2cfg.wabasw = m_awitch;
+		np2wabcfg.multiwindow = m_multiwindow;
+		np2wabcfg.multithread = m_multithread;
 		update |= SYS_UPDATECFG;
 	}
 	::sysmng_update(update);
@@ -111,6 +133,14 @@ BOOL CWABPage::OnCommand(WPARAM wParam, LPARAM lParam)
 	{
 		case IDC_WABASWITCH:
 			m_awitch = (m_chkawitch.SendMessage(BM_GETCHECK , 0 , 0) ? 1 : 0);
+			return TRUE;
+			
+		case IDC_WABMULTIWIN:
+			m_multiwindow = (m_chkmultiwindow.SendMessage(BM_GETCHECK , 0 , 0) ? 1 : 0);
+			return TRUE;
+			
+		case IDC_WABMULTHREAD:
+			m_multithread = (m_chkmultithread.SendMessage(BM_GETCHECK , 0 , 0) ? 1 : 0);
 			return TRUE;
 	}
 	return FALSE;

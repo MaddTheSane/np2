@@ -26,7 +26,7 @@
   TAP_CONTROL_CODE (6, METHOD_BUFFERED)
  
 #define NET_BUFLEN (10*1024) // バッファ1つの長さ（XXX: パケットサイズの最大値にしないと無駄。もっと言えば可変長で大きな1つのバッファに入れるべき？）
-#define NET_ARYLEN (64) // バッファの数
+#define NET_ARYLEN (128) // バッファの数
 
 	NP2NET	np2net;
 	
@@ -76,8 +76,8 @@ static int sendDataToBuffer(UCHAR *pSendBuf, DWORD len){
 	if(np2net_membuf_readpos==(np2net_membuf_writepos+1)%NET_ARYLEN){
 		TRACEOUT(("LGY-98: buffer full"));
 		while(np2net_membuf_readpos==(np2net_membuf_writepos+1)%NET_ARYLEN){
-			Sleep(0); // バッファがいっぱいなので待つ
-			//return;
+			//Sleep(0); // バッファがいっぱいなので待つ
+			return 1; // バッファがいっぱいなので捨てる
 		}
 	}
 	memcpy(np2net_membuf[np2net_membuf_writepos], pSendBuf, len);

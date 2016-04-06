@@ -83,6 +83,8 @@ typedef struct {
 #if defined(SUPPORT_VSTi)
 	TCHAR	szVSTiFile[MAX_PATH];
 #endif	// defined(SUPPORT_VSTi)
+
+	UINT8	emuddraw; // DirectDraw Emulation Only
 } NP2OSCFG;
 
 

@@ -27,6 +27,10 @@
 #endif
 #include "recvideo.h"
 
+#ifdef SUPPORT_WAB
+#include "wab/wab.h"
+#endif
+
 #if !defined(__GNUC__)
 #pragma comment(lib, "ddraw.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -152,6 +156,7 @@ static void renewalclientsize(BOOL winloc) {
 
 	width = min(scrnstat.width, ddraw.width);
 	height = min(scrnstat.height, ddraw.height);
+
 	extend = 0;
 
 	// 描画範囲～
@@ -465,8 +470,8 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 	}
 	SetWindowLong(g_hWndMain, GWL_STYLE, winstyle);
 	SetWindowLong(g_hWndMain, GWL_EXSTYLE, winstyleex);
-
-	if (DirectDrawCreate(NULL, &ddraw.ddraw1, NULL) != DD_OK) {
+	
+	if (DirectDrawCreate(np2oscfg.emuddraw ? (LPGUID)DDCREATE_EMULATIONONLY : NULL, &ddraw.ddraw1, NULL) != DD_OK) {
 		goto scre_err;
 	}
 	ddraw.ddraw1->QueryInterface(IID_IDirectDraw2, (void **)&ddraw2);
@@ -480,6 +485,17 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 										DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 		width = np2oscfg.fscrn_cx;
 		height = np2oscfg.fscrn_cy;
+#ifdef SUPPORT_WAB
+		if(np2wab.relay&0x3){
+			if(np2wab.realWidth>=640 && np2wab.realHeight>=400){
+				width = np2wab.realWidth;
+				height = np2wab.realHeight;
+			}else{
+				width = 640;
+				height = 480;
+			}
+		}
+#endif
 		bitcolor = np2oscfg.fscrnbpp;
 		fscrnmod = np2oscfg.fscrnmod;
 		if ((fscrnmod & (FSCRNMOD_SAMERES | FSCRNMOD_SAMEBPP)) &&
@@ -504,7 +520,11 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 #endif
 		}
 		if (ddraw2->SetDisplayMode(width, height, bitcolor, 0, 0) != DD_OK) {
-			goto scre_err;
+			width = 640;
+			height = 480;
+			if (ddraw2->SetDisplayMode(width, height, bitcolor, 0, 0) != DD_OK) {
+				goto scre_err;
+			}
 		}
 		ddraw2->CreateClipper(0, &ddraw.clipper, NULL);
 		ddraw.clipper->SetHWnd(0, g_hWndMain);
@@ -528,8 +548,24 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+#ifdef SUPPORT_WAB
+		if(np2oscfg.fscrnmod & FSCRNMOD_SAMERES){
+			ddsd.dwWidth = 1024;
+			ddsd.dwHeight = 768;
+		}else{
+			if((np2wab.relay&0x3)!=0 && np2wab.realWidth>=640 && np2wab.realHeight>=400){
+				// 実サイズに
+				ddsd.dwWidth = np2wab.realWidth;
+				ddsd.dwHeight = np2wab.realHeight;
+			}else{
+				ddsd.dwWidth = 640;
+				ddsd.dwHeight = 480;
+			}
+		}
+#else
 		ddsd.dwWidth = 640;
 		ddsd.dwHeight = 480;
+#endif
 		if (ddraw2->CreateSurface(&ddsd, &ddraw.backsurf, NULL) != DD_OK) {
 			goto scre_err;
 		}
@@ -583,6 +619,12 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+#ifdef SUPPORT_WAB
+		ddsd.dwWidth = 1024+1; // +1しないと駄目らしい
+		ddsd.dwHeight = 768;
+		width = 1024;
+		height = 768;
+#else
 		if (!(scrnmode & SCRNMODE_ROTATE)) {
 			ddsd.dwWidth = 640 + 1;
 			ddsd.dwHeight = 480;
@@ -593,6 +635,7 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		}
 		width = 640;
 		height = 480;
+#endif
 
 		if (ddraw2->CreateSurface(&ddsd, &ddraw.backsurf, NULL) != DD_OK) {
 			goto scre_err;
@@ -1063,3 +1106,64 @@ void scrnmng_exitsizing(void)
 	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }
 
+// フルスクリーン解像度調整
+void scrnmng_updatefsres(void) {
+#ifdef SUPPORT_WAB
+	static int lastwidth = 0;
+	static int lastheight = 0;
+	int width = scrnstat.width;
+	int height = scrnstat.height;
+
+	if(np2oscfg.fscrnmod & FSCRNMOD_SAMERES){
+		DDBLTFX ddbltfx = {0};
+		ddbltfx.dwSize = sizeof(DDBLTFX);
+		ddraw.primsurf->Blt(NULL,NULL,NULL,DDBLT_COLORFILL | DDBLT_WAIT,&ddbltfx);
+		ddraw.backsurf->Blt(NULL,NULL,NULL,DDBLT_COLORFILL | DDBLT_WAIT,&ddbltfx);
+		return;
+	}
+	if(scrnstat.width<100 || scrnstat.height<100) return;
+
+	if((lastwidth!=width || lastheight!=height) && (g_scrnmode & SCRNMODE_FULLSCREEN)!=0){
+		lastwidth=width;
+		lastheight=height;
+		g_scrnmode = g_scrnmode & ~SCRNMODE_FULLSCREEN;
+		scrnmng_destroy();
+		g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
+		if (scrnmng_create(g_scrnmode | SCRNMODE_FULLSCREEN) == SUCCESS) {
+			g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
+		}
+		else {
+			if (scrnmng_create(g_scrnmode) != SUCCESS) {
+				PostQuitMessage(0);
+				return;
+			}
+		}
+	}
+#endif
+}
+
+// ウィンドウアクセラレータ画面転送
+void scrnmng_blthdc(HDC hdc) {
+	RECT	*dst;
+	HRESULT	r;
+	HDC hDCDD;
+	if (ddraw.backsurf != NULL) {
+		if (ddraw.scrnmode & SCRNMODE_FULLSCREEN) {
+			if (GetWindowLongPtr(g_hWndMain, NP2GWLP_HMENU)) {
+				dst = &ddraw.rect;
+			}
+			else {
+				dst = &ddraw.rectclip;
+			}
+		}else{
+			dst = &ddraw.rect;
+		}
+
+		r = ddraw.backsurf->GetDC(&hDCDD);
+		if (r == DD_OK){
+			r = BitBlt(hDCDD, dst->left, dst->top, scrnstat.width, scrnstat.height,
+				   hdc, 0, 0, SRCCOPY);
+			ddraw.backsurf->ReleaseDC(hDCDD);
+		}
+	}
+}

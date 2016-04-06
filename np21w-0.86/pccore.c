@@ -471,6 +471,7 @@ static void drawscreen(void) {
 	UINT8	timing;
 	void	(VRAMCALL * grphfn)(int page, int alldraw);
 	UINT8	bit;
+	
 
 	tramflag.timing++;
 	timing = ((LOADINTELWORD(gdc.m.para + GDC_CSRFORM + 1)) >> 5) & 0x3e;
@@ -491,6 +492,13 @@ static void drawscreen(void) {
 	if (!pcstat.drawframe) {
 		return;
 	}
+#ifdef SUPPORT_WAB
+	if(np2wab.relay & 0x3){
+		pcstat.screenupdate = scrndraw_draw((UINT8)(pcstat.screenupdate & 2));
+		drawcount++;
+		return;
+	}
+#endif
 	if ((gdcs.textdisp & GDCSCRN_EXT) || (gdcs.grphdisp & GDCSCRN_EXT)) {
 		if (dispsync_renewalvertical()) {
 			gdcs.textdisp |= GDCSCRN_ALLDRAW2;
@@ -668,7 +676,16 @@ void pccore_exec(BOOL draw) {
 	MEMWAIT_TRAM = np2cfg.wait[0];
 	MEMWAIT_VRAM = np2cfg.wait[2];
 	MEMWAIT_GRCG = np2cfg.wait[4];
+	
+//#if defined(SUPPORT_WAB)
+//	if(!np2wab.multiwindow && np2wab.relay & 0x3 && np2wab.fps!=0){
+//		nevent_set(NEVENT_FLAMES, pccore.realclock/np2wab.fps, screenvsync, NEVENT_RELATIVE);
+//	}else{
+//		nevent_set(NEVENT_FLAMES, gdc.dispclock, screenvsync, NEVENT_RELATIVE);
+//	}
+//#else
 	nevent_set(NEVENT_FLAMES, gdc.dispclock, screenvsync, NEVENT_RELATIVE);
+//#endif
 
 //	nevent_get1stevent();
 

@@ -455,6 +455,8 @@ CAPTION "一般"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x0
 BEGIN
     CONTROL         "アナログスイッチICを使う",IDC_WABASWITCH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,8,200,10
+    CONTROL         "マルチウィンドウモード",IDC_WABMULTIWIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,28,200,10
+    CONTROL         "マルチスレッドモード",IDC_WABMULTHREAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,48,200,10
 END
 
 IDD_GD5430 DIALOGEX 0, 0, 184, 124
@@ -1369,7 +1371,7 @@ STRINGTABLE
 BEGIN
     IDS_HDDTITLE            "HDイメージ選択"
     IDS_HDDEXT              "thd"
-    IDS_HDDFILTER           "Anex86ハードディスクイメージ(*.hdi)|*.hdi|T98ハードディスクイメージ(*.thd)|*.thd|T98-Nextハードディスクイメージ(*.nhd)|*.nhd|All supported files|*.thd;*.nhd;*.hdi|"
+    IDS_HDDFILTER           "Anex86ハードディスクイメージ(*.hdi)|*.hdi|T98ハードディスクイメージ(*.thd)|*.thd|T98-Nextハードディスクイメージ(*.nhd)|*.nhd|VirtualPCハードディスクイメージ (*.vhd)|*.vhd|対応しているすべての形式|*.thd;*.nhd;*.hdi;*.vhd|"
     IDS_SASITITLE           "SASI/IDE HDDイメージ"
     IDS_IDETITLE            "IDE HDDイメージ"
     IDS_ISOTITLE            "ISO-9660ディスクイメージ"

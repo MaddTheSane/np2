@@ -14,7 +14,7 @@ typedef struct {
 } MOUSEMNG;
 
 static	MOUSEMNG	mousemng;
-
+static  int mousecaptureflg = 0;
 
 UINT8 mousemng_getstat(SINT16 *x, SINT16 *y, int clear) {
 
@@ -35,6 +35,11 @@ static void getmaincenter(POINT *cp) {
 	RECT	rct;
 
 	GetWindowRect(g_hWndMain, &rct);
+//#ifdef SUPPORT_WAB
+//	// XXX: 解像度を変えると中心座標が変わってしまうので対策（手抜き）
+//	rct.right = rct.left + 640;
+//	rct.bottom = rct.top + 400;
+//#endif
 	cp->x = (rct.right + rct.left) / 2;
 	cp->y = (rct.bottom + rct.top) / 2;
 }
@@ -56,11 +61,13 @@ static void mousecapture(BOOL capture) {
 		SetCursorPos(cp.x, cp.y);
 		ClipCursor(&rct);
 		style &= ~(CS_DBLCLKS);
+		mousecaptureflg = 1;
 	}
 	else {
 		ShowCursor(TRUE);
 		ClipCursor(NULL);
 		style |= CS_DBLCLKS;
+		mousecaptureflg = 0;
 	}
 	SetClassLong(g_hWndMain, GCL_STYLE, style);
 }
@@ -144,3 +151,9 @@ void mousemng_toggle(UINT proc) {
 	}
 }
 
+void mousemng_updateclip(){
+	if(mousecaptureflg){
+		mousecapture(FALSE);
+		mousecapture(TRUE); // キャプチャし直し
+	}
+}

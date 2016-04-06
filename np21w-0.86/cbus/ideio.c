@@ -14,6 +14,8 @@
 #include	"sound.h"
 #include	"idebios.res"
 
+#define TRACEOUT(a) (void)(a)
+
 
 	IDEIO	ideio;
 
@@ -174,10 +176,6 @@ static void drvreset(IDEDRV drv) {
 		drv->sn = 0x01;
 		drv->cy = 0x0000;
 		drv->status = IDESTAT_DRDY;
-
-		drv->ctrl = drv->ctrl & ~IDECTRL_SRST;
-		drv->status = drv->status & ~0x0d;
-		drv->error = 0x01;
 	}
 }
 
@@ -404,7 +402,7 @@ static void IOOUTCALL ideio_o64c(UINT port, REG8 dat) {
 #endif
 	drvnum = (dat >> 4) & 1;
 	if(dev->drivesel != drvnum){
-		dev->drv[drvnum].status = dev->drv[drvnum].status & ~(IDESTAT_DRQ|IDESTAT_BSY);
+		//dev->drv[drvnum].status = dev->drv[drvnum].status & ~(IDESTAT_DRQ|IDESTAT_BSY);
 		dev->drv[drvnum].error = 1;
 	}
 	dev->drivesel = drvnum;
@@ -623,8 +621,8 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 
 		case 0xe1:		// idle immediate
 			TRACEOUT(("ideio: idle immediate dr = %.2x", drv->dr));
-			drv->status = drv->status & ~0x20;
-			drv->error = 0;
+			//drv->status = drv->status & ~0x20;
+			//drv->error = 0;
 			//cmdabort(drv);
 			break;
 
@@ -1093,9 +1091,9 @@ void ideio_reset(const NP2CFG *pConfig) {
 	for (i=0; i<4; i++) {
 		drv = ideio.dev[i >> 1].drv + (i & 1);
 		devinit(drv, i);
-		drv->ctrl = drv->ctrl & ~IDECTRL_SRST;
-		drv->status = drv->status & ~0x0d;
-		drv->error = 0x01;
+		//drv->ctrl = drv->ctrl & ~IDECTRL_SRST;
+		//drv->status = drv->status & ~0x0d;
+		//drv->error = 0x01;
 	}
 	//ideio.dev[0].drv[0].ctrl = ideio.dev[0].drv[0].ctrl & ~IDECTRL_SRST;
 	//ideio.dev[0].drv[1].ctrl = ideio.dev[0].drv[1].ctrl & ~IDECTRL_SRST;

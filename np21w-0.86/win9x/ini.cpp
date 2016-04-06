@@ -625,6 +625,8 @@ static const PFTBL s_IniItems[] =
 #if defined(SUPPORT_VSTi)
 	PFSTR("VSTiFile", PFRO_STR,			np2oscfg.szVSTiFile),
 #endif	// defined(SUPPORT_VSTi)
+	
+	PFVAL("EMUDDRAW", PFRO_BOOL,		&np2oscfg.emuddraw), // 最近はEMULATIONONLYにした方速かったりする（特にピクセル操作する場合とか）
 
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)
 };

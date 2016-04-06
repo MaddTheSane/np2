@@ -236,6 +236,8 @@
 #define IDC_GD5430TYPE                  19012
 #define IDC_GD5430DEF                   19013
 #define IDC_WABASWITCH                  19014
+#define IDC_WABMULTIWIN                 19015
+#define IDC_WABMULTHREAD                19016
 #define IDC_IDE1TYPE                    19100
 #define IDC_IDE2TYPE                    19101
 #define IDC_IDE3TYPE                    19102

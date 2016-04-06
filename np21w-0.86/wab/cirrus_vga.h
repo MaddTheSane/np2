@@ -37,6 +37,7 @@
 #define cpu_to_le16w(a,b)	STOREINTELWORD(a,b)
 #define cpu_to_le32w(a,b)	STOREINTELDWORD(a,b)
 */
+
 #define cpu_to_le16wu(p, v) STOREINTELWORD(p, v) // XXX: 
 #define cpu_to_le32wu(p, v) STOREINTELDWORD(p, v) // XXX: 
 

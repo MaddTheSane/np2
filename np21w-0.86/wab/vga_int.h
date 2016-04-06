@@ -504,22 +504,19 @@ static void vga_draw_cursor_line(uint8_t *d1,
     }
 
 }
-
-void vga_draw_cursor_line_8(uint8_t *d1, const uint8_t *src1,
-                            int poffset, int w,
-                            unsigned int color0, unsigned int color1,
-							unsigned int color_xor){}
-void vga_draw_cursor_line_16(uint8_t *d1, const uint8_t *src1,
-                             int poffset, int w,
-                             unsigned int color0, unsigned int color1,
-							 unsigned int color_xor){}
-void vga_draw_cursor_line_32(uint8_t *d1, const uint8_t *src1,
-                             int poffset, int w,
-                             unsigned int color0, unsigned int color1,
-							 unsigned int color_xor)
-{
-	vga_draw_cursor_line(d1, src1, poffset, w, color0, color1, color_xor);
-}
+//
+//void vga_draw_cursor_line_8(uint8_t *d1, const uint8_t *src1,
+//                            int poffset, int w,
+//                            unsigned int color0, unsigned int color1,
+//							unsigned int color_xor);
+//void vga_draw_cursor_line_16(uint8_t *d1, const uint8_t *src1,
+//                             int poffset, int w,
+//                             unsigned int color0, unsigned int color1,
+//							 unsigned int color_xor);
+//void vga_draw_cursor_line_32(uint8_t *d1, const uint8_t *src1,
+//                             int poffset, int w,
+//                             unsigned int color0, unsigned int color1,
+//							 unsigned int color_xor);
 
 extern const uint8_t sr_mask[8];
 extern const uint8_t gr_mask[16];

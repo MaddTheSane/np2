@@ -31,7 +31,6 @@ enum {
 	MOUSEPROC_BG
 };
 
-
 void mousemng_initialize(void);
 void mousemng_sync(void);
 BOOL mousemng_buttonevent(UINT event);
@@ -39,3 +38,11 @@ void mousemng_enable(UINT proc);
 void mousemng_disable(UINT proc);
 void mousemng_toggle(UINT proc);
 
+
+#ifdef __cplusplus
+extern "C" { // XXX: wab.c用。もっとスマートにすべき
+#endif
+void mousemng_updateclip();
+#ifdef __cplusplus
+} // XXX: wab.c用。もっとスマートにすべき
+#endif
