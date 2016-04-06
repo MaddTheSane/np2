@@ -128,9 +128,6 @@ DisplayState *graphic_console_init(vga_hw_update_ptr update,
                                    vga_hw_text_update_ptr text_update,
 								   void *opaque);
 
-typedef void CPUWriteMemoryFunc(void *opaque, target_phys_addr_t addr, uint32_t_ value);
-typedef uint32_t_ CPUReadMemoryFunc(void *opaque, target_phys_addr_t addr);
-
 typedef void QEMUResetHandler(void *opaque);
 
 typedef void (IOPortWriteFunc)(void *opaque, uint32_t_ address, uint32_t_ data);

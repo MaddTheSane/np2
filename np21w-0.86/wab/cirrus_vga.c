@@ -52,6 +52,9 @@ REG8 cirrusvga_regindex = 0;
 REG8 cirrusvga_mmioenable = 0;
 REG8 cirrusvga_paletteChanged = 1;
 
+int g_cirrus_linear_map_enabled = 0;
+CPUWriteMemoryFunc **g_cirrus_linear_write = NULL;
+
 uint8_t* vramptr;
 
 DisplayState ds = {0};
@@ -374,7 +377,7 @@ typedef struct CirrusVGAState {
     int last_hw_cursor_y_start;
     int last_hw_cursor_y_end;
     int real_vram_size; /* XXX: suppress that */
-    CPUWriteMemoryFunc **cirrus_linear_write;
+    //CPUWriteMemoryFunc **cirrus_linear_write;
     int device_id;
     int bustype;
 } CirrusVGAState;
@@ -2901,6 +2904,8 @@ static CPUWriteMemoryFunc *cirrus_linear_bitblt_write[3] = {
 
 static void map_linear_vram(CirrusVGAState *s)
 {
+	g_cirrus_linear_map_enabled = 1;
+
     vga_dirty_log_stop((VGAState *)s);
 
     if (!s->map_addr && s->lfb_addr && s->lfb_end) {
@@ -2943,6 +2948,8 @@ static void map_linear_vram(CirrusVGAState *s)
 
 static void unmap_linear_vram(CirrusVGAState *s)
 {
+	g_cirrus_linear_map_enabled = 0;
+
     vga_dirty_log_stop((VGAState *)s);
 
     if (s->map_addr && s->lfb_addr && s->lfb_end)
@@ -2974,15 +2981,15 @@ static void cirrus_update_memory_access(CirrusVGAState *s)
 	mode = s->gr[0x05] & 0x7;
 	if (mode < 4 || mode > 5 || ((s->gr[0x0B] & 0x4) == 0)) {
             map_linear_vram(s);
-            s->cirrus_linear_write[0] = cirrus_linear_mem_writeb;
-            s->cirrus_linear_write[1] = cirrus_linear_mem_writew;
-            s->cirrus_linear_write[2] = cirrus_linear_mem_writel;
+            g_cirrus_linear_write[0] = cirrus_linear_mem_writeb;
+            g_cirrus_linear_write[1] = cirrus_linear_mem_writew;
+            g_cirrus_linear_write[2] = cirrus_linear_mem_writel;
         } else {
         generic_io:
             unmap_linear_vram(s);
-            s->cirrus_linear_write[0] = cirrus_linear_writeb;
-            s->cirrus_linear_write[1] = cirrus_linear_writew;
-            s->cirrus_linear_write[2] = cirrus_linear_writel;
+            g_cirrus_linear_write[0] = cirrus_linear_writeb;
+            g_cirrus_linear_write[1] = cirrus_linear_writew;
+            g_cirrus_linear_write[2] = cirrus_linear_writel;
         }
     }
 }
@@ -3803,7 +3810,6 @@ void cirrusvga_drawGraphic(){
 	int i, y, width, height, bpp;
 	LOGPALETTE * lpPalette;
 	static HPALETTE hPalette, oldpalette;
-	HCURSOR hCursor = GetCursor();
 	HWND hWnd = np2wab.hWndWAB;
 	HDC hdc = np2wab.hDCWAB;
 	static int lastscalemode = 0;
@@ -3954,6 +3960,7 @@ void cirrusvga_drawGraphic(){
 	ga_bmpInfo->bmiHeader.biWidth = width; // 前回の解像度を保存
 	ga_bmpInfo->bmiHeader.biHeight = height; // 前回の解像度を保存
     if ((cirrusvga->sr[0x12] & CIRRUS_CURSOR_SHOW)){
+		HCURSOR hCursor = GetCursor();
 		DrawIcon(hdc, cirrusvga->hw_cursor_x, cirrusvga->hw_cursor_y, hCursor);
 	}
  //   for(y = 0; y < height; y++) {
@@ -4018,7 +4025,8 @@ static void cirrus_init_common(CirrusVGAState * s, int device_id, int is_pci)
     /* I/O handler for LFB */
     s->cirrus_linear_io_addr =
         cpu_register_io_memory(0, cirrus_linear_read, cirrus_linear_write, s);
-    s->cirrus_linear_write = cpu_get_io_memory_write(s->cirrus_linear_io_addr);
+    //s->cirrus_linear_write = cpu_get_io_memory_write(s->cirrus_linear_io_addr);
+	g_cirrus_linear_write = cpu_get_io_memory_write(s->cirrus_linear_io_addr);
 
     /* I/O handler for LFB */
     s->cirrus_linear_bitblt_io_addr =
@@ -4241,29 +4249,29 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
 	iocore_attachinp(0xff82, cirrusvga_iff82);
 	
 	for(i=0;i<16;i++){
-		iocore_attachout(0xca0 + i, vga_ioport_write_wrap);
-		iocore_attachinp(0xca0 + i, vga_ioport_read_wrap);
+		iocore_attachout(0xca0 + i, vga_ioport_write_wrap);	// 0x3C0 to 0x3CF
+		iocore_attachinp(0xca0 + i, vga_ioport_read_wrap);	// 0x3C0 to 0x3CF
 	}
 	
-	//iocore_attachout(0x904, vga_ioport_write_wrap);
-	//iocore_attachinp(0x904, vga_ioport_read_wrap);
-
-	//　この辺のマッピング本当にあってる？
-	iocore_attachout(0xba4, vga_ioport_write_wrap);
-	iocore_attachinp(0xba4, vga_ioport_read_wrap);
-	iocore_attachout(0xba5, vga_ioport_write_wrap);
-	iocore_attachinp(0xba5, vga_ioport_read_wrap);
-
-	iocore_attachout(0xda4, vga_ioport_write_wrap);
-	iocore_attachinp(0xda4, vga_ioport_read_wrap);
-	iocore_attachout(0xda5, vga_ioport_write_wrap);
-	iocore_attachinp(0xda5, vga_ioport_read_wrap);
+	//iocore_attachout(0x904, vga_ioport_write_wrap);	// 0x094
+	//iocore_attachinp(0x904, vga_ioport_read_wrap);	// 0x094
 	
-	iocore_attachout(0xbaa, vga_ioport_write_wrap);
-	iocore_attachinp(0xbaa, vga_ioport_read_wrap);
+	//　この辺のマッピング本当にあってる？
+	iocore_attachout(0xba4, vga_ioport_write_wrap);	// 0x3B4
+	iocore_attachinp(0xba4, vga_ioport_read_wrap);	// 0x3B4
+	iocore_attachout(0xba5, vga_ioport_write_wrap);	// 0x3B5
+	iocore_attachinp(0xba5, vga_ioport_read_wrap);	// 0x3B5
 
-	iocore_attachout(0xdaa, vga_ioport_write_wrap);
-	iocore_attachinp(0xdaa, vga_ioport_read_wrap);
+	iocore_attachout(0xda4, vga_ioport_write_wrap);	// 0x3D4
+	iocore_attachinp(0xda4, vga_ioport_read_wrap);	// 0x3D4
+	iocore_attachout(0xda5, vga_ioport_write_wrap);	// 0x3D5
+	iocore_attachinp(0xda5, vga_ioport_read_wrap);	// 0x3D5
+	
+	iocore_attachout(0xbaa, vga_ioport_write_wrap);	// 0x3BA
+	iocore_attachinp(0xbaa, vga_ioport_read_wrap);	// 0x3BA
+
+	iocore_attachout(0xdaa, vga_ioport_write_wrap);	// 0x3DA
+	iocore_attachinp(0xdaa, vga_ioport_read_wrap);	// 0x3DA
 	
     //register_ioport_write(0x3c0, 16, 1, vga_ioport_write, s);
 
@@ -4289,7 +4297,8 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
 
     /* I/O handler for LFB */
     //s->cirrus_linear_io_addr = 0x0F200000;//cpu_register_io_memory(0, cirrus_linear_read, cirrus_linear_write, s);
-    s->cirrus_linear_write = cirrus_vga_mem_write;//cpu_get_io_memory_write(s->cirrus_linear_io_addr);
+    //s->cirrus_linear_write = cirrus_vga_mem_write;//cpu_get_io_memory_write(s->cirrus_linear_io_addr);
+	g_cirrus_linear_write = cirrus_vga_mem_write;
 
     /* I/O handler for LFB */
     //s->cirrus_linear_bitblt_io_addr = 0x0F100000;//cpu_register_io_memory(0, cirrus_linear_bitblt_read, cirrus_linear_bitblt_write, s);
@@ -4337,7 +4346,7 @@ void pc98_cirrus_vga_init(void)
 	PalIndexes = (WORD*)((char*)ga_bmpInfo + sizeof(BITMAPINFOHEADER));
 	for (i = 0; i < 256; ++i) PalIndexes[i] = i;
     hdc = GetDC(np2wab.hWndWAB);
-    hBmpBuf = CreateCompatibleBitmap(hdc, 1024, 768);
+    hBmpBuf = CreateCompatibleBitmap(hdc, 1024, 768); // XXX: 1024x768以上にならないのでこれで十分
     hdcBuf = CreateCompatibleDC(NULL);
     SelectObject(hdcBuf, hBmpBuf);
 

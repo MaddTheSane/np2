@@ -181,7 +181,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>.\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -206,6 +206,9 @@
   <ItemGroup>
     <ClCompile Include="..\calendar.c" />
     <ClCompile Include="..\debugsub386.c" />
+    <ClInclude Include="..\fdd\hdd_vhd.h">
+      <FileType>CppCode</FileType>
+    </ClInclude>
     <ClCompile Include="..\keystat.c" />
     <ClCompile Include="..\network\lgy98.c" />
     <ClCompile Include="..\network\net.c" />
@@ -554,6 +557,7 @@
     <ClInclude Include="..\calendar.h" />
     <ClInclude Include="..\common.h" />
     <ClInclude Include="..\debugsub.h" />
+    <ClInclude Include="..\fdd\hdd_vpc.h" />
     <ClInclude Include="..\keystat.h" />
     <ClInclude Include="..\network\lgy98.h" />
     <ClInclude Include="..\network\lgy98dev.h" />

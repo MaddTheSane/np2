@@ -1984,6 +1984,12 @@
     <ClInclude Include="..\wab\wab.h">
       <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
+    <ClInclude Include="..\fdd\hdd_vpc.h">
+      <Filter>ヘッダー ファイル\fdd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fdd\hdd_vhd.h">
+      <Filter>ヘッダー ファイル\fdd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resources\932\np2.rc">

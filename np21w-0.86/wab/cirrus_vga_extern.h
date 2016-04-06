@@ -41,6 +41,11 @@ typedef	unsigned long long	uint64_t;
 typedef uint32_t_ ram_addr_t;
 typedef uint32_t_ target_phys_addr_t;
 
+typedef void CPUWriteMemoryFunc(void *opaque, target_phys_addr_t addr, uint32_t_ value);
+typedef uint32_t_ CPUReadMemoryFunc(void *opaque, target_phys_addr_t addr);
+
+extern CPUWriteMemoryFunc **g_cirrus_linear_write;
+
 extern void		*cirrusvga_opaque;
 extern UINT32	ga_VRAMWindowAddr;
 

@@ -1369,7 +1369,7 @@ STRINGTABLE
 BEGIN
     IDS_HDDTITLE            "Select HD image"
     IDS_HDDEXT              "thd"
-    IDS_HDDFILTER           "Anex86 harddisk image files (*.hdi)|*.hdi|T98 harddisk image files (*.thd)|*.thd|T98-Next harddisk image files (*.nhd)|*.nhd|All supported files|*.thd;*.nhd;*.hdi|"
+    IDS_HDDFILTER           "Anex86 harddisk image files (*.hdi)|*.hdi|T98 harddisk image files (*.thd)|*.thd|T98-Next harddisk image files (*.nhd)|*.nhd|VirtualPC harddisk image files (*.vhd)|*.vhd|All supported files|*.thd;*.nhd;*.hdi;*.vhd|"
     IDS_SASITITLE           "Select SASI/IDE HDD image"
     IDS_IDETITLE            "Select IDE HDD image"
     IDS_ISOTITLE            "Select ISO-9660 image"

@@ -560,11 +560,11 @@ void MEMCALL memp_write8(UINT32 address, REG8 value) {
 	if(cirrusvga_opaque){
 		if(ga_VRAMWindowAddr <= address){
 			if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE){
-				cirrus_linear_writeb(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[0](cirrusvga_opaque, address, value);
 				return;
 			}else if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SIZE){
 				if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SHFT);
-				cirrus_linear_writeb(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[0](cirrusvga_opaque, address, value);
 				return;
 			}
 		}
@@ -622,11 +622,11 @@ void MEMCALL memp_write16(UINT32 address, REG16 value) {
 	if(cirrusvga_opaque){
 		if(ga_VRAMWindowAddr <= address){
 			if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE){
-				cirrus_linear_writew(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[1](cirrusvga_opaque, address, value);
 				return;
 			}else if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SIZE){
 				if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SHFT);
-				cirrus_linear_writew(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[1](cirrusvga_opaque, address, value);
 				return;
 			}
 		}
@@ -691,11 +691,11 @@ void MEMCALL memp_write32(UINT32 address, UINT32 value) {
 	if(cirrusvga_opaque){
 		if(ga_VRAMWindowAddr <= address){
 			if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE){
-				cirrus_linear_writel(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[2](cirrusvga_opaque, address, value);
 				return;
 			}else if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SIZE){
 				if(address < ga_VRAMWindowAddr + VRAMWINDOW_SIZE + EXT_WINDOW_SHFT);
-				cirrus_linear_writel(cirrusvga_opaque, address, value);
+				g_cirrus_linear_write[2](cirrusvga_opaque, address, value);
 				return;
 			}
 		}

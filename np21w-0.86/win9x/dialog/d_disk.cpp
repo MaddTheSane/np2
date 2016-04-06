@@ -78,7 +78,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 				nTitle = IDS_SASITITLE;
 				nExt = IDS_HDDEXT;
 				nFilter = IDS_HDDFILTER;
-				nIndex = 4;
+				nIndex = 5;
 			}
 			else
 			{

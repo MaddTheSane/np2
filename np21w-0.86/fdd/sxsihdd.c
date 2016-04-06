@@ -5,6 +5,9 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"sxsi.h"
+#ifdef SUPPORT_VPCVHD
+#include "hdd_vpc.h"
+#endif
 
 const char sig_vhd[8] = "VHD1.00";
 const char sig_nhd[15] = "T98HDDIMAGE.R0";
@@ -226,6 +229,16 @@ const OEMCHAR	*ext;
 		size = LOADINTELWORD(vhd.sectorsize);
 		totals = (SINT32)LOADINTELDWORD(vhd.totals);
 	}
+#ifdef SUPPORT_VPCVHD
+	else if ((iftype == SXSIDRV_SASI) && (!file_cmpname(ext, str_vhd))) {
+		// Microsoft VirtualPC VHD (SASI/IDE)
+		BRESULT rc = sxsihdd_vpcvhd_mount(sxsi, fh);
+		if (rc == FAILURE) {
+			file_close(fh);
+		}
+		return (rc);
+	}
+#endif
 	else {
 		goto sxsiope_err2;
 	}
@@ -265,3 +278,7 @@ sxsiope_err1:
 	return(FAILURE);
 }
 
+#ifdef SUPPORT_VPCVHD
+#define HDD_VPC_INCLUDE
+#include "hdd_vhd.h"
+#endif
