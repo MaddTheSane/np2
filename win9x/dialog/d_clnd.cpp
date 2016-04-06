@@ -113,6 +113,8 @@ void CCalendarDlg::OnOK()
 		}
 	}
 	calendar_set(cbuf);
+	
+	CDlgProc::OnOK();
 }
 
 /**
