@@ -1140,7 +1140,7 @@
       <Filter>ヘッダー ファイル\cbus</Filter>
     </ClInclude>
     <ClInclude Include="..\cbus\scsicmd.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\cbus</Filter>
     </ClInclude>
     <ClInclude Include="..\cbus\scsiio.h">
       <Filter>ヘッダー ファイル\cbus</Filter>
