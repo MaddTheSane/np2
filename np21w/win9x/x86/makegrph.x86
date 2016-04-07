@@ -1,8 +1,8 @@
 
-%include '.\x86\pccore.inc'
-%include '..\i386c\x86\cpucore.inc'
-%include '..\io\x86\iocore.inc'
-%include '.\x86\vram.inc'
+%include 'pccore.inc'
+%include 'cpucore.inc'
+%include 'iocore.inc'
+%include 'vram.inc'
 
 section .bss
 

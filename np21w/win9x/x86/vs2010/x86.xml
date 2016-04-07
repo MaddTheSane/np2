@@ -59,19 +59,21 @@
       DisplayName="Object File Name"
       Description="Specifies the name of the output object file.     (-o [file])"
       Switch="-o &quot;[value]&quot;" />
-    <StringProperty
+    <StringListProperty
       Name="PreprocessorDefinitions"
       HelpContext="0"
       HelpUrl="http://www.nasm.us/doc/"
       DisplayName="Preprocessor Definitions"
       Description="Defines a text macro with the given name.     (-D[symbol])"
+      Separator=";"
       Switch="-D[value]" />
-    <StringProperty
+    <StringListProperty
       Name="UndefinePreprocessorDefinitions"
       HelpContext="0"
       HelpUrl="http://www.nasm.us/doc/"
       DisplayName="Undefine Preprocessor Definitions"
       Description="Undefines a text macro with the given name.     (-U[symbol])"
+      Separator=";"
       Switch="-U[value]" />
     <StringProperty
       Name="AssembledCodeListingFile"
@@ -81,12 +83,13 @@
       DisplayName="Assembled Code Listing File"
       Description="Generates an assembled code listing file.     (-l [file])"
       Switch="-l &quot;[value]&quot;" />
-    <StringProperty
+    <StringListProperty
       Name="IncludePaths"
       HelpContext="0"
       HelpUrl="http://www.nasm.us/doc/"
       DisplayName="Include Paths"
       Description="Sets path for include file.     (-I[path])"
+      Separator=";"
       Switch="-I[value]" />
     <StringProperty
       Name="CommandLineTemplate"

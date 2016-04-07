@@ -11,8 +11,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <YASM>
-      <ObjectFileName>"$(IntDir)%(Filename).obj"</ObjectFileName>
-      <CommandLineTemplate>yasm -Xvc -f $(Platform) [ListFileName] [Defines] [IncludePaths] [ObjectFileName] [inputs]</CommandLineTemplate>
+      <ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
+      <CommandLineTemplate>yasm -Xvc -f $(Platform) [AdditionalOptions] [ListFileName] [Defines] [IncludePaths] [ObjectFileName] [inputs]</CommandLineTemplate>
       <Outputs>%(ObjectFileName)</Outputs>
       <ExecutionDescription>Assembling %(Filename)%(Extension)</ExecutionDescription>
       <ShowOnlyRuleProperties>false</ShowOnlyRuleProperties>
