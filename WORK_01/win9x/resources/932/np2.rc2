@@ -3,7 +3,7 @@
 // Manifest
 //
 
-#ifndef _USRDLL
+#ifdef NEEDS_MANIFEST
 #ifdef _WIN64
 #ifdef SUPPORT_PC9821
 IDR_MANIFEST            IRT_MANIFEST MOVEABLE PURE "..\\np21x64.mnf"
