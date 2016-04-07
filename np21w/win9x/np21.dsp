@@ -1,10 +1,10 @@
-# Microsoft Developer Studio Project File - Name="np21" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="np21w" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** 編集しないでください **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=np21 - Win32 Debug
+CFG=np21w - Win32 Debug
 !MESSAGE これは有効なﾒｲｸﾌｧｲﾙではありません。 このﾌﾟﾛｼﾞｪｸﾄをﾋﾞﾙﾄﾞするためには NMAKE を使用してください。
 !MESSAGE [ﾒｲｸﾌｧｲﾙのｴｸｽﾎﾟｰﾄ] ｺﾏﾝﾄﾞを使用して実行してください
 !MESSAGE 
@@ -13,15 +13,15 @@ CFG=np21 - Win32 Debug
 !MESSAGE NMAKE の実行時に構成を指定できます
 !MESSAGE ｺﾏﾝﾄﾞ ﾗｲﾝ上でﾏｸﾛの設定を定義します。例:
 !MESSAGE 
-!MESSAGE NMAKE /f "np21.mak" CFG="np21 - Win32 Debug"
+!MESSAGE NMAKE /f "np21.mak" CFG="np21w - Win32 Debug"
 !MESSAGE 
 !MESSAGE 選択可能なﾋﾞﾙﾄﾞ ﾓｰﾄﾞ:
 !MESSAGE 
-!MESSAGE "np21 - Win32 Release" ("Win32 (x86) Application" 用)
-!MESSAGE "np21 - Win32 Release NT" ("Win32 (x86) Application" 用)
-!MESSAGE "np21 - Win32 Trace" ("Win32 (x86) Application" 用)
-!MESSAGE "np21 - Win32 Trap" ("Win32 (x86) Application" 用)
-!MESSAGE "np21 - Win32 Debug" ("Win32 (x86) Application" 用)
+!MESSAGE "np21w - Win32 Release" ("Win32 (x86) Application" 用)
+!MESSAGE "np21w - Win32 Release NT" ("Win32 (x86) Application" 用)
+!MESSAGE "np21w - Win32 Trace" ("Win32 (x86) Application" 用)
+!MESSAGE "np21w - Win32 Trap" ("Win32 (x86) Application" 用)
+!MESSAGE "np21w - Win32 Debug" ("Win32 (x86) Application" 用)
 !MESSAGE 
 
 # Begin Project
@@ -32,7 +32,7 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
+!IF  "$(CFG)" == "np21w - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -46,7 +46,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "SUPPORT_NET" /D "SUPPORT_LGY98" /D "SUPPORT_WAB" /D "SUPPORT_CL_GD5430" /D "SUPPORT_HRTIMER" /D "ALLOW_MULTIRUN" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -56,9 +56,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21w.exe"
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Release NT"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -72,7 +72,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "SUPPORT_PC9821" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "SUPPORT_NET" /D "SUPPORT_LGY98" /D "SUPPORT_WAB" /D "SUPPORT_CL_GD5430" /D "SUPPORT_HRTIMER" /D "ALLOW_MULTIRUN" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -82,9 +82,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21nt.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21wnt.exe"
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trace"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -99,7 +99,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "NP2APPDEV" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "NP2APPDEV" /D "SUPPORT_NET" /D "SUPPORT_LGY98" /D "SUPPORT_WAB" /D "SUPPORT_CL_GD5430" /D "SUPPORT_HRTIMER" /D "ALLOW_MULTIRUN" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -109,9 +109,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21t.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21wt.exe"
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trap"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -126,7 +126,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /D "ENABLE_TRAP" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /D "ENABLE_TRAP" /D "SUPPORT_IDEIO" /D "SUPPORT_NET" /D "SUPPORT_LGY98" /D "SUPPORT_WAB" /D "SUPPORT_CL_GD5430" /D "SUPPORT_HRTIMER" /D "ALLOW_MULTIRUN" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
@@ -136,9 +136,9 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21trap.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /map /machine:I386 /out:"..\bin/np21wtrap.exe"
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -152,7 +152,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "SUPPORT_NET" /D "SUPPORT_LGY98" /D "SUPPORT_WAB" /D "SUPPORT_CL_GD5430" /D "SUPPORT_HRTIMER" /D "ALLOW_MULTIRUN" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
@@ -162,17 +162,17 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\bin/np21d.exe" /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\bin/np21wd.exe" /pdbtype:sept
 
 !ENDIF 
 
 # Begin Target
 
-# Name "np21 - Win32 Release"
-# Name "np21 - Win32 Release NT"
-# Name "np21 - Win32 Trace"
-# Name "np21 - Win32 Trap"
-# Name "np21 - Win32 Debug"
+# Name "np21w - Win32 Release"
+# Name "np21w - Win32 Release NT"
+# Name "np21w - Win32 Trace"
+# Name "np21w - Win32 Trap"
+# Name "np21w - Win32 Debug"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -355,7 +355,7 @@ SOURCE=..\COMMON\MIMPIDEF.C
 
 SOURCE=.\x86\PARTS.X86
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
+!IF  "$(CFG)" == "np21w - Win32 Release"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\rel21
@@ -367,7 +367,7 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Release NT"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\relnt21
@@ -379,7 +379,7 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
@@ -391,7 +391,7 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trap"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trap21
@@ -403,7 +403,7 @@ InputName=PARTS
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\dbg21
@@ -875,6 +875,30 @@ SOURCE=..\MEM\MEMVGA.C
 SOURCE=..\MEM\MEMVRAM.C
 # End Source File
 # End Group
+# Begin Group "network"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\network\lgy98.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\network\lgy98.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\network\lgy98dev.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\network\net.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\network\net.h
+# End Source File
+# End Group
 # Begin Group "sound"
 
 # PROP Default_Filter ""
@@ -994,7 +1018,7 @@ SOURCE=..\sound\opngencfg.h
 
 SOURCE=.\x86\opngeng.x86
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
+!IF  "$(CFG)" == "np21w - Win32 Release"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\rel21
@@ -1006,7 +1030,7 @@ InputName=opngeng
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Release NT"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\relnt21
@@ -1018,7 +1042,7 @@ InputName=opngeng
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
@@ -1030,7 +1054,7 @@ InputName=opngeng
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trap"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trap21
@@ -1042,7 +1066,7 @@ InputName=opngeng
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\dbg21
@@ -1149,7 +1173,7 @@ SOURCE=..\VRAM\MAKEGREX.C
 
 SOURCE=.\x86\MAKEGRPH.X86
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
+!IF  "$(CFG)" == "np21w - Win32 Release"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\rel21
@@ -1161,7 +1185,7 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Release NT"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\relnt21
@@ -1173,7 +1197,7 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
@@ -1185,7 +1209,7 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trap"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trap21
@@ -1197,7 +1221,7 @@ InputName=MAKEGRPH
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\dbg21
@@ -1239,6 +1263,42 @@ SOURCE=..\VRAM\SDRAW.C
 # Begin Source File
 
 SOURCE=..\VRAM\VRAM.C
+# End Source File
+# End Group
+# Begin Group "wab"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\wab\cirrus_vga.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\cirrus_vga.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\cirrus_vga_extern.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\cirrus_vga_rop.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\cirrus_vga_rop2.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\vga_int.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\wab.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\wab\wab.h
 # End Source File
 # End Group
 # Begin Group "win9x"
@@ -1501,7 +1561,15 @@ SOURCE=.\dialog\d_font.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\dialog\d_ide.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\dialog\d_mpu98.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_network.cpp
 # End Source File
 # Begin Source File
 
@@ -1518,6 +1586,10 @@ SOURCE=.\dialog\d_sound.cpp
 # Begin Source File
 
 SOURCE=.\dialog\d_soundlog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_wab.cpp
 # End Source File
 # Begin Source File
 
@@ -1832,7 +1904,7 @@ SOURCE=.\commng.h
 
 SOURCE=.\x86\CPUTYPE.X86
 
-!IF  "$(CFG)" == "np21 - Win32 Release"
+!IF  "$(CFG)" == "np21w - Win32 Release"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\rel21
@@ -1844,7 +1916,7 @@ InputName=CPUTYPE
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Release NT"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\relnt21
@@ -1856,7 +1928,7 @@ InputName=CPUTYPE
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trace"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trc21
@@ -1868,7 +1940,7 @@ InputName=CPUTYPE
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Trap"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\trap21
@@ -1880,7 +1952,7 @@ InputName=CPUTYPE
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+!ELSEIF  "$(CFG)" == "np21w - Win32 Debug"
 
 # Begin Custom Build - ｱｾﾝﾌﾞﾙ中... $(InputPath)
 IntDir=.\..\obj\dbg21

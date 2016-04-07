@@ -69,8 +69,8 @@ static void wabwin_readini()
 	np2wabcfg.multithread = 0;
 	np2wabcfg.halftone = 0;
 
-	initgetfile(szPath, _countof(szPath));
-	ini_read(szPath, g_Name, s_wabwndini, _countof(s_wabwndini));
+	initgetfile(szPath, NELEMENTS(szPath));
+	ini_read(szPath, g_Name, s_wabwndini, NELEMENTS(s_wabwndini));
 }
 
 /**
@@ -78,9 +78,9 @@ static void wabwin_readini()
  */
 static void wabwin_writeini()
 {
-	TCHAR szPath[MAX_PATH];
-	initgetfile(szPath, _countof(szPath));
-	ini_write(szPath, g_Name, s_wabwndini, _countof(s_wabwndini));
+	OEMCHAR szPath[MAX_PATH];
+	initgetfile(szPath, NELEMENTS(szPath));
+	ini_write(szPath, g_Name, s_wabwndini, NELEMENTS(s_wabwndini));
 }
 
 //void np2wab_updateWABChildWindowSize()
