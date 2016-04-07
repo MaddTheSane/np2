@@ -169,6 +169,10 @@ static void bios_reinitbyswitch(void) {
 	mem[0x45c] = 0x40;
 #endif
 
+#if defined(SUPPORT_PC9801_119)
+	mem[MEMB_BIOS_FLAG3] |= 0x40;
+#endif	/* defined(SUPPORT_PC9801_119) */
+
 	// FDC
 	if (fdc.support144) {
 		mem[MEMB_F144_SUP] |= fdc.equip;
