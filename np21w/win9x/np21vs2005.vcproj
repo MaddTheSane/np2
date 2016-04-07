@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="np21"
+	Name="np21w"
 	ProjectGUID="{A5EF7198-33D1-432A-B2C7-DD25B2553D1C}"
 	RootNamespace="np21vs2005"
 	Keyword="Win32Proj"
@@ -57,7 +57,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -143,7 +143,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -229,7 +229,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -315,7 +315,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -1078,6 +1078,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="network"
+				>
+				<File
+					RelativePath="..\network\lgy98.c"
+					>
+				</File>
+				<File
+					RelativePath="..\network\net.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="sound"
 				>
 				<File
@@ -1334,6 +1346,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="wab"
+				>
+				<File
+					RelativePath="..\wab\cirrus_vga.c"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\wab.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="win9x"
 				>
 				<File
@@ -1556,7 +1580,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_ide.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_mpu98.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\d_network.cpp"
 						>
 					</File>
 					<File
@@ -1573,6 +1605,10 @@
 					</File>
 					<File
 						RelativePath=".\dialog\d_soundlog.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\d_wab.cpp"
 						>
 					</File>
 					<File
@@ -2476,6 +2512,22 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="network"
+				>
+				<File
+					RelativePath="..\network\lgy98.h"
+					>
+				</File>
+				<File
+					RelativePath="..\network\lgy98dev.h"
+					>
+				</File>
+				<File
+					RelativePath="..\network\net.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="sound"
 				>
 				<File
@@ -2648,6 +2700,34 @@
 				</File>
 				<File
 					RelativePath="..\vram\vram.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="wab"
+				>
+				<File
+					RelativePath="..\wab\cirrus_vga.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_extern.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_rop.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_rop2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\vga_int.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\wab.h"
 					>
 				</File>
 			</Filter>

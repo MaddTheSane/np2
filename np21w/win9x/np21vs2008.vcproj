@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="np21"
+	Name="np21w"
 	ProjectGUID="{5DA72513-B262-42D0-A420-EDDA228EE6DC}"
 	RootNamespace="np21vs2008"
 	Keyword="Win32Proj"
@@ -58,7 +58,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LGY98;SUPPORT_LARGE_HDD;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -82,90 +82,6 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="NASM"
-				IncludePaths=".\x86\;..\i386c\x86\;..\io\x86\"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="YASM"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4819"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_UNICODE;UNICODE;SUPPORT_PC9821"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -224,7 +140,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -250,6 +166,90 @@
 				SubSystem="2"
 				LargeAddressAware="1"
 				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="..\bin\$(SolutionName)\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="..\obj\$(SolutionName)\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="NASM"
+				IncludePaths=".\x86\;..\i386c\x86\;..\io\x86\"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="YASM"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories=".\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4819"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_UNICODE;UNICODE;SUPPORT_PC9821"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -309,7 +309,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;TRACE;ALLOW_MULTIRUN"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -587,7 +587,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -595,7 +595,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1069,6 +1069,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="network"
+				>
+				<File
+					RelativePath="..\network\lgy98.c"
+					>
+				</File>
+				<File
+					RelativePath="..\network\net.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="sound"
 				>
 				<File
@@ -1267,7 +1279,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1275,7 +1287,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1321,6 +1333,18 @@
 				</File>
 				<File
 					RelativePath="..\vram\vram.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="wab"
+				>
+				<File
+					RelativePath="..\wab\cirrus_vga.c"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\wab.c"
 					>
 				</File>
 			</Filter>
@@ -1547,7 +1571,15 @@
 						>
 					</File>
 					<File
+						RelativePath=".\dialog\d_ide.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\dialog\d_mpu98.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\d_network.cpp"
 						>
 					</File>
 					<File
@@ -1564,6 +1596,10 @@
 					</File>
 					<File
 						RelativePath=".\dialog\d_soundlog.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\dialog\d_wab.cpp"
 						>
 					</File>
 					<File
@@ -1869,30 +1905,6 @@
 				</File>
 				<File
 					RelativePath="..\zlib\zutil.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="video"
-				>
-				<File
-					RelativePath="..\video\cirrus_vga.c"
-					>
-				</File>
-				<File
-					RelativePath="..\video\video.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="network"
-				>
-				<File
-					RelativePath="..\network\lgy98.c"
-					>
-				</File>
-				<File
-					RelativePath="..\network\net.c"
 					>
 				</File>
 			</Filter>
@@ -2495,6 +2507,22 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="network"
+				>
+				<File
+					RelativePath="..\network\lgy98.h"
+					>
+				</File>
+				<File
+					RelativePath="..\network\lgy98dev.h"
+					>
+				</File>
+				<File
+					RelativePath="..\network\net.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="sound"
 				>
 				<File
@@ -2667,6 +2695,34 @@
 				</File>
 				<File
 					RelativePath="..\vram\vram.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="wab"
+				>
+				<File
+					RelativePath="..\wab\cirrus_vga.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_extern.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_rop.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\cirrus_vga_rop2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\vga_int.h"
+					>
+				</File>
+				<File
+					RelativePath="..\wab\wab.h"
 					>
 				</File>
 			</Filter>
@@ -3119,46 +3175,6 @@
 				</File>
 				<File
 					RelativePath="..\zlib\zutil.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="video"
-				>
-				<File
-					RelativePath="..\video\cirrus_vga.h"
-					>
-				</File>
-				<File
-					RelativePath="..\video\cirrus_vga_rop.h"
-					>
-				</File>
-				<File
-					RelativePath="..\video\cirrus_vga_rop2.h"
-					>
-				</File>
-				<File
-					RelativePath="..\video\vga_int.h"
-					>
-				</File>
-				<File
-					RelativePath="..\video\video.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="network"
-				>
-				<File
-					RelativePath="..\network\lgy98.h"
-					>
-				</File>
-				<File
-					RelativePath="..\network\lgy98dev.h"
-					>
-				</File>
-				<File
-					RelativePath="..\network\net.h"
 					>
 				</File>
 			</Filter>
