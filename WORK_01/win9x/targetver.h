@@ -12,7 +12,7 @@
 #define WINVER 0x0400         // Change this to the appropriate value to target other versions of Windows.
 #endif
 
-#ifndef _WIN32_WINNT          // Specifies that the minimum required platform is Windows NT 4.
+#ifndef _WIN32_WINNT          // Specifies that the minimum required platform is Windows NT4.0 SP3.
 #define _WIN32_WINNT 0x0403   // Change this to the appropriate value to target other versions of Windows.
 #endif
 
