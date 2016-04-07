@@ -101,7 +101,7 @@ BOOL CNetworkPage::OnCommand(WPARAM wParam, LPARAM lParam)
 	switch (LOWORD(wParam))
 	{
 		case IDC_NETTAP:
-			m_cmbtap.GetWindowTextW(m_tap, NELEMENTS(m_tap));
+			m_cmbtap.GetWindowText(m_tap, _countof(m_tap));
 			return TRUE;
 	}
 	return FALSE;
@@ -235,7 +235,7 @@ void CNetworkPage::SetNetWorkDeviceNames()
 
 	if(indexsel == -1){
 		// ÉJÉXÉ^ÉÄê⁄ë±ñº
-		m_cmbtap.SetWindowTextW(m_tap);
+		m_cmbtap.SetWindowText(m_tap);
 	}
  
 	return;
