@@ -7,10 +7,10 @@
 
 #define MFCHECK(a) ((a) ? MF_CHECKED : MF_UNCHECKED)
 
-bool menu_searchmenu(HMENU hMenu, UINT uID, HMENU *phmenuRet, int *pnPos);
-int menu_addmenu(HMENU hMenu, int nPos, HMENU hmenuAdd, BOOL bSeparator);
-int menu_addmenures(HMENU hMenu, int nPos, UINT uID, BOOL bSeparator);
-void menu_addmenubar(HMENU popup, HMENU menubar);
+UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup);
+UINT AppendMenuResource(HMENU hMenu, UINT nMenuID);
+UINT InsertMenuResource(HMENU hMenu, UINT uItem, BOOL fByPosition, UINT nMenuID);
+HMENU GetMenuOwner(HMENU hMenu, UINT uItem, int* pnPos = NULL);
 
 void sysmenu_initialize(HMENU hMenu);
 void sysmenu_update(HMENU hMenu);

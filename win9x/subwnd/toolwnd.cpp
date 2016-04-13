@@ -544,59 +544,53 @@ void CToolWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 static void setSkinMruMenu(HMENU hMenu)
 {
-	HMENU		hmenuSub;
-const OEMCHAR	*pcszBase;
-	UINT		uCount;
-	OEMCHAR		*pszMru;
-const OEMCHAR	*pcszMruList[SKINMRU_MAX];
-	UINT		i;
-	UINT		uID[SKINMRU_MAX];
-	UINT		j;
-	UINT		uFlag;
-
-	for (i=0; i<SKINMRU_MAX; i++)
+	for (UINT i = 0; i < SKINMRU_MAX; i++)
 	{
 		DeleteMenu(hMenu, IDM_TOOL_SKINMRU + i, MF_BYCOMMAND);
 	}
 
-	if (!menu_searchmenu(hMenu, IDM_TOOL_SKINDEF, &hmenuSub, NULL))
+	HMENU hMenuSub = GetMenuOwner(hMenu, IDM_TOOL_SKINDEF);
+	if (hMenuSub == NULL)
 	{
 		return;
 	}
 
-	pcszBase = s_toolwndcfg.skin;
-
+	const OEMCHAR* pcszBase = s_toolwndcfg.skin;
 	CheckMenuItem(hMenu, IDM_TOOL_SKINDEF, MFCHECK(pcszBase[0] == '\0'));
 
-	for (uCount=0; uCount<SKINMRU_MAX; uCount++)
+	UINT nCount = 0;
+	UINT nID[SKINMRU_MAX];
+	const OEMCHAR* pcszMruList[SKINMRU_MAX];
+	for (nCount = 0; nCount < SKINMRU_MAX; nCount++)
 	{
-		pszMru = s_toolwndcfg.skinmru[uCount];
+		OEMCHAR* pszMru = s_toolwndcfg.skinmru[nCount];
 		if (pszMru[0] == '\0')
 		{
 			break;
 		}
 		pszMru = file_getname(pszMru);
-		for (i=0; i<uCount; i++)
+
+		UINT i = 0;
+		for (i = 0; i < nCount; i++)
 		{
-			if (file_cmpname(pszMru, pcszMruList[uID[i]]) < 0)
+			if (file_cmpname(pszMru, pcszMruList[nID[i]]) < 0)
 			{
 				break;
 			}
 		}
-		for (j=uCount; j>i; j--)
+		for (UINT j = nCount; j > i; j--)
 		{
-			uID[j] = uID[j-1];
+			nID[j] = nID[j - 1];
 		}
-		uID[i] = uCount;
-		pcszMruList[uCount] = pszMru;
+		nID[i] = nCount;
+		pcszMruList[nCount] = pszMru;
 	}
 
-	for (i=0; i<uCount; i++)
+	for (UINT i = 0; i < nCount; i++)
 	{
-		j = uID[i];
-		uFlag = MFCHECK(!file_cmpname(pcszBase, s_toolwndcfg.skinmru[j]));
-		const TCHAR *szPath = pcszMruList[j];
-		AppendMenu(hmenuSub, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
+		const UINT j = nID[i];
+		const UINT uFlag = MFCHECK(!file_cmpname(pcszBase, s_toolwndcfg.skinmru[j]));
+		AppendMenu(hMenuSub, MF_STRING + uFlag, IDM_TOOL_SKINMRU + j, pcszMruList[j]);
 	}
 }
 
@@ -653,10 +647,12 @@ void CToolWnd::OpenPopUp(LPARAM lParam)
 	HMENU hMenu = CreatePopupMenu();
 	if (!winui_en)
 	{
-		menu_addmenu(hMenu, 0, np2class_gethmenu(g_hWndMain), FALSE);
+		InsertMenuPopup(hMenu, 0, TRUE, np2class_gethmenu(g_hWndMain));
 	}
-	menu_addmenures(hMenu, -1, IDR_TOOLWIN, FALSE);
-	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
+	AppendMenuResource(hMenu, IDR_TOOLWIN);
+	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenuResource(hMenu, IDR_CLOSE);
+
 	setSkinMruMenu(hMenu);
 	xmenu_update(hMenu);
 	POINT pt;
@@ -673,7 +669,7 @@ int CToolWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	setSkinMruMenu(np2class_gethmenu(m_hWnd));
 
 	HMENU hMenu = GetSystemMenu(FALSE);
-	int nCount = menu_addmenures(hMenu, 0, IDR_TOOLWIN, FALSE);
+	UINT nCount = InsertMenuResource(hMenu, 0, TRUE, IDR_TOOLWIN);
 	if (nCount)
 	{
 		InsertMenu(hMenu, nCount, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
