@@ -620,7 +620,7 @@ void initgetfile(LPTSTR lpPath, UINT cchPath)
 	{
 		file_cpyname(lpPath, lpIni, cchPath);
 		LPCTSTR lpExt = file_getext(lpPath);
-		if (lpExt[0] != '\0')
+		if (lpExt[0] == '\0')
 		{
 			file_catname(lpPath, s_szExt, cchPath);
 		}
