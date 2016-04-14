@@ -829,7 +829,7 @@ const SCRNSURF *scrnmng_surflock(void) {
 	}
 	else if (!(ddraw.scrnmode & SCRNMODE_ROTATEDIR)) {
 		scrnsurf.ptr = (UINT8 *)destscrn.lpSurface;
-		scrnsurf.ptr += (scrnsurf.width - 1) * destscrn.lPitch;
+		scrnsurf.ptr += (scrnsurf.width + scrnsurf.extend - 1) * destscrn.lPitch;
 		scrnsurf.xalign = 0 - destscrn.lPitch;
 		scrnsurf.yalign = scrnsurf.bpp >> 3;
 	}
