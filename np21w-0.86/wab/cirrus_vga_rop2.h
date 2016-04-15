@@ -1,4 +1,3 @@
-
 /*
  * QEMU Cirrus CLGD 54xx VGA Emulator.
  *
@@ -23,8 +22,6 @@
  * THE SOFTWARE.
  */
 
-#if defined(SUPPORT_CL_GD5430)
-
 #if DEPTH == 8
 #define PUTPIXEL()    ROP_OP(d[0], col)
 #elif DEPTH == 16
@@ -36,7 +33,7 @@
 #elif DEPTH == 32
 #define PUTPIXEL()    ROP_OP(((uint32_t_ *)d)[0], col)
 #else
-//#error unsupported DEPTH
+#error unsupported DEPTH
 #endif
 
 static void
@@ -282,6 +279,3 @@ glue(glue(glue(cirrus_fill_, ROP_NAME), _),DEPTH)
 
 #undef DEPTH
 #undef PUTPIXEL
-
-
-#endif

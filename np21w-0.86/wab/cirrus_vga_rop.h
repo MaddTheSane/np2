@@ -1,4 +1,3 @@
-
 /*
  * QEMU Cirrus CLGD 54xx VGA Emulator.
  *
@@ -22,8 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-#if defined(SUPPORT_CL_GD5430)
 
 static void
 glue(cirrus_bitblt_rop_fwd_, ROP_NAME)(CirrusVGAState *s,
@@ -187,6 +184,3 @@ glue(glue(cirrus_bitblt_rop_bkwd_transp_, ROP_NAME),_16)(CirrusVGAState *s,
 
 #undef ROP_NAME
 #undef ROP_OP
-
-
-#endif

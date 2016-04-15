@@ -326,12 +326,12 @@ static const MEMFNF memfnf = {
 #define VRAMWINDOW_SIZE	0x200000  // VRAM マッピングサイズ
 #define EXT_WINDOW_SIZE	0x200000  // 謎
 #define EXT_WINDOW_SHFT	0x000000  // 謎
-#define BBLTWINDOW_ADSH	0xF0000000 // VRAM BITBLT
-#define BBLTWINDOW_SIZE	0x100000  // VRAM BITBLT マッピングサイズ
-#define MMIOWINDOW_ADDR	0xF80000  // MMIO マッピングアドレス（場所不明）
-#define MMIOWINDOW_SIZE	0x0   // MMIO マッピングサイズ（サイズ不明）
-#define VRA2WINDOW_ADDR	0xF20000  // VRAMウィンドウ マッピングアドレス（場所不明）
-#define VRA2WINDOW_SIZE	0x0   // VRAMウィンドウ マッピングサイズ（サイズ不明）
+#define BBLTWINDOW_ADSH	0x200000 // VRAM BITBLT
+#define BBLTWINDOW_SIZE	0x000000  // VRAM BITBLT マッピングサイズ
+#define MMIOWINDOW_ADDR	0x0F200000  // MMIO マッピングアドレス（場所不明）
+#define MMIOWINDOW_SIZE	0x000000   // MMIO マッピングサイズ（サイズ不明）
+#define VRA2WINDOW_ADDR	0x0F200000  // VRAMウィンドウ マッピングアドレス（場所不明）
+#define VRA2WINDOW_SIZE	0x000000   // VRAMウィンドウ マッピングサイズ（サイズ不明）
 #endif
 
 REG8 MEMCALL memp_read8(UINT32 address) {
@@ -381,13 +381,6 @@ REG8 MEMCALL memp_read8(UINT32 address) {
 		if (address == 0xF8E80+0x003F) 
 			return 0x21; // PC-9821 Xa7,9,10,12/C 
 	}
-	//if(sxsi_getdevtype(0)==SXSIDEV_HDD){
-		//if(address == 0x457) return 0x90|0x42;
-		//if(address == 0x45d) return 0x08|0x10|mem[0x45d];
-		//if(address == 0x55d) return 0x01|0x02|mem[0x55d];
-		//if(address == 0x5b0) return 0x00;
-		//if(address == 0x480) return 0x80|mem[0x55d];
-	//}
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);
