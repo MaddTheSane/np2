@@ -11,6 +11,18 @@
 #include "targetver.h"
 #define _USE_MATH_DEFINES
 #include <windows.h>
+
+/* workaround for VC6 (definition missing in the header) */
+#if (_MSC_VER + 0) <= 1200
+# ifdef __cplusplus
+extern "C" {
+# endif
+WINBASEAPI BOOL WINAPI SetFilePointerEx(HANDLE, LARGE_INTEGER, PLARGE_INTEGER, DWORD);
+# ifdef __cplusplus
+}
+# endif
+#endif
+
 #if !defined(__GNUC__)
 #include <tchar.h>
 #endif	// !defined(__GNUC__)
@@ -60,6 +72,11 @@ typedef	signed __int64		SINT64;
 #define	INLINE				inline
 #endif
 #define	FASTCALL			__fastcall
+
+#include <limits.h>
+#if !defined(LLONG_MIN)
+#  define LLONG_MIN (SINT64)(QWORD_CONST(1)<<63)
+#endif
 
 // for x86
 #define	LOADINTELDWORD(a)		(*((UINT32 *)(a)))

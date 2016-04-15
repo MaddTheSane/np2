@@ -27,6 +27,10 @@
 #include "dispsync.h"
 #include "wab.h"
 
+#if !defined(_countof)
+#define _countof(a)	(sizeof(a)/sizeof(a[0]))
+#endif
+
 NP2WAB np2wab = {0};
 
 TCHAR	g_Name[100] = _T("NP2 Window Accelerator");

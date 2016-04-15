@@ -6,12 +6,13 @@
  * @date	$Date: 2011/02/17 10:36:05 $
  */
 
+#include "compiler.h"
+
 #if defined(SUPPORT_WIN2000HOST)
 #define WINVER2 0x0500
 #include "commonfix.h"
 #endif
 
-#include "compiler.h"
 #include <time.h>
 #include <winsock.h>
 #ifndef __GNUC__

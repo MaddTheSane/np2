@@ -227,7 +227,7 @@ void pccore_exec(BOOL draw);
 void pccore_postevent(UINT32 event);
 
 #ifdef SUPPORT_HRTIMER
-extern long long hrtimerdiv;
+extern SINT64 hrtimerdiv;
 #endif
 
 #ifdef __cplusplus
