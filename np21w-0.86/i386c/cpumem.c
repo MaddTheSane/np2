@@ -390,8 +390,6 @@ REG8 MEMCALL memp_read8(UINT32 address) {
 	//}
 
 	if (address < I286_MEMREADMAX) {
-		if(address==0x0481) 
-			return 0x40;
 		return(mem[address]);
 	}
 	else {

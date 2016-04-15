@@ -14,8 +14,6 @@
 #include	"sound.h"
 #include	"idebios.res"
 
-#define TRACEOUT(a) (void)(a)
-
 
 	IDEIO	ideio;
 

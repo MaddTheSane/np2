@@ -50,7 +50,7 @@ RSC=rc.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -76,7 +76,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -99,11 +99,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "NP2APPDEV" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -130,7 +130,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -156,7 +156,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
-# ADD RSC /l 0x411 /d "_DEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "_DEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo

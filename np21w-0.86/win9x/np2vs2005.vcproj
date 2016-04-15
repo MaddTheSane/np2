@@ -17,10 +17,10 @@
 	</Platforms>
 	<ToolFiles>
 		<ToolFile
-			RelativePath=".\x86\x86.rules"
+			RelativePath=".\x86\vs2008\x86.rules"
 		/>
 		<ToolFile
-			RelativePath=".\x64\x64.rules"
+			RelativePath=".\x64\vs2008\x64.rules"
 		/>
 	</ToolFiles>
 	<Configurations>
