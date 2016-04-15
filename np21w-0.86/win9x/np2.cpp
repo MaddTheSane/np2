@@ -8,10 +8,14 @@
 
 #include "compiler.h"
 
-#if defined(SUPPORT_WIN2000HOST)
 // Win2000‚Å“®‚­‚æ‚¤‚É‚·‚é
+#if defined(SUPPORT_WIN2000HOST)
+#ifdef _WINDOWS
+#ifndef _WIN64
 #define WINVER2 0x0500
 #include "commonfix.h"
+#endif
+#endif
 #endif
 
 #include <time.h>

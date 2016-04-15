@@ -209,6 +209,10 @@ BOOL ScrOptChipPage::OnInitDialog()
 	{
 		GetDlgItem(s_disabled[i]).EnableWindow(FALSE);
 	}
+	CheckDlgButton(s_gdcchip[0], BST_UNCHECKED);
+	CheckDlgButton(s_gdcchip[1], BST_UNCHECKED);
+	CheckDlgButton(s_gdcchip[2], BST_UNCHECKED);
+	CheckDlgButton(s_gdcchip[3], BST_CHECKED);
 #endif	// defined(SUPPORT_PC9821)
 
 	return TRUE;

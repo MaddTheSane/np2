@@ -467,7 +467,7 @@ static const PFTBL s_IniItems[] =
 
 	PFEXT("DIPswtch", PFTYPE_BIN,		np2cfg.dipsw,			3),
 	PFEXT("MEMswtch", PFTYPE_BIN,		np2cfg.memsw,			8),
-	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			255),
+	PFMAX("ExMemory", PFTYPE_UINT8,		&np2cfg.EXTMEM,			127),
 	PFVAL("ITF_WORK", PFTYPE_BOOL,		&np2cfg.ITF_WORK),
 
 	PFSTR("HDD1FILE", PFTYPE_STR,		np2cfg.sasihdd[0]),
@@ -645,11 +645,11 @@ void initgetfile(LPTSTR lpPath, UINT cchPath)
 	if (lpIni)
 	{
 		file_cpyname(lpPath, lpIni, cchPath);
-		LPCTSTR lpExt = file_getext(lpPath);
-		if (lpExt[0] != '\0')
-		{
-			file_catname(lpPath, s_szExt, cchPath);
-		}
+		//LPCTSTR lpExt = file_getext(lpPath);
+		//if (lpExt[0] != '\0')
+		//{
+		//	file_catname(lpPath, s_szExt, cchPath);
+		//}
 	}
 	else
 	{
@@ -676,7 +676,7 @@ void initload(void)
 void initsave(void)
 {
 	TCHAR szPath[MAX_PATH];
-
+	
 	initgetfile(szPath, _countof(szPath));
 	ini_write(szPath, s_szIniTitle, s_IniItems, _countof(s_IniItems));
 }

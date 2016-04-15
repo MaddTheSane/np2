@@ -1128,6 +1128,9 @@
     <ClCompile Include="..\zlib\zutil.c">
       <Filter>ソース ファイル\zlib</Filter>
     </ClCompile>
+    <ClCompile Include="..\i386c\ia32\instructions\fpu\fpemul.c">
+      <Filter>ソース ファイル\i386c\ia32\instructions\fpu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\calendar.h">
@@ -1975,6 +1978,12 @@
     </ClInclude>
     <ClInclude Include="..\zlib\zutil.h">
       <Filter>ヘッダー ファイル\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fdd\hdd_vhd.h">
+      <Filter>ヘッダー ファイル\fdd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fdd\hdd_vpc.h">
+      <Filter>ヘッダー ファイル\fdd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

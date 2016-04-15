@@ -1200,7 +1200,7 @@ static void cirrus_bitblt_start(CirrusVGAState * s)
     s->cirrus_blt_srcaddr =
 	(s->gr[0x2c] | (s->gr[0x2d] << 8) | (s->gr[0x2e] << 16));
     s->cirrus_blt_mode = s->gr[0x30];
-    s->cirrus_blt_modeext = s->gr[0x33];
+    s->cirrus_blt_modeext = 0; //s->gr[0x33];  // ver0.86 rev8
     blt_rop = s->gr[0x32];
 
 #ifdef DEBUG_BITBLT
@@ -4152,10 +4152,7 @@ static void pc98_cirrus_init_common(CirrusVGAState * s, int device_id, int is_pc
         rop_to_index[CIRRUS_ROP_NOTSRC_OR_DST] = 14;
         rop_to_index[CIRRUS_ROP_NOTSRC_AND_NOTDST] = 15;
         s->device_id = device_id;
-        if (is_pci)
-            s->bustype = CIRRUS_BUSTYPE_PCI;
-        else
-            s->bustype = CIRRUS_BUSTYPE_ISA;
+        s->bustype = CIRRUS_BUSTYPE_ISA;
     //}
 	
 	iocore_attachout(0xfa2, cirrusvga_ofa2);

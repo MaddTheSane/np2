@@ -178,7 +178,7 @@ BEGIN
     LTEXT           "clock",IDC_STATIC,148,9,22,8
     LTEXT           "clock",IDC_STATIC,148,25,22,8
     LTEXT           "clock",IDC_STATIC,148,41,22,8
-    LTEXT           "Real palettes adjust",IDC_STATIC,8,60,156,8
+    LTEXT           "擬似多色パレット調整",IDC_STATIC,8,60,156,8
     CONTROL         "Slider3",IDC_REALPAL,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,40,73,80,10
     RTEXT           "",IDC_REALPALSTR,124,72,20,10,SS_SUNKEN
 END
