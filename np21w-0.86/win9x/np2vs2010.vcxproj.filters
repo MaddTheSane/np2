@@ -26,17 +26,11 @@
     <Filter Include="ソース ファイル\generic">
       <UniqueIdentifier>{ddd41d04-af6a-4e3f-afc0-637b76a22b31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\i386c">
+    <Filter Include="ソース ファイル\i286c">
       <UniqueIdentifier>{e5b27007-849a-4a45-bdfa-4765e2b38b84}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\i386c\ia32">
-      <UniqueIdentifier>{fef96193-cafa-4f6a-b633-210a2df36f23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\i386c\ia32\instructions">
-      <UniqueIdentifier>{40a504df-5e1c-4bef-ac4d-5930b568bc38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\i386c\ia32\instructions\fpu">
-      <UniqueIdentifier>{470c4350-1447-4e1e-8ec6-d479521af90a}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\i286x">
+      <UniqueIdentifier>{58c74657-242f-4792-b014-5e8f6a538e4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\io">
       <UniqueIdentifier>{9d73e98b-7a0a-4020-bc6c-7aaa04a461b6}</UniqueIdentifier>
@@ -47,8 +41,8 @@
     <Filter Include="ソース ファイル\mem">
       <UniqueIdentifier>{01579648-5982-43cb-833c-6b7a4a7bcb08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\network">
-      <UniqueIdentifier>{bdac5245-4b58-48bd-82fd-c397ded19fcf}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\mem\x86">
+      <UniqueIdentifier>{31f8d1d1-fa51-413f-b5f6-34b8b544a6dd}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\sound">
       <UniqueIdentifier>{6425f598-1380-4bd5-b08b-999a4c1278ad}</UniqueIdentifier>
@@ -64,9 +58,6 @@
     </Filter>
     <Filter Include="ソース ファイル\vram">
       <UniqueIdentifier>{c496ddb3-5aee-413b-8906-3d91b461cd13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\wab">
-      <UniqueIdentifier>{f43e01c0-5bb4-47a1-8c84-f3f4f40cbc67}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\win9x">
       <UniqueIdentifier>{726cbe33-3d3a-4a4e-971c-45e476da141f}</UniqueIdentifier>
@@ -141,17 +132,11 @@
     <Filter Include="ヘッダー ファイル\generic">
       <UniqueIdentifier>{09e56662-4cd1-4232-b414-9b0f90c1e145}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\i386c">
+    <Filter Include="ヘッダー ファイル\i286c">
       <UniqueIdentifier>{6626a5ee-5600-41b6-be1f-217e4eaf53e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\i386c\ia32">
-      <UniqueIdentifier>{0104c1ac-5ca1-4b6f-b220-c05324e2ad97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\i386c\ia32\instructions">
-      <UniqueIdentifier>{cae28f00-c91f-49af-8efa-c32011af9e0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\i386c\ia32\instructions\fpu">
-      <UniqueIdentifier>{00715a1e-f5e4-4da4-96c0-b83522638d51}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\i286x">
+      <UniqueIdentifier>{9e6219f1-0b53-4089-aa53-22a1be26ba5f}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\io">
       <UniqueIdentifier>{365eee28-18cb-4b90-ad6d-39cc2f26318d}</UniqueIdentifier>
@@ -161,9 +146,6 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\mem">
       <UniqueIdentifier>{3a4f5730-0e13-42b9-baee-87d5d4a11e9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\network">
-      <UniqueIdentifier>{09bbd1f2-e09f-4bb7-bdd8-93e18f8fe539}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\sound">
       <UniqueIdentifier>{09de52a7-67a5-4d07-baa1-19cea9b9550d}</UniqueIdentifier>
@@ -179,9 +161,6 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\vram">
       <UniqueIdentifier>{25377575-7944-47a0-b798-eabc91766702}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\wab">
-      <UniqueIdentifier>{54b973e6-85c2-4691-908f-77446d50b5d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\win9x">
       <UniqueIdentifier>{ea5e42aa-6b8e-4dfe-a484-4910f03c4de8}</UniqueIdentifier>
@@ -471,9 +450,6 @@
     <ClCompile Include="..\generic\keydisp.c">
       <Filter>ソース ファイル\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\generic\memdbg32.c">
-      <Filter>ソース ファイル\generic</Filter>
-    </ClCompile>
     <ClCompile Include="..\generic\np2info.c">
       <Filter>ソース ファイル\generic</Filter>
     </ClCompile>
@@ -483,98 +459,56 @@
     <ClCompile Include="..\generic\unasm.c">
       <Filter>ソース ファイル\generic</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\cpucore.c">
-      <Filter>ソース ファイル\i386c</Filter>
+    <ClCompile Include="..\i286c\cpumem.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\cpumem.c">
-      <Filter>ソース ファイル\i386c</Filter>
+    <ClCompile Include="..\i286c\i286c.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\cpu.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_0f.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\cpu_io.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_8x.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\cpu_mem.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_ea.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\ctrlxfer.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_f6.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\debug.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_fe.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\disasm.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_mn.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\exception.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_rp.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\groups.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\i286c_sf.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\ia32.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286c\v30patch.c">
+      <Filter>ソース ファイル\i286c</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\inst_table.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286x\i286x.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\interface.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286x\i286xadr.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\paging.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286x\i286xcts.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\resolve.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286x\i286xrep.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\segments.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
+    <ClCompile Include="..\i286x\i286xs.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
-    <ClCompile Include="..\i386c\ia32\task.c">
-      <Filter>ソース ファイル\i386c\ia32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\bin_arith.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\bit_byte.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\ctrl_trans.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\data_trans.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\dec_arith.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\flag_ctrl.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\fpu.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\logic_arith.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\misc_inst.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\seg_reg.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\shift_rotate.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\string_inst.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\system_inst.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\i386c\ia32\instructions\fpu\fpdummy.c">
-      <Filter>ソース ファイル\i386c\ia32\instructions\fpu</Filter>
+    <ClCompile Include="..\i286x\v30patch.cpp">
+      <Filter>ソース ファイル\i286x</Filter>
     </ClCompile>
     <ClCompile Include="..\io\artic.c">
       <Filter>ソース ファイル\io</Filter>
@@ -672,6 +606,9 @@
     <ClCompile Include="..\lio\lio.c">
       <Filter>ソース ファイル\lio</Filter>
     </ClCompile>
+    <ClCompile Include="..\mem\dmav30.c">
+      <Filter>ソース ファイル\mem</Filter>
+    </ClCompile>
     <ClCompile Include="..\mem\dmax86.c">
       <Filter>ソース ファイル\mem</Filter>
     </ClCompile>
@@ -692,12 +629,6 @@
     </ClCompile>
     <ClCompile Include="..\mem\memvram.c">
       <Filter>ソース ファイル\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\lgy98.c">
-      <Filter>ソース ファイル\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\network\net.c">
-      <Filter>ソース ファイル\network</Filter>
     </ClCompile>
     <ClCompile Include="..\sound\adpcmc.c">
       <Filter>ソース ファイル\sound</Filter>
@@ -833,12 +764,6 @@
     </ClCompile>
     <ClCompile Include="..\vram\vram.c">
       <Filter>ソース ファイル\vram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\wab\cirrus_vga.c">
-      <Filter>ソース ファイル\wab</Filter>
-    </ClCompile>
-    <ClCompile Include="..\wab\wab.c">
-      <Filter>ソース ファイル\wab</Filter>
     </ClCompile>
     <ClCompile Include="commng.cpp">
       <Filter>ソース ファイル\win9x</Filter>
@@ -993,13 +918,7 @@
     <ClCompile Include="dialog\d_font.cpp">
       <Filter>ソース ファイル\win9x\dialog</Filter>
     </ClCompile>
-    <ClCompile Include="dialog\d_ide.cpp">
-      <Filter>ソース ファイル\win9x\dialog</Filter>
-    </ClCompile>
     <ClCompile Include="dialog\d_mpu98.cpp">
-      <Filter>ソース ファイル\win9x\dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="dialog\d_network.cpp">
       <Filter>ソース ファイル\win9x\dialog</Filter>
     </ClCompile>
     <ClCompile Include="dialog\d_screen.cpp">
@@ -1012,9 +931,6 @@
       <Filter>ソース ファイル\win9x\dialog</Filter>
     </ClCompile>
     <ClCompile Include="dialog\d_soundlog.cpp">
-      <Filter>ソース ファイル\win9x\dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="dialog\d_wab.cpp">
       <Filter>ソース ファイル\win9x\dialog</Filter>
     </ClCompile>
     <ClCompile Include="dialog\np2class.cpp">
@@ -1331,9 +1247,6 @@
     <ClInclude Include="..\generic\keydisp.h">
       <Filter>ヘッダー ファイル\generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\generic\memdbg32.h">
-      <Filter>ヘッダー ファイル\generic</Filter>
-    </ClInclude>
     <ClInclude Include="..\generic\np2info.h">
       <Filter>ヘッダー ファイル\generic</Filter>
     </ClInclude>
@@ -1343,86 +1256,41 @@
     <ClInclude Include="..\generic\unasm.h">
       <Filter>ヘッダー ファイル\generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\cpucore.h">
-      <Filter>ヘッダー ファイル\i386c</Filter>
+    <ClInclude Include="..\i286x\cpucore.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\cpumem.h">
-      <Filter>ヘッダー ファイル\i386c</Filter>
+    <ClInclude Include="..\i286x\cpumem.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\cpu.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\i286x.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\cpu_io.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\i286xadr.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\cpu_mem.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\i286xcts.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\ctrlxfer.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\i286xrep.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\exception.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\i286xs.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\groups.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286x\v30patch.h">
+      <Filter>ヘッダー ファイル\i286x</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\inst_table.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286c\cpucore.h">
+      <Filter>ヘッダー ファイル\i286c</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\interface.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286c\cpumem.h">
+      <Filter>ヘッダー ファイル\i286c</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\paging.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
+    <ClInclude Include="..\i286c\i286c.h">
+      <Filter>ヘッダー ファイル\i286c</Filter>
     </ClInclude>
-    <ClInclude Include="..\i386c\ia32\resolve.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\segments.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\task.h">
-      <Filter>ヘッダー ファイル\i386c\ia32</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\bin_arith.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\bit_byte.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\ctrl_trans.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\data_trans.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\dec_arith.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\flag_ctrl.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\logic_arith.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\misc_inst.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\seg_reg.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\shift_rotate.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\string_inst.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\system_inst.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\i386c\ia32\instructions\fpu\fp.h">
-      <Filter>ヘッダー ファイル\i386c\ia32\instructions\fpu</Filter>
+    <ClInclude Include="..\i286c\v30patch.h">
+      <Filter>ヘッダー ファイル\i286c</Filter>
     </ClInclude>
     <ClInclude Include="..\io\artic.h">
       <Filter>ヘッダー ファイル\io</Filter>
@@ -1534,15 +1402,6 @@
     </ClInclude>
     <ClInclude Include="..\mem\memvram.h">
       <Filter>ヘッダー ファイル\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\lgy98.h">
-      <Filter>ヘッダー ファイル\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\lgy98dev.h">
-      <Filter>ヘッダー ファイル\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\network\net.h">
-      <Filter>ヘッダー ファイル\network</Filter>
     </ClInclude>
     <ClInclude Include="..\sound\adpcm.h">
       <Filter>ヘッダー ファイル\sound</Filter>
@@ -1660,24 +1519,6 @@
     </ClInclude>
     <ClInclude Include="..\vram\vram.h">
       <Filter>ヘッダー ファイル\vram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\cirrus_vga.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\cirrus_vga_extern.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\cirrus_vga_rop.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\cirrus_vga_rop2.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\vga_int.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wab\wab.h">
-      <Filter>ヘッダー ファイル\wab</Filter>
     </ClInclude>
     <ClInclude Include="commng.h">
       <Filter>ヘッダー ファイル\win9x</Filter>
@@ -1978,6 +1819,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <NASM Include="..\i286x\cpumem.x86">
+      <Filter>ソース ファイル\i286x</Filter>
+    </NASM>
+    <NASM Include="..\mem\x86\dmax86.x86">
+      <Filter>ソース ファイル\mem\x86</Filter>
+    </NASM>
+    <NASM Include="..\mem\x86\memegc.x86">
+      <Filter>ソース ファイル\mem\x86</Filter>
+    </NASM>
     <NASM Include="x86\cputype.x86">
       <Filter>ソース ファイル\win9x\x86</Filter>
     </NASM>
@@ -1992,16 +1842,16 @@
     </NASM>
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="resources\1252\np2.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
     <YASM Include="x64\makegrph.x64">
       <Filter>ソース ファイル\win9x\x64</Filter>
     </YASM>
     <YASM Include="x64\parts.x64">
       <Filter>ソース ファイル\win9x\x64</Filter>
     </YASM>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resources\932\np2.rc">
-      <Filter>リソース ファイル</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>
