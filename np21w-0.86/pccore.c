@@ -118,7 +118,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 #if defined(SUPPORT_HRTIMER)
 	LARGE_INTEGER hrtimer = {0}; 
 	LARGE_INTEGER hrtimerfreq = {0}; 
-	long long hrtimerdiv = 32; 
+	SINT64 hrtimerdiv = 32; 
 #endif
 
 // ---------------------------------------------------------------------------
