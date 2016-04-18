@@ -67,7 +67,7 @@ static int doWriteTap(HANDLE hTap, const UCHAR *pSendBuf, DWORD len)
 	return 0;
 }
 
-// パケットデータをバッファに送る
+// パケットデータをバッファに送る（実際の送信はnp2net_ThreadFuncW内で行われる）
 static int sendDataToBuffer(UCHAR *pSendBuf, DWORD len){
 	if(len > NET_BUFLEN){
 		TRACEOUT(("LGY-98: too large packet!! %d bytes", len));
@@ -76,8 +76,8 @@ static int sendDataToBuffer(UCHAR *pSendBuf, DWORD len){
 	if(np2net_membuf_readpos==(np2net_membuf_writepos+1)%NET_ARYLEN){
 		TRACEOUT(("LGY-98: buffer full"));
 		while(np2net_membuf_readpos==(np2net_membuf_writepos+1)%NET_ARYLEN){
-			//Sleep(0); // バッファがいっぱいなので待つ
-			return 1; // バッファがいっぱいなので捨てる
+			Sleep(0); // バッファがいっぱいなので待つ
+			//return 1; // バッファがいっぱいなので捨てる
 		}
 	}
 	memcpy(np2net_membuf[np2net_membuf_writepos], pSendBuf, len);
@@ -122,6 +122,7 @@ static DWORD WINAPI np2net_ThreadFuncR(LPVOID vdParam) {
 	int sleepcount = 0;
 	CHAR np2net_Buf[NET_BUFLEN];
 
+	// OVERLAPPED非同期読み取り準備
 	memset(&ovl, 0, sizeof(OVERLAPPED));
 	ovl.hEvent = hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	ovl.Offset = 0;
@@ -131,22 +132,25 @@ static DWORD WINAPI np2net_ThreadFuncR(LPVOID vdParam) {
 		if (!ReadFile(np2net_hTap, np2net_Buf, sizeof(np2net_Buf), &dwLen, &ovl)) {
 			DWORD err = GetLastError();
 			if (err == ERROR_IO_PENDING) {
+				// 読み取り待ち
 				WaitForSingleObject(hEvent, INFINITE); // 受信完了待ち
 				GetOverlappedResult(np2net_hTap, &ovl, &dwLen, FALSE);
 				if(dwLen>0){
 					//TRACEOUT(("LGY-98: recieve %u bytes\n", dwLen));
-					np2net.recieve_packet((UINT8*)np2net_Buf, dwLen);
+					np2net.recieve_packet((UINT8*)np2net_Buf, dwLen); // 受信できたので通知する
 				}
 			} else {
+				// 読み取りエラー
 				printf("TAP-Win32: ReadFile err=0x%08X\n", err);
 				//CloseHandle(hTap);
 				//return -1;
 				Sleep(0);
 			}
 		} else {
+			// 読み取り成功
 			if(dwLen>0){
 				//TRACEOUT(("LGY-98: recieve %u bytes\n", dwLen));
-				np2net.recieve_packet((UINT8*)np2net_Buf, dwLen);
+				np2net.recieve_packet((UINT8*)np2net_Buf, dwLen); // 受信できたので通知する
 			}else{
 				Sleep(0);
 			}
@@ -157,7 +161,7 @@ static DWORD WINAPI np2net_ThreadFuncR(LPVOID vdParam) {
 	return 0;
 }
 
-//  TAPデバイスを開く
+//  TAPデバイスを閉じる
 static void np2net_closeTAP(){
     if (np2net_hTap != NULL) {
 		if(np2net_hThreadR){
@@ -173,7 +177,7 @@ static void np2net_closeTAP(){
 		np2net_hTap = NULL;
     }
 }
-//  TAPデバイスを閉じる
+//  TAPデバイスを開く
 static int np2net_openTAP(const TCHAR* tapname){
 	DWORD dwID;
 	DWORD dwLen;
@@ -239,7 +243,9 @@ void np2net_init(void)
 // リセット時に呼ばれる？
 void np2net_reset(const NP2CFG *pConfig){
 	_tcscpy(np2net_tapName, pConfig->np2nettap);
-	np2net_openTAP(np2net_tapName);
+	if(pConfig->uselgy98){ // XXX: 使われていないならTAPデバイスはオープンしない
+		np2net_openTAP(np2net_tapName);
+	}
 }
 // リセット時に呼ばれる？（np2net_resetより後・iocore_attach～が使える）
 void np2net_bind(void){
@@ -358,4 +364,4 @@ static TCHAR *GetNetWorkDeviceGuid(CONST TCHAR *pDisplayName, TCHAR *pszBuf, DWO
   return pszBuf;
 }
 
-#endif	/* SUPPORT_LGY98 */
+#endif	/* SUPPORT_NET */

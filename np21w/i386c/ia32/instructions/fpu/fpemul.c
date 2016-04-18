@@ -632,157 +632,524 @@ fpu_fwait(void)
 
 	/* XXX: check pending FPU exception */
 }
+//
+//void
+//ESC0(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(0), ST(i) */
+//		switch (idx) {
+//		case 0:	/* FADD */
+//		case 1:	/* FMUL */
+//		case 2:	/* FCOM */
+//		case 3:	/* FCOMP */
+//		case 4:	/* FSUB */
+//		case 5:	/* FSUBR */
+//		case 6:	/* FDIV */
+//		case 7:	/* FDIVR */
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FADD (単精度実数) */
+//		case 1:	/* FMUL (単精度実数) */
+//		case 2:	/* FCOM (単精度実数) */
+//		case 3:	/* FCOMP (単精度実数) */
+//		case 4:	/* FSUB (単精度実数) */
+//		case 5:	/* FSUBR (単精度実数) */
+//		case 6:	/* FDIV (単精度実数) */
+//		case 7:	/* FDIVR (単精度実数) */
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC1(void)
+//{
+//	FP_REG *st0;
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		switch (op & 0xf0) {
+//		case 0xc0:
+//			if (!(op & 0x08)) {
+//				/* FLD ST(0), ST(i) */
+//			} else {
+//				/* FXCH ST(0), ST(i) */
+//			}
+//			break;
+//
+//		case 0xd0:
+//			if (op == 0xd0) {
+//				/* FNOP */
+//				break;
+//			}
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//
+//		case 0xe0:
+//			switch (op & 0x0f) {
+//			case 0x0:	/* FCHS */
+//				break;
+//
+//			case 0x1:	/* FABS */
+//				st0 = &FPU_ST(0);
+//				FPU_STATUSWORD &= ~FP_C1_FLAG;
+//				if (IS_VALID(st0)) {
+//					if (!IS_NAN(st0)) {
+//						st0->sign = 0;
+//					}
+//				} else {
+//					FPU_EXCEPTION(IS_EXCEPTION, 0);
+//				}
+//				break;
+//
+//			case 0x4:	/* FTST */
+//			case 0x5:	/* FXAM */
+//			case 0x8:	/* FLD1 */
+//			case 0x9:	/* FLDL2T */
+//			case 0xa:	/* FLDL2E */
+//			case 0xb:	/* FLDPI */
+//			case 0xc:	/* FLDLG2 */
+//			case 0xd:	/* FLDLN2 */
+//			case 0xe:	/* FLDZ */
+//				break;
+//
+//			default:
+//				EXCEPTION(UD_EXCEPTION, 0);
+//				break;
+//			}
+//			break;
+//
+//		case 0xf0:
+//			switch (op & 0xf) {
+//			case 0x0:	/* F2XM1 */
+//			case 0x1:	/* FYL2X */
+//			case 0x2:	/* FPTAN */
+//			case 0x3:	/* FPATAN */
+//			case 0x4:	/* FXTRACT */
+//			case 0x5:	/* FPREM1 */
+//			case 0x6:	/* FDECSTP */
+//			case 0x7:	/* FINCSTP */
+//			case 0x8:	/* FPREM */
+//			case 0x9:	/* FYL2XP1 */
+//			case 0xa:	/* FSQRT */
+//			case 0xb:	/* FSINCOS */
+//			case 0xc:	/* FRNDINT */
+//			case 0xd:	/* FSCALE */
+//			case 0xe:	/* FSIN */
+//			case 0xf:	/* FCOS */
+//				break;
+//			}
+//			break;
+//
+//		default:
+//			ia32_panic("ESC1: invalid opcode = %02x\n", op);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FLD (単精度実数) */
+//		case 2:	/* FST (単精度実数) */
+//		case 3:	/* FSTP (単精度実数) */
+//		case 4:	/* FLDENV */
+//		case 5:	/* FLDCW */
+//		case 6:	/* FSTENV */
+//			break;
+//
+//		case 7:	/* FSTCW */
+//			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr,
+//			    FPU_CTRLWORD);
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC2(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(0), ST(i) */
+//		switch (idx) {
+//		case 0:	/* FCMOVB */
+//		case 1:	/* FCMOVE */
+//		case 2:	/* FCMOVBE */
+//		case 3:	/* FCMOVU */
+//			break;
+//
+//		case 5:
+//			if (op == 0xe9) {
+//				/* FUCOMPP */
+//				break;
+//			}
+//			/*FALLTHROUGH*/
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FIADD (DWORD) */
+//		case 1:	/* FIMUL (DWORD) */
+//		case 2:	/* FICOM (DWORD) */
+//		case 3:	/* FICOMP (DWORD) */
+//		case 4:	/* FISUB (DWORD) */
+//		case 5:	/* FISUBR (DWORD) */
+//		case 6:	/* FIDIV (DWORD) */
+//		case 7:	/* FIDIVR (DWORD) */
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC3(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	if (op == 0xe3) {
+//		/* FNINIT */
+//		fpu_init();
+//		return;
+//	}
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(0), ST(i) */
+//		switch (idx) {
+//		case 0:	/* FCMOVNB */
+//		case 1:	/* FCMOVNE */
+//		case 2:	/* FCMOVBE */
+//		case 3:	/* FCMOVNU */
+//		case 5:	/* FUCOMI */
+//		case 6:	/* FCOMI */
+//			break;
+//
+//		case 4:
+//			if (op == 0xe2) {
+//				/* FCLEX */
+//				break;
+//			}
+//			/*FALLTHROUGH*/
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FILD (DWORD) */
+//		case 2:	/* FIST (DWORD) */
+//		case 3:	/* FISTP (DWORD) */
+//		case 5:	/* FLD (拡張実数) */
+//		case 7:	/* FSTP (拡張実数) */
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC4(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(i), ST(0) */
+//		switch (idx) {
+//		case 0:	/* FADD */
+//		case 1:	/* FMUL */
+//		case 4:	/* FSUBR */
+//		case 5:	/* FSUB */
+//		case 6:	/* FDIVR */
+//		case 7:	/* FDIV */
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FADD (倍精度実数) */
+//		case 1:	/* FMUL (倍精度実数) */
+//		case 2:	/* FCOM (倍精度実数) */
+//		case 3:	/* FCOMP (倍精度実数) */
+//		case 4:	/* FSUB (倍精度実数) */
+//		case 5:	/* FSUBR (倍精度実数) */
+//		case 6:	/* FDIV (倍精度実数) */
+//		case 7:	/* FDIVR (倍精度実数) */
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC5(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* FUCOM ST(i), ST(0) */
+//		/* Fxxx ST(i) */
+//		switch (idx) {
+//		case 0:	/* FFREE */
+//		case 2:	/* FST */
+//		case 3:	/* FSTP */
+//		case 4:	/* FUCOM */
+//		case 5:	/* FUCOMP */
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FLD (倍精度実数) */
+//		case 2:	/* FST (倍精度実数) */
+//		case 3:	/* FSTP (倍精度実数) */
+//		case 4:	/* FRSTOR */
+//		case 6:	/* FSAVE */
+//			break;
+//
+//		case 7:	/* FSTSW */
+//			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr,
+//			    FPU_STATUSWORD);
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC6(void)
+//{
+//	UINT32 op, madr;
+//	UINT idx;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(i), ST(0) */
+//		switch (idx) {
+//		case 0:	/* FADDP */
+//		case 1:	/* FMULP */
+//		case 4:	/* FSUBRP */
+//		case 5:	/* FSUBP */
+//		case 6:	/* FDIVRP */
+//		case 7:	/* FFIVP */
+//			break;
+//
+//		case 3:
+//			if (op == 0xd9) {
+//				/* FCOMPP */
+//				break;
+//			}
+//			/*FALLTHROUGH*/
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FIADD (WORD) */
+//		case 1:	/* FIMUL (WORD) */
+//		case 2:	/* FICOM (WORD) */
+//		case 3:	/* FICOMP (WORD) */
+//		case 4:	/* FISUB (WORD) */
+//		case 5:	/* FISUBR (WORD) */
+//		case 6:	/* FIDIV (WORD) */
+//		case 7:	/* FIDIVR (WORD) */
+//			break;
+//		}
+//	}
+//}
+//
+//void
+//ESC7(void)
+//{
+//	FP_REG *st0;
+//	UINT32 op, madr;
+//	UINT idx;
+//	int valid;
+//
+//	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
+//		EXCEPTION(NM_EXCEPTION, 0);
+//	}
+//
+//	GET_PCBYTE(op);
+//	idx = (op >> 3) & 7;
+//	if (op >= 0xc0) {
+//		/* Fxxx ST(0), ST(i) */
+//		switch (idx) {
+//		case 6:	/* FCOMIP */
+//		case 7:	/* FUCOMIP */
+//			break;
+//
+//		case 5:
+//			if (op == 0xe0) {
+//				/* FSTSW AX */
+//				CPU_AX = FPU_STATUSWORD;
+//				break;
+//			}
+//			/*FALLTHROUGH*/
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	} else {
+//		madr = calc_ea_dst(op);
+//		switch (idx) {
+//		case 0:	/* FILD (WORD) */
+//		case 2:	/* FIST (WORD) */
+//		case 3:	/* FISTP (WORD) */
+//			break;
+//
+//		case 4:	/* FBLD (BCD) */
+//			st0 = &FPU_ST(-1);
+//			valid = IS_VALID(st0);
+//			if (valid) {
+//				/* stack overflow */
+//				FPU_STATUSWORD |= FP_C1_FLAG;
+//				FPU_EXCEPTION(IS_EXCEPTION, 0);
+//			}
+//			fp_load_bcd_integer(st0, madr);
+//			if (!valid) {
+//				FPU_STATUSWORD &= ~FP_C1_FLAG;
+//			}
+//			FPU_STAT_TOP_DEC();
+//			break;
+//
+//		case 5:	/* FILD (QWORD) */
+//			break;
+//
+//		case 6:	/* FBSTP (BCD) */
+//			st0 = &FPU_ST(0);
+//			if (!IS_VALID(st0)) {
+//				/* stack underflow */
+//				FPU_STATUSWORD &= ~FP_C1_FLAG;
+//				FPU_EXCEPTION(IS_EXCEPTION, 0);
+//			}
+//			fp_store_bcd(st0, madr);
+//			st0->valid = 0;
+//			FPU_STAT_TOP_INC();
+//			break;
+//
+//		case 7:	/* FISTP (QWORD) */
+//			break;
+//
+//		default:
+//			EXCEPTION(UD_EXCEPTION, 0);
+//			break;
+//		}
+//	}
+//}
 
 void
 ESC0(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU d8 %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(0), ST(i) */
-		switch (idx) {
-		case 0:	/* FADD */
-		case 1:	/* FMUL */
-		case 2:	/* FCOM */
-		case 3:	/* FCOMP */
-		case 4:	/* FSUB */
-		case 5:	/* FSUBR */
-		case 6:	/* FDIV */
-		case 7:	/* FDIVR */
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FADD (単精度実数) */
-		case 1:	/* FMUL (単精度実数) */
-		case 2:	/* FCOM (単精度実数) */
-		case 3:	/* FCOMP (単精度実数) */
-		case 4:	/* FSUB (単精度実数) */
-		case 5:	/* FSUBR (単精度実数) */
-		case 6:	/* FDIV (単精度実数) */
-		case 7:	/* FDIVR (単精度実数) */
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 
 void
 ESC1(void)
 {
-	FP_REG *st0;
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU d9 %.2x", op));
 	if (op >= 0xc0) {
-		switch (op & 0xf0) {
-		case 0xc0:
-			if (!(op & 0x08)) {
-				/* FLD ST(0), ST(i) */
-			} else {
-				/* FXCH ST(0), ST(i) */
-			}
-			break;
-
-		case 0xd0:
-			if (op == 0xd0) {
-				/* FNOP */
-				break;
-			}
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-
-		case 0xe0:
-			switch (op & 0x0f) {
-			case 0x0:	/* FCHS */
-				break;
-
-			case 0x1:	/* FABS */
-				st0 = &FPU_ST(0);
-				FPU_STATUSWORD &= ~FP_C1_FLAG;
-				if (IS_VALID(st0)) {
-					if (!IS_NAN(st0)) {
-						st0->sign = 0;
-					}
-				} else {
-					FPU_EXCEPTION(IS_EXCEPTION, 0);
-				}
-				break;
-
-			case 0x4:	/* FTST */
-			case 0x5:	/* FXAM */
-			case 0x8:	/* FLD1 */
-			case 0x9:	/* FLDL2T */
-			case 0xa:	/* FLDL2E */
-			case 0xb:	/* FLDPI */
-			case 0xc:	/* FLDLG2 */
-			case 0xd:	/* FLDLN2 */
-			case 0xe:	/* FLDZ */
-				break;
-
-			default:
-				EXCEPTION(UD_EXCEPTION, 0);
-				break;
-			}
-			break;
-
-		case 0xf0:
-			switch (op & 0xf) {
-			case 0x0:	/* F2XM1 */
-			case 0x1:	/* FYL2X */
-			case 0x2:	/* FPTAN */
-			case 0x3:	/* FPATAN */
-			case 0x4:	/* FXTRACT */
-			case 0x5:	/* FPREM1 */
-			case 0x6:	/* FDECSTP */
-			case 0x7:	/* FINCSTP */
-			case 0x8:	/* FPREM */
-			case 0x9:	/* FYL2XP1 */
-			case 0xa:	/* FSQRT */
-			case 0xb:	/* FSINCOS */
-			case 0xc:	/* FRNDINT */
-			case 0xd:	/* FSCALE */
-			case 0xe:	/* FSIN */
-			case 0xf:	/* FCOS */
-				break;
-			}
-			break;
-
-		default:
-			ia32_panic("ESC1: invalid opcode = %02x\n", op);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FLD (単精度実数) */
-		case 2:	/* FST (単精度実数) */
-		case 3:	/* FSTP (単精度実数) */
-		case 4:	/* FLDENV */
-		case 5:	/* FLDCW */
-		case 6:	/* FSTENV */
+		switch (op & 0x38) {
+		case 0x28:
+			TRACEOUT(("FLDCW"));
+			(void) cpu_vmemoryread_w(CPU_INST_SEGREG_INDEX, madr);
 			break;
 
-		case 7:	/* FSTCW */
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr,
-			    FPU_CTRLWORD);
+		case 0x38:
+			TRACEOUT(("FSTCW"));
+			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, 0xffff);
 			break;
 
 		default:
-			EXCEPTION(UD_EXCEPTION, 0);
+			EXCEPTION(NM_EXCEPTION, 0);
 			break;
 		}
 	}
@@ -792,46 +1159,14 @@ void
 ESC2(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU da %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(0), ST(i) */
-		switch (idx) {
-		case 0:	/* FCMOVB */
-		case 1:	/* FCMOVE */
-		case 2:	/* FCMOVBE */
-		case 3:	/* FCMOVU */
-			break;
-
-		case 5:
-			if (op == 0xe9) {
-				/* FUCOMPP */
-				break;
-			}
-			/*FALLTHROUGH*/
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FIADD (DWORD) */
-		case 1:	/* FIMUL (DWORD) */
-		case 2:	/* FICOM (DWORD) */
-		case 3:	/* FICOMP (DWORD) */
-		case 4:	/* FISUB (DWORD) */
-		case 5:	/* FISUBR (DWORD) */
-		case 6:	/* FIDIV (DWORD) */
-		case 7:	/* FIDIVR (DWORD) */
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 
@@ -839,54 +1174,18 @@ void
 ESC3(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	if (op == 0xe3) {
-		/* FNINIT */
-		fpu_init();
-		return;
-	}
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU db %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(0), ST(i) */
-		switch (idx) {
-		case 0:	/* FCMOVNB */
-		case 1:	/* FCMOVNE */
-		case 2:	/* FCMOVBE */
-		case 3:	/* FCMOVNU */
-		case 5:	/* FUCOMI */
-		case 6:	/* FCOMI */
-			break;
-
-		case 4:
-			if (op == 0xe2) {
-				/* FCLEX */
-				break;
-			}
-			/*FALLTHROUGH*/
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
+		if (op != 0xe3) {
+			EXCEPTION(NM_EXCEPTION, 0);
 		}
+		/* FNINIT */
+		(void)madr;
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FILD (DWORD) */
-		case 2:	/* FIST (DWORD) */
-		case 3:	/* FISTP (DWORD) */
-		case 5:	/* FLD (拡張実数) */
-		case 7:	/* FSTP (拡張実数) */
-			break;
-
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 
@@ -894,42 +1193,14 @@ void
 ESC4(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU dc %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(i), ST(0) */
-		switch (idx) {
-		case 0:	/* FADD */
-		case 1:	/* FMUL */
-		case 4:	/* FSUBR */
-		case 5:	/* FSUB */
-		case 6:	/* FDIVR */
-		case 7:	/* FDIV */
-			break;
-
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FADD (倍精度実数) */
-		case 1:	/* FMUL (倍精度実数) */
-		case 2:	/* FCOM (倍精度実数) */
-		case 3:	/* FCOMP (倍精度実数) */
-		case 4:	/* FSUB (倍精度実数) */
-		case 5:	/* FSUBR (倍精度実数) */
-		case 6:	/* FDIV (倍精度実数) */
-		case 7:	/* FDIVR (倍精度実数) */
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 
@@ -937,48 +1208,19 @@ void
 ESC5(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU dd %.2x", op));
 	if (op >= 0xc0) {
-		/* FUCOM ST(i), ST(0) */
-		/* Fxxx ST(i) */
-		switch (idx) {
-		case 0:	/* FFREE */
-		case 2:	/* FST */
-		case 3:	/* FSTP */
-		case 4:	/* FUCOM */
-		case 5:	/* FUCOMP */
-			break;
-
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FLD (倍精度実数) */
-		case 2:	/* FST (倍精度実数) */
-		case 3:	/* FSTP (倍精度実数) */
-		case 4:	/* FRSTOR */
-		case 6:	/* FSAVE */
-			break;
-
-		case 7:	/* FSTSW */
-			cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr,
-			    FPU_STATUSWORD);
-			break;
-
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
+		if (((op >> 3) & 7) != 7) {
+			EXCEPTION(NM_EXCEPTION, 0);
 		}
+		/* FSTSW */
+		TRACEOUT(("FSTSW"));
+		cpu_vmemorywrite_w(CPU_INST_SEGREG_INDEX, madr, 0xffff);
 	}
 }
 
@@ -986,128 +1228,34 @@ void
 ESC6(void)
 {
 	UINT32 op, madr;
-	UINT idx;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU de %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(i), ST(0) */
-		switch (idx) {
-		case 0:	/* FADDP */
-		case 1:	/* FMULP */
-		case 4:	/* FSUBRP */
-		case 5:	/* FSUBP */
-		case 6:	/* FDIVRP */
-		case 7:	/* FFIVP */
-			break;
-
-		case 3:
-			if (op == 0xd9) {
-				/* FCOMPP */
-				break;
-			}
-			/*FALLTHROUGH*/
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FIADD (WORD) */
-		case 1:	/* FIMUL (WORD) */
-		case 2:	/* FICOM (WORD) */
-		case 3:	/* FICOMP (WORD) */
-		case 4:	/* FISUB (WORD) */
-		case 5:	/* FISUBR (WORD) */
-		case 6:	/* FIDIV (WORD) */
-		case 7:	/* FIDIVR (WORD) */
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 
 void
 ESC7(void)
 {
-	FP_REG *st0;
 	UINT32 op, madr;
-	UINT idx;
-	int valid;
-
-	if (CPU_CR0 & (CPU_CR0_EM|CPU_CR0_TS)) {
-		EXCEPTION(NM_EXCEPTION, 0);
-	}
 
 	GET_PCBYTE(op);
-	idx = (op >> 3) & 7;
+	TRACEOUT(("use FPU df %.2x", op));
 	if (op >= 0xc0) {
-		/* Fxxx ST(0), ST(i) */
-		switch (idx) {
-		case 6:	/* FCOMIP */
-		case 7:	/* FUCOMIP */
-			break;
-
-		case 5:
-			if (op == 0xe0) {
-				/* FSTSW AX */
-				CPU_AX = FPU_STATUSWORD;
-				break;
-			}
-			/*FALLTHROUGH*/
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
+		if (op != 0xe0) {
+			EXCEPTION(NM_EXCEPTION, 0);
 		}
+		/* FSTSW AX */
+		TRACEOUT(("FSTSW AX"));
+		CPU_AX = 0xffff;
 	} else {
 		madr = calc_ea_dst(op);
-		switch (idx) {
-		case 0:	/* FILD (WORD) */
-		case 2:	/* FIST (WORD) */
-		case 3:	/* FISTP (WORD) */
-			break;
-
-		case 4:	/* FBLD (BCD) */
-			st0 = &FPU_ST(-1);
-			valid = IS_VALID(st0);
-			if (valid) {
-				/* stack overflow */
-				FPU_STATUSWORD |= FP_C1_FLAG;
-				FPU_EXCEPTION(IS_EXCEPTION, 0);
-			}
-			fp_load_bcd_integer(st0, madr);
-			if (!valid) {
-				FPU_STATUSWORD &= ~FP_C1_FLAG;
-			}
-			FPU_STAT_TOP_DEC();
-			break;
-
-		case 5:	/* FILD (QWORD) */
-			break;
-
-		case 6:	/* FBSTP (BCD) */
-			st0 = &FPU_ST(0);
-			if (!IS_VALID(st0)) {
-				/* stack underflow */
-				FPU_STATUSWORD &= ~FP_C1_FLAG;
-				FPU_EXCEPTION(IS_EXCEPTION, 0);
-			}
-			fp_store_bcd(st0, madr);
-			st0->valid = 0;
-			FPU_STAT_TOP_INC();
-			break;
-
-		case 7:	/* FISTP (QWORD) */
-			break;
-
-		default:
-			EXCEPTION(UD_EXCEPTION, 0);
-			break;
-		}
+		EXCEPTION(NM_EXCEPTION, 0);
 	}
 }
 

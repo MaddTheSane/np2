@@ -27,6 +27,7 @@ Np2Arg::Np2Arg()
 Np2Arg::~Np2Arg()
 {
 	free(m_lpArg);
+	if(m_lpIniFile) free((TCHAR*)m_lpIniFile); // np21w ver0.86 rev8
 }
 
 /**
@@ -71,6 +72,17 @@ void Np2Arg::Parse()
 				m_lpDisk[nDrive++] = lpArg;
 			}
 		}
+	}
+	if(m_lpIniFile){ // np21w ver0.86 rev8
+		LPTSTR strbuf;
+		strbuf = (LPTSTR)calloc(500, sizeof(TCHAR));
+		//getcwd(pathname, 300);
+		GetCurrentDirectory(500, strbuf);
+		if(strbuf[_tcslen(strbuf)-1]!='\\'){
+			_tcscat(strbuf, _T("\\")); // XXX: Linux‚Æ‚©‚¾‚Á‚½‚çƒXƒ‰ƒbƒVƒ…‚¶‚á‚È‚¢‚Æ‘Ê–Ú‚¾‚æ‚Ë
+		}
+		_tcscat(strbuf, m_lpIniFile);
+		m_lpIniFile = strbuf;
 	}
 }
 

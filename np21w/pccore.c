@@ -202,7 +202,7 @@ static void pccore_set(const NP2CFG *pConfig)
 	{
 		extsize = np2cfg.EXTMEM;
 #if defined(CPUCORE_IA32)
-		extsize = min(extsize, 120);
+		extsize = min(extsize, 127);
 #else
 		extsize = min(extsize, 13);
 #endif

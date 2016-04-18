@@ -8,9 +8,14 @@
 
 #include "compiler.h"
 
+// Win2000‚Å“®‚­‚æ‚¤‚É‚·‚é
 #if defined(SUPPORT_WIN2000HOST)
+#ifdef _WINDOWS
+#ifndef _WIN64
 #define WINVER2 0x0500
 #include "commonfix.h"
+#endif
+#endif
 #endif
 
 #include <time.h>
@@ -678,16 +683,16 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_ROLLEFT:
-#if 0 // XXX: Ä‚Ñ“®‚­‚æ‚¤‚É‚µ‚½‚¢
+//#ifndef SUPPORT_PC9821 // XXX: Ä‚Ñ“®‚­‚æ‚¤‚É‚µ‚½‚¢
 			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATELEFT);
 			break;
-#endif
+//#endif
 
 		case IDM_ROLRIGHT:
-#if 0 // XXX: Ä‚Ñ“®‚­‚æ‚¤‚É‚µ‚½‚¢
+//#ifndef SUPPORT_PC9821 // XXX: Ä‚Ñ“®‚­‚æ‚¤‚É‚µ‚½‚¢
 			changescreen((g_scrnmode & (~SCRNMODE_ROTATEMASK)) | SCRNMODE_ROTATERIGHT);
 			break;
-#endif
+//#endif
 
 		case IDM_DISPSYNC:
 			np2cfg.DISPSYNC = !np2cfg.DISPSYNC;
@@ -1573,7 +1578,7 @@ LRESULT CALLBACK LowLevelKeyboardProc (INT nCode, WPARAM wParam, LPARAM lParam)
         {
 			if(GetForegroundWindow()==g_hWndMain){
 				KBDLLHOOKSTRUCT *kbstruct = (KBDLLHOOKSTRUCT*)lParam;
-				// Check to see if the CTRL key is pressed
+				// Check to see if the CTRL,DHIFT,ALT key is pressed
 				bControlKeyDown = GetAsyncKeyState (VK_LCONTROL) >> ((sizeof(SHORT) * 8) - 1);
 				bShiftKeyDown = GetAsyncKeyState (VK_LSHIFT) >> ((sizeof(SHORT) * 8) - 1);
 				bAltKeyDown = GetAsyncKeyState (VK_LMENU) >> ((sizeof(SHORT) * 8) - 1);
@@ -1581,7 +1586,9 @@ LRESULT CALLBACK LowLevelKeyboardProc (INT nCode, WPARAM wParam, LPARAM lParam)
 				// Disable CTRL+ESC, ALT+TAB, ALT+ESC
 				if (pkbhs->vkCode == VK_ESCAPE && bControlKeyDown
 					|| pkbhs->vkCode == VK_TAB && bAltKeyDown
-					|| pkbhs->vkCode == VK_ESCAPE && bAltKeyDown){
+					|| pkbhs->vkCode == VK_ESCAPE && bAltKeyDown
+					|| pkbhs->vkCode == VK_LWIN
+					|| pkbhs->vkCode == VK_APPS){
 
 					switch((int)wParam){
 					case WM_KEYDOWN:

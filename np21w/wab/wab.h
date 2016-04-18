@@ -37,6 +37,8 @@ typedef struct {
 	int wndHeight; // 描画領域サイズ(高さ)
 	int fps; // リフレッシュレート（大体合わせてくれるかもしれない）
 	NP2WAB_DrawFrame *drawframe; // 画面描画関数。hDCBufにアクセラレータ画面データを転送する。
+
+	int vramoffs;
 } NP2WAB;
 
 void np2wab_init(HINSTANCE hInstance, HWND g_hWndMain);

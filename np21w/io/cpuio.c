@@ -44,6 +44,7 @@ static REG8 IOINPCALL cpuio_if0(UINT port) {
 	else {				// for AMD-98
 		ret = 0x18;		// 0x14?
 	}
+#if defined(SUPPORT_IDEIO)
 	{
 		REG8 bank = ideio.bank[1] & 0x7f;
 		TRACEOUT(("IDE master/slave read"));
@@ -62,6 +63,7 @@ static REG8 IOINPCALL cpuio_if0(UINT port) {
 			}
 		}
 	}
+#endif
 	(void)port;
 	return(ret);
 }
