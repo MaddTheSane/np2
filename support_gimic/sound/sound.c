@@ -56,11 +56,9 @@ static	SNDSTREAM	s_sndstream;
  */
 static void streamreset(PSNDSTREAM sndstream)
 {
-	SNDCSEC_ENTER;
 	sndstream->ptr = sndstream->buffer;
 	sndstream->remain = sndstream->samples + sndstream->reserve;
 	sndstream->cbreg = sndstream->cb;
-	SNDCSEC_LEAVE;
 }
 
 /**
@@ -270,7 +268,6 @@ BRESULT sound_create(UINT rate, UINT ms)
 	s_sndstream.samples = samples;
 	s_sndstream.reserve = reserve;
 
-	SNDCSEC_INIT;
 	streamreset(&s_sndstream);
 	return SUCCESS;
 
@@ -291,7 +288,6 @@ void sound_destroy(void)
 		soundmng_stop();
 		streamreset(&s_sndstream);
 		soundmng_destroy();
-		SNDCSEC_TERM;
 		_MFREE(s_sndstream.buffer);
 		s_sndstream.buffer = NULL;
 	}
@@ -374,7 +370,6 @@ void sound_sync(void)
 	{
 		return;
 	}
-	SNDCSEC_ENTER;
 #if defined(SUPPORT_WAVEREC)
 	if (s_sndstream.rec)
 	{
@@ -385,13 +380,14 @@ void sound_sync(void)
 		streamprepare(&s_sndstream, length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
-	SNDCSEC_LEAVE;
 
 	soundcfg.writecount += length;
 	if (soundcfg.writecount >= 100)
 	{
 		soundcfg.writecount = 0;
+		SNDCSEC_LEAVE;
 		soundmng_sync();
+		SNDCSEC_ENTER;
 	}
 }
 
@@ -410,11 +406,12 @@ const SINT32 *sound_pcmlock(void)
 		TRACEOUT(("sound pcm lock: already locked"));
 		return NULL;
 	}
+
+	SNDCSEC_ENTER;
 	locks++;
 	ret = s_sndstream.buffer;
 	if (ret)
 	{
-		SNDCSEC_ENTER;
 		if (s_sndstream.remain > s_sndstream.reserve)
 #if defined(SUPPORT_WAVEREC)
 			if (s_sndstream.rec)
@@ -432,6 +429,7 @@ const SINT32 *sound_pcmlock(void)
 	else
 	{
 		locks--;
+		SNDCSEC_LEAVE;
 	}
 	return ret;
 }
@@ -453,7 +451,7 @@ void sound_pcmunlock(const SINT32 *hdl)
 		}
 		s_sndstream.ptr = s_sndstream.buffer + (leng * 2);
 		s_sndstream.remain = s_sndstream.samples + s_sndstream.reserve - leng;
-		SNDCSEC_LEAVE;
 		locks--;
+		SNDCSEC_LEAVE;
 	}
 }
