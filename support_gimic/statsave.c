@@ -27,6 +27,7 @@
 #include "vram.h"
 #include "palettes.h"
 #include "maketext.h"
+#include "sound/sndcsec.h"
 #include "sound.h"
 #include "fmboard.h"
 #include "beep.h"
@@ -1355,6 +1356,8 @@ const SFENTRY	*tblterm;
 		return(STATFLAG_FAILURE);
 	}
 
+	SNDCSEC_ENTER;
+
 	soundmng_stop();
 	rs232c_midipanic();
 	mpu98ii_midipanic();
@@ -1481,6 +1484,8 @@ const SFENTRY	*tblterm;
 	MEMM_VRAM(vramop.operate);
 	fddmtr_reset();
 	soundmng_play();
+
+	SNDCSEC_LEAVE;
 
 	return(ret);
 }
