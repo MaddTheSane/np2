@@ -119,7 +119,6 @@ void nevent_set(NEVENTID id, SINT32 eventclock, NEVENTCB proc, NEVENTPOSITION ab
 	clk = CPU_BASECLOCK - CPU_REMCLOCK;
 	item = &g_nevent.item[id];
 	item->proc = proc;
-	item->flag = 0;
 	if (absolute)
 	{
 		item->clock = eventclock + clk;

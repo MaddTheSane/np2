@@ -585,13 +585,11 @@ static int flagload_epson(STFLAGH sfh, const SFENTRY *tbl) {
 
 typedef struct {
 	UINT		readyevents;
-	UINT		waitevents;
 } NEVTSAVE;
 
 typedef struct {
 	UINT32		id;
 	SINT32		clock;
-	UINT32		flag;
 	NEVENTCB	proc;
 } NEVTITEM;
 
@@ -608,7 +606,6 @@ static int nevent_write(STFLAGH sfh, NEVENTID num) {
 		}
 	}
 	nit.clock = g_nevent.item[num].clock;
-	nit.flag = g_nevent.item[num].flag;
 	nit.proc = g_nevent.item[num].proc;
 	if (PROC2NUM(nit.proc, evtproc)) {
 		nit.proc = NULL;
@@ -623,7 +620,6 @@ static int flagsave_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT		i;
 
 	nevt.readyevents = g_nevent.readyevents;
-	nevt.waitevents = 0;
 
 	ret = statflag_write(sfh, &nevt, sizeof(nevt));
 	for (i=0; i<nevt.readyevents; i++) {
@@ -650,7 +646,6 @@ static int nevent_read(STFLAGH sfh, NEVENTID *tbl, UINT *pos) {
 	if (i < NELEMENTS(evtnum)) {
 		num = evtnum[i].num;
 		g_nevent.item[num].clock = nit.clock;
-		g_nevent.item[num].flag = nit.flag;
 		g_nevent.item[num].proc = nit.proc;
 		if (NUM2PROC(g_nevent.item[num].proc, evtproc)) {
 			ret |= STATFLAG_WARNING;
@@ -673,10 +668,6 @@ static int flagload_evt(STFLAGH sfh, const SFENTRY *tbl) {
 	UINT		i;
 
 	ret = statflag_read(sfh, &nevt, sizeof(nevt));
-	if (nevt.waitevents != 0)
-	{
-		ret |= STATFLAG_FAILURE;
-	}
 
 	g_nevent.readyevents = 0;
 	for (i=0; i<nevt.readyevents; i++) {
