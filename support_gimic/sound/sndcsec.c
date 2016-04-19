@@ -8,7 +8,11 @@
 
 #if defined(SOUND_CRITICAL)
 
-#if defined(WIN32) || defined(_WIN32_WCE)
+#if defined(WIN32) && defined(_DEBUG)
+
+	HANDLE g_sndcsec;
+
+#elif defined(WIN32) || defined(_WIN32_WCE)
 
 	CRITICAL_SECTION g_sndcsec;
 

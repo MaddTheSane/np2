@@ -12,7 +12,16 @@ extern "C"
 
 #if defined(SOUND_CRITICAL)
 
-#if defined(WIN32) || defined(_WIN32_WCE)
+#if defined(WIN32) && defined(_DEBUG)
+
+extern HANDLE g_sndcsec;
+
+#define	SNDCSEC_INIT	g_sndcsec = CreateSemaphore(NULL, 1, 1, NULL)
+#define	SNDCSEC_TERM	CloseHandle(g_sndcsec)
+#define	SNDCSEC_ENTER	WaitForSingleObject(g_sndcsec, INFINITE)
+#define	SNDCSEC_LEAVE	ReleaseSemaphore(g_sndcsec, 1, NULL)
+
+#elif defined(WIN32) || defined(_WIN32_WCE)
 
 extern CRITICAL_SECTION g_sndcsec;
 
