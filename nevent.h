@@ -50,8 +50,7 @@ typedef enum tagNEventId NEVENTID;
 
 enum
 {
-	NEVENT_SETEVENT		= 0x0002,
-	NEVENT_WAIT			= 0x0004
+	NEVENT_SETEVENT		= 0x0002
 };
 
 /**
@@ -79,9 +78,7 @@ struct _neventitem
 
 typedef struct {
 	UINT		readyevents;
-	UINT		waitevents;
 	NEVENTID	level[NEVENT_MAXEVENTS];
-	NEVENTID	waitevent[NEVENT_MAXEVENTS];
 	_NEVENTITEM	item[NEVENT_MAXEVENTS];
 } _NEVENT, *NEVENT;
 
@@ -110,7 +107,6 @@ void nevent_setbyms(NEVENTID id, SINT32 ms, NEVENTCB proc, NEVENTPOSITION absolu
 
 // イベントの削除
 void nevent_reset(NEVENTID id);
-void nevent_waitreset(NEVENTID id);
 
 // イベントの動作状態取得
 BOOL nevent_iswork(NEVENTID id);
