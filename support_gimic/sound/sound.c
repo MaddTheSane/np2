@@ -351,9 +351,18 @@ void sound_streamregist(void *hdl, SOUNDCB cbfn)
 
 /* ---- */
 
+#ifdef _DEBUG
+#include <assert.h>
+extern BOOL g_sndlock;
+#endif	/* _DEBUG */
+
 void sound_sync(void)
 {
 	UINT32	length;
+
+#ifdef _DEBUG
+	assert(g_sndlock);
+#endif	/* _DEBUG */
 
 	if (s_sndstream.buffer == NULL)
 	{
