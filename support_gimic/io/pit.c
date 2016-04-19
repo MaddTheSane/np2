@@ -34,20 +34,18 @@ void systimer(NEVENTITEM item) {
 
 	PITCH	pitch;
 
-	if (item->flag & NEVENT_SETEVENT) {
-		pitch = pit.ch + 0;
-		if (pitch->flag & PIT_FLAG_I) {
-			pitch->flag &= ~PIT_FLAG_I;
-			pic_setirq(0);
-		}
-		if ((pitch->ctrl & 0x0c) == 0x04) {
-			// レートジェネレータ
-			pitch->flag |= PIT_FLAG_I;
-			setsystimerevent(pitch->value, NEVENT_RELATIVE);
-		}
-		else {
-			setsystimerevent(0, NEVENT_RELATIVE);
-		}
+	pitch = pit.ch + 0;
+	if (pitch->flag & PIT_FLAG_I) {
+		pitch->flag &= ~PIT_FLAG_I;
+		pic_setirq(0);
+	}
+	if ((pitch->ctrl & 0x0c) == 0x04) {
+		// レートジェネレータ
+		pitch->flag |= PIT_FLAG_I;
+		setsystimerevent(pitch->value, NEVENT_RELATIVE);
+	}
+	else {
+		setsystimerevent(0, NEVENT_RELATIVE);
 	}
 }
 
@@ -85,23 +83,21 @@ void beeponeshot(NEVENTITEM item) {
 
 	PITCH	pitch;
 
-	if (item->flag & NEVENT_SETEVENT) {
-		pitch = pit.ch + 1;
-		if (!(pitch->ctrl & 0x0c)) {
-			beep_lheventset(0);
-		}
+	pitch = pit.ch + 1;
+	if (!(pitch->ctrl & 0x0c)) {
+		beep_lheventset(0);
+	}
 #if defined(uPD71054)
-		if ((pitch->ctrl & 0x06) == 0x02)
+	if ((pitch->ctrl & 0x06) == 0x02)
 #else
-		if (pitch->ctrl & 0x02)
+	if (pitch->ctrl & 0x02)
 #endif
-		{
+	{
 #if defined(BEEPCOUNTEREX)
-			setbeepeventex(pitch->value, NEVENT_RELATIVE);
+		setbeepeventex(pitch->value, NEVENT_RELATIVE);
 #else
-			setbeepevent(pitch->value, NEVENT_RELATIVE);
+		setbeepevent(pitch->value, NEVENT_RELATIVE);
 #endif
-		}
 	}
 }
 
@@ -124,19 +120,17 @@ void rs232ctimer(NEVENTITEM item) {
 
 	PITCH	pitch;
 
-	if (item->flag & NEVENT_SETEVENT) {
-		pitch = pit.ch + 2;
-		if (pitch->flag & PIT_FLAG_I) {
-			pitch->flag &= ~PIT_FLAG_I;
-			rs232c_callback();
-		}
-		if ((pitch->ctrl & 0x0c) == 0x04) {
-			// レートジェネレータ
-			setrs232cevent(pitch->value, NEVENT_RELATIVE);
-		}
-		else {
-			setrs232cevent(0, NEVENT_RELATIVE);
-		}
+	pitch = pit.ch + 2;
+	if (pitch->flag & PIT_FLAG_I) {
+		pitch->flag &= ~PIT_FLAG_I;
+		rs232c_callback();
+	}
+	if ((pitch->ctrl & 0x0c) == 0x04) {
+		/* レートジェネレータ */
+		setrs232cevent(pitch->value, NEVENT_RELATIVE);
+	}
+	else {
+		setrs232cevent(0, NEVENT_RELATIVE);
 	}
 }
 

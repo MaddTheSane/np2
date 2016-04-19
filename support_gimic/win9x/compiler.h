@@ -156,9 +156,7 @@ typedef	signed __int64		SINT64;
 #define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
-#if defined(TRACE)
-#define	SUPPORT_IDEIO
-#endif
+/* #define	SUPPORT_IDEIO */
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 #if !defined(_WIN64)
@@ -184,7 +182,7 @@ typedef	signed __int64		SINT64;
 #endif
 
 
-#if (_MSC_VER >= 1500)
+#if (_MSC_VER >= 1400)
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
@@ -194,4 +192,4 @@ typedef	signed __int64		SINT64;
 #else
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
-#endif	/* (_MSC_VER >= 1500) */
+#endif	/* (_MSC_VER >= 1400) */

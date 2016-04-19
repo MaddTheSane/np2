@@ -79,26 +79,24 @@ void cs4231_dma(NEVENTITEM item) {
 	UINT	r;
 	SINT32	cnt;
 
-	if (item->flag & NEVENT_SETEVENT) {
-		if (cs4231.dmach != 0xff) {
-			sound_sync();
-			dmach = dmac.dmach + cs4231.dmach;
-			if (cs4231.bufsize > cs4231.bufdatas) {
-				rem = cs4231.bufsize - cs4231.bufdatas;
-				pos = (cs4231.bufpos + cs4231.bufdatas) & CS4231_BUFMASK;
-				size = min(rem, CS4231_BUFFERS - pos);
-				r = dmac_getdatas(dmach, cs4231.buffer + pos, size);
-				rem -= r;
+	if (cs4231.dmach != 0xff) {
+		sound_sync();
+		dmach = dmac.dmach + cs4231.dmach;
+		if (cs4231.bufsize > cs4231.bufdatas) {
+			rem = cs4231.bufsize - cs4231.bufdatas;
+			pos = (cs4231.bufpos + cs4231.bufdatas) & CS4231_BUFMASK;
+			size = min(rem, CS4231_BUFFERS - pos);
+			r = dmac_getdatas(dmach, cs4231.buffer + pos, size);
+			rem -= r;
+			cs4231.bufdatas += r;
+			if (r != size) {
+				r = dmac_getdatas(dmach, cs4231.buffer, rem);
 				cs4231.bufdatas += r;
-				if (r != size) {
-					r = dmac_getdatas(dmach, cs4231.buffer, rem);
-					cs4231.bufdatas += r;
-				}
 			}
-			if ((dmach->leng.w) && (cs4231cfg.rate)) {
-				cnt = pccore.realclock * 16 / cs4231cfg.rate;
-				nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_RELATIVE);
-			}
+		}
+		if ((dmach->leng.w) && (cs4231cfg.rate)) {
+			cnt = pccore.realclock * 16 / cs4231cfg.rate;
+			nevent_set(NEVENT_CS4231, cnt, cs4231_dma, NEVENT_RELATIVE);
 		}
 	}
 	(void)item;
