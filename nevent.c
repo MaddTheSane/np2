@@ -98,7 +98,6 @@ void nevent_progress(void)
 				g_nevent.waitevent[g_nevent.waitevents++] = id;
 			}
 			item->flag |= NEVENT_SETEVENT;
-			item->flag &= ~(NEVENT_ENABLE);
 //			TRACEOUT(("event = %x", id));
 		}
 	}
