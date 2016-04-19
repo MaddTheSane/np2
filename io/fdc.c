@@ -25,14 +25,12 @@ static const UINT8 FDCCMD_TABLE[32] = {
 
 void fdc_intwait(NEVENTITEM item) {
 
-	if (item->flag & NEVENT_SETEVENT) {
-		fdc.intreq = TRUE;
-		if (fdc.chgreg & 1) {
-			pic_setirq(0x0b);
-		}
-		else {
-			pic_setirq(0x0a);
-		}
+	fdc.intreq = TRUE;
+	if (fdc.chgreg & 1) {
+		pic_setirq(0x0b);
+	}
+	else {
+		pic_setirq(0x0a);
 	}
 }
 
@@ -122,10 +120,8 @@ void fdcsend_success7(void) {
 // FDCのタイムアウト			まぁ本当はこんなんじゃダメだけど…	ver0.29
 void fdctimeoutproc(NEVENTITEM item) {
 
-	if (item->flag & NEVENT_SETEVENT) {
-		fdc.stat[fdc.us] = FDCRLT_IC0 | FDCRLT_EN | (fdc.hd << 2) | fdc.us;
-		fdcsend_error7();
-	}
+	fdc.stat[fdc.us] = FDCRLT_IC0 | FDCRLT_EN | (fdc.hd << 2) | fdc.us;
+	fdcsend_error7();
 }
 
 static void fdc_timeoutset(void) {

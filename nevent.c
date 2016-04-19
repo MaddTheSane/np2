@@ -41,7 +41,7 @@ void nevent_progress(void)
 	NEVENTID id;
 	NEVENTITEM item;
 	UINT nRaiseEvents = 0;
-	UINT nRaiseEventId[NEVENT_MAXEVENTS];
+	NEVENTITEM pRaiseEvent[NEVENT_MAXEVENTS];
 
 	CPU_CLOCK += CPU_BASECLOCK;
 	nextbase = NEVENT_MAXCLOCK;
@@ -62,11 +62,7 @@ void nevent_progress(void)
 		else
 		{
 			/* イベント発生 */
-			if (!(item->flag & NEVENT_SETEVENT))
-			{
-				nRaiseEventId[nRaiseEvents++] = id;
-			}
-			item->flag |= NEVENT_SETEVENT;
+			pRaiseEvent[nRaiseEvents++] = item;
 //			TRACEOUT(("event = %x", id));
 		}
 	}
@@ -77,15 +73,13 @@ void nevent_progress(void)
 
 	for (i = 0; i < nRaiseEvents; i++)
 	{
-		id = nRaiseEventId[i];
-		item = &g_nevent.item[id];
+		item = pRaiseEvent[i];
 
 		/* コールバックの実行 */
 		if (item->proc != NULL)
 		{
 			item->proc(item);
 		}
-		item->flag &= ~NEVENT_SETEVENT;
 	}
 }
 
