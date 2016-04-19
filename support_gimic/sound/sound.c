@@ -17,15 +17,23 @@
 
 	SOUNDCFG	soundcfg;
 
-
 #define	STREAM_CBMAX	16
 
-typedef struct {
-	void	*hdl;
-	SOUNDCB	cbfn;
-} CBTBL;
+/**
+ * @brief Callback table
+ */
+struct tagSndCallback
+{
+	void *hdl;			/*!< instance */
+	SOUNDCB cbfn;		/*!< function */
+};
+typedef struct tagSndCallback CBTBL;			/*!< Define */
 
-typedef struct {
+/**
+ * @brief Stream
+ */
+struct tagSndStream
+{
 	SINT32	*buffer;
 	SINT32	*ptr;
 	UINT	samples;
@@ -36,35 +44,45 @@ typedef struct {
 #endif	/* defined(SUPPORT_WAVEREC) */
 	CBTBL	*cbreg;
 	CBTBL	cb[STREAM_CBMAX];
-} SNDSTREAM;
+};
+typedef struct tagSndStream SNDSTREAM;			/*!< Define */
+typedef struct tagSndStream *PSNDSTREAM;		/*!< Define */
 
-static	SNDSTREAM	sndstream;
+static	SNDSTREAM	s_sndstream;
 
-
-static void streamreset(void) {
-
+/**
+ * Reset
+ * @param[in] sndstream The instance
+ */
+static void streamreset(PSNDSTREAM sndstream)
+{
 	SNDCSEC_ENTER;
-	sndstream.ptr = sndstream.buffer;
-	sndstream.remain = sndstream.samples + sndstream.reserve;
-	sndstream.cbreg = sndstream.cb;
+	sndstream->ptr = sndstream->buffer;
+	sndstream->remain = sndstream->samples + sndstream->reserve;
+	sndstream->cbreg = sndstream->cb;
 	SNDCSEC_LEAVE;
 }
 
-static void streamprepare(UINT samples) {
-
+/**
+ * Prepare
+ * @param[in] sndstream The instance
+ * @param[in] samples The samples
+ */
+static void streamprepare(PSNDSTREAM sndstream, UINT samples)
+{
 	CBTBL	*cb;
 	UINT	count;
 
-	count = min(sndstream.remain, samples);
-	if (count) {
-		ZeroMemory(sndstream.ptr, count * 2 * sizeof(SINT32));
-		cb = sndstream.cb;
-		while(cb < sndstream.cbreg) {
-			cb->cbfn(cb->hdl, sndstream.ptr, count);
-			cb++;
+	count = min(sndstream->remain, samples);
+	if (count)
+	{
+		memset(sndstream->ptr, 0, count * 2 * sizeof(SINT32));
+		for (cb = sndstream->cb; cb < sndstream->cbreg; cb++)
+		{
+			cb->cbfn(cb->hdl, sndstream->ptr, count);
 		}
-		sndstream.ptr += count * 2;
-		sndstream.remain -= count;
+		sndstream->ptr += count * 2;
+		sndstream->remain -= count;
 	}
 }
 
@@ -83,12 +101,12 @@ BRESULT sound_recstart(const OEMCHAR *lpFilename)
 	WAVEFILEH rec;
 
 	sound_recstop();
-	if (sndstream.buffer == NULL)
+	if (s_sndstream.buffer == NULL)
 	{
 		return FAILURE;
 	}
 	rec = wavefile_create(lpFilename, soundcfg.rate, 16, 2);
-	sndstream.rec = rec;
+	s_sndstream.rec = rec;
 	if (rec)
 	{
 		return SUCCESS;
@@ -103,8 +121,8 @@ void sound_recstop(void)
 {
 	WAVEFILEH rec;
 
-	rec = sndstream.rec;
-	sndstream.rec = NULL;
+	rec = s_sndstream.rec;
+	s_sndstream.rec = NULL;
 	wavefile_close(rec);
 }
 
@@ -114,14 +132,15 @@ void sound_recstop(void)
  */
 BOOL sound_isrecording(void)
 {
-	return (sndstream.rec != NULL) ? TRUE : FALSE;
+	return (s_sndstream.rec != NULL) ? TRUE : FALSE;
 }
 
 /**
  * write
+ * @param[in] sndstream The instance
  * @param[in] samples The count of samples
  */
-static void streamfilewrite(UINT nSamples)
+static void streamfilewrite(PSNDSTREAM sndstream, UINT nSamples)
 {
 	UINT nCount;
 	SINT32 buf32[2 * 512];
@@ -135,18 +154,16 @@ static void streamfilewrite(UINT nSamples)
 	{
 		nCount = min(nSamples, 512);
 		memset(buf32, 0, nCount * 2 * sizeof(buf32[0]));
-		cb = sndstream.cb;
-		while (cb < sndstream.cbreg)
+		for (cb = sndstream->cb; cb < sndstream->cbreg; cb++)
 		{
 			cb->cbfn(cb->hdl, buf32, nCount);
-			cb++;
 		}
-		r = min(sndstream.remain, nCount);
+		r = min(sndstream->remain, nCount);
 		if (r)
 		{
-			memcpy(sndstream.ptr, buf32, r * 2 * sizeof(buf32[0]));
-			sndstream.ptr += r * 2;
-			sndstream.remain -= r;
+			memcpy(sndstream->ptr, buf32, r * 2 * sizeof(buf32[0]));
+			sndstream->ptr += r * 2;
+			sndstream->remain -= r;
 		}
 		for (i = 0; i < nCount * 2; i++)
 		{
@@ -159,11 +176,11 @@ static void streamfilewrite(UINT nSamples)
 			{
 				nSample = -32768;
 			}
-			// little endianなので satuation_s16は使えない
+			/* little endianなので satuation_s16は使えない */
 			buf[i][0] = (UINT8)nSample;
 			buf[i][1] = (UINT8)(nSample >> 8);
 		}
-		wavefile_write(sndstream.rec, buf, nCount * 2 * sizeof(buf[0]));
+		wavefile_write(sndstream->rec, buf, nCount * 2 * sizeof(buf[0]));
 		nSamples -= nCount;
 	}
 }
@@ -172,18 +189,18 @@ static void streamfilewrite(UINT nSamples)
  * fill
  * @param[in] samples The count of samples
  */
-static void filltailsample(UINT nCount)
+static void filltailsample(PSNDSTREAM sndstream, UINT nCount)
 {
 	SINT32 *ptr;
 	UINT nOrgSize;
 	SINT32 nSampleL;
 	SINT32 nSampleR;
 
-	nCount = min(sndstream.remain, nCount);
+	nCount = min(sndstream->remain, nCount);
 	if (nCount)
 	{
-		ptr = sndstream.ptr;
-		nOrgSize = (UINT)((ptr - sndstream.buffer) / 2);
+		ptr = sndstream->ptr;
+		nOrgSize = (UINT)((ptr - sndstream->buffer) / 2);
 		if (nOrgSize == 0)
 		{
 			nSampleL = 0;
@@ -194,8 +211,8 @@ static void filltailsample(UINT nCount)
 			nSampleL = *(ptr - 2);
 			nSampleR = *(ptr - 1);
 		}
-		sndstream.ptr += nCount * 2;
-		sndstream.remain -= nCount;
+		sndstream->ptr += nCount * 2;
+		sndstream->remain -= nCount;
 		do
 		{
 			ptr[0] = nSampleL;
@@ -207,15 +224,16 @@ static void filltailsample(UINT nCount)
 #endif	/* defined(SUPPORT_WAVEREC) */
 
 
-// ----
+/* ---- */
 
-BRESULT sound_create(UINT rate, UINT ms) {
-
+BRESULT sound_create(UINT rate, UINT ms)
+{
 	UINT	samples;
 	UINT	reserve;
 
-	ZeroMemory(&sndstream, sizeof(sndstream));
-	switch(rate) {
+	memset(&s_sndstream, 0, sizeof(s_sndstream));
+	switch (rate)
+	{
 		case 11025:
 		case 22050:
 		case 44100:
@@ -227,10 +245,11 @@ BRESULT sound_create(UINT rate, UINT ms) {
 			break;
 
 		default:
-			return(FAILURE);
+			return FAILURE;
 	}
 	samples = soundmng_create(rate, ms);
-	if (samples == 0) {
+	if (samples == 0)
+	{
 		goto scre_err1;
 	}
 	soundmng_reset();
@@ -243,69 +262,73 @@ BRESULT sound_create(UINT rate, UINT ms) {
 #else
 	reserve = 0;
 #endif
-	sndstream.buffer = (SINT32 *)_MALLOC((samples + reserve) * 2 
-												* sizeof(SINT32), "stream");
-	if (sndstream.buffer == NULL) {
+	s_sndstream.buffer = (SINT32 *)_MALLOC((samples + reserve) * 2 * sizeof(SINT32), "stream");
+	if (s_sndstream.buffer == NULL)
+	{
 		goto scre_err2;
 	}
-	sndstream.samples = samples;
-	sndstream.reserve = reserve;
+	s_sndstream.samples = samples;
+	s_sndstream.reserve = reserve;
 
 	SNDCSEC_INIT;
-	streamreset();
-	return(SUCCESS);
+	streamreset(&s_sndstream);
+	return SUCCESS;
 
 scre_err2:
 	soundmng_destroy();
 
 scre_err1:
-	return(FAILURE);
+	return FAILURE;
 }
 
-void sound_destroy(void) {
-
-	if (sndstream.buffer) {
+void sound_destroy(void)
+{
+	if (s_sndstream.buffer)
+	{
 #if defined(SUPPORT_WAVEREC)
 		sound_recstop();
 #endif	/* defined(SUPPORT_WAVEREC) */
 		soundmng_stop();
-		streamreset();
+		streamreset(&s_sndstream);
 		soundmng_destroy();
 		SNDCSEC_TERM;
-		_MFREE(sndstream.buffer);
-		sndstream.buffer = NULL;
+		_MFREE(s_sndstream.buffer);
+		s_sndstream.buffer = NULL;
 	}
 
 	soundcfg.rate = 0;
 }
 
-void sound_reset(void) {
-
-	if (sndstream.buffer) {
+void sound_reset(void)
+{
+	if (s_sndstream.buffer)
+	{
 		soundmng_reset();
-		streamreset();
+		streamreset(&s_sndstream);
 		soundcfg.lastclock = CPU_CLOCK;
 		beep_eventreset();
 	}
 }
 
-void sound_changeclock(void) {
-
+void sound_changeclock(void)
+{
 	UINT32	clk;
 	UINT	hz;
 	UINT	hzmax;
 
-	if (sndstream.buffer == NULL) {
+	if (s_sndstream.buffer == NULL)
+	{
 		return;
 	}
 
-	// とりあえず 25で割り切れる。
+	/* とりあえず 25で割り切れる。 */
 	clk = pccore.realclock / 25;
 	hz = soundcfg.rate / 25;
 
-	// で、クロック数に合せて調整。(64bit演算しろよな的)
+	/* で、クロック数に合せて調整。(64bit演算しろよな的) */
 	hzmax = (1 << (32 - 8)) / (clk >> 8);
-	while(hzmax < hz) {
+	while (hzmax < hz)
+	{
 		clk = (clk + 1) >> 1;
 		hz = (hz + 1) >> 1;
 	}
@@ -316,51 +339,57 @@ void sound_changeclock(void) {
 	soundcfg.lastclock = CPU_CLOCK;
 }
 
-void sound_streamregist(void *hdl, SOUNDCB cbfn) {
-
-	if (sndstream.buffer) {
-		if ((cbfn) &&
-			(sndstream.cbreg < (sndstream.cb + STREAM_CBMAX))) {
-			sndstream.cbreg->hdl = hdl;
-			sndstream.cbreg->cbfn = cbfn;
-			sndstream.cbreg++;
+void sound_streamregist(void *hdl, SOUNDCB cbfn)
+{
+	if (s_sndstream.buffer)
+	{
+		if ((cbfn) && (s_sndstream.cbreg < (s_sndstream.cb + STREAM_CBMAX)))
+		{
+			s_sndstream.cbreg->hdl = hdl;
+			s_sndstream.cbreg->cbfn = cbfn;
+			s_sndstream.cbreg++;
 		}
 	}
 }
 
 
-// ----
+/* ---- */
 
-void sound_sync(void) {
-
+void sound_sync(void)
+{
 	UINT32	length;
 
-	if (sndstream.buffer == NULL) {
+	if (s_sndstream.buffer == NULL)
+	{
 		return;
 	}
 
 	length = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK - soundcfg.lastclock;
-	if (length < soundcfg.minclock) {
+	if (length < soundcfg.minclock)
+	{
 		return;
 	}
 	length = (length * soundcfg.hzbase) / soundcfg.clockbase;
-	if (length == 0) {
+	if (length == 0)
+	{
 		return;
 	}
 	SNDCSEC_ENTER;
 #if defined(SUPPORT_WAVEREC)
-	if (sndstream.rec) {
-		streamfilewrite(length);
+	if (s_sndstream.rec)
+	{
+		streamfilewrite(&s_sndstream, length);
 	}
 	else
 #endif	/* defined(SUPPORT_WAVEREC) */
-		streamprepare(length);
+		streamprepare(&s_sndstream, length);
 	soundcfg.lastclock += length * soundcfg.clockbase / soundcfg.hzbase;
 	beep_eventreset();
 	SNDCSEC_LEAVE;
 
 	soundcfg.writecount += length;
-	if (soundcfg.writecount >= 100) {
+	if (soundcfg.writecount >= 100)
+	{
 		soundcfg.writecount = 0;
 		soundmng_sync();
 	}
@@ -368,51 +397,62 @@ void sound_sync(void) {
 
 static volatile int locks = 0;
 
-const SINT32 *sound_pcmlock(void) {
+/**
+ * PCM バッファを得る (フレームワークから呼ばれる)
+ * @return バッファ
+ */
+const SINT32 *sound_pcmlock(void)
+{
+	const SINT32 *ret;
 
-const SINT32 *ret;
-
-	if (locks) {
+	if (locks)
+	{
 		TRACEOUT(("sound pcm lock: already locked"));
-		return(NULL);
+		return NULL;
 	}
 	locks++;
-	ret = sndstream.buffer;
-	if (ret) {
+	ret = s_sndstream.buffer;
+	if (ret)
+	{
 		SNDCSEC_ENTER;
-		if (sndstream.remain > sndstream.reserve)
+		if (s_sndstream.remain > s_sndstream.reserve)
 #if defined(SUPPORT_WAVEREC)
-			if (sndstream.rec) {
-				filltailsample(sndstream.remain - sndstream.reserve);
+			if (s_sndstream.rec)
+			{
+				filltailsample(&s_sndstream, s_sndstream.remain - s_sndstream.reserve);
 			}
 			else
 #endif	/* defined(SUPPORT_WAVEREC) */
 		{
-			streamprepare(sndstream.remain - sndstream.reserve);
+			streamprepare(&s_sndstream, s_sndstream.remain - s_sndstream.reserve);
 			soundcfg.lastclock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
 			beep_eventreset();
 		}
 	}
-	else {
+	else
+	{
 		locks--;
 	}
-	return(ret);
+	return ret;
 }
 
-void sound_pcmunlock(const SINT32 *hdl) {
-
+/**
+ * PCM バッファを解放する
+ * @param[in] hdl バッファ
+ */
+void sound_pcmunlock(const SINT32 *hdl)
+{
 	int		leng;
 
-	if (hdl) {
-		leng = sndstream.reserve - sndstream.remain;
-		if (leng > 0) {
-			CopyMemory(sndstream.buffer,
-						sndstream.buffer + (sndstream.samples * 2),
-												leng * 2 * sizeof(SINT32));
+	if (hdl)
+	{
+		leng = s_sndstream.reserve - s_sndstream.remain;
+		if (leng > 0)
+		{
+			memcpy(s_sndstream.buffer, s_sndstream.buffer + (s_sndstream.samples * 2), leng * 2 * sizeof(SINT32));
 		}
-		sndstream.ptr = sndstream.buffer + (leng * 2);
-		sndstream.remain = sndstream.samples + sndstream.reserve - leng;
-//		sndstream.remain += sndstream.samples;
+		s_sndstream.ptr = s_sndstream.buffer + (leng * 2);
+		s_sndstream.remain = s_sndstream.samples + s_sndstream.reserve - leng;
 		SNDCSEC_LEAVE;
 		locks--;
 	}
