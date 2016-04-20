@@ -285,7 +285,7 @@ static void info_extsnd(OEMCHAR *str, int maxlen, const NP2INFOEX *ex) {
 							milstr_list(str_chpan, (g_pcm86.cDacCtrl >> 4) & 3));
 		milstr_ncat(str, buf, maxlen);
 		milstr_ncat(str, ex->cr, maxlen);
-		OEMSPRINTF(buf, str_pcm86b, g_pcm86.nVirtualCount, g_pcm86.nFifoSize);
+		OEMSPRINTF(buf, str_pcm86b, g_pcm86.nFifoRemain, g_pcm86.nFifoIntrSize);
 		milstr_ncat(str, buf, maxlen);
 	}
 }

@@ -44,14 +44,14 @@ void pcm86_reset(void)
 	PCM86 pcm86 = &g_pcm86;
 
 	memset(pcm86, 0, sizeof(*pcm86));
-	pcm86->nFifoSize = 0x80;
+	pcm86->nFifoIntrSize = 0x80;
 	pcm86->cDacCtrl = 0x32;
 	pcm86->nStepMask = (1 << 2) - 1;
 	pcm86->cStepBits = 2;
 	pcm86->nStepClock = (pccore.baseclock << 6);
 	pcm86->nStepClock /= 44100;
 	pcm86->nStepClock *= pccore.multiple;
-	pcm86->rescue = (PCM86_RESCUE * 32) << 2;
+	pcm86->nExtendBufferSize = (PCM86_RESCUE * 32) << 2;
 	pcm86->cIrqLevel = 0xff;
 }
 
@@ -87,7 +87,7 @@ void pcm86_cb(NEVENTITEM item)
 	{
 		sound_sync();
 //		RECALC_NOWCLKP;
-		if (pcm86->nVirtualCount <= pcm86->nFifoSize)
+		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
 			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
@@ -112,7 +112,7 @@ void pcm86_setnextintr(void) {
 
 	if (pcm86->cFifoCtrl & 0x80)
 	{
-		cnt = pcm86->nVirtualCount - pcm86->nFifoSize;
+		cnt = pcm86->nFifoRemain - pcm86->nFifoIntrSize;
 		if (cnt > 0)
 		{
 			cnt += pcm86->nStepMask;
@@ -151,12 +151,12 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 		RECALC_NOWCLKWAIT(pcm86, nPast);
 	}
 
-	nDiff = pcm86->nBufferCount - pcm86->nVirtualCount;
+	nDiff = pcm86->nBufferCount - pcm86->nFifoRemain;
 	if (nDiff < 0)									/* ˆ——Ž‚¿‚Ä‚éc */
 	{
 		nDiff &= ~3;
-		pcm86->nVirtualCount += nDiff;
-		if (pcm86->nVirtualCount <= pcm86->nFifoSize)
+		pcm86->nFifoRemain += nDiff;
+		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
 			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
@@ -172,7 +172,7 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 	}
 	else
 	{
-		nDiff -= PCM86_EXTBUF;
+		nDiff -= pcm86->nExtendBufferSize;
 		if (nDiff > 0)
 		{
 			nDiff &= ~3;
@@ -193,7 +193,7 @@ BOOL pcm86gen_intrq(void)
 	if (pcm86->cFifoCtrl & 0x20)
 	{
 		sound_sync();
-		if ((pcm86->cReqIrq) && (pcm86->nVirtualCount <= pcm86->nFifoSize))
+		if ((pcm86->cReqIrq) && (pcm86->nFifoRemain <= pcm86->nFifoIntrSize))
 		{
 			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;

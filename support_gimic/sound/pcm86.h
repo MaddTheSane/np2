@@ -19,16 +19,13 @@ enum {
 	PCM86_RESCUE		= 20
 };
 
-#define	PCM86_EXTBUF		g_pcm86.rescue					/* 救済延滞… */
-#define	PCM86_REALBUFSIZE	(PCM86_LOGICALBUF + PCM86_EXTBUF)
-
 #define RECALC_NOWCLKWAIT(p, cnt)										\
 	do																	\
 	{																	\
-		(p)->nVirtualCount -= (cnt << (p)->cStepBits);					\
-		if ((p)->nVirtualCount < 0)										\
+		(p)->nFifoRemain -= (cnt << (p)->cStepBits);					\
+		if ((p)->nFifoRemain < 0)										\
 		{																\
-			(p)->nVirtualCount &= (p)->nStepMask;						\
+			(p)->nFifoRemain &= (p)->nStepMask;							\
 		}																\
 	} while (0 /*CONSTCOND*/)
 
@@ -50,10 +47,10 @@ struct tagPcm86
 	UINT nReadPos;				/*!< DSOUND再生位置 */
 	UINT nWritePos;				/*!< 書込み位置 */
 	SINT nBufferCount;			/*!< DSOUND用のデータ数 */
-	SINT nVirtualCount;			/*!< 86PCM(bufsize:0x8000)のデータ数 */
-	SINT32	rescue;
+	SINT nFifoRemain;			/*!< 86PCM(bufsize:0x8000)のデータ数 */
+	SINT nExtendBufferSize;		/*!< バッファの追加サイズ */
 
-	SINT nFifoSize;				/*!< 割り込み要求サイズ */
+	SINT nFifoIntrSize;			/*!< 割り込み要求サイズ */
 	SINT32	volume;
 	SINT32	vol5;
 
