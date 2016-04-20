@@ -353,7 +353,6 @@ void sound_streamregist(void *hdl, SOUNDCB cbfn)
 
 #ifdef _DEBUG
 #include <assert.h>
-extern BOOL g_sndlock;
 #endif	/* _DEBUG */
 
 void sound_sync(void)

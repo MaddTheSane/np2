@@ -189,6 +189,10 @@ extern	PCSTAT	pcstat;
 extern	UINT8	soundrenewal;
 extern	UINT	drawcount;
 
+#ifdef _DEBUG
+extern BOOL g_sndlock;
+#endif	/* _DEBUG */
+
 void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
