@@ -83,13 +83,12 @@ void pcm86_cb(NEVENTITEM item)
 {
 	PCM86 pcm86 = &g_pcm86;
 
-	if (pcm86->cReqIrq)
+	if (((pcm86->cFifoCtrl & 0xa0) == 0xa0) && (pcm86->cIrqFlag == 0))
 	{
 		sound_sync();
-//		RECALC_NOWCLKP;
+		TRACEOUT(("pcm intr? %d < %d", pcm86->nFifoRemain, pcm86->nFifoIntrSize));
 		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
-			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
 			if (pcm86->cIrqLevel != 0xff)
 			{
@@ -104,35 +103,40 @@ void pcm86_cb(NEVENTITEM item)
 	(void)item;
 }
 
-void pcm86_setnextintr(void) {
-
+/**
+ * 次の割り込みタイミングを計算する
+ */
+void pcm86_setnextintr(void)
+{
 	PCM86 pcm86 = &g_pcm86;
-	SINT32	cnt;
-	SINT32	clk;
+	SINT32 clk;
+	SINT32 cnt;
 
-	if (pcm86->cFifoCtrl & 0x80)
+	if (((pcm86->cFifoCtrl & 0xa0) == 0xa0) && (pcm86->cIrqFlag == 0))
 	{
+		if (pccore.cpumode & CPUMODE_8MHZ)
+		{
+			clk = clk20_128[pcm86->cFifoCtrl & 7];
+		}
+		else
+		{
+			clk = clk25_128[pcm86->cFifoCtrl & 7];
+		}
+
 		cnt = pcm86->nFifoRemain - pcm86->nFifoIntrSize;
 		if (cnt > 0)
 		{
 			cnt += pcm86->nStepMask;
 			cnt >>= pcm86->cStepBits;
-//			cnt += 4;								/* ちょっと延滞させる */
-			/* ここで clk = pccore.realclock * cnt / 86pcm_rate */
-			/* clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple */
-			if (pccore.cpumode & CPUMODE_8MHZ) {
-				clk = clk20_128[pcm86->cFifoCtrl & 7];
-			}
-			else {
-				clk = clk25_128[pcm86->cFifoCtrl & 7];
-			}
-			/* cntは最大 8000h で 32bitで収まるように… */
 			clk *= cnt;
-			clk >>= 7;
-//			clk++;						/* roundup */
-			clk *= pccore.multiple;
-			nevent_set(NEVENT_86PCM, clk, pcm86_cb, NEVENT_ABSOLUTE);
 		}
+		else if (pcm86->nFifoRemain == 0)
+		{
+			clk *= (32768 >> pcm86->cStepBits);
+		}
+		clk >>= 7;
+		clk *= pccore.multiple;
+		nevent_set(NEVENT_86PCM, clk, pcm86_cb, NEVENT_ABSOLUTE);
 	}
 }
 
@@ -156,6 +160,7 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 	{
 		nDiff &= ~3;
 		pcm86->nFifoRemain += nDiff;
+#if 0
 		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
 			pcm86->cReqIrq = 0;
@@ -169,6 +174,7 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 		{
 			pcm86_setnextintr();
 		}
+#endif
 	}
 	else
 	{
@@ -190,6 +196,7 @@ BOOL pcm86gen_intrq(void)
 	{
 		return TRUE;
 	}
+#if 0
 	if (pcm86->cFifoCtrl & 0x20)
 	{
 		sound_sync();
@@ -200,5 +207,6 @@ BOOL pcm86gen_intrq(void)
 			return TRUE;
 		}
 	}
+#endif
 	return FALSE;
 }

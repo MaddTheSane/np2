@@ -127,7 +127,6 @@ static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val)
 		g_pcm86.nBufferCount -= 4;
 		g_pcm86.nReadPos = (g_pcm86.nReadPos + 4) & PCM86_BUFMSK;
 	}
-	g_pcm86.cReqIrq = 1;
 	(void)port;
 }
 

@@ -61,10 +61,10 @@ struct tagPcm86
 	UINT8 cFifoCtrl;			/*!< FIFO コントロール */
 	UINT8 cSoundFlags;			/*!< サウンド フラグ (A460) */
 	UINT8 cDacCtrl;				/*!< DAC 設定 */
-	UINT8	__write;
+	UINT8 __write;
 	UINT8 cStepBits;			/*!< PCM アライメント */
 	UINT8 cIrqLevel;			/*!< 割り込みレベル */
-	UINT8 cReqIrq;				/*!< 割り込み要求フラグ */
+	UINT8 __cReqIrq;
 	UINT8 cIrqFlag;				/*!< 割り込みフラグ */
 
 	UINT8	buffer[PCM86_BUFSIZE];
