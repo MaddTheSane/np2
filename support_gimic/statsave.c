@@ -1193,6 +1193,8 @@ const SFENTRY	*tblterm;
 		return(STATFLAG_FAILURE);
 	}
 
+	SNDCSEC_ENTER;
+
 	ret = STATFLAG_SUCCESS;
 	tbl = np2tbl;
 	tblterm = tbl + NELEMENTS(np2tbl);
@@ -1258,6 +1260,9 @@ const SFENTRY	*tblterm;
 		}
 		tbl++;
 	}
+
+	SNDCSEC_LEAVE;
+
 	statflag_close(sffh);
 	return(ret);
 }
