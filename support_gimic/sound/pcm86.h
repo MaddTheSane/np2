@@ -22,17 +22,21 @@ enum {
 #define	PCM86_EXTBUF		g_pcm86.rescue					/* 救済延滞… */
 #define	PCM86_REALBUFSIZE	(PCM86_LOGICALBUF + PCM86_EXTBUF)
 
-#define RECALC_NOWCLKWAIT(cnt)											\
+#define RECALC_NOWCLKWAIT(p, cnt)										\
 	do																	\
 	{																	\
-		g_pcm86.virbuf -= (cnt << g_pcm86.cStepBits);					\
-		if (g_pcm86.virbuf < 0)											\
+		(p)->nVirtualCount -= (cnt << (p)->cStepBits);					\
+		if ((p)->nVirtualCount < 0)										\
 		{																\
-			g_pcm86.virbuf &= g_pcm86.nStepMask;						\
+			(p)->nVirtualCount &= (p)->nStepMask;						\
 		}																\
 	} while (0 /*CONSTCOND*/)
 
-typedef struct {
+/**
+ * @brief PCM86
+ */
+struct tagPcm86
+{
 	SINT32	divremain;
 	SINT32	div;
 	SINT32	div2;
@@ -43,18 +47,18 @@ typedef struct {
 	SINT32	smp_r;
 	SINT32	lastsmp_r;
 
-	UINT32	readpos;			/* DSOUND再生位置 */
-	UINT32	wrtpos;				/* 書込み位置 */
-	SINT32	realbuf;			/* DSOUND用のデータ数 */
-	SINT32	virbuf;				/* 86PCM(bufsize:0x8000)のデータ数 */
+	UINT nReadPos;				/*!< DSOUND再生位置 */
+	UINT nWritePos;				/*!< 書込み位置 */
+	SINT nBufferCount;			/*!< DSOUND用のデータ数 */
+	SINT nVirtualCount;			/*!< 86PCM(bufsize:0x8000)のデータ数 */
 	SINT32	rescue;
 
-	SINT32 nFifoSize;			/* 割り込み要求サイズ */
+	SINT nFifoSize;				/*!< 割り込み要求サイズ */
 	SINT32	volume;
 	SINT32	vol5;
 
-	UINT32	lastclock;
-	UINT32	stepclock;
+	UINT32 nLastClock;			/*!< 最後に処理したクロック */
+	UINT32 nStepClock;			/*!< サンプル1つのクロック */
 	UINT nStepMask;				/*!< ステップ マスク */
 
 	UINT8 cFifoCtrl;			/*!< FIFO コントロール */
@@ -67,7 +71,9 @@ typedef struct {
 	UINT8 cIrqFlag;				/*!< 割り込みフラグ */
 
 	UINT8	buffer[PCM86_BUFSIZE];
-} _PCM86, *PCM86;
+};
+typedef struct tagPcm86	_PCM86;		/*!< define */
+typedef struct tagPcm86	*PCM86;		/*!< define */
 
 typedef struct {
 	UINT	rate;
