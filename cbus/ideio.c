@@ -63,7 +63,7 @@ static BRESULT setidentify(IDEDRV drv) {
 	UINT32	size;
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
-	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY))) {
+	if ((sxsi == NULL) || (!(sxsi->flag & SXSIFLAG_READY) && drv->device != IDETYPE_CDROM)) {
 		return(FAILURE);
 	}
 
