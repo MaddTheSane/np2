@@ -49,6 +49,9 @@
 #include "s98.h"
 #include "fdd/diskdrv.h"
 #include "fdd/fddfile.h"
+#if defined(SUPPORT_IDEIO)
+#include "fdd/sxsi.h"
+#endif	// defined(SUPPORT_IDEIO)
 #include "timing.h"
 #include "keystat.h"
 #include "debugsub.h"
@@ -580,7 +583,7 @@ static void OnCommand(HWND hWnd, WPARAM wParam)
 			break;
 
 		case IDM_IDE2EJECT:
-			diskdrv_setsxsi(0x02, NULL);
+			sxsi_devclose(0x02);
 			break;
 #endif
 
