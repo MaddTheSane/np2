@@ -189,7 +189,7 @@ extern	PCSTAT	pcstat;
 extern	UINT8	soundrenewal;
 extern	UINT	drawcount;
 
-void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, UINT maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
 
