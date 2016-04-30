@@ -250,7 +250,7 @@ const MENURES	*res;
 			if (ic->count == 0) {
 				vram_destroy(ic->hdl);
 				while(ic > icorg) {
-					CopyMemory(ic, ic - 1, sizeof(ICONCACHE));
+					*ic = *(ic - 1);
 					ic--;
 				}
 				ic->id = id;
