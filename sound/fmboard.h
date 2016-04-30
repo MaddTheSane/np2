@@ -30,7 +30,8 @@ extern	OPNA		g_opna[OPNA_MAX];
 extern	_PCM86		g_pcm86;
 extern	_CS4231		cs4231;
 
-REG8 fmboard_getjoy(POPNA opna);
+REG8 fmboard_getjoypad(int nPort);
+REG8 fmboard_getjoyreg(POPNA opna);
 
 void fmboard_extreg(void (*ext)(REG8 enable));
 void fmboard_extenable(REG8 enable);

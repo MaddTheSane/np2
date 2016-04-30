@@ -59,7 +59,7 @@ static REG8 IOINPCALL spb_i08a(UINT port)
 	nAddress = g_opna[0].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opna[0]);
+		return fmboard_getjoyreg(&g_opna[0]);
 	}
 
 	(void)port;
@@ -117,7 +117,26 @@ static REG8 IOINPCALL spb_i188(UINT port)
 {
 	(void)port;
 
+<<<<<<< .working
 	return opna_readExtendedStatus(&g_opna[1]);
+=======
+	UINT	addr;
+
+	addr = opn2.addr1l;
+	if (addr == 0x0e) {
+		return(fmboard_getjoyreg(&psg2));
+	}
+	else if (addr < 0x10) {
+		return(psggen_getreg(&psg2, addr));
+	}
+	else if (addr == 0xff) {
+		return(1);
+	}
+	else {
+		(void)port;
+		return(opn2.reg[addr]);
+	}
+>>>>>>> .merge-right.r1533
 }
 
 static REG8 IOINPCALL spb_i18a(UINT port)
@@ -197,10 +216,18 @@ static REG8 IOINPCALL p86_i28a(UINT port)
 {
 	UINT nAddress;
 
+<<<<<<< .working
 	nAddress = g_opna[4].s.addrl;
 	if (nAddress == 0x0e)
 	{
 		return fmboard_getjoy(&g_opna[4]);
+=======
+	UINT	addr;
+
+	addr = opn3.addr1l;
+	if (addr == 0x0e) {
+		return(fmboard_getjoyreg(&psg3));
+>>>>>>> .merge-right.r1533
 	}
 	else if (nAddress < 0x10)
 	{
