@@ -1364,7 +1364,8 @@ STRINGTABLE
 BEGIN
     IDS_FDDTITLE            "Select floppy image"
     IDS_FDDEXT              "d88"
-    IDS_FDDFILTER           "D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.xdf;*.hdm;*.dup;*.2hd)|*.xdf;*.hdm;*.hd4;*.dup;*.2hd;*.tfd|All supported files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.hd4;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
+    IDS_FDDFILTER           "Anex86 floppy disk images (*.fdi)|*.fdi|T98-Next floppy disk images (*.nfd)|*.nfd|Virtual floppy disk images (*.fdd)|*.fdd|BKDSK images (*.hdm;*.hd4;*.hd5;*.hd9;*.h01;*.hdb;*.ddb;*.dd6;*.dd9)|*.hdm;*.hd4;*.hd5;*.hd9;*.h01;*.hdb;*.ddb;*.dd6;*.dd9|D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|DCP/DCU image files (*.dcp;*.dcu)|*.dcp;*.dcu|Floppy disk images (*.xdf;*.hdm;*.dup;*.2hd;*.flp;*.bin;*.tfd)|*.fdi;*.hdm;*.hd4;*.hd5;*.hd9;*.h01;*.hdb;*.ddb;*.dd6;*.dd9;*.dcp;*.dcu;*.xdf;*.dup;*.2hd;*.flp;*.bin;*.tfd;*.fim|All supported files|*.fdi;*.nfd;*.fdd;*.hdm;*.hd4;*.hd5;*.hd9;*.h01;*hdb;*.ddb;*.dd6;*.dd9;*.d88;*.88d;*.d98;*.98d;*.dcp;*.dcu;*.xdf;*.dup;*.2hd;*.flp;*.bin;*.tfd;*.fim|All files (*.*)|*.*|"
+//    IDS_FDDFILTER           "D88 image files (*.d88;*.d98)|*.d88;*.88d;*.d98;*.98d|Floppy disk images (*.xdf;*.hdm;*.dup;*.2hd)|*.xdf;*.hdm;*.hd4;*.dup;*.2hd;*.tfd|All supported files|*.d88;*.88d;*.d98;*.98d;*.fdi;*.xdf;*.hdm;*.hd4;*.dup;*.2hd;*.tfd|All files (*.*)|*.*|"
 END
 
 STRINGTABLE
@@ -1376,7 +1377,8 @@ BEGIN
     IDS_IDETITLE            "Select IDE HDD image"
     IDS_ISOTITLE            "Select ISO-9660 image"
     IDS_ISOEXT              "iso"
-    IDS_ISOFILTER           "Cue sheets (*.cue)|*.cue|ISO-9660 image files (*.iso)|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files (*.*)|*.*|"
+    IDS_ISOFILTER           "Cue sheets (*.cue)|*.cue|CloneCD Image (*.ccd)|*.ccd|CD Manipulator Image (*.cdm)|*.cdm|Media Descriptor (*.mds)|*.mds|Nero Image (*.nrg)|*.nrg|ISO-9660 image files (*.iso)|*.iso;*.img|All supported files|*.cue;*.ccd;*.cdm;*.mds;*.nrg;*.iso;*.img|All files (*.*)|*.*|"
+//	IDS_ISOFILTER           "Cue sheets (*.cue)|*.cue|ISO-9660 image files (*.iso)|*.iso;*.img|All supported files|*.cue;*.iso;*.img|All files (*.*)|*.*|"
 END
 
 STRINGTABLE

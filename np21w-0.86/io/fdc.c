@@ -7,7 +7,7 @@
 #include	"cpucore.h"
 #include	"pccore.h"
 #include	"iocore.h"
-#include	"fdd/fddfile.h"
+#include	"diskimage/fddfile.h"
 
 enum {
 	FDC_DMACH2HD	= 2,
@@ -104,9 +104,24 @@ void fdcsend_success7(void) {
 	fdc.event = FDCEVENT_BUFSEND;
 	fdc.bufp = 0;
 	fdc.bufcnt = 7;
+#ifdef SUPPORT_KAI_IMAGES
+	if (fdd_fdcresult() == FALSE) {
+		fdc.buf[0] = (fdc.hd << 2) | fdc.us;
+		fdc.buf[1] = 0;
+		fdc.buf[2] = 0;
+	}
+	else {
+		//	FDイメージファイルがFDCリザルトコードを持っている場合は
+		//	(fdc.statに設定しているはずなので)そちらを設定
+		fdc.buf[0] = (fdc.hd << 2) | fdc.us | (UINT8)(fdc.stat[fdc.us] >>  0);
+		fdc.buf[1] = (UINT8)(fdc.stat[fdc.us] >>  8);
+		fdc.buf[2] = (UINT8)(fdc.stat[fdc.us] >> 16);
+	}
+#else
 	fdc.buf[0] = (fdc.hd << 2) | fdc.us;
 	fdc.buf[1] = 0;
 	fdc.buf[2] = 0;
+#endif
 	fdc.buf[3] = fdc.C;
 	fdc.buf[4] = fdc.H;
 	fdc.buf[5] = fdc.R;
@@ -192,7 +207,7 @@ static void FDC_Invalid(void) {							// cmd: xx
 	fdc.status = FDCSTAT_RQM | FDCSTAT_CB | FDCSTAT_DIO;
 }
 
-#if 0
+#ifdef SUPPORT_KAI_IMAGES
 static void FDC_ReadDiagnostic(void) {					// cmd: 02
 
 	switch(fdc.event) {
@@ -566,7 +581,7 @@ static void FDC_Seek(void) {							// cmd: 0f
 	fdc.status = FDCSTAT_RQM;
 }
 
-#if 0
+#ifdef SUPPORT_KAI_IMAGES
 static void FDC_ScanEqual(void) {						// cmd: 11, 19, 1d
 
 	switch(fdc.event) {

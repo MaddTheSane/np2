@@ -13,7 +13,7 @@
 #include "iocore.h"
 #include "lio/lio.h"
 #include "vram.h"
-#include "fdd/fddfile.h"
+#include "diskimage/fddfile.h"
 #include "fdd/fdd_mtr.h"
 #include "fdfmt.h"
 #include "dosio.h"

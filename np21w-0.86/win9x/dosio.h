@@ -102,7 +102,7 @@ FILEPOS DOSIOCALL file_seek(FILEH hFile, FILEPOS pointer, int method);
 UINT DOSIOCALL file_read(FILEH hFile, void *data, UINT length);
 UINT DOSIOCALL file_write(FILEH hFile, const void *data, UINT length);
 short DOSIOCALL file_close(FILEH hFile);
-UINT DOSIOCALL file_getsize(FILEH hFile);
+FILELEN DOSIOCALL file_getsize(FILEH hFile);
 short DOSIOCALL file_getdatetime(FILEH hFile, DOSDATE* dosdate, DOSTIME* dostime);
 short DOSIOCALL file_delete(const OEMCHAR* lpPathName);
 short DOSIOCALL file_attr(const OEMCHAR* lpPathName);

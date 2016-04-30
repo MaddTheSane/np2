@@ -15,7 +15,7 @@
 #include "pccore.h"
 #include "common/strres.h"
 #include "fdd/diskdrv.h"
-#include "fdd/fddfile.h"
+#include "diskimage/fddfile.h"
 #include "fdd/newdisk.h"
 #include "fdd/sxsi.h"
 
@@ -40,7 +40,7 @@ void dialog_changefdd(HWND hWnd, REG8 drv)
 
 		CFileDlg dlg(TRUE, rExt.c_str(), lpPath, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, rFilter.c_str(), hWnd);
 		dlg.m_ofn.lpstrTitle = rTitle.c_str();
-		dlg.m_ofn.nFilterIndex = 3;
+		dlg.m_ofn.nFilterIndex = 8; // 3;
 		if (dlg.DoModal())
 		{
 			LPCTSTR lpImage = dlg.GetPathName();
@@ -85,7 +85,7 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 				nTitle = IDS_ISOTITLE;
 				nExt = IDS_ISOEXT;
 				nFilter = IDS_ISOFILTER;
-				nIndex = 3;
+				nIndex = 6; // 3
 			}
 		}
 #else

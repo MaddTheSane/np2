@@ -381,6 +381,18 @@ REG8 MEMCALL memp_read8(UINT32 address) {
 		if (address == 0xF8E80+0x003F) 
 			return 0x21; // PC-9821 Xa7,9,10,12/C 
 	}
+	//if (address == 0x96000+0x0000) 
+	//	return 0xC3;
+	//if (address == 0x961F0+0x0000) 
+	//	return 0xCB;
+	//if (address == 0x2C1F0+0x0000) 
+	//	return 0xCB;
+	//if (address == 0x00fd0+0x0001) 
+	//	return 0xCB;
+	//if (address == 0x00700+0x0000) 
+	//	return 0xCB;
+	//if (address == 0x30000+0x0000) 
+	//	return 0xCB;
 
 	if (address < I286_MEMREADMAX) {
 		return(mem[address]);

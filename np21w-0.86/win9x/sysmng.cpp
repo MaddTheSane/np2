@@ -4,7 +4,7 @@
 #include	"sysmng.h"
 #include	"cpucore.h"
 #include	"pccore.h"
-#include	"fdd/fddfile.h"
+#include	"diskimage/fddfile.h"
 #ifdef SUPPORT_IDEIO
 #include	"fdd/sxsi.h"
 #endif

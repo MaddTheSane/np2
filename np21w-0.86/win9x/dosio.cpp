@@ -137,9 +137,15 @@ short DOSIOCALL file_close(FILEH hFile)
  * @param[in] hFile ファイル ハンドル
  * @return ファイル サイズ
  */
-UINT DOSIOCALL file_getsize(FILEH hFile)
+FILELEN DOSIOCALL file_getsize(FILEH hFile)
 {
+#ifdef SUPPORT_LARGE_HDD
+	LARGE_INTEGER lires;
+	::GetFileSizeEx(hFile, &lires);
+	return lires.QuadPart;
+#else
 	return ::GetFileSize(hFile, NULL);
+#endif
 }
 
 /**

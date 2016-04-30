@@ -4,7 +4,7 @@
 #endif
 #include	"dosio.h"
 #include	"newdisk.h"
-#include	"fddfile.h"
+#include	"diskimage/fddfile.h"
 #include	"sxsi.h"
 #include	"hddboot.res"
 

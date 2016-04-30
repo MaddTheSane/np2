@@ -85,6 +85,7 @@ typedef struct {
 #endif	// defined(SUPPORT_VSTi)
 
 	UINT8	emuddraw; // DirectDraw Emulation Only
+	UINT8	dragdrop; // Drag and drop support
 } NP2OSCFG;
 
 

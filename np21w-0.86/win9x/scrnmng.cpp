@@ -620,10 +620,23 @@ BRESULT scrnmng_create(UINT8 scrnmode) {
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 #ifdef SUPPORT_WAB
-		ddsd.dwWidth = 1024+1; // +1しないと駄目らしい
-		ddsd.dwHeight = 768;
-		width = 1024;
-		height = 768;
+		if((np2wab.relay&0x3)!=0 && np2wab.realWidth>=640 && np2wab.realHeight>=400){
+			// 実サイズに
+			width = ddsd.dwWidth = np2wab.realWidth;
+			height = ddsd.dwHeight = np2wab.realHeight;
+			ddsd.dwWidth++; // +1しないと駄目らしい
+		}else{
+			if (!(scrnmode & SCRNMODE_ROTATE)) {
+				ddsd.dwWidth = 640 + 1;
+				ddsd.dwHeight = 480;
+			}
+			else {
+				ddsd.dwWidth = 480;
+				ddsd.dwHeight = 640 + 1;
+			}
+			width = 640;
+			height = 480;
+		}
 #else
 		if (!(scrnmode & SCRNMODE_ROTATE)) {
 			ddsd.dwWidth = 640 + 1;
@@ -1114,7 +1127,7 @@ void scrnmng_updatefsres(void) {
 	int width = scrnstat.width;
 	int height = scrnstat.height;
 
-	if(np2oscfg.fscrnmod & FSCRNMOD_SAMERES){
+	if((np2oscfg.fscrnmod & FSCRNMOD_SAMERES) && (g_scrnmode & SCRNMODE_FULLSCREEN)){
 		DDBLTFX ddbltfx = {0};
 		ddbltfx.dwSize = sizeof(DDBLTFX);
 		ddraw.primsurf->Blt(NULL,NULL,NULL,DDBLT_COLORFILL | DDBLT_WAIT,&ddbltfx);
@@ -1122,20 +1135,31 @@ void scrnmng_updatefsres(void) {
 		return;
 	}
 	if(scrnstat.width<100 || scrnstat.height<100) return;
-
-	if((lastwidth!=width || lastheight!=height) && (g_scrnmode & SCRNMODE_FULLSCREEN)!=0){
+	
+	if(lastwidth!=width || lastheight!=height){
 		lastwidth=width;
 		lastheight=height;
-		g_scrnmode = g_scrnmode & ~SCRNMODE_FULLSCREEN;
-		scrnmng_destroy();
-		g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
-		if (scrnmng_create(g_scrnmode | SCRNMODE_FULLSCREEN) == SUCCESS) {
+		if((g_scrnmode & SCRNMODE_FULLSCREEN)!=0){
+			g_scrnmode = g_scrnmode & ~SCRNMODE_FULLSCREEN;
+			scrnmng_destroy();
 			g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
-		}
-		else {
+			if (scrnmng_create(g_scrnmode | SCRNMODE_FULLSCREEN) == SUCCESS) {
+				g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
+			}
+			else {
+				if (scrnmng_create(g_scrnmode) != SUCCESS) {
+					PostQuitMessage(0);
+					return;
+				}
+			}
+		}else if(ddraw.width < width || ddraw.height < height){
+			scrnmng_destroy();
 			if (scrnmng_create(g_scrnmode) != SUCCESS) {
-				PostQuitMessage(0);
-				return;
+				if (scrnmng_create(g_scrnmode | SCRNMODE_FULLSCREEN) != SUCCESS) { // フルスクリーンでリトライ
+					PostQuitMessage(0);
+					return;
+				}
+				g_scrnmode = g_scrnmode | SCRNMODE_FULLSCREEN;
 			}
 		}
 	}

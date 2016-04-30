@@ -627,6 +627,8 @@ static const PFTBL s_IniItems[] =
 #endif	// defined(SUPPORT_VSTi)
 	
 	PFVAL("EMUDDRAW", PFRO_BOOL,		&np2oscfg.emuddraw), // 最近はEMULATIONONLYにした方速かったりする（特にピクセル操作する場合とか）
+	
+	PFVAL("DRAGDROP", PFRO_BOOL,		&np2oscfg.dragdrop), // どらっぐあんどどろっぷサポート
 
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)
 };

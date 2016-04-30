@@ -6,7 +6,7 @@
 #include	"bios.h"
 #include	"biosmem.h"
 #include	"sxsibios.h"
-#include	"fdd/fddfile.h"
+#include	"diskimage/fddfile.h"
 #include	"fdd/fdd_mtr.h"
 #include	"fdd/sxsi.h"
 

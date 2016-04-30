@@ -59,7 +59,7 @@
 #include "beep.h"
 #include "s98.h"
 #include "fdd/diskdrv.h"
-#include "fdd/fddfile.h"
+#include "diskimage/fddfile.h"
 #include "timing.h"
 #include "keystat.h"
 #include "debugsub.h"
@@ -130,7 +130,7 @@ static	TCHAR		szClassName[] = _T("NP2-MainWindow");
 #if defined(SUPPORT_VSTi)
 						TEXT("%ProgramFiles%\\Roland\\Sound Canvas VA\\SOUND Canvas VA.dll"),
 #endif	// defined(SUPPORT_VSTi)
-						0
+						0, 0
 					};
 
 		OEMCHAR		fddfolder[MAX_PATH];
@@ -1140,6 +1140,85 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	WINLOCEX	wlex;
 
 	switch (msg) {
+		//	イメージファイルのＤ＆Ｄに対応(Kai1)
+		case WM_DROPFILES:
+			if(np2oscfg.dragdrop){
+				int		files;				//	Kai1追加
+				OEMCHAR	fname[MAX_PATH];	//	Kai1追加
+				const OEMCHAR	*ext;		//	Kai1追加
+   				files = DragQueryFile((HDROP)wParam, (UINT)-1, NULL, 0);
+				REG8	hddrv_IDE = 0x00;
+				REG8	hddrv_IDECD = 0x00;
+				REG8	hddrv_SCSI = 0x20;
+				REG8	fddrv = 0x00;
+				UINT8	i;
+				
+#if defined(SUPPORT_IDEIO)
+				while(hddrv_IDE <= 0x03 && np2cfg.idetype[hddrv_IDE]!=0x01) hddrv_IDE++;
+				while(hddrv_IDECD <= 0x03 && np2cfg.idetype[hddrv_IDECD]!=0x02) hddrv_IDECD++;
+#endif	//	SUPPORT_IDEIO
+				for (i = 0; i < files; i++) {
+#if defined(OSLANG_UTF8)
+					TCHAR tchr[MAX_PATH];
+					DragQueryFile((HDROP)wParam, i, tchr, NELEMENTS(tchr));
+					tchartooem(fname, NELEMENTS(fname), tchr, -1);
+#else
+					DragQueryFile((HDROP)wParam, i, fname, NELEMENTS(fname));
+#endif
+					ext = file_getext(fname);
+#if defined(SUPPORT_IDEIO)
+					//	CDイメージ？
+					if ((!file_cmpname(ext, OEMTEXT("iso"))) ||
+						(!file_cmpname(ext, OEMTEXT("cue"))) ||
+						(!file_cmpname(ext, OEMTEXT("ccd"))) ||
+						(!file_cmpname(ext, OEMTEXT("cdm"))) ||
+						(!file_cmpname(ext, OEMTEXT("mds"))) ||
+						(!file_cmpname(ext, OEMTEXT("nrg")))) {
+						diskdrv_setsxsi(hddrv_IDECD, fname);
+						while(hddrv_IDECD <= 0x03 && np2cfg.idetype[hddrv_IDECD]!=0x02) hddrv_IDECD++;
+						continue;
+					}
+#endif	//	SUPPORT_IDEIO
+					//	HDイメージ？
+					if ((!file_cmpname(ext, str_hdi)) ||
+						(!file_cmpname(ext, str_thd)) ||
+						(!file_cmpname(ext, str_nhd))) {
+#if defined(SUPPORT_IDEIO)
+						if (hddrv_IDE <= 0x03) {
+							diskdrv_setsxsi(hddrv_IDE, fname);
+							while(hddrv_IDE <= 0x03 && np2cfg.idetype[hddrv_IDE]!=0x01) hddrv_IDE++;
+						}
+#else
+						if (hddrv_IDE <= 0x01) {
+							diskdrv_setsxsi(hddrv_IDE, fname);
+							hddrv_IDE++;
+						}
+#endif
+						continue;
+					}
+					if (!file_cmpname(ext, str_hdd)) {
+						if (hddrv_SCSI <= 0x23) {
+							diskdrv_setsxsi(hddrv_SCSI, fname);
+							hddrv_SCSI++;
+						}
+						continue;
+					}
+					//	FDイメージ…？
+					if (fddrv <= 0x02) {
+						diskdrv_setfdd(fddrv, fname, 0);
+						sysmng_update(SYS_UPDATEOSCFG);
+						toolwin_setfdd(fddrv, fname);
+						fddrv++;
+					}
+				}
+				DragFinish((HDROP)wParam);
+				if (GetKeyState(VK_SHIFT) & 0x8000) {
+					//	Shiftキーが押下されていればリセット
+					pccore_cfgupdate();
+					pccore_reset();
+				}
+			}
+			break;
 		case WM_CREATE:
 			np2class_wmcreate(hWnd);
 			np2class_windowtype(hWnd, np2oscfg.wintype);
@@ -1792,9 +1871,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	g_hWndMain = hWnd;
 	scrnmng_initialize();
 
+	if(np2oscfg.dragdrop)
+		DragAcceptFiles(hWnd, TRUE);	//	イメージファイルのＤ＆Ｄに対応(Kai1)
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
-
+	
 #ifdef OPENING_WAIT
 	tick = GetTickCount();
 #endif

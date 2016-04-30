@@ -204,12 +204,13 @@ typedef struct {
 } FPU_PTR;
 
 typedef struct {
-	UINT16		control;
-	UINT16		status;
-	UINT16		op;
+	UINT16		control; // 制御レジスター
+	UINT16		status; // ステータスレジスター
+	UINT16		op; // オペコードレジスター
+	UINT16		tag; // タグワードレジスター
 
-	FPU_PTR		inst;
-	FPU_PTR		data;
+	FPU_PTR		inst; // ラスト命令ポインタレジスター
+	FPU_PTR		data; // ラストデータポインタレジスター
 } FPU_REGS;
 
 typedef struct {
@@ -229,7 +230,7 @@ typedef struct {
 	UINT8		rc;
 	UINT8		dmy[1];
 
-	FP_REG		reg[FPU_REG_NUM];
+	FP_REG		reg[FPU_REG_NUM]; // R0 to R7
 } FPU_STAT;
 
 typedef struct {

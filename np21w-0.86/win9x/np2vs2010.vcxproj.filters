@@ -211,6 +211,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\diskimage">
+      <UniqueIdentifier>{15d7999c-f39a-48f7-84de-ea38d1697c30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\diskimage\cd">
+      <UniqueIdentifier>{99a5b921-9d67-45ec-bb0c-ba35a779efa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\diskimage\hd">
+      <UniqueIdentifier>{f999d75b-360f-4e43-93aa-56b5e760a25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\diskimage\fd">
+      <UniqueIdentifier>{476a0f0a-89b7-44bb-9722-c146fbe0a8ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\diskimage">
+      <UniqueIdentifier>{6473d399-51af-46d6-9a5e-2687f0a2c2f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\diskimage\fd">
+      <UniqueIdentifier>{18bf0f6d-aa51-4612-b4ac-d62b75166b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\diskimage\hd">
+      <UniqueIdentifier>{1bf0146c-e36e-4fde-8374-74349a152452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\diskimage\cd">
+      <UniqueIdentifier>{a056b450-e130-4ca1-9cd0-e3c2e4b50570}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\calendar.c">
@@ -381,16 +405,7 @@
     <ClCompile Include="..\fdd\diskdrv.c">
       <Filter>ソース ファイル\fdd</Filter>
     </ClCompile>
-    <ClCompile Include="..\fdd\fdd_d88.c">
-      <Filter>ソース ファイル\fdd</Filter>
-    </ClCompile>
     <ClCompile Include="..\fdd\fdd_mtr.c">
-      <Filter>ソース ファイル\fdd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fdd\fdd_xdf.c">
-      <Filter>ソース ファイル\fdd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\fdd\fddfile.c">
       <Filter>ソース ファイル\fdd</Filter>
     </ClCompile>
     <ClCompile Include="..\fdd\newdisk.c">
@@ -1044,6 +1059,48 @@
     <ClCompile Include="..\zlib\zutil.c">
       <Filter>ソース ファイル\zlib</Filter>
     </ClCompile>
+    <ClCompile Include="..\diskimage\cd\cdd_ccd.c">
+      <Filter>ソース ファイル\diskimage\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\cd\cdd_cue.c">
+      <Filter>ソース ファイル\diskimage\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\cd\cdd_iso.c">
+      <Filter>ソース ファイル\diskimage\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\cd\cdd_mds.c">
+      <Filter>ソース ファイル\diskimage\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\cd\cdd_nrg.c">
+      <Filter>ソース ファイル\diskimage\cd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_bkdsk.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_d88.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_dcp.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_nfd.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_vfdd.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fd\fdd_xdf.c">
+      <Filter>ソース ファイル\diskimage\fd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\cddfile.c">
+      <Filter>ソース ファイル\diskimage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\fddfile.c">
+      <Filter>ソース ファイル\diskimage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\diskimage\img_strres.c">
+      <Filter>ソース ファイル\diskimage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\calendar.h">
@@ -1196,16 +1253,7 @@
     <ClInclude Include="..\fdd\diskdrv.h">
       <Filter>ヘッダー ファイル\fdd</Filter>
     </ClInclude>
-    <ClInclude Include="..\fdd\fdd_d88.h">
-      <Filter>ヘッダー ファイル\fdd</Filter>
-    </ClInclude>
     <ClInclude Include="..\fdd\fdd_mtr.h">
-      <Filter>ヘッダー ファイル\fdd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fdd\fdd_xdf.h">
-      <Filter>ヘッダー ファイル\fdd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\fdd\fddfile.h">
       <Filter>ヘッダー ファイル\fdd</Filter>
     </ClInclude>
     <ClInclude Include="..\fdd\newdisk.h">
@@ -1816,6 +1864,63 @@
     </ClInclude>
     <ClInclude Include="..\zlib\zutil.h">
       <Filter>ヘッダー ファイル\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cddfile.h">
+      <Filter>ヘッダー ファイル\diskimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fddfile.h">
+      <Filter>ヘッダー ファイル\diskimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\img_common.h">
+      <Filter>ヘッダー ファイル\diskimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\img_strres.h">
+      <Filter>ヘッダー ファイル\diskimage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cd\cdd_ccd.h">
+      <Filter>ヘッダー ファイル\diskimage\cd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cd\cdd_cue.h">
+      <Filter>ヘッダー ファイル\diskimage\cd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cd\cdd_iso.h">
+      <Filter>ヘッダー ファイル\diskimage\cd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cd\cdd_mds.h">
+      <Filter>ヘッダー ファイル\diskimage\cd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\cd\cdd_nrg.h">
+      <Filter>ヘッダー ファイル\diskimage\cd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_bkdsk.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_d88.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_dcp.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_head_d88.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_head_dcp.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_head_nfd.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_head_vfdd.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_nfd.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_vfdd.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\diskimage\fd\fdd_xdf.h">
+      <Filter>ヘッダー ファイル\diskimage\fd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

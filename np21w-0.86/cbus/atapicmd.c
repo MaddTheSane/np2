@@ -216,7 +216,7 @@ void atapicmd_a0(IDEDRV drv) {
 		//TRACEOUT(("atapicmd: pause resume"));
 		atapi_cmd_pauseresume(drv);
 		break;
-
+		
 	default:
 		TRACEOUT(("atapicmd: unknown command = %.2x", cmd));
 		sendabort(drv);
@@ -587,8 +587,13 @@ static void atapi_cmd_readsubch(IDEDRV drv) {
 						break;
 					}
 				}
+#ifdef SUPPORT_KAI_IMAGES
+				drv->buf[5] = trk[r].adr_ctl;
+				drv->buf[6] = trk[r].point;
+#else
 				drv->buf[5] = trk[r].type;
 				drv->buf[6] = trk[r].track;
+#endif
 				drv->buf[7] = 1;
 				storemsf(drv->buf + 8, pos + 150);
 				storemsf(drv->buf + 12, (UINT32)(pos - trk[r].pos));
@@ -613,6 +618,9 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 	UINT	datasize;
 	UINT8	*ptr;
 	UINT	i;
+#ifdef SUPPORT_KAI_IMAGES
+	UINT8	time;	//	追加(kaiD)
+#endif
 
 	sxsi = sxsi_getptr(drv->sxsidrv);
 	if ((sxsi == NULL) || (sxsi->devtype != SXSIDEV_CDROM) ||
@@ -621,10 +629,36 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 		return;
 	}
 	trk = sxsicd_gettrk(sxsi, &tracks);
+	
+#ifdef SUPPORT_KAI_IMAGES
 
+#if 0	//	修正(kaiD)
+	leng = (drv->buf[7] << 8) + drv->buf[8];
+	format = (drv->buf[9] >> 6);
+	TRACEOUT(("atapi_cmd_readtoc fmt=%d leng=%d", format, leng));
+#else
+#if 0
+	//	こっちが正しいと思うんだけど…ドライバの違い？
+	time = (drv->buf[1] & 0x02) >> 0x01;
+	format = (drv->buf[2] & 0x0f);
+	leng = (drv->buf[6] << 8) + drv->buf[7];
+#else
+	time = (drv->buf[1] & 0x02) >> 0x01;
+	format = (drv->buf[9] >> 6);
+	leng = (drv->buf[7] << 8) + drv->buf[8];
+#endif
+	TRACEOUT(("ATAPI CMD: read TOC : time=%d fmt=%d leng=%d", time, format, leng));
+	TRACEOUT(("\t[%02x %02x %02x %02x %02x %02x %02x %02x]",
+			drv->buf[0x00], drv->buf[0x01], drv->buf[0x02], drv->buf[0x03], drv->buf[0x04], drv->buf[0x05], drv->buf[0x06], drv->buf[0x07]));
+	TRACEOUT(("\t[%02x %02x %02x %02x %02x %02x %02x %02x]",
+			drv->buf[0x08], drv->buf[0x09], drv->buf[0x0a], drv->buf[0x0b], drv->buf[0x0c], drv->buf[0x0d], drv->buf[0x0e], drv->buf[0x0f]));
+#endif
+
+#else /* SUPPORT_KAI_IMAGES */
 	leng = (drv->buf[7] << 8) + drv->buf[8];
 	format = (drv->buf[9] >> 6);
 	//TRACEOUT(("atapi_cmd_readtoc fmt=%d leng=%d", format, leng));
+#endif /* SUPPORT_KAI_IMAGES */
 
 	switch (format) {
 	case 0: // track info
@@ -636,8 +670,13 @@ static void atapi_cmd_readtoc(IDEDRV drv) {
 		ptr = drv->buf + 4;
 		for (i=0; i<=tracks; i++) {
 			ptr[0] = 0;
+#ifdef SUPPORT_KAI_IMAGES
+			ptr[1] = trk[i].adr_ctl;
+			ptr[2] = trk[i].point;
+#else
 			ptr[1] = trk[i].type;
 			ptr[2] = trk[i].track;
+#endif
 			ptr[3] = 0;
 			storemsf(ptr + 4, (UINT32)(trk[i].pos + 150));
 			ptr += 8;

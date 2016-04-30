@@ -52,7 +52,7 @@ static const char model[] = "QUANTUM FIREBALL CR                     ";
 
 static const char cdrom_serial[] = "1.0                 ";
 static const char cdrom_firm[]   = "        ";
-static const char cdrom_model[]  = "NEC CD-ROM DRIVE                        ";
+static const char cdrom_model[]  = "NEC CD-ROM DRIVE:98                     ";
 
 static BRESULT setidentify(IDEDRV drv) {
 
@@ -315,7 +315,7 @@ static REG8 IOINPCALL ideio_i430(UINT port) {
 	ideio.bank[bank] = ret & (~0x80);
 	TRACEOUT(("ideio getbank%d %.2x [%.4x:%.8x]",
 									(port >> 1) & 1, ret, CPU_CS, CPU_EIP));
-	return(ret & 0x81);
+	return(ret & 0x01);
 }
 
 
@@ -447,6 +447,8 @@ static void IOOUTCALL ideio_o64e(UINT port, REG8 dat) {
 	drv->cmd = dat;
 	TRACEOUT(("ideio set cmd %.2x [%.4x:%.8x]", dat, CPU_CS, CPU_EIP));
 	switch(dat) {
+		//case 0x00:		// NOP
+		//	break;
 		case 0x08:		// device reset
 			TRACEOUT(("ideio: device reset"));
 			drvreset(drv);
@@ -1081,7 +1083,9 @@ static void devinit(IDEDRV drv, REG8 sxsidrv) {
 }
 
 void ideio_reset(const NP2CFG *pConfig) {
-
+	
+	OEMCHAR	path[MAX_PATH];
+	FILEH	fh;
 	REG8	i;
 	IDEDRV	drv;
 
@@ -1097,10 +1101,92 @@ void ideio_reset(const NP2CFG *pConfig) {
 	//ideio.dev[0].drv[1].ctrl = ideio.dev[0].drv[1].ctrl & ~IDECTRL_SRST;
 	//ideio.dev[1].drv[0].ctrl = ideio.dev[0].drv[0].ctrl & ~IDECTRL_SRST;
 	//ideio.dev[1].drv[1].ctrl = ideio.dev[0].drv[1].ctrl & ~IDECTRL_SRST;
+	
+	//memset(mem + 0x0d8000, 0xcb, 0x2000);
+	getbiospath(path, OEMTEXT("ide.rom"), NELEMENTS(path));
+	fh = file_open_rb(path);
+	if (fh == FILEH_INVALID) {
+		getbiospath(path, OEMTEXT("d8000.rom"), NELEMENTS(path));
+		fh = file_open_rb(path);
+	}
+	if (fh == FILEH_INVALID) {
+		getbiospath(path, OEMTEXT("bank3.bin"), NELEMENTS(path));
+		fh = file_open_rb(path);
+	}
+	if (fh != FILEH_INVALID) {
+		// IDE BIOS
+		if (file_read(fh, mem + 0x0d8000, 0x2000) == 0x2000) {
+			//STOREINTELWORD(mem + 0x0d8009, 0);
+			TRACEOUT(("load ide.rom"));
+		}else{
+			CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
+			TRACEOUT(("use simulate ide.rom"));
+		}
+		file_close(fh);
+	}else{
+		CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
+		TRACEOUT(("use simulate ide.rom"));
+	}
+	//CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
+	//CopyMemory(mem + 0xd8000, idebios, sizeof(idebios));
+	//
+	//getbiospath(path, OEMTEXT("test.bin"), NELEMENTS(path));
+	//fh = file_open_rb(path);
+	//if (fh != FILEH_INVALID) {
+	//	// IDE BIOS
+	//	if (file_read(fh, mem + 0x0dA000, 0x2000) == 0x2000) {
+	//		//STOREINTELWORD(mem + 0x0d8009, 0);
+	//		TRACEOUT(("load test.bin"));
+	//	}
+	//	file_close(fh);
+	//}
+	//
+	//{
+	//	OEMCHAR	path[MAX_PATH];
+	//	FILEH	fh;
+	//	getbiospath(path, OEMTEXT("test2.bin"), NELEMENTS(path));
+	//	fh = file_open_rb(path);
+	//	if (fh != FILEH_INVALID) {
+	//		// IDE BIOS
+	//		if (file_read(fh, mem + 0x000390, 0x50) == 0x50) {
+	//			//STOREINTELWORD(mem + 0x0d8009, 0);
+	//			TRACEOUT(("load test2.bin"));
+	//		}
+	//		file_close(fh);
+	//	}
+	//}
+	//
+	//mem[0x457] |= 0x97;
+	//mem[0x457] |= 0xd2;
+	////
+	////mem[0x4b0] |= 0xd0;
+	////mem[0x4b8] |= 0xd0;
 
-	CopyMemory(mem + 0xd0000, idebios, sizeof(idebios));
-	TRACEOUT(("use simulate ide.rom"));
+	//mem[0x4b0] |= 0xd8;
+	//mem[0x4b8] |= 0xd8;
 
+	//mem[0x4d8] |= 0xea;
+	//mem[0x4d9] |= 0xaa;
+	//mem[0x4da] |= 0xaa;
+	//mem[0x4db] |= 0xaa;
+	//
+	//mem[0x5a9] |= 0xf3;
+	//mem[0x5aa] |= 0x6d;
+	//mem[0x5ab] |= 0xcb;
+	//mem[0x5b0] |= 0xff;
+	//mem[0x5ba] |= 0x03;
+	//
+	//mem[0x44] |= 0x7D;
+	//mem[0x45] |= 0x1A;
+	//mem[0x46] |= 0x00;
+	//mem[0x47] |= 0xD8;
+
+	//mem[0x5e8] |= 0x8F;
+	//mem[0x5e9] |= 0x07;
+	//mem[0x5eb] |= 0xD8;
+	//mem[0x5ec] |= 0x8F;
+	//mem[0x5ed] |= 0x07;
+	//mem[0x5ef] |= 0xD8;
 	(void)pConfig;
 }
 

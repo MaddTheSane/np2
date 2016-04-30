@@ -91,7 +91,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_WIN2000HOST;HOOK_SYSKEY;ALLOW_MULTIRUN;TRACE;USE_FPU;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_WIN2000HOST;SUPPORT_KAI_IMAGES;HOOK_SYSKEY;ALLOW_MULTIRUN;TRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
@@ -114,7 +114,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_KAI_IMAGES;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
@@ -141,13 +141,14 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_WIN2000HOST;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_WIN2000HOST;SUPPORT_KAI_IMAGES;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\x86;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,7 +171,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SUPPORT_PC9821;SUPPORT_IDEIO;SUPPORT_LARGE_HDD;SUPPORT_NET;SUPPORT_LGY98;SUPPORT_WAB;SUPPORT_CL_GD5430;SUPPORT_HRTIMER;SUPPORT_VPCVHD;SUPPORT_KAI_IMAGES;HOOK_SYSKEY;ALLOW_MULTIRUN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\x64;..\;..\common;..\i386c;..\mem;..\io;..\cbus;..\vram;..\sound;..\generic;..\zlib</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -250,11 +251,22 @@
     <ClCompile Include="..\common\wavefile.c" />
     <ClCompile Include="..\common\_memory.c" />
     <ClCompile Include="..\debugsub.c" />
+    <ClCompile Include="..\diskimage\cddfile.c" />
+    <ClCompile Include="..\diskimage\cd\cdd_ccd.c" />
+    <ClCompile Include="..\diskimage\cd\cdd_cue.c" />
+    <ClCompile Include="..\diskimage\cd\cdd_iso.c" />
+    <ClCompile Include="..\diskimage\cd\cdd_mds.c" />
+    <ClCompile Include="..\diskimage\cd\cdd_nrg.c" />
+    <ClCompile Include="..\diskimage\fddfile.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_bkdsk.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_d88.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_dcp.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_nfd.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_vfdd.c" />
+    <ClCompile Include="..\diskimage\fd\fdd_xdf.c" />
+    <ClCompile Include="..\diskimage\img_strres.c" />
     <ClCompile Include="..\fdd\diskdrv.c" />
-    <ClCompile Include="..\fdd\fddfile.c" />
-    <ClCompile Include="..\fdd\fdd_d88.c" />
     <ClCompile Include="..\fdd\fdd_mtr.c" />
-    <ClCompile Include="..\fdd\fdd_xdf.c" />
     <ClCompile Include="..\fdd\newdisk.c" />
     <ClCompile Include="..\fdd\sxsi.c" />
     <ClCompile Include="..\fdd\sxsicd.c" />
@@ -297,11 +309,17 @@
     <ClCompile Include="..\i386c\ia32\instructions\flag_ctrl.c" />
     <ClCompile Include="..\i386c\ia32\instructions\fpu.c" />
     <ClCompile Include="..\i386c\ia32\instructions\fpu\fpdummy.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\i386c\ia32\instructions\fpu\fpemul.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\i386c\ia32\instructions\fpu\fpemul_ia32.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\i386c\ia32\instructions\logic_arith.c" />
@@ -557,12 +575,28 @@
     <ClInclude Include="..\common\wavefile.h" />
     <ClInclude Include="..\common\_memory.h" />
     <ClInclude Include="..\debugsub.h" />
+    <ClInclude Include="..\diskimage\cddfile.h" />
+    <ClInclude Include="..\diskimage\cd\cdd_ccd.h" />
+    <ClInclude Include="..\diskimage\cd\cdd_cue.h" />
+    <ClInclude Include="..\diskimage\cd\cdd_iso.h" />
+    <ClInclude Include="..\diskimage\cd\cdd_mds.h" />
+    <ClInclude Include="..\diskimage\cd\cdd_nrg.h" />
+    <ClInclude Include="..\diskimage\fddfile.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_bkdsk.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_d88.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_dcp.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_head_d88.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_head_dcp.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_head_nfd.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_head_vfdd.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_nfd.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_vfdd.h" />
+    <ClInclude Include="..\diskimage\fd\fdd_xdf.h" />
+    <ClInclude Include="..\diskimage\img_common.h" />
+    <ClInclude Include="..\diskimage\img_strres.h" />
     <ClInclude Include="..\fdd\d88head.h" />
     <ClInclude Include="..\fdd\diskdrv.h" />
-    <ClInclude Include="..\fdd\fddfile.h" />
-    <ClInclude Include="..\fdd\fdd_d88.h" />
     <ClInclude Include="..\fdd\fdd_mtr.h" />
-    <ClInclude Include="..\fdd\fdd_xdf.h" />
     <ClInclude Include="..\fdd\hdd_vhd.h" />
     <ClInclude Include="..\fdd\hdd_vpc.h" />
     <ClInclude Include="..\fdd\newdisk.h" />
