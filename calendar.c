@@ -44,7 +44,7 @@ static void secinc(_SYSTIME *dt) {
 	}
 	dt->week = (UINT16)((dt->week + 1) % 7);
 	dt->day++;
-	if (dt->day < daylimit) {
+	if (dt->day <= daylimit) {
 		goto secinc_exit;
 	}
 	dt->day = 1;
