@@ -345,7 +345,7 @@ LRESULT CTraceWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 int CTraceWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	HMENU hMenu = GetSystemMenu(FALSE);
-	menu_addmenures(hMenu, 0, IDR_TRACE, FALSE);
+	InsertMenuResource(hMenu, 0, TRUE, IDR_TRACE);
 
 	m_hBrush = ::CreateSolidBrush(VIEW_BGCOLOR);
 

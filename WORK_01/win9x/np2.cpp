@@ -421,19 +421,18 @@ static void OpenSoundDevice(HWND hWnd)
 
 // ---- proc
 
-static void np2popup(HWND hWnd, LPARAM lp) {
-
-	HMENU	mainmenu;
-	HMENU	hMenu;
-	POINT	pt;
-
-	mainmenu = (HMENU)GetWindowLongPtr(hWnd, NP2GWLP_HMENU);
-	if (mainmenu == NULL) {
+static void np2popup(HWND hWnd, LPARAM lp)
+{
+	HMENU hMainMenu = reinterpret_cast<HMENU>(GetWindowLongPtr(hWnd, NP2GWLP_HMENU));
+	if (hMainMenu == NULL)
+	{
 		return;
 	}
-	hMenu = CreatePopupMenu();
-	menu_addmenubar(hMenu, mainmenu);
+	HMENU hMenu = CreatePopupMenu();
+	InsertMenuPopup(hMenu, 0, TRUE, hMainMenu);
 	xmenu_update(hMenu);
+
+	POINT pt;
 	pt.x = LOWORD(lp);
 	pt.y = HIWORD(lp);
 	ClientToScreen(hWnd, &pt);

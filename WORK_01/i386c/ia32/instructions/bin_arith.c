@@ -30,6 +30,9 @@
 
 #include "bin_arith.h"
 #include <limits.h>
+#if !defined(LLONG_MIN)
+#define LLONG_MIN (SINT64)(QWORD_CONST(1) << 63)
+#endif	/* !defined(LLONG_MIN) */
 
 
 /*
@@ -333,7 +336,7 @@ IDIV_EAXEd(UINT32 op)
 		src = cpu_vmemoryread_d(CPU_INST_SEGREG_INDEX, madr);
 	}
 	tmp = (SINT64)(((UINT64)CPU_EDX << 32) + (SINT64)CPU_EAX);
-	if ((src != 0) && (tmp != QWORD_CONST(0x8000000000000000))) {
+	if ((src != 0) && (tmp != LLONG_MIN)) {
 		r = tmp / src;
 		if (((r + SQWORD_CONST(0x80000000)) & QWORD_CONST(0xffffffff00000000)) == 0) {
 			CPU_EAX = (SINT32)r;

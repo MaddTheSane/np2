@@ -309,8 +309,9 @@ void CKeyDisplayWnd::OnDestroy()
 void CKeyDisplayWnd::OnRButtonDown(UINT nFlags, POINT point)
 {
 	HMENU hMenu = CreatePopupMenu();
-	menu_addmenu(hMenu, 0, np2class_gethmenu(m_hWnd), FALSE);
-	menu_addmenures(hMenu, -1, IDR_CLOSE, TRUE);
+	InsertMenuPopup(hMenu, 0, TRUE, np2class_gethmenu(m_hWnd));
+	AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenuResource(hMenu, IDR_CLOSE);
 
 	ClientToScreen(&point);
 	::TrackPopupMenu(hMenu, TPM_LEFTALIGN, point.x, point.y, 0, m_hWnd, NULL);
