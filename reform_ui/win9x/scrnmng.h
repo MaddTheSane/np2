@@ -53,7 +53,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	SCRNMNG		scrnmng;			// マクロ用
+extern	SCRNMNG		g_scrnmng;			// マクロ用
 
 void scrnmng_initialize(void);
 BRESULT scrnmng_create(UINT8 scrnmode);
@@ -67,11 +67,11 @@ const SCRNSURF *scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
 void scrnmng_update(void);
 
-#define	scrnmng_isfullscreen()	(scrnmng.flag & SCRNFLAG_FULLSCREEN)
-#define	scrnmng_haveextend()	(scrnmng.flag & SCRNFLAG_HAVEEXTEND)
-#define	scrnmng_getbpp()		(scrnmng.bpp)
-#define	scrnmng_allflash()		scrnmng.allflash = TRUE
-#define	scrnmng_palchanged()	scrnmng.palchanged = TRUE
+#define	scrnmng_isfullscreen()	(g_scrnmng.flag & SCRNFLAG_FULLSCREEN)
+#define	scrnmng_haveextend()	(g_scrnmng.flag & SCRNFLAG_HAVEEXTEND)
+#define	scrnmng_getbpp()		(g_scrnmng.bpp)
+#define	scrnmng_allflash()		g_scrnmng.allflash = TRUE
+#define	scrnmng_palchanged()	g_scrnmng.palchanged = TRUE
 
 RGB16 scrnmng_makepal16(RGB32 pal32);
 
