@@ -97,7 +97,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 
 // ---------------------------------------------------------------------------
 
-void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen) {
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, UINT maxlen) {
 
 const OEMCHAR	*p;
 

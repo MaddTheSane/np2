@@ -193,7 +193,7 @@ extern	UINT	drawcount;
 extern BOOL g_sndlock;
 #endif	/* _DEBUG */
 
-void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, UINT maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
 
