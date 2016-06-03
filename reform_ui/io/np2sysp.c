@@ -52,9 +52,9 @@ static const OEMCHAR str_mhz[] = OEMTEXT("%uMHz");
 static void setoutstr(const OEMCHAR *str) {
 
 #if defined(OSLANG_UCS2)
-	oemtext_oemtosjis(np2sysp.outstr, sizeof(np2sysp.outstr), str, -1);
+	oemtext_oemtosjis(np2sysp.outstr, NELEMENTS(np2sysp.outstr), str, (UINT)-1);
 #else
-	milstr_ncpy(np2sysp.outstr, str, sizeof(np2sysp.outstr));
+	milstr_ncpy(np2sysp.outstr, str, NELEMENTS(np2sysp.outstr));
 #endif
 	np2sysp.outpos = 0;
 }

@@ -39,7 +39,7 @@ static REG8 IOINPCALL opn_i18a(UINT port)
 	nAddress = g_opna[0].s.addrl;
 	if (nAddress == 0x0e)
 	{
-		return fmboard_getjoy(&g_opna[0]);
+		return fmboard_getjoyreg(&g_opna[0]);
 	}
 	else if (nAddress < 0x10)
 	{

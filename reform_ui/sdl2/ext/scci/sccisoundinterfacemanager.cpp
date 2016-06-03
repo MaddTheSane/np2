@@ -310,7 +310,6 @@ bool CSoundInterfaceManager::initializeInstance()
 
 				pInterface->Add(info);
 			}
-
 			m_interfaces.push_back(pInterface);
 		}
 	}

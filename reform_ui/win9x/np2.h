@@ -76,6 +76,13 @@ typedef struct {
 	UINT8	xrollkey;
 	UINT8	fscrnbpp;
 	UINT8	fscrnmod;
+
+	UINT8	cSoundDeviceType;
+	TCHAR	szSoundDeviceName[MAX_PATH];
+
+#if defined(SUPPORT_VSTi)
+	TCHAR	szVSTiFile[MAX_PATH];
+#endif	// defined(SUPPORT_VSTi)
 } NP2OSCFG;
 
 

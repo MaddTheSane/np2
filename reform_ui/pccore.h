@@ -101,7 +101,7 @@ struct tagNP2Config
 	UINT32	BG_COLOR;
 	UINT32	FG_COLOR;
 
-	UINT16	samplingrate;
+	UINT32	samplingrate;
 	UINT16	delayms;
 	UINT8	SOUND_SW;
 	UINT8	snd_x;
@@ -189,7 +189,7 @@ extern	PCSTAT	pcstat;
 extern	UINT8	soundrenewal;
 extern	UINT	drawcount;
 
-void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen);
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, UINT maxlen);
 void screendisp(NEVENTITEM item);
 void screenvsync(NEVENTITEM item);
 

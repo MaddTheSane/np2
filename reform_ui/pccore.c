@@ -96,7 +96,7 @@ const OEMCHAR np2version[] = OEMTEXT(NP2VER_CORE);
 
 // ---------------------------------------------------------------------------
 
-void getbiospath(OEMCHAR *path, const OEMCHAR *fname, int maxlen) {
+void getbiospath(OEMCHAR *path, const OEMCHAR *fname, UINT maxlen) {
 
 const OEMCHAR	*p;
 
@@ -200,14 +200,13 @@ static void pccore_set(const NP2CFG *pConfig)
 #if !defined(DISABLE_SOUND)
 static void sound_init(void)
 {
-	UINT	rate;
+	UINT rate;
 
 	rate = np2cfg.samplingrate;
-	if ((rate != 11025) && (rate != 22050) && (rate != 44100) && (rate != 48000))
+	if (sound_create(rate, np2cfg.delayms) != SUCCESS)
 	{
 		rate = 0;
 	}
-	sound_create(rate, np2cfg.delayms);
 	fddmtrsnd_initialize(rate);
 	beep_initialize(rate);
 	beep_setvol(np2cfg.BEEP_VOL);
@@ -429,10 +428,6 @@ void pccore_reset(void) {
 
 	timing_reset();
 	soundmng_play();
-
-#if 0 && defined(SUPPORT_IDEIO)	// Test!
-	sxsi_devopen(0x02, OEMTEXT("e:\\pn\\pn.iso"));
-#endif
 }
 
 static void drawscreen(void) {

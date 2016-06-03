@@ -64,7 +64,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SASI1EJECT:
-			diskdrv_sethdd(0x00, NULL);
+			diskdrv_setsxsi(0x00, NULL);
 			break;
 
 		case MID_SASI2OPEN:
@@ -72,7 +72,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SASI2EJECT:
-			diskdrv_sethdd(0x01, NULL);
+			diskdrv_setsxsi(0x01, NULL);
 			break;
 #if defined(SUPPORT_SCSI)
 		case MID_SCSI0OPEN:
@@ -80,7 +80,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SCSI0EJECT:
-			diskdrv_sethdd(0x20, NULL);
+			diskdrv_setsxsi(0x20, NULL);
 			break;
 
 		case MID_SCSI1OPEN:
@@ -88,7 +88,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SCSI1EJECT:
-			diskdrv_sethdd(0x21, NULL);
+			diskdrv_setsxsi(0x21, NULL);
 			break;
 
 		case MID_SCSI2OPEN:
@@ -96,7 +96,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SCSI2EJECT:
-			diskdrv_sethdd(0x22, NULL);
+			diskdrv_setsxsi(0x22, NULL);
 			break;
 
 		case MID_SCSI3OPEN:
@@ -104,7 +104,7 @@ static void sys_cmd(MENUID id) {
 			break;
 
 		case MID_SCSI3EJECT:
-			diskdrv_sethdd(0x23, NULL);
+			diskdrv_setsxsi(0x23, NULL);
 			break;
 #endif
 		case MID_DISPSYNC:

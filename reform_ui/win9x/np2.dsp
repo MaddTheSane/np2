@@ -51,7 +51,7 @@ RSC=rc.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -77,7 +77,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -100,11 +100,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "NP2APPDEV" /YX"compiler.h" /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /D "SUPPORT_IDEIO" /D "NP2APPDEV" /YX"compiler.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -131,7 +131,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -158,7 +158,7 @@ LINK32=link.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -180,11 +180,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /YX"compiler.h" /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i286x" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "TRACE" /D "MEMTRACE" /YX"compiler.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
-# ADD RSC /l 0x411 /d "_DEBUG"
+# ADD RSC /l 0x411 /d "_DEBUG" /d "NEEDS_MANIFEST"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -604,7 +604,11 @@ SOURCE=..\I286X\V30PATCH.CPP
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\FDD\DISKDRV.C
+SOURCE=..\fdd\diskdrv.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\fdd\diskdrv.h
 # End Source File
 # Begin Source File
 
@@ -1249,6 +1253,14 @@ SOURCE=..\SOUND\S98.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound\sndcsec.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\sndcsec.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\SOUND\SOUND.C
 # End Source File
 # Begin Source File
@@ -1394,6 +1406,130 @@ SOURCE=..\VRAM\VRAM.C
 # Begin Group "win9x"
 
 # PROP Default_Filter ""
+# Begin Group "commng"
+
+# PROP Default_Filter ""
+# Begin Group "vsthost"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstbuffer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstbuffer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteditwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteditwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteffect.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vsteffect.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstmidievent.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\vsthost\vstmidievent.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\commng\cmbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiin32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiin32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.h
+# End Source File
+# End Group
 # Begin Group "debuguty"
 
 # PROP Default_Filter ""
@@ -1750,6 +1886,46 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
+# Begin Group "soundmng"
+
+# PROP Default_Filter ""
+# Begin Group "asio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiodriverlist.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiodriverlist.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\asio\asiosdk.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\soundmng\sdasio.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sdasio.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sdbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.h
+# End Source File
+# End Group
 # Begin Group "subwnd"
 
 # PROP Default_Filter ""
@@ -1812,19 +1988,11 @@ SOURCE=.\subwnd\toolwnd.h
 # End Group
 # Begin Source File
 
-SOURCE=.\CMMIDI.CPP
+SOURCE=.\commng.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMPARA.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\CMSERIAL.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\COMMNG.CPP
+SOURCE=.\commng.h
 # End Source File
 # Begin Source File
 
@@ -1960,7 +2128,11 @@ SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SOUNDMNG.CPP
+SOURCE=.\soundmng.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng.h
 # End Source File
 # Begin Source File
 

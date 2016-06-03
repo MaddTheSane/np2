@@ -39,13 +39,18 @@ static void	(*extfn)(REG8 enable);
 
 static	REG8	s_rapids = 0;
 
-REG8 fmboard_getjoy(POPNA opna)
+/**
+ * Retrieves the status of the specified virtual pad
+ * @param[in] nPort The port of the input
+ * @return The return value specifies the status of the specified virtual pad
+ */
+REG8 fmboard_getjoypad(int nPort)
 {
 	REG8 ret;
 
 	s_rapids ^= 0xf0;											// ver0.28
 	ret = 0xff;
-	if (!(opna->s.reg[15] & 0x40))
+	if (nPort == 0)
 	{
 		ret &= (joymng_getstat() | (s_rapids & 0x30));
 		if (np2cfg.KEY_MODE == 1)
@@ -65,7 +70,7 @@ REG8 fmboard_getjoy(POPNA opna)
 		ret |= s_rapids;
 	}
 
-	// rapid‚Æ”ñrapid‚ð‡¬								// ver0.28
+	/* merge rapid */
 	ret &= ((ret >> 2) | (~0x30));
 
 	if (np2cfg.BTN_MODE)
@@ -75,7 +80,20 @@ REG8 fmboard_getjoy(POPNA opna)
 		ret = (ret & (~0x30)) | bit1 | bit2;
 	}
 
-	// intr ”½‰f‚µ‚ÄI‚í‚è								// ver0.28
+	return ret;
+}
+
+/**
+ * Retrieves the pad of the specified OPNA
+ * @param[in] opna The instance of the OPNA
+ * @return The return value specifies the pad of the specified OPNA
+ */
+REG8 fmboard_getjoyreg(POPNA opna)
+{
+	const int nPort = (opna->s.reg[15] & 0x40) ? 1 : 0;
+	REG8 ret = fmboard_getjoypad(nPort);
+
+	/* merge interrupts */
 	ret &= 0x3f;
 	ret |= opna->s.intr;
 	return ret;
@@ -135,12 +153,10 @@ void fmboard_destruct(void)
  */
 void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 {
-	UINT8 cross;
 	UINT i;
 
 	soundrom_reset();
 	beep_reset();												// ver0.27a
-	cross = pConfig->snd_x;										// ver0.30
 
 	if (g_nSoundID != nSoundID)
 	{
@@ -185,12 +201,10 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 
 		case SOUNDID_SPEAKBOARD:
 			boardspb_reset(pConfig);
-			cross ^= pConfig->spb_x;
 			break;
 
 		case SOUNDID_SPARKBOARD:
 			boardspr_reset(pConfig);
-			cross ^= pConfig->spb_x;
 			break;
 
 		case SOUNDID_AMD98:
@@ -219,7 +233,7 @@ void fmboard_reset(const NP2CFG *pConfig, SOUNDID nSoundID)
 			break;
 	}
 	g_nSoundID = nSoundID;
-	soundmng_setreverse(cross);
+	soundmng_setreverse(pConfig->snd_x);
 	opngen_setVR(pConfig->spb_vrc, pConfig->spb_vrl);
 }
 

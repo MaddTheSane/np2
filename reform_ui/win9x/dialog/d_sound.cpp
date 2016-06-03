@@ -633,9 +633,9 @@ static const CComboData::Entry s_io86[] =
 static const CComboData::Entry s_int86[] =
 {
 	{MAKEINTRESOURCE(IDS_INT0),		0x00},
-	{MAKEINTRESOURCE(IDS_INT41),	0x08},
+	{MAKEINTRESOURCE(IDS_INT41),	0x04},
 	{MAKEINTRESOURCE(IDS_INT5),		0x0c},
-	{MAKEINTRESOURCE(IDS_INT6),		0x04},
+	{MAKEINTRESOURCE(IDS_INT6),		0x08},
 };
 
 //! 86 ID
@@ -718,7 +718,7 @@ BOOL SndOpt86Page::OnCommand(WPARAM wParam, LPARAM lParam)
 			break;
 
 		case IDC_SND86INT:
-			SetJumper((IsDlgButtonChecked(IDC_SND86INT) != BST_UNCHECKED) ?0x10 : 0x00, 0x10);
+			SetJumper((IsDlgButtonChecked(IDC_SND86INT) != BST_UNCHECKED) ? 0x10 : 0x00, 0x10);
 			break;
 
 		case IDC_SND86INTA:
