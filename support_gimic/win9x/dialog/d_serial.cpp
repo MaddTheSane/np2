@@ -11,7 +11,6 @@
 #include "c_midi.h"
 #include "np2class.h"
 #include "commng\cmserial.h"
-#include "commng\cmmidi.h"
 #include "dosio.h"
 #include "np2.h"
 #include "sysmng.h"
