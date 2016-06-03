@@ -31,7 +31,8 @@ protected:
 
 private:
 	static CSoftKeyboardWnd sm_instance;	//!< インスタンス
-	DD2Surface m_dd2;						//!< DirectDraw2 インスタンス
+	DDraw2 m_dd2;							//!< DirectDraw2 インスタンス
+	DDraw2Surface m_surface;				//!< DirectDraw2 サーフェス
 	int m_nWidth;							//!< 幅
 	int m_nHeight;							//!< 高さ
 	void OnDraw(BOOL redraw);

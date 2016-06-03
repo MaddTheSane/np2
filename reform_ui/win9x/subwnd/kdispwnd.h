@@ -32,7 +32,8 @@ protected:
 
 private:
 	static CKeyDisplayWnd sm_instance;		//!< インスタンス
-	DD2Surface m_dd2;						//!< DirectDraw2 インスタンス
+	DDraw2 m_dd2;							//!< DirectDraw2 インスタンス
+	DDraw2Surface m_surface;				//!< DirectDraw2 サーフェス
 	void OnDraw(BOOL redraw);
 	void OnResize();
 	void SetDispMode(UINT8 mode);

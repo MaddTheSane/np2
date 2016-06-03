@@ -97,6 +97,12 @@ void CMemDebugWnd::Create()
 		DestroyWindow();
 		return;
 	}
+	if (!m_surface.Create(m_dd2, m_nWidth, m_nHeight))
+	{
+		DestroyWindow();
+		return;
+	}
+
 	Invalidate();
 	SetForegroundWindow(g_hWndMain);
 }
@@ -173,7 +179,8 @@ LRESULT CMemDebugWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 void CMemDebugWnd::OnDestroy()
 {
 	::np2class_wmdestroy(m_hWnd);
-	m_dd2.Release();
+	m_surface.Destroy();
+	m_dd2.Destroy();
 }
 
 /**
@@ -201,12 +208,12 @@ void CMemDebugWnd::OnDraw(BOOL redraw)
 	draw.top = 0;
 	draw.right = min(m_nWidth, rect.right - rect.left);
 	draw.bottom = min(m_nHeight, rect.bottom - rect.top);
-	CMNVRAM* vram = m_dd2.Lock();
+	CMNVRAM* vram = m_surface.Lock();
 	if (vram)
 	{
 		memdbg32_paint(vram, mdpalcnv, redraw);
-		m_dd2.Unlock();
-		m_dd2.Blt(NULL, &draw);
+		m_surface.Unlock();
+		m_dd2.Blt(m_surface, NULL, &draw);
 	}
 }
 

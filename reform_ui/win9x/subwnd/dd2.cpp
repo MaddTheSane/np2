@@ -14,29 +14,28 @@
 /**
  * コンストラクタ
  */
-DD2Surface::DD2Surface()
+DDraw2::DDraw2()
 	: m_hWnd(NULL)
 	, m_pDDraw(NULL)
 	, m_pDDraw2(NULL)
 	, m_pPrimarySurface(NULL)
-	, m_pBackSurface(NULL)
 	, m_pClipper(NULL)
 	, m_pPalette(NULL)
+	, m_nBpp(0)
 	, m_r16b(0)
 	, m_l16r(0)
 	, m_l16g(0)
 {
 	m_pal16.d = 0;
-	ZeroMemory(&m_vram, sizeof(m_vram));
 	ZeroMemory(&m_pal, sizeof(m_pal));
 }
 
 /**
  * デストラクタ
  */
-DD2Surface::~DD2Surface()
+DDraw2::~DDraw2()
 {
-	Release();
+	Destroy();
 }
 
 /**
@@ -47,7 +46,7 @@ DD2Surface::~DD2Surface()
  * @retval true 成功
  * @retval false 失敗
  */
-bool DD2Surface::Create(HWND hWnd, int nWidth, int nHeight)
+bool DDraw2::Create(HWND hWnd, int nWidth, int nHeight)
 {
 	m_hWnd = hWnd;
 
@@ -81,6 +80,7 @@ bool DD2Surface::Create(HWND hWnd, int nWidth, int nHeight)
 			break;
 		}
 
+#if 0
 		ZeroMemory(&ddsd, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
@@ -91,6 +91,7 @@ bool DD2Surface::Create(HWND hWnd, int nWidth, int nHeight)
 		{
 			break;
 		}
+#endif
 		if (ddpf.dwRGBBitCount == 8)
 		{
 			HDC hdc = ::GetDC(hWnd);
@@ -146,21 +147,18 @@ bool DD2Surface::Create(HWND hWnd, int nWidth, int nHeight)
 		{
 			break;
 		}
-		m_vram.width = nWidth;
-		m_vram.height = nHeight;
-		m_vram.xalign = ddpf.dwRGBBitCount / 8;
-		m_vram.bpp = ddpf.dwRGBBitCount;
+		m_nBpp = ddpf.dwRGBBitCount;
 		return true;
 	} while (false /*CONSTCOND*/);
 
-	Release();
+	Destroy();
 	return false;
 }
 
 /**
  * 解放
  */
-void DD2Surface::Release()
+void DDraw2::Destroy()
 {
 	if (m_pPalette)
 	{
@@ -171,11 +169,6 @@ void DD2Surface::Release()
 	{
 		m_pClipper->Release();
 		m_pClipper = NULL;
-	}
-	if (m_pBackSurface)
-	{
-		m_pBackSurface->Release();
-		m_pBackSurface = NULL;
 	}
 	if (m_pPrimarySurface)
 	{
@@ -195,52 +188,14 @@ void DD2Surface::Release()
 }
 
 /**
- * バッファ ロック
- * @return バッファ
- */
-CMNVRAM* DD2Surface::Lock()
-{
-	if (m_pBackSurface == NULL)
-	{
-		return NULL;
-	}
-	DDSURFACEDESC surface;
-	ZeroMemory(&surface, sizeof(DDSURFACEDESC));
-	surface.dwSize = sizeof(surface);
-	HRESULT r = m_pBackSurface->Lock(NULL, &surface, DDLOCK_WAIT, NULL);
-	if (r == DDERR_SURFACELOST)
-	{
-		m_pBackSurface->Restore();
-		r = m_pBackSurface->Lock(NULL, &surface, DDLOCK_WAIT, NULL);
-	}
-	if (r != DD_OK)
-	{
-		return(NULL);
-	}
-	m_vram.ptr = static_cast<UINT8*>(surface.lpSurface);
-	m_vram.yalign = surface.lPitch;
-	return &m_vram;
-}
-
-/**
- * バッファ アンロック
- */
-void DD2Surface::Unlock()
-{
-	if (m_pBackSurface)
-	{
-		m_pBackSurface->Unlock(NULL);
-	}
-}
-
-/**
  * blt
+ * @param[in] pSurface サーフェス
  * @param[in] pt 位置
  * @param[in] lpRect 領域
  */
-void DD2Surface::Blt(const POINT* pt, const RECT* lpRect)
+void DDraw2::Blt(LPDIRECTDRAWSURFACE pSurface, const POINT* pt, const RECT* lpRect)
 {
-	if (m_pBackSurface)
+	if (pSurface)
 	{
 		POINT clipt;
 		if (pt)
@@ -258,9 +213,9 @@ void DD2Surface::Blt(const POINT* pt, const RECT* lpRect)
 		scrn.top = clipt.y;
 		scrn.right = clipt.x + lpRect->right - lpRect->left;
 		scrn.bottom = clipt.y + lpRect->bottom - lpRect->top;
-		if (m_pPrimarySurface->Blt(&scrn, m_pBackSurface, const_cast<LPRECT>(lpRect), DDBLT_WAIT, NULL) == DDERR_SURFACELOST)
+		if (m_pPrimarySurface->Blt(&scrn, pSurface, const_cast<LPRECT>(lpRect), DDBLT_WAIT, NULL) == DDERR_SURFACELOST)
 		{
-			m_pBackSurface->Restore();
+			pSurface->Restore();
 			m_pPrimarySurface->Restore();
 		}
 	}
@@ -271,8 +226,116 @@ void DD2Surface::Blt(const POINT* pt, const RECT* lpRect)
  * @param[in] pal 色
  * @return 16BPP色
  */
-UINT16 DD2Surface::GetPalette16(RGB32 pal) const
+UINT16 DDraw2::GetPalette16(RGB32 pal) const
 {
 	pal.d &= m_pal16.d;
 	return (static_cast<UINT>(pal.p.g) << m_l16g) | (static_cast<UINT>(pal.p.r) << m_l16r) | (pal.p.b >> m_r16b);
+}
+
+
+
+// ----
+
+/**
+ * コンストラクタ
+ */
+DDraw2Surface::DDraw2Surface()
+	: m_pBackSurface(NULL)
+{
+	ZeroMemory(&m_vram, sizeof(m_vram));
+}
+
+/**
+ * デストラクタ
+ */
+DDraw2Surface::~DDraw2Surface()
+{
+	Destroy();
+}
+
+/**
+ * 作成
+ * @param[in] nWidth 幅
+ * @param[in] nHeight 高さ
+ * @retval true 成功
+ * @retval false 失敗
+ */
+bool DDraw2Surface::Create(DDraw2& dd2, int nWidth, int nHeight)
+{
+	Destroy();
+
+	LPDIRECTDRAW2 pDDraw2 = dd2;
+	if (pDDraw2 == NULL)
+	{
+		return false;
+	}
+
+	DDSURFACEDESC ddsd;
+	ZeroMemory(&ddsd, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
+	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+	ddsd.dwWidth = nWidth;
+	ddsd.dwHeight = nHeight;
+	if (pDDraw2->CreateSurface(&ddsd, &m_pBackSurface, NULL) != DD_OK)
+	{
+		return false;
+	}
+	m_vram.width = nWidth;
+	m_vram.height = nHeight;
+	m_vram.xalign = dd2.GetBpp() / 8;
+	m_vram.bpp = dd2.GetBpp();
+	return true;
+}
+
+/**
+ * 解放
+ */
+void DDraw2Surface::Destroy()
+{
+	if (m_pBackSurface)
+	{
+		m_pBackSurface->Release();
+		m_pBackSurface = NULL;
+	}
+	ZeroMemory(&m_vram, sizeof(m_vram));
+}
+
+/**
+ * バッファ ロック
+ * @return バッファ
+ */
+CMNVRAM* DDraw2Surface::Lock()
+{
+	if (m_pBackSurface == NULL)
+	{
+		return NULL;
+	}
+	DDSURFACEDESC surface;
+	ZeroMemory(&surface, sizeof(DDSURFACEDESC));
+	surface.dwSize = sizeof(surface);
+	HRESULT r = m_pBackSurface->Lock(NULL, &surface, DDLOCK_WAIT, NULL);
+	if (r == DDERR_SURFACELOST)
+	{
+		m_pBackSurface->Restore();
+		r = m_pBackSurface->Lock(NULL, &surface, DDLOCK_WAIT, NULL);
+	}
+	if (r != DD_OK)
+	{
+		return NULL;
+	}
+	m_vram.ptr = static_cast<UINT8*>(surface.lpSurface);
+	m_vram.yalign = surface.lPitch;
+	return &m_vram;
+}
+
+/**
+ * バッファ アンロック
+ */
+void DDraw2Surface::Unlock()
+{
+	if (m_pBackSurface)
+	{
+		m_pBackSurface->Unlock(NULL);
+	}
 }

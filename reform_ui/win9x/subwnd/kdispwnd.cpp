@@ -112,7 +112,7 @@ static UINT8 kdgetpal8(CMNPALFN* self, UINT num)
  */
 static UINT16 kdcnvpal16(CMNPALFN* self, RGB32 pal32)
 {
-	return (reinterpret_cast<DD2Surface*>(self->userdata))->GetPalette16(pal32);
+	return (reinterpret_cast<DDraw2*>(self->userdata))->GetPalette16(pal32);
 }
 
 /**
@@ -166,6 +166,11 @@ void CKeyDisplayWnd::Create()
 	UpdateWindow();
 
 	if (!m_dd2.Create(m_hWnd, KEYDISP_WIDTH, KEYDISP_HEIGHT))
+	{
+		DestroyWindow();
+		return;
+	}
+	if (!m_surface.Create(m_dd2, KEYDISP_WIDTH, KEYDISP_HEIGHT))
 	{
 		DestroyWindow();
 		return;
@@ -297,7 +302,8 @@ LRESULT CKeyDisplayWnd::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 void CKeyDisplayWnd::OnDestroy()
 {
 	::np2class_wmdestroy(m_hWnd);
-	m_dd2.Release();
+	m_surface.Destroy();
+	m_dd2.Destroy();
 	SetDispMode(KEYDISP_MODENONE);
 }
 
@@ -347,12 +353,12 @@ void CKeyDisplayWnd::OnDraw(BOOL redraw)
 	{
 		return;
 	}
-	CMNVRAM* vram = m_dd2.Lock();
+	CMNVRAM* vram = m_surface.Lock();
 	if (vram)
 	{
 		keydisp_paint(vram, redraw);
-		m_dd2.Unlock();
-		m_dd2.Blt(NULL, &draw);
+		m_surface.Unlock();
+		m_dd2.Blt(m_surface, NULL, &draw);
 	}
 }
 
