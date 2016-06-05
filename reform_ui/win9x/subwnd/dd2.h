@@ -27,6 +27,7 @@ public:
 	RGB16 GetPalette16(RGB32 pal) const;
 	operator LPDIRECTDRAW2();
 	UINT GetBpp() const;
+	bool IsFullscreen() const;
 
 protected:
 	HWND					m_hWnd;				/*!< ウィンドウ ハンドル */
@@ -65,6 +66,16 @@ inline DDraw2::operator LPDIRECTDRAW2()
 inline UINT DDraw2::GetBpp() const
 {
 	return m_nBpp;
+}
+
+/**
+ * フルスクリーン?
+ * @retval true フルスクリーン
+ * @retval false ウィンドウ
+ */
+inline bool DDraw2::IsFullscreen() const
+{
+	return m_bFullscreen;
 }
 
 /**

@@ -186,16 +186,16 @@ static void UnloadExternalResource()
 
 // ----
 
-static void winuienter(void) {
-
+static void winuienter(void)
+{
 	winui_en = TRUE;
 	CSoundMng::GetInstance()->Disable(SNDPROC_MAIN);
-	scrnmng_topwinui();
+	CScreenManager::GetInstance()->EnableUI();
 }
 
-static void winuileave(void) {
-
-	scrnmng_clearwinui();
+static void winuileave(void)
+{
+	CScreenManager::GetInstance()->DisableUI();
 	CSoundMng::GetInstance()->Enable(SNDPROC_MAIN);
 	winui_en = FALSE;
 }
@@ -1231,7 +1231,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_QUERYNEWPALETTE:
-			scrnmng_querypalette();
+			CScreenManager::GetInstance()->QueryPalette();
 			break;
 
 		case WM_MOVE:
@@ -1328,10 +1328,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		case WM_MOUSEMOVE:
-			if (scrnmng_isfullscreen()) {
-				POINT p;
-				if (GetCursorPos(&p)) {
-					scrnmng_fullscrnmenu(p.y);
+			if (CScreenManager::GetInstance()->IsFullscreen())
+			{
+				POINT pt;
+				if (::GetCursorPos(&pt))
+				{
+					CScreenManager::GetInstance()->OnMouseMove(pt);
 				}
 			}
 			break;
@@ -1345,10 +1347,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					}
 				}
 #if defined(SUPPORT_DCLOCK)
-				else {
+				else
+				{
 					POINT p;
-					if ((GetCursorPos(&p)) &&
-						(scrnmng_isdispclockclick(&p))) {
+					if ((GetCursorPos(&p)) && (CScreenManager::GetInstance()->IsDispClockClick(&p)))
+					{
 						np2oscfg.clk_x++;
 						sysmng_update(SYS_UPDATEOSCFG);
 						DispClock::GetInstance()->Reset();
@@ -1377,11 +1380,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 					np2popup(hWnd, lParam);
 				}
 #if defined(SUPPORT_DCLOCK)
-				else {
+				else
+				{
 					POINT p;
-					if ((GetCursorPos(&p)) &&
-						(scrnmng_isdispclockclick(&p)) &&
-						(np2oscfg.clk_x)) {
+					if ((GetCursorPos(&p)) && (CScreenManager::GetInstance()->IsDispClockClick(&p)) && (np2oscfg.clk_x))
+					{
 						np2oscfg.clk_fnt++;
 						sysmng_update(SYS_UPDATEOSCFG);
 						DispClock::GetInstance()->Reset();
@@ -1499,7 +1502,7 @@ static void framereset(UINT cnt) {
 
 	framecnt = 0;
 #if defined(SUPPORT_DCLOCK)
-	scrnmng_dispclock();
+	CScreenManager::GetInstance()->DispClock();
 #endif
 	kdispwin_draw((UINT8)cnt);
 	skbdwin_process();
