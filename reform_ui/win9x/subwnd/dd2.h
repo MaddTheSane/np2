@@ -20,7 +20,9 @@ public:
 	bool Create(HWND hWnd, int nWidth, int nHeight, UINT nBpp = 0);
 	void Destroy();
 	LPDIRECTDRAWSURFACE CreateBackSurface(int nWidth, int nHeight);
+	void ZeroFill(const RECT* lpRect);
 	void Blt(LPDIRECTDRAWSURFACE pSurface, const POINT* pt, const RECT* lpRect = NULL);
+	HRESULT Blt(LPCRECT lpDestRect, LPDIRECTDRAWSURFACE lpDDSrcSurface, LPCRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFX);
 	void QueryPalette();
 	RGB16 GetPalette16(RGB32 pal) const;
 	operator LPDIRECTDRAW2();
@@ -33,6 +35,7 @@ protected:
 	LPDIRECTDRAWSURFACE		m_pPrimarySurface;	/*!< プライマリ サーフェス */
 	LPDIRECTDRAWCLIPPER		m_pClipper;			/*!< クリッパー */
 	LPDIRECTDRAWPALETTE		m_pPalette;			/*!< パレット */
+	SIZE					m_szScreen;			/*!< スクリーン サイズ */
 	UINT					m_nBpp;				/*!< BPP */
 	bool					m_bFullscreen;		/*!< フルスクリーン */
 	RGB32					m_pal16;			/*!< 16BPPマスク */

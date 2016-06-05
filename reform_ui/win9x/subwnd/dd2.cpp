@@ -27,6 +27,8 @@ DDraw2::DDraw2()
 	, m_l16r(0)
 	, m_l16g(0)
 {
+	m_szScreen.cx = 0;
+	m_szScreen.cy = 0;
 	m_pal16.d = 0;
 	ZeroMemory(&m_pal, sizeof(m_pal));
 }
@@ -115,6 +117,8 @@ bool DDraw2::Create(HWND hWnd, int nWidth, int nHeight, UINT nBpp)
 		{
 			break;
 		}
+		m_szScreen.cx = nWidth;
+		m_szScreen.cy = nHeight;
 		m_nBpp = ddpf.dwRGBBitCount;
 		return true;
 	} while (false /*CONSTCOND*/);
@@ -159,6 +163,8 @@ void DDraw2::Destroy()
 	}
 
 	m_hWnd = NULL;
+	m_szScreen.cx = 0;
+	m_szScreen.cy = 0;
 	m_nBpp = 0;
 	m_bFullscreen = false;
 	m_pal16.d = 0;
@@ -194,6 +200,15 @@ LPDIRECTDRAWSURFACE DDraw2::CreateBackSurface(int nWidth, int nHeight)
 	return pBackSurface;
 }
 
+void DDraw2::ZeroFill(const RECT* lpRect)
+{
+	DDBLTFX ddbf;
+	ZeroMemory(&ddbf, sizeof(ddbf));
+	ddbf.dwSize = sizeof(ddbf);
+	ddbf.dwFillColor = 0;
+	Blt(lpRect, NULL, NULL, DDBLT_COLORFILL, &ddbf);
+}
+
 /**
  * blt
  * @param[in] pSurface サーフェス
@@ -204,28 +219,37 @@ void DDraw2::Blt(LPDIRECTDRAWSURFACE pSurface, const POINT* pt, const RECT* lpRe
 {
 	if (pSurface)
 	{
-		POINT clipt;
-		clipt.x = 0;
-		clipt.y = 0;
+		RECT rcProjection;
+		::SetRect(&rcProjection, 0, 0, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top);
 		if (pt)
 		{
-			clipt = *pt;
+			::OffsetRect(&rcProjection, pt->x, pt->y);
 		}
-		if (!m_bFullscreen)
-		{
-			::ClientToScreen(m_hWnd, &clipt);
-		}
-		RECT scrn;
-		scrn.left = clipt.x;
-		scrn.top = clipt.y;
-		scrn.right = clipt.x + lpRect->right - lpRect->left;
-		scrn.bottom = clipt.y + lpRect->bottom - lpRect->top;
-		if (m_pPrimarySurface->Blt(&scrn, pSurface, const_cast<LPRECT>(lpRect), DDBLT_WAIT, NULL) == DDERR_SURFACELOST)
+		if (Blt(&rcProjection, pSurface, lpRect, DDBLT_WAIT, NULL) == DDERR_SURFACELOST)
 		{
 			pSurface->Restore();
 			m_pPrimarySurface->Restore();
 		}
 	}
+}
+
+HRESULT DDraw2::Blt(LPCRECT lpDestRect, LPDIRECTDRAWSURFACE lpDDSrcSurface, LPCRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFX)
+{
+	if (m_pPrimarySurface == NULL)
+	{
+		return DDERR_INVALIDOBJECT;
+	}
+	if (lpDestRect == NULL)
+	{
+		return DDERR_INVALIDRECT;
+	}
+
+	RECT rcProjection = *lpDestRect;
+	if (!m_bFullscreen)
+	{
+		::MapWindowPoints(m_hWnd, HWND_DESKTOP, reinterpret_cast<LPPOINT>(&rcProjection), 2);
+	}
+	return m_pPrimarySurface->Blt(&rcProjection, lpDDSrcSurface, const_cast<LPRECT>(lpSrcRect), dwFlags, lpDDBltFX);
 }
 
 /**
