@@ -15,12 +15,14 @@ class DDraw2
 {
 public:
 	DDraw2();
-	~DDraw2();
+	virtual ~DDraw2();
 
-	bool Create(HWND hWnd, int nWidth, int nHeight);
+	bool Create(HWND hWnd, int nWidth, int nHeight, UINT nBpp = 0);
 	void Destroy();
+	LPDIRECTDRAWSURFACE CreateBackSurface(int nWidth, int nHeight);
 	void Blt(LPDIRECTDRAWSURFACE pSurface, const POINT* pt, const RECT* lpRect = NULL);
-	UINT16 GetPalette16(RGB32 pal) const;
+	void QueryPalette();
+	RGB16 GetPalette16(RGB32 pal) const;
 	operator LPDIRECTDRAW2();
 	UINT GetBpp() const;
 
@@ -32,11 +34,16 @@ protected:
 	LPDIRECTDRAWCLIPPER		m_pClipper;			/*!< クリッパー */
 	LPDIRECTDRAWPALETTE		m_pPalette;			/*!< パレット */
 	UINT					m_nBpp;				/*!< BPP */
+	bool					m_bFullscreen;		/*!< フルスクリーン */
 	RGB32					m_pal16;			/*!< 16BPPマスク */
 	UINT8					m_r16b;				/*!< B シフト量 */
 	UINT8					m_l16r;				/*!< R シフト量 */
 	UINT8					m_l16g;				/*!< G シフト量 */
 	PALETTEENTRY			m_pal[256];			/*!< パレット */
+
+	void InitializePalette();
+	virtual void OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes);
+	void Make16Mask(DWORD dwBBitMask, DWORD dwRBitMask, DWORD dwGBitMask);
 };
 
 /**

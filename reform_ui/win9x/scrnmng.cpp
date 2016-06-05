@@ -7,7 +7,6 @@
  */
 
 #include "compiler.h"
-#include <ddraw.h>
 #ifndef __GNUC__
 #include <winnls32.h>
 #endif
@@ -20,16 +19,11 @@
 #include "pccore.h"
 #include "scrndraw.h"
 #include "palettes.h"
-
+#include "subwnd\dd2.h"
 #if defined(SUPPORT_DCLOCK)
 #include "subwnd\dclock.h"
 #endif
 #include "recvideo.h"
-
-#if !defined(__GNUC__)
-#pragma comment(lib, "ddraw.lib")
-#pragma comment(lib, "dxguid.lib")
-#endif	// !defined(__GNUC__)
 
 //! 8BPP パレット数
 #define PALLETES_8BPP	NP2PAL_TEXT3
@@ -39,14 +33,12 @@ extern WINLOCEX np2_winlocexallwin(HWND base);
 /**
  *
  */
-class CScreenManager
+class CScreenManager : public DDraw2
 {
 public:
 	CScreenManager();
-	BRESULT Create(UINT8 scrnmode);
+	BRESULT Create(HWND hWnd, UINT8 scrnmode);
 	void Destroy();
-	void QueryPalette();
-	RGB16 MakePal16(RGB32 pal32);
 	void FullscreenMenu(int y);
 	void TopWinUI();
 	void ClearWinUI();
@@ -60,17 +52,7 @@ public:
 #endif	// defined(SUPPORT_DCLOCK)
 
 public:
-	LPDIRECTDRAW			m_pDDraw;			/*!< DirectDraw インスタンス */
-	LPDIRECTDRAW2			m_pDDraw2;			/*!< DirectDraw2 インスタンス */
-	LPDIRECTDRAWSURFACE		m_pPrimarySurface;	/*!< プライマリ サーフェス */
 	LPDIRECTDRAWSURFACE		m_pBackSurface;		/*!< バック サーフェス */
-	LPDIRECTDRAWCLIPPER		m_pClipper;			/*!< クリッパー */
-	LPDIRECTDRAWPALETTE		m_pPalette;			/*!< パレット */
-	RGB32					m_pal16;			/*!< 16BPPマスク */
-	UINT8					m_r16b;				/*!< B シフト量 */
-	UINT8					m_l16r;				/*!< R シフト量 */
-	UINT8					m_l16g;				/*!< G シフト量 */
-	PALETTEENTRY			m_pal[256];			/*!< パレット */
 
 	UINT				scrnmode;
 	int					_width;
@@ -93,9 +75,8 @@ public:
 	void ClearOutOfRect(const RECT *target, const RECT *base);
 	void ClearOutScreen();
 	void ClearOutFullscreen();
-	void PaletteInit();
+	virtual void OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes);
 	void PaletteSet();
-	void Make16Mask(DWORD bmask, DWORD rmask, DWORD gmask);
 };
 
 typedef struct
@@ -173,19 +154,8 @@ static void setwindowsize(HWND hWnd, int width, int height)
  * コンストラクタ
  */
 CScreenManager::CScreenManager()
-	: m_pDDraw(NULL)
-	, m_pDDraw2(NULL)
-	, m_pPrimarySurface(NULL)
-	, m_pBackSurface(NULL)
-	, m_pClipper(NULL)
-	, m_pPalette(NULL)
-	, m_r16b(0)
-	, m_l16r(0)
-	, m_l16g(0)
+	: m_pBackSurface(NULL)
 {
-	m_pal16.d = 0;
-	ZeroMemory(m_pal, sizeof(m_pal));
-
 	this->scrnmode = 0;
 	this->_width = 0;
 	this->_height = 0;
@@ -434,11 +404,8 @@ void CScreenManager::ClearOutFullscreen()
 #endif
 }
 
-void CScreenManager::PaletteInit()
+void CScreenManager::OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes)
 {
-	HDC hdc = GetDC(g_hWndMain);
-	GetSystemPaletteEntries(hdc, 0, 256, m_pal);
-	ReleaseDC(g_hWndMain, hdc);
 #if defined(SUPPORT_DCLOCK)
 	const RGB32* pal32 = DispClock::GetInstance()->GetPalettes();
 	for (UINT i = 0; i < 4; i++)
@@ -453,8 +420,6 @@ void CScreenManager::PaletteInit()
 	{
 		m_pal[i + START_PAL].peFlags = PC_RESERVED | PC_NOCOLLAPSE;
 	}
-	m_pDDraw2->CreatePalette(DDPCAPS_8BIT, m_pal, &m_pPalette, 0);
-	m_pPrimarySurface->SetPalette(m_pPalette);
 }
 
 void CScreenManager::PaletteSet()
@@ -471,110 +436,73 @@ void CScreenManager::PaletteSet()
 	}
 }
 
-void CScreenManager::Make16Mask(DWORD bmask, DWORD rmask, DWORD gmask)
+/**
+ * 作成
+ */
+BRESULT CScreenManager::Create(HWND hWnd, UINT8 scrnmode)
 {
 	CScreenManager& ddraw = *this;
 
-	UINT8 sft = 0;
-	while ((!(bmask & 0x80)) && (sft < 32))
-	{
-		bmask <<= 1;
-		sft++;
-	}
-	m_pal16.p.b = (UINT8)bmask;
-	m_r16b = sft;
-
-	sft = 0;
-	while ((rmask & 0xffffff00) && (sft < 32))
-	{
-		rmask >>= 1;
-		sft++;
-	}
-	m_pal16.p.r = (UINT8)rmask;
-	m_l16r = sft;
-
-	sft = 0;
-	while ((gmask & 0xffffff00) && (sft < 32))
-	{
-		gmask >>= 1;
-		sft++;
-	}
-	m_pal16.p.g = (UINT8)gmask;
-	m_l16g = sft;
-}
-
-BRESULT CScreenManager::Create(UINT8 scrnmode)
-{
-	CScreenManager& ddraw = *this;
-
-	DWORD			winstyle;
-	DWORD			winstyleex;
-	DDPIXELFORMAT	ddpf;
 	int				width;
 	int				height;
 	UINT			bitcolor;
 	UINT			fscrnmod;
-	DEVMODE			devmode;
 
 	ZeroMemory(&g_scrnmng, sizeof(g_scrnmng));
-	winstyle = GetWindowLong(g_hWndMain, GWL_STYLE);
-	winstyleex = GetWindowLong(g_hWndMain, GWL_EXSTYLE);
+	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+	DWORD dwStyleEx = GetWindowLong(hWnd, GWL_EXSTYLE);
 	if (scrnmode & SCRNMODE_FULLSCREEN)
 	{
 		scrnmode &= ~SCRNMODE_ROTATEMASK;
 		g_scrnmng.flag = SCRNFLAG_FULLSCREEN;
-		winstyle &= ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME);
-		winstyle |= WS_POPUP;
-		winstyleex |= WS_EX_TOPMOST;
+		dwStyle &= ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME);
+		dwStyle |= WS_POPUP;
+		dwStyleEx |= WS_EX_TOPMOST;
 		ddraw.menudisp = 0;
 		ddraw.menusize = GetSystemMetrics(SM_CYMENU);
-		np2class_enablemenu(g_hWndMain, FALSE);
+		np2class_enablemenu(hWnd, FALSE);
 	}
 	else
 	{
 		g_scrnmng.flag = SCRNFLAG_HAVEEXTEND;
-		winstyle |= WS_SYSMENU;
+		dwStyle |= WS_SYSMENU;
 		if (np2oscfg.thickframe)
 		{
-			winstyle |= WS_THICKFRAME;
+			dwStyle |= WS_THICKFRAME;
 		}
 		if (np2oscfg.wintype < 2)
 		{
-			winstyle |= WS_CAPTION;
+			dwStyle |= WS_CAPTION;
 		}
-		winstyle &= ~WS_POPUP;
-		winstyleex &= ~WS_EX_TOPMOST;
+		dwStyle &= ~WS_POPUP;
+		dwStyleEx &= ~WS_EX_TOPMOST;
 	}
-	SetWindowLong(g_hWndMain, GWL_STYLE, winstyle);
-	SetWindowLong(g_hWndMain, GWL_EXSTYLE, winstyleex);
-
-	if (DirectDrawCreate(NULL, &m_pDDraw, NULL) != DD_OK)
-	{
-		goto scre_err;
-	}
-	m_pDDraw->QueryInterface(IID_IDirectDraw2, (void **)&m_pDDraw2);
+	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
+	SetWindowLong(hWnd, GWL_EXSTYLE, dwStyleEx);
 
 	if (scrnmode & SCRNMODE_FULLSCREEN)
 	{
 #if defined(SUPPORT_DCLOCK)
 		DispClock::GetInstance()->Initialize();
 #endif
-		m_pDDraw2->SetCooperativeLevel(g_hWndMain, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 		width = np2oscfg.fscrn_cx;
 		height = np2oscfg.fscrn_cy;
 		bitcolor = np2oscfg.fscrnbpp;
 		fscrnmod = np2oscfg.fscrnmod;
-		if ((fscrnmod & (FSCRNMOD_SAMERES | FSCRNMOD_SAMEBPP)) &&
-			(EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &devmode)))
+		if (fscrnmod & (FSCRNMOD_SAMERES | FSCRNMOD_SAMEBPP))
+		{
+			DEVMODE devmode;
+			if (::EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &devmode))
 			{
-			if (fscrnmod & FSCRNMOD_SAMERES)
-			{
-				width = devmode.dmPelsWidth;
-				height = devmode.dmPelsHeight;
-			}
-			if (fscrnmod & FSCRNMOD_SAMEBPP)
-			{
-				bitcolor = devmode.dmBitsPerPel;
+				if (fscrnmod & FSCRNMOD_SAMERES)
+				{
+					width = devmode.dmPelsWidth;
+					height = devmode.dmPelsHeight;
+				}
+				if (fscrnmod & FSCRNMOD_SAMEBPP)
+				{
+					bitcolor = devmode.dmBitsPerPel;
+				}
 			}
 		}
 		if ((width == 0) || (height == 0))
@@ -590,136 +518,47 @@ BRESULT CScreenManager::Create(UINT8 scrnmode)
 			bitcolor = 16;
 #endif
 		}
-		if (m_pDDraw2->SetDisplayMode(width, height, bitcolor, 0, 0) != DD_OK)
-		{
-			goto scre_err;
-		}
-		m_pDDraw2->CreateClipper(0, &m_pClipper, NULL);
-		m_pClipper->SetHWnd(0, g_hWndMain);
 
-		DDSURFACEDESC ddsd;
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-		if (m_pDDraw2->CreateSurface(&ddsd, &m_pPrimarySurface, NULL) != DD_OK)
-		{
-			goto scre_err;
-		}
-//		fullscrn_clearblank();
-
-		ZeroMemory(&ddpf, sizeof(ddpf));
-		ddpf.dwSize = sizeof(DDPIXELFORMAT);
-		if (m_pPrimarySurface->GetPixelFormat(&ddpf) != DD_OK)
+		if (!DDraw2::Create(hWnd, width, height, bitcolor))
 		{
 			goto scre_err;
 		}
 
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-		ddsd.dwWidth = 640;
-		ddsd.dwHeight = 480;
-		if (m_pDDraw2->CreateSurface(&ddsd, &m_pBackSurface, NULL) != DD_OK)
+		m_pBackSurface = CreateBackSurface(640, 480);
+		if (m_pBackSurface == NULL)
 		{
 			goto scre_err;
 		}
-		if (bitcolor == 8)
-		{
-			PaletteInit();
-		}
-		else if (bitcolor == 16)
-		{
-			Make16Mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
-		}
-		else if (bitcolor == 24)
-		{
-		}
-		else if (bitcolor == 32)
-		{
-		}
-		else
-		{
-			goto scre_err;
-		}
+
 #if defined(SUPPORT_DCLOCK)
 		DispClock::GetInstance()->SetPalettes(bitcolor);
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-		ddsd.dwWidth = DCLOCK_WIDTH;
-		ddsd.dwHeight = DCLOCK_HEIGHT;
-		m_pDDraw2->CreateSurface(&ddsd, &ddraw.clocksurf, NULL);
+		this->clocksurf = CreateBackSurface(DCLOCK_WIDTH, DCLOCK_HEIGHT);
 		DispClock::GetInstance()->Reset();
 #endif
 	}
 	else
 	{
-		m_pDDraw2->SetCooperativeLevel(g_hWndMain, DDSCL_NORMAL);
-
-		DDSURFACEDESC ddsd;
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-		if (m_pDDraw2->CreateSurface(&ddsd, &m_pPrimarySurface, NULL) != DD_OK)
+		if (!DDraw2::Create(hWnd, 640, 480))
 		{
 			goto scre_err;
 		}
 
-		m_pDDraw2->CreateClipper(0, &m_pClipper, NULL);
-		m_pClipper->SetHWnd(0, g_hWndMain);
-		m_pPrimarySurface->SetClipper(m_pClipper);
-
-		ZeroMemory(&ddpf, sizeof(ddpf));
-		ddpf.dwSize = sizeof(DDPIXELFORMAT);
-		if (m_pPrimarySurface->GetPixelFormat(&ddpf) != DD_OK)
-		{
-			goto scre_err;
-		}
-
-		ZeroMemory(&ddsd, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 		if (!(scrnmode & SCRNMODE_ROTATE))
 		{
-			ddsd.dwWidth = 640 + 1;
-			ddsd.dwHeight = 480;
+			m_pBackSurface = CreateBackSurface(641, 480);
 		}
 		else
 		{
-			ddsd.dwWidth = 480;
-			ddsd.dwHeight = 640 + 1;
+			m_pBackSurface = CreateBackSurface(480, 641);
 		}
+		if (m_pBackSurface == NULL)
+		{
+			goto scre_err;
+		}
+
 		width = 640;
 		height = 480;
-
-		if (m_pDDraw2->CreateSurface(&ddsd, &m_pBackSurface, NULL) != DD_OK)
-		{
-			goto scre_err;
-		}
-		bitcolor = ddpf.dwRGBBitCount;
-		if (bitcolor == 8)
-		{
-			PaletteInit();
-		}
-		else if (bitcolor == 16)
-		{
-			Make16Mask(ddpf.dwBBitMask, ddpf.dwRBitMask, ddpf.dwGBitMask);
-		}
-		else if (bitcolor == 24)
-		{
-		}
-		else if (bitcolor == 32)
-		{
-		}
-		else
-		{
-			goto scre_err;
-		}
+		bitcolor = GetBpp();
 		this->_extend = 1;
 	}
 	g_scrnmng.bpp = (UINT8)bitcolor;
@@ -729,14 +568,16 @@ BRESULT CScreenManager::Create(UINT8 scrnmode)
 	this->_height = height;
 	ddraw.cliping = 0;
 	RenewalClientSize(FALSE);
-//	screenupdate = 3;					// update!
-	return(SUCCESS);
+	return SUCCESS;
 
 scre_err:
 	scrnmng_destroy();
-	return(FAILURE);
+	return FAILURE;
 }
 
+/**
+ * 破棄
+ */
 void CScreenManager::Destroy()
 {
 	CScreenManager& ddraw = *this;
@@ -757,41 +598,8 @@ void CScreenManager::Destroy()
 		m_pBackSurface->Release();
 		m_pBackSurface = NULL;
 	}
-	if (m_pPalette)
-	{
-		m_pPalette->Release();
-		m_pPalette = NULL;
-	}
-	if (m_pClipper)
-	{
-		m_pClipper->Release();
-		m_pClipper = NULL;
-	}
-	if (m_pPrimarySurface)
-	{
-		m_pPrimarySurface->Release();
-		m_pPrimarySurface = NULL;
-	}
-	if (m_pDDraw2)
-	{
-		if (ddraw.scrnmode & SCRNMODE_FULLSCREEN)
-		{
-			m_pDDraw2->SetCooperativeLevel(g_hWndMain, DDSCL_NORMAL);
-		}
-		m_pDDraw2->Release();
-		m_pDDraw2 = NULL;
-	}
-	if (m_pDDraw)
-	{
-		m_pDDraw->Release();
-		m_pDDraw = NULL;
-	}
 
-	m_pal16.d = 0;
-	m_r16b = 0;
-	m_l16r = 0;
-	m_l16g = 0;
-	ZeroMemory(m_pal, sizeof(m_pal));
+	DDraw2::Destroy();
 
 	this->scrnmode = 0;
 	this->_width = 0;
@@ -805,21 +613,6 @@ void CScreenManager::Destroy()
 	ZeroMemory(&this->scrnclip, sizeof(this->scrnclip));
 	ZeroMemory(&this->rectclip, sizeof(this->rectclip));
 	ZeroMemory(&m_scrnsurf, sizeof(m_scrnsurf));
-}
-
-void CScreenManager::QueryPalette()
-{
-	if (m_pPalette)
-	{
-		m_pPrimarySurface->SetPalette(m_pPalette);
-	}
-}
-
-RGB16 CScreenManager::MakePal16(RGB32 pal32)
-{
-	RGB32 pal;
-	pal.d = pal32.d & m_pal16.d;
-	return (RGB16)((pal.p.g << m_l16g) + (pal.p.r << m_l16r) + (pal.p.b >> m_r16b));
 }
 
 void CScreenManager::FullscreenMenu(int y)
@@ -1084,7 +877,7 @@ void scrnmng_initialize(void)
 
 BRESULT scrnmng_create(UINT8 scrnmode)
 {
-	return s_ddraw.Create(scrnmode);
+	return s_ddraw.Create(g_hWndMain, scrnmode);
 }
 
 void scrnmng_destroy(void)
@@ -1099,7 +892,7 @@ void scrnmng_querypalette(void)
 
 RGB16 scrnmng_makepal16(RGB32 pal32)
 {
-	return s_ddraw.MakePal16(pal32);
+	return s_ddraw.GetPalette16(pal32);
 }
 
 void scrnmng_fullscrnmenu(int y)
@@ -1199,22 +992,21 @@ void scrnmng_entersizing(void)
 {
 	CScreenManager& ddraw = s_ddraw;
 
-	RECT	rectwindow;
-	RECT	rectclient;
-	int		cx;
-	int		cy;
-
+	RECT rectwindow;
 	GetWindowRect(g_hWndMain, &rectwindow);
+
+	RECT rectclient;
 	GetClientRect(g_hWndMain, &rectclient);
+
 	scrnsizing.bx = (np2oscfg.paddingx * 2) +
 					(rectwindow.right - rectwindow.left) -
 					(rectclient.right - rectclient.left);
 	scrnsizing.by = (np2oscfg.paddingy * 2) +
 					(rectwindow.bottom - rectwindow.top) -
 					(rectclient.bottom - rectclient.top);
-	cx = min(s_scrnstat.width, ddraw._width);
+	int cx = min(s_scrnstat.width, ddraw._width);
 	cx = (cx + 7) >> 3;
-	cy = min(s_scrnstat.height, ddraw._height);
+	int cy = min(s_scrnstat.height, ddraw._height);
 	cy = (cy + 7) >> 3;
 	if (!(ddraw.scrnmode & SCRNMODE_ROTATE))
 	{
@@ -1231,29 +1023,20 @@ void scrnmng_entersizing(void)
 
 void scrnmng_sizing(UINT side, RECT *rect)
 {
-	int		width;
-	int		height;
-	int		mul;
-
+	int nWidth = 16;
 	if ((side != WMSZ_TOP) && (side != WMSZ_BOTTOM))
 	{
-		width = rect->right - rect->left - scrnsizing.bx + SIZING_ADJUST;
-		width /= scrnsizing.cx;
+		nWidth = rect->right - rect->left - scrnsizing.bx + SIZING_ADJUST;
+		nWidth /= scrnsizing.cx;
 	}
-	else
-	{
-		width = 16;
-	}
+
+	int nHeight = 16;
 	if ((side != WMSZ_LEFT) && (side != WMSZ_RIGHT))
 	{
-		height = rect->bottom - rect->top - scrnsizing.by + SIZING_ADJUST;
-		height /= scrnsizing.cy;
+		nHeight = rect->bottom - rect->top - scrnsizing.by + SIZING_ADJUST;
+		nHeight /= scrnsizing.cy;
 	}
-	else
-	{
-		height = 16;
-	}
-	mul = min(width, height);
+	int mul = min(nWidth, nHeight);
 	if (mul <= 0)
 	{
 		mul = 1;
@@ -1262,14 +1045,14 @@ void scrnmng_sizing(UINT side, RECT *rect)
 	{
 		mul = 16;
 	}
-	width = scrnsizing.bx + (scrnsizing.cx * mul);
-	height = scrnsizing.by + (scrnsizing.cy * mul);
+	nWidth = scrnsizing.bx + (scrnsizing.cx * mul);
+	nHeight = scrnsizing.by + (scrnsizing.cy * mul);
 	switch (side)
 	{
 		case WMSZ_LEFT:
 		case WMSZ_TOPLEFT:
 		case WMSZ_BOTTOMLEFT:
-			rect->left = rect->right - width;
+			rect->left = rect->right - nWidth;
 			break;
 
 		case WMSZ_RIGHT:
@@ -1278,7 +1061,7 @@ void scrnmng_sizing(UINT side, RECT *rect)
 		case WMSZ_BOTTOM:
 		case WMSZ_BOTTOMRIGHT:
 		default:
-			rect->right = rect->left + width;
+			rect->right = rect->left + nWidth;
 			break;
 	}
 
@@ -1287,7 +1070,7 @@ void scrnmng_sizing(UINT side, RECT *rect)
 		case WMSZ_TOP:
 		case WMSZ_TOPLEFT:
 		case WMSZ_TOPRIGHT:
-			rect->top = rect->bottom - height;
+			rect->top = rect->bottom - nHeight;
 			break;
 
 		case WMSZ_LEFT:
@@ -1296,7 +1079,7 @@ void scrnmng_sizing(UINT side, RECT *rect)
 		case WMSZ_BOTTOMLEFT:
 		case WMSZ_BOTTOMRIGHT:
 		default:
-			rect->bottom = rect->top + height;
+			rect->bottom = rect->top + nHeight;
 			break;
 	}
 	scrnsizing.mul = mul;
