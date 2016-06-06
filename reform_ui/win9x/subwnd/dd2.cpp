@@ -46,7 +46,7 @@ DDraw2::~DDraw2()
  * @param[in] hWnd ウィンドウ ハンドル
  * @param[in] nWidth 幅
  * @param[in] nHeight 高さ
- * @paran[in] nBpp BPP
+ * @param[in] nBpp BPP
  * @retval true 成功
  * @retval false 失敗
  */
@@ -176,6 +176,9 @@ void DDraw2::Destroy()
 
 /**
  * バックサーフェス作成
+ * @param[in] nWidth 幅
+ * @param[in] nHeight 高さ
+ * @return バックサーフェス
  */
 LPDIRECTDRAWSURFACE DDraw2::CreateBackSurface(int nWidth, int nHeight)
 {
@@ -200,6 +203,10 @@ LPDIRECTDRAWSURFACE DDraw2::CreateBackSurface(int nWidth, int nHeight)
 	return pBackSurface;
 }
 
+/**
+ * フィル
+ * @param[in] lpRect 領域
+ */
 void DDraw2::ZeroFill(const RECT* lpRect)
 {
 	DDBLTFX ddbf;
@@ -233,6 +240,15 @@ void DDraw2::Blt(LPDIRECTDRAWSURFACE pSurface, const POINT* pt, const RECT* lpRe
 	}
 }
 
+/**
+ * Performs a bit block transfer
+ * @param[in] lpDestRect The rectangle to blit to on the destination surface
+ * @param[in] lpDDSrcSurface The DirectDrawSurface object
+ * @param[in] lpSrcRect The rectangle to blit from on the source surface
+ * @param[in] dwFlags The flags
+ * @param[in] lpDDBltFX DDBLTFX
+ * @return The result
+ */
 HRESULT DDraw2::Blt(LPCRECT lpDestRect, LPDIRECTDRAWSURFACE lpDDSrcSurface, LPCRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFX)
 {
 	if (m_pPrimarySurface == NULL)
@@ -267,6 +283,8 @@ void DDraw2::InitializePalette()
 
 /**
  * パレット更新イベント
+ * @param[in,out] pPalette パレット
+ * @param[in] nPalettes パレット数
  */
 void DDraw2::OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes)
 {
@@ -285,6 +303,9 @@ void DDraw2::QueryPalette()
 
 /**
  * 16BPP用のマスク作成
+ * @param[in] dwBBitMask Bマスク
+ * @param[in] dwRBitMask Rマスク
+ * @param[in] dwGBitMask Gマスク
  */
 void DDraw2::Make16Mask(DWORD dwBBitMask, DWORD dwRBitMask, DWORD dwGBitMask)
 {
@@ -350,6 +371,7 @@ DDraw2Surface::~DDraw2Surface()
 
 /**
  * 作成
+ * @param[in] dd2 DDraw2 インスタンス
  * @param[in] nWidth 幅
  * @param[in] nHeight 高さ
  * @retval true 成功

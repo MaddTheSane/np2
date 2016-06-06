@@ -1,9 +1,6 @@
 /**
  * @file	scrnmng.cpp
- * @brief	Screen Manager (DirectDraw2)
- *
- * @author	$Author: yui $
- * @date	$Date: 2011/03/07 09:54:11 $
+ * @brief	スクリーン マネージャ クラスの動作の定義を行います
  */
 
 #include "compiler.h"
@@ -32,74 +29,20 @@ extern WINLOCEX np2_winlocexallwin(HWND base);
 /*! インスタンス */
 CScreenManager CScreenManager::sm_instance;
 
-typedef struct
+static void setclientsize(HWND hWnd, int nWidth, int nHeight)
 {
-	int		width;
-	int		height;
-	int		extend;
-	int		multiple;
-} SCRNSTAT;
+	nWidth += np2oscfg.paddingx * 2;
+	nHeight += np2oscfg.paddingy * 2;
+	winloc_setclientsize(hWnd, np2oscfg.winx, np2oscfg.winy, nWidth, nHeight);
+}
 
-		SCRNMNG		g_scrnmng;
-static	SCRNSTAT	s_scrnstat;
-
-static void setwindowsize(HWND hWnd, int width, int height)
+/**
+ * 初期化
+ * @param[in] hWnd ウィンドウハンドル
+ */
+void CScreenManager::Initialize(HWND hWnd)
 {
-	RECT workrc;
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &workrc, 0);
-	const int scx = GetSystemMetrics(SM_CXSCREEN);
-	const int scy = GetSystemMetrics(SM_CYSCREEN);
-
-	UINT cnt = 2;
-	do
-	{
-		RECT rectwindow;
-		GetWindowRect(hWnd, &rectwindow);
-		RECT rectclient;
-		GetClientRect(hWnd, &rectclient);
-		int winx = (np2oscfg.winx != CW_USEDEFAULT) ? np2oscfg.winx : rectwindow.left;
-		int winy = (np2oscfg.winy != CW_USEDEFAULT) ? np2oscfg.winy : rectwindow.top;
-		int cx = width;
-		cx += np2oscfg.paddingx * 2;
-		cx += rectwindow.right - rectwindow.left;
-		cx -= rectclient.right - rectclient.left;
-		int cy = height;
-		cy += np2oscfg.paddingy * 2;
-		cy += rectwindow.bottom - rectwindow.top;
-		cy -= rectclient.bottom - rectclient.top;
-
-		if (scx < cx)
-		{
-			winx = (scx - cx) / 2;
-		}
-		else
-		{
-			if ((winx + cx) > workrc.right)
-			{
-				winx = workrc.right - cx;
-			}
-			if (winx < workrc.left)
-			{
-				winx = workrc.left;
-			}
-		}
-		if (scy < cy)
-		{
-			winy = (scy - cy) / 2;
-		}
-		else
-		{
-			if ((winy + cy) > workrc.bottom)
-			{
-				winy = workrc.bottom - cy;
-			}
-			if (winy < workrc.top)
-			{
-				winy = workrc.top;
-			}
-		}
-		MoveWindow(hWnd, winx, winy, cx, cy, TRUE);
-	} while (--cnt);
+	setclientsize(hWnd, 640, 400);
 }
 
 /**
@@ -108,9 +51,15 @@ static void setwindowsize(HWND hWnd, int width, int height)
 CScreenManager::CScreenManager()
 	: m_pBackSurface(NULL)
 	, m_nScreenMode(0)
+	, m_nWidth(640)
+	, m_nExtend(1)
+	, m_nHeight(400)
+	, m_nMultiple(8)
 	, m_nCliping(0)
 	, m_bHasExtendColumn(false)
 	, m_bDisplayedMenu(false)
+	, m_bAllFlash(false)
+	, m_bChangedPalette(false)
 	, m_nMenuHeight(0)
 #if defined(SUPPORT_DCLOCK)
 	, m_pClockSurface(NULL)
@@ -123,10 +72,14 @@ CScreenManager::CScreenManager()
 	ZeroMemory(&m_scrnsurf, sizeof(m_scrnsurf));
 }
 
+/**
+ * クライアント領域の更新
+ * @param[in] bWndLoc リサイズ時に他のウィンドウを移動するか?
+ */
 void CScreenManager::RenewalClientSize(bool bWndLoc)
 {
-	const int width = min(s_scrnstat.width, m_szScreen.cx);
-	const int height = min(s_scrnstat.height, m_szScreen.cy);
+	const int width = min(m_nWidth, m_szScreen.cx);
+	const int height = min(m_nHeight, m_szScreen.cy);
 	int extend = 0;
 
 	// 描画範囲～
@@ -206,8 +159,7 @@ void CScreenManager::RenewalClientSize(bool bWndLoc)
 	{
 		int scrnwidth = width;
 		int scrnheight = height;
-		const int nMultiple = s_scrnstat.multiple;
-		int nExtendX = ((nMultiple == 8) && (m_bHasExtendColumn)) ? 1 : 0;
+		int nExtendX = ((m_nMultiple == 8) && (m_bHasExtendColumn)) ? m_nExtend : 0;
 		int nExtendY = 0;
 
 		if (m_nScreenMode & SCRNMODE_ROTATE)
@@ -224,8 +176,8 @@ void CScreenManager::RenewalClientSize(bool bWndLoc)
 		m_rcSurface.right = scrnwidth + nExtendX;
 		m_rcSurface.bottom = scrnheight + nExtendY;
 
-		scrnwidth = (scrnwidth * nMultiple) >> 3;
-		scrnheight = (scrnheight * nMultiple) >> 3;
+		scrnwidth = (scrnwidth * m_nMultiple) >> 3;
+		scrnheight = (scrnheight * m_nMultiple) >> 3;
 		m_rcProjection.left = nPaddingX - nExtendX;
 		m_rcProjection.top = nPaddingY - nExtendY;
 		m_rcProjection.right = nPaddingX + scrnwidth;
@@ -238,7 +190,7 @@ void CScreenManager::RenewalClientSize(bool bWndLoc)
 			wlex = np2_winlocexallwin(m_hWnd);
 		}
 		winlocex_setholdwnd(wlex, m_hWnd);
-		setwindowsize(m_hWnd, scrnwidth, scrnheight);
+		setclientsize(m_hWnd, scrnwidth, scrnheight);
 		winlocex_move(wlex);
 		winlocex_destroy(wlex);
 	}
@@ -249,6 +201,8 @@ void CScreenManager::RenewalClientSize(bool bWndLoc)
 
 /**
  * クリア
+ * @param[in] target ターゲット
+ * @param[in] base 領域
  */
 void CScreenManager::ClearOutOfRect(const RECT *target, const RECT *base)
 {
@@ -320,6 +274,11 @@ void CScreenManager::ClearOutFullscreen()
 #endif	// defined(SUPPORT_DCLOCK)
 }
 
+/**
+ * パレット初期化イベント
+ * @param[in,out] pPalette パレット
+ * @param[in] nPalettes パレット数
+ */
 void CScreenManager::OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes)
 {
 #if defined(SUPPORT_DCLOCK)
@@ -338,6 +297,9 @@ void CScreenManager::OnInitializePalette(LPPALETTEENTRY pPalette, UINT nPalettes
 	}
 }
 
+/**
+ * パレット更新
+ */
 void CScreenManager::PaletteSet()
 {
 	if (m_pPalette)
@@ -354,10 +316,13 @@ void CScreenManager::PaletteSet()
 
 /**
  * 作成
+ * @param[in] hWnd ウィンドウ ハンドル
+ * @param[in] scrnmode モード
+ * @retval true 成功
+ * @retval false 失敗
  */
-BRESULT CScreenManager::Create(HWND hWnd, UINT8 scrnmode)
+bool CScreenManager::Create(HWND hWnd, UINT8 scrnmode)
 {
-	ZeroMemory(&g_scrnmng, sizeof(g_scrnmng));
 	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
 	DWORD dwStyleEx = GetWindowLong(hWnd, GWL_EXSTYLE);
 	if (scrnmode & SCRNMODE_FULLSCREEN)
@@ -468,11 +433,11 @@ BRESULT CScreenManager::Create(HWND hWnd, UINT8 scrnmode)
 	m_nScreenMode = scrnmode;
 	m_nCliping = 0;
 	RenewalClientSize(false);
-	return SUCCESS;
+	return true;
 
 scre_err:
-	scrnmng_destroy();
-	return FAILURE;
+	Destroy();
+	return false;
 }
 
 /**
@@ -503,6 +468,8 @@ void CScreenManager::Destroy()
 	m_nCliping = 0;
 	m_bHasExtendColumn = false;
 	m_bDisplayedMenu = false;
+	m_bAllFlash = false;
+	m_bChangedPalette = false;
 	m_nMenuHeight = 0;
 	ZeroMemory(&m_rcProjection, sizeof(m_rcProjection));
 	ZeroMemory(&m_rcSurface, sizeof(m_rcSurface));
@@ -536,6 +503,9 @@ void CScreenManager::OnMouseMove(const POINT& pt)
 	}
 }
 
+/**
+ * UIを有効化
+ */
 void CScreenManager::EnableUI()
 {
 	mousemng_disable(MOUSEPROC_WINUI);
@@ -551,6 +521,9 @@ void CScreenManager::EnableUI()
 	}
 }
 
+/**
+ * UIを無効化
+ */
 void CScreenManager::DisableUI()
 {
 	if ((m_nCliping > 0) && (!(--m_nCliping)))
@@ -580,6 +553,54 @@ void CScreenManager::DisableUI()
 	mousemng_enable(MOUSEPROC_WINUI);
 }
 
+/**
+ * 幅を設定
+ * @param[in] nWidth 幅
+ */
+void CScreenManager::SetWidth(int nWidth)
+{
+	m_nWidth = nWidth;
+	RenewalClientSize(true);
+}
+
+/**
+ * 拡張幅を設定
+ * @param[in] nExtend 拡張
+ */
+void CScreenManager::SetExtend(int nExtend)
+{
+	m_nExtend = nExtend;
+	AllFlash();
+	RenewalClientSize(true);
+}
+
+/**
+ * 高さを設定
+ * @param[in] nHeight 高さ
+ */
+void CScreenManager::SetHeight(int nHeight)
+{
+	m_nHeight = nHeight;
+	RenewalClientSize(true);
+}
+
+/**
+ * 倍率設定
+ * @param[in] nMultiple 倍率
+ */
+void CScreenManager::SetMultiple(int nMultiple)
+{
+	if (m_nMultiple != nMultiple)
+	{
+		m_nMultiple = nMultiple;
+		RenewalClientSize(true);
+	}
+}
+
+/**
+ * バックサーフェス ロック
+ * @return サーフェス
+ */
 const SCRNSURF* CScreenManager::Lock()
 {
 	DDSURFACEDESC destscrn;
@@ -623,6 +644,10 @@ const SCRNSURF* CScreenManager::Lock()
 	return &m_scrnsurf;
 }
 
+/**
+ * バックサーフェス アンロック
+ * @param[in] surf サーフェス
+ */
 void CScreenManager::Unlock(const SCRNSURF *surf)
 {
 	m_pBackSurface->Unlock(NULL);
@@ -630,20 +655,23 @@ void CScreenManager::Unlock(const SCRNSURF *surf)
 	recvideo_update();
 }
 
+/**
+ * 更新
+ */
 void CScreenManager::Update()
 {
-	if (g_scrnmng.palchanged)
+	if (m_bChangedPalette)
 	{
-		g_scrnmng.palchanged = FALSE;
+		m_bChangedPalette = false;
 		PaletteSet();
 	}
 	if (m_pBackSurface)
 	{
 		if (m_nScreenMode & SCRNMODE_FULLSCREEN)
 		{
-			if (g_scrnmng.allflash)
+			if (m_bAllFlash)
 			{
-				g_scrnmng.allflash = 0;
+				m_bAllFlash = false;
 				ClearOutFullscreen();
 			}
 
@@ -669,9 +697,9 @@ void CScreenManager::Update()
 		}
 		else
 		{
-			if (g_scrnmng.allflash)
+			if (m_bAllFlash)
 			{
-				g_scrnmng.allflash = 0;
+				m_bAllFlash = false;
 				ClearOutScreen();
 			}
 			HRESULT hr = Blt(&m_rcProjection, m_pBackSurface, &m_rcSurface, DDBLT_WAIT, NULL);
@@ -688,11 +716,20 @@ void CScreenManager::Update()
 #if defined(SUPPORT_DCLOCK)
 static const RECT rectclk = {0, 0, DCLOCK_WIDTH, DCLOCK_HEIGHT};
 
+/**
+ * 時計の領域か?
+ * @param[in] pt 位置
+ * @retval true 領域内
+ * @retval false 領域外
+ */
 bool CScreenManager::IsDispClockClick(const POINT *pt) const
 {
 	return (pt->y >= (m_szScreen.cy - DCLOCK_HEIGHT));
 }
 
+/**
+ * 時計を表示
+ */
 void CScreenManager::DispClock()
 {
 	if (m_pClockSurface == NULL)
@@ -741,25 +778,6 @@ void CScreenManager::DispClock()
 
 // ----
 
-void scrnmng_initialize(void)
-{
-	s_scrnstat.width = 640;
-	s_scrnstat.height = 400;
-	s_scrnstat.extend = 1;
-	s_scrnstat.multiple = 8;
-	setwindowsize(g_hWndMain, 640, 400);
-}
-
-BRESULT scrnmng_create(UINT8 scrnmode)
-{
-	return CScreenManager::GetInstance()->Create(g_hWndMain, scrnmode);
-}
-
-void scrnmng_destroy(void)
-{
-	CScreenManager::GetInstance()->Destroy();
-}
-
 RGB16 scrnmng_makepal16(RGB32 pal32)
 {
 	return CScreenManager::GetInstance()->GetPalette16(pal32);
@@ -767,21 +785,17 @@ RGB16 scrnmng_makepal16(RGB32 pal32)
 
 void scrnmng_setwidth(int posx, int width)
 {
-	s_scrnstat.width = width;
-	CScreenManager::GetInstance()->RenewalClientSize(true);
+	CScreenManager::GetInstance()->SetWidth(width);
 }
 
 void scrnmng_setextend(int extend)
 {
-	s_scrnstat.extend = extend;
-	g_scrnmng.allflash = TRUE;
-	CScreenManager::GetInstance()->RenewalClientSize(true);
+	CScreenManager::GetInstance()->SetExtend(extend);
 }
 
 void scrnmng_setheight(int posy, int height)
 {
-	s_scrnstat.height = height;
-	CScreenManager::GetInstance()->RenewalClientSize(true);
+	CScreenManager::GetInstance()->SetHeight(height);
 }
 
 BOOL scrnmng_isfullscreen(void)
@@ -814,18 +828,14 @@ void scrnmng_update(void)
 	CScreenManager::GetInstance()->Update();
 }
 
-void scrnmng_setmultiple(int multiple)
+void scrnmng_allflash(void)
 {
-	if (s_scrnstat.multiple != multiple)
-	{
-		s_scrnstat.multiple = multiple;
-		CScreenManager::GetInstance()->RenewalClientSize(true);
-	}
+	CScreenManager::GetInstance()->AllFlash();
 }
 
-int scrnmng_getmultiple(void)
+void scrnmng_palchanged(void)
 {
-	return s_scrnstat.multiple;
+	CScreenManager::GetInstance()->ChangePalette();
 }
 
 // ----
@@ -865,21 +875,17 @@ void CScreenManager::EnterSizing()
 	scrnsizing.by = (np2oscfg.paddingy * 2) +
 					(rectwindow.bottom - rectwindow.top) -
 					(rectclient.bottom - rectclient.top);
-	int cx = min(s_scrnstat.width, m_szScreen.cx);
+	int cx = min(m_nWidth, m_szScreen.cx);
 	cx = (cx + 7) >> 3;
-	int cy = min(s_scrnstat.height, m_szScreen.cy);
+	int cy = min(m_nHeight, m_szScreen.cy);
 	cy = (cy + 7) >> 3;
-	if (!(m_nScreenMode & SCRNMODE_ROTATE))
+	if (m_nScreenMode & SCRNMODE_ROTATE)
 	{
-		scrnsizing.cx = cx;
-		scrnsizing.cy = cy;
+		std::swap(cx, cy);
 	}
-	else
-	{
-		scrnsizing.cx = cy;
-		scrnsizing.cy = cx;
-	}
-	scrnsizing.mul = s_scrnstat.multiple;
+	scrnsizing.cx = cx;
+	scrnsizing.cy = cy;
+	scrnsizing.mul = m_nMultiple;
 }
 
 void scrnmng_sizing(UINT side, RECT* rect)
@@ -948,6 +954,6 @@ void scrnmng_sizing(UINT side, RECT* rect)
 
 void scrnmng_exitsizing(void)
 {
-	scrnmng_setmultiple(scrnsizing.mul);
+	CScreenManager::GetInstance()->SetMultiple(scrnsizing.mul);
 	InvalidateRect(g_hWndMain, NULL, TRUE);		// ugh
 }

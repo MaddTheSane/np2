@@ -251,12 +251,14 @@ static void changescreen(UINT8 newmode) {
 		}
 		soundmng_stop();
 		mousemng_disable(MOUSEPROC_WINUI);
-		scrnmng_destroy();
-		if (scrnmng_create(newmode) == SUCCESS) {
+		CScreenManager::GetInstance()->Destroy();
+		if (CScreenManager::GetInstance()->Create(g_hWndMain, newmode))
+		{
 			g_scrnmode = newmode;
 		}
 		else {
-			if (scrnmng_create(g_scrnmode) != SUCCESS) {
+			if (!CScreenManager::GetInstance()->Create(g_hWndMain, g_scrnmode))
+			{
 				PostQuitMessage(0);
 				return;
 			}
@@ -1139,10 +1141,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_SCRNMUL10:
 				case IDM_SCRNMUL12:
 				case IDM_SCRNMUL16:
-					if ((!scrnmng_isfullscreen()) &&
-						!(GetWindowLong(g_hWndMain, GWL_STYLE) & WS_MINIMIZE))
+					if ((!scrnmng_isfullscreen()) && (!(GetWindowLong(g_hWndMain, GWL_STYLE) & WS_MINIMIZE)))
 					{
-						scrnmng_setmultiple((int)(wParam - IDM_SCRNMUL));
+						CScreenManager::GetInstance()->SetMultiple(static_cast<int>(wParam - IDM_SCRNMUL));
 					}
 					break;
 
@@ -1534,7 +1535,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	MSG			msg;
 	HWND		hWnd;
 	UINT		i;
-	DWORD		style;
 #ifdef OPENING_WAIT
 	UINT32		tick;
 #endif
@@ -1624,15 +1624,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	mousemng_initialize();
 
-	style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
-	if (np2oscfg.thickframe) {
-		style |= WS_THICKFRAME;
+	DWORD dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
+	if (np2oscfg.thickframe)
+	{
+		dwStyle |= WS_THICKFRAME;
 	}
-	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, style,
+	hWnd = CreateWindowEx(0, szClassName, np2oscfg.titles, dwStyle,
 						np2oscfg.winx, np2oscfg.winy, 640, 400,
 						NULL, NULL, hInstance, NULL);
 	g_hWndMain = hWnd;
-	scrnmng_initialize();
+	CScreenManager::Initialize(hWnd);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -1660,9 +1661,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	if (np2cfg.RASTER) {
 		g_scrnmode |= SCRNMODE_HIGHCOLOR;
 	}
-	if (scrnmng_create(g_scrnmode) != SUCCESS) {
+	if (!CScreenManager::GetInstance()->Create(hWnd, g_scrnmode))
+	{
 		g_scrnmode ^= SCRNMODE_FULLSCREEN;
-		if (scrnmng_create(g_scrnmode) != SUCCESS) {
+		if (!CScreenManager::GetInstance()->Create(hWnd, g_scrnmode))
+		{
 			messagebox(hWnd, MAKEINTRESOURCE(IDS_ERROR_DIRECTDRAW), MB_OK | MB_ICONSTOP);
 			UnloadExternalResource();
 			TRACETERM();
@@ -1720,7 +1723,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 			pccore_term();
 			CSoundMng::GetInstance()->Close();
 			CSoundMng::Deinitialize();
-			scrnmng_destroy();
+			CScreenManager::GetInstance()->Destroy();
 			UnloadExternalResource();
 			TRACETERM();
 			dosio_term();
@@ -1853,7 +1856,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	CSoundMng::GetInstance()->Close();
 	CSoundMng::Deinitialize();
-	scrnmng_destroy();
+	CScreenManager::GetInstance()->Destroy();
 	recvideo_close();
 
 	if (sys_updates	& (SYS_UPDATECFG | SYS_UPDATEOSCFG)) {

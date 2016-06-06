@@ -7,56 +7,65 @@ enum {
 	SNAPDOTREL		= 16
 };
 
+void winloc_setclientsize(HWND hWnd, int nWidth, int nHeight)
+{
+	winloc_setclientsize(hWnd, CW_USEDEFAULT, CW_USEDEFAULT, nWidth, nHeight);
+}
 
-void winloc_setclientsize(HWND hwnd, int width, int height) {
+void winloc_setclientsize(HWND hWnd, int nPosX, int nPosY, int nWidth, int nHeight)
+{
+	RECT rcDesktop;
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &rcDesktop, 0);
 
-	RECT	rectDisktop;
-	int		scx;
-	int		scy;
-	UINT	cnt;
-	RECT	rectWindow;
-	RECT	rectClient;
-	int		x, y, w, h;
+	const int nScreenCX = GetSystemMetrics(SM_CXSCREEN);
+	const int nScreenCY = GetSystemMetrics(SM_CYSCREEN);
 
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &rectDisktop, 0);
-	scx = GetSystemMetrics(SM_CXSCREEN);
-	scy = GetSystemMetrics(SM_CYSCREEN);
+	UINT nCount = 2;
+	do
+	{
+		RECT rcWindow;
+		GetWindowRect(hWnd, &rcWindow);
 
-	cnt = 2;
-	do {
-		GetWindowRect(hwnd, &rectWindow);
-		GetClientRect(hwnd, &rectClient);
-		w = width + (rectWindow.right - rectWindow.left)
-					- (rectClient.right - rectClient.left);
-		h = height + (rectWindow.bottom - rectWindow.top)
-					- (rectClient.bottom - rectClient.top);
+		RECT rcClient;
+		GetClientRect(hWnd, &rcClient);
 
-		x = rectWindow.left;
-		y = rectWindow.top;
-		if (scx < w) {
-			x = (scx - w) / 2;
+		const int w = nWidth + (rcWindow.right - rcWindow.left) - (rcClient.right - rcClient.left);
+		const int h = nHeight + (rcWindow.bottom - rcWindow.top) - (rcClient.bottom - rcClient.top);
+
+		int x = (nPosX != CW_USEDEFAULT) ? nPosX : rcWindow.left;
+		int y = (nPosY != CW_USEDEFAULT) ? nPosY : rcWindow.top;
+		if (nScreenCX < w)
+		{
+			x = (nScreenCX - w) / 2;
 		}
-		else {
-			if ((x + w) > rectDisktop.right) {
-				x = rectDisktop.right - w;
+		else
+		{
+			if ((x + w) > rcDesktop.right)
+			{
+				x = rcDesktop.right - w;
 			}
-			if (x < rectDisktop.left) {
-				x = rectDisktop.left;
-			}
-		}
-		if (scy < h) {
-			y = (scy - h) / 2;
-		}
-		else {
-			if ((y + h) > rectDisktop.bottom) {
-				y = rectDisktop.bottom - h;
-			}
-			if (y < rectDisktop.top) {
-				y = rectDisktop.top;
+			if (x < rcDesktop.left)
+			{
+				x = rcDesktop.left;
 			}
 		}
-		MoveWindow(hwnd, x, y, w, h, TRUE);
-	} while(--cnt);
+		if (nScreenCY < h)
+		{
+			y = (nScreenCY - h) / 2;
+		}
+		else
+		{
+			if ((y + h) > rcDesktop.bottom)
+			{
+				y = rcDesktop.bottom - h;
+			}
+			if (y < rcDesktop.top)
+			{
+				y = rcDesktop.top;
+			}
+		}
+		::MoveWindow(hWnd, x, y, w, h, TRUE);
+	} while (--nCount);
 }
 
 

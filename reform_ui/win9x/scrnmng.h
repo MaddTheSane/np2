@@ -1,3 +1,7 @@
+/**
+ * @file	scrnmng.h
+ * @brief	スクリーン マネージャ クラスの宣言およびインターフェイスの定義をします
+ */
 
 #pragma once
 
@@ -40,23 +44,10 @@ enum
 	FSCRNMOD_SAMEBPP		= 0x08
 };
 
-typedef struct
-{
-	UINT8	allflash;
-	UINT8	palchanged;
-} SCRNMNG;
-
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-extern	SCRNMNG		g_scrnmng;			// マクロ用
-
-void scrnmng_initialize(void);
-BRESULT scrnmng_create(UINT8 scrnmode);
-void scrnmng_destroy(void);
 
 void scrnmng_setwidth(int posx, int width);
 void scrnmng_setextend(int extend);
@@ -67,10 +58,8 @@ UINT scrnmng_getbpp(void);
 const SCRNSURF *scrnmng_surflock(void);
 void scrnmng_surfunlock(const SCRNSURF *surf);
 void scrnmng_update(void);
-
-#define	scrnmng_allflash()		g_scrnmng.allflash = TRUE
-#define	scrnmng_palchanged()	g_scrnmng.palchanged = TRUE
-
+void scrnmng_allflash(void);
+void scrnmng_palchanged(void);
 RGB16 scrnmng_makepal16(RGB32 pal32);
 
 #ifdef __cplusplus
@@ -87,34 +76,47 @@ class CScreenManager : public DDraw2
 public:
 	static CScreenManager* GetInstance();
 
+	static void Initialize(HWND hWnd);
 	CScreenManager();
-	BRESULT Create(HWND hWnd, UINT8 scrnmode);
+	bool Create(HWND hWnd, UINT8 scrnmode);
 	void Destroy();
 	void OnMouseMove(const POINT& pt);
 	void EnableUI();
 	void DisableUI();
+	void SetWidth(int nWidth);
+	void SetExtend(int nExtend);
+	void SetHeight(int nHeight);
+	void SetMultiple(int nMultiple);
+	int GetMultiple() const;
 	const SCRNSURF* Lock();
 	void Unlock(const SCRNSURF *surf);
 	void Update();
 	bool HasExtendColumn() const;
+	void AllFlash();
+	void ChangePalette();
 	void EnterSizing();
-	void RenewalClientSize(bool bWndLoc);
 
 protected:
 	static CScreenManager sm_instance;		/*!< インスタンス */
-
-	LPDIRECTDRAWSURFACE	m_pBackSurface;		/*!< バック サーフェス */
-	UINT				m_nScreenMode;
-	int					m_nCliping;
-	bool				m_bHasExtendColumn;
-	bool				m_bDisplayedMenu;
-	int					m_nMenuHeight;
-	RECT				m_rcProjection;
-	RECT				m_rcSurface;
+	UINT m_nScreenMode;						/*!< 画面モード */
+	int m_nWidth;							/*!< 幅 */
+	int m_nExtend;							/*!< 拡張幅 */
+	int m_nHeight;							/*!< 高さ */
+	int m_nMultiple;						/*!< 拡大率 */
+	int m_nCliping;							/*!< クリッピング回数 */
+	bool m_bHasExtendColumn;				/*!< 拡張カラムを持つか? */
+	bool m_bDisplayedMenu;					/*!< メニュー表示中か? */
+	bool m_bAllFlash;						/*!< フラッシュ要求 */
+	bool m_bChangedPalette;					/*!< パレット変更 */
+	int m_nMenuHeight;						/*!< メニューの高さ */
+	RECT m_rcProjection;					/*!< 投影領域 */
+	RECT m_rcSurface;						/*!< サーフェス領域 */
 	RECT				scrnclip;
 	RECT				rectclip;
-	SCRNSURF			m_scrnsurf;
+	LPDIRECTDRAWSURFACE m_pBackSurface;		/*!< バックサーフェス */
+	SCRNSURF m_scrnsurf;					/*!< バックサーフェス情報 */
 
+	void RenewalClientSize(bool bWndLoc);
 	void ClearOutOfRect(const RECT* target, const RECT* base);
 	void ClearOutScreen();
 	void ClearOutFullscreen();
@@ -150,8 +152,30 @@ inline bool CScreenManager::HasExtendColumn() const
 	return m_bHasExtendColumn;
 }
 
-void scrnmng_setmultiple(int multiple);
-int scrnmng_getmultiple(void);
+/**
+ * 倍率を取得
+ * @return 倍率
+ */
+inline int CScreenManager::GetMultiple() const
+{
+	return m_nMultiple;
+}
+
+/**
+ * フラッシュ要求
+ */
+inline void CScreenManager::AllFlash()
+{
+	m_bAllFlash = true;
+}
+
+/**
+ * パレット更新要求
+ */
+inline void CScreenManager::ChangePalette()
+{
+	m_bChangedPalette = true;
+}
 
 void scrnmng_entersizing(void);
 void scrnmng_sizing(UINT side, RECT *rect);

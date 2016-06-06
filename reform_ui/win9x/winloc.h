@@ -1,7 +1,8 @@
 
 #pragma once
 
-void winloc_setclientsize(HWND hwnd, int width, int height);
+void winloc_setclientsize(HWND hWnd, int nWidth, int nHeight);
+void winloc_setclientsize(HWND hWnd, int nPosX, int nPosY, int nWidth, int nHeight);
 
 typedef struct {
 	HWND	hwnd;

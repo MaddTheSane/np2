@@ -230,13 +230,13 @@ void sysmenu_update(HMENU hMenu)
 	CheckMenuItem(hMenu, IDM_BACKGROUND, MF_BYCOMMAND | MFCHECK(background & 1));
 	CheckMenuItem(hMenu, IDM_BGSOUND, MF_BYCOMMAND | MFCHECK(background & 2));
 
-	const int scrnmul = scrnmng_getmultiple();
-	CheckMenuItem(hMenu, IDM_SCRNMUL4, MF_BYCOMMAND | MFCHECK(scrnmul == 4));
-	CheckMenuItem(hMenu, IDM_SCRNMUL6, MF_BYCOMMAND | MFCHECK(scrnmul == 6));
-	CheckMenuItem(hMenu, IDM_SCRNMUL8, MF_BYCOMMAND | MFCHECK(scrnmul == 8));
-	CheckMenuItem(hMenu, IDM_SCRNMUL10, MF_BYCOMMAND | MFCHECK(scrnmul == 10));
-	CheckMenuItem(hMenu, IDM_SCRNMUL12, MF_BYCOMMAND | MFCHECK(scrnmul == 12));
-	CheckMenuItem(hMenu, IDM_SCRNMUL16, MF_BYCOMMAND | MFCHECK(scrnmul == 16));
+	const int nMultiple = CScreenManager::GetInstance()->GetMultiple();
+	CheckMenuItem(hMenu, IDM_SCRNMUL4, MF_BYCOMMAND | MFCHECK(nMultiple == 4));
+	CheckMenuItem(hMenu, IDM_SCRNMUL6, MF_BYCOMMAND | MFCHECK(nMultiple == 6));
+	CheckMenuItem(hMenu, IDM_SCRNMUL8, MF_BYCOMMAND | MFCHECK(nMultiple == 8));
+	CheckMenuItem(hMenu, IDM_SCRNMUL10, MF_BYCOMMAND | MFCHECK(nMultiple == 10));
+	CheckMenuItem(hMenu, IDM_SCRNMUL12, MF_BYCOMMAND | MFCHECK(nMultiple == 12));
+	CheckMenuItem(hMenu, IDM_SCRNMUL16, MF_BYCOMMAND | MFCHECK(nMultiple == 16));
 }
 
 
