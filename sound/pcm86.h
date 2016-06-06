@@ -25,10 +25,10 @@ enum {
 #define RECALC_NOWCLKWAIT(cnt)											\
 	do																	\
 	{																	\
-		g_pcm86.virbuf -= (cnt << g_pcm86.stepbit);						\
+		g_pcm86.virbuf -= (cnt << g_pcm86.cStepBits);					\
 		if (g_pcm86.virbuf < 0)											\
 		{																\
-			g_pcm86.virbuf &= g_pcm86.stepmask;							\
+			g_pcm86.virbuf &= g_pcm86.nStepMask;						\
 		}																\
 	} while (0 /*CONSTCOND*/)
 
@@ -49,22 +49,22 @@ typedef struct {
 	SINT32	virbuf;				/* 86PCM(bufsize:0x8000)のデータ数 */
 	SINT32	rescue;
 
-	SINT32	fifosize;
+	SINT32 nFifoSize;			/* 割り込み要求サイズ */
 	SINT32	volume;
 	SINT32	vol5;
 
 	UINT32	lastclock;
 	UINT32	stepclock;
-	UINT	stepmask;
+	UINT nStepMask;				/*!< ステップ マスク */
 
-	UINT8	fifo;
-	UINT8	soundflags;			/*!< サウンド フラグ (A460) */
-	UINT8	dactrl;
-	UINT8	_write;
-	UINT8	stepbit;
-	UINT8	irq;
-	UINT8	reqirq;
-	UINT8	irqflag;
+	UINT8 cFifoCtrl;			/*!< FIFO コントロール */
+	UINT8 cSoundFlags;			/*!< サウンド フラグ (A460) */
+	UINT8 cDacCtrl;				/*!< DAC 設定 */
+	UINT8	__write;
+	UINT8 cStepBits;			/*!< PCM アライメント */
+	UINT8 cIrqLevel;			/*!< 割り込みレベル */
+	UINT8 cReqIrq;				/*!< 割り込み要求フラグ */
+	UINT8 cIrqFlag;				/*!< 割り込みフラグ */
 
 	UINT8	buffer[PCM86_BUFSIZE];
 } _PCM86, *PCM86;
