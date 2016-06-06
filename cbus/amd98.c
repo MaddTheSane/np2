@@ -25,8 +25,6 @@ static struct
 	UINT	enable;
 } amd98r;
 
-static	REG8	rapids = 0;
-
 static void pcmmake1(PMIXDAT *dat, UINT rate, int vol, double hz, double env)
 {
 
