@@ -193,6 +193,24 @@ static REG8 IOINPCALL pcm86_ia46a(UINT port)
 	return g_pcm86.cDacCtrl;
 }
 
+static REG8 IOINPCALL pcm86_ia46c(UINT port)
+{
+	REG8 ret = 0;
+
+	if (g_pcm86.nFifoRemain)
+	{
+		g_pcm86.nFifoRemain--;
+	}
+
+	if (g_pcm86.nBufferCount > 0)
+	{
+		g_pcm86.nBufferCount--;
+		ret = g_pcm86.buffer[g_pcm86.nReadPos & PCM86_BUFMSK];
+		g_pcm86.nReadPos++;
+	}
+	return ret;
+}
+
 static REG8 IOINPCALL pcm86_inpdummy(UINT port)
 {
 	(void)port;
@@ -228,6 +246,6 @@ void pcm86io_bind(void)
 	iocore_attachinp(0xa466, pcm86_ia466);
 	iocore_attachinp(0xa468, pcm86_ia468);
 	iocore_attachinp(0xa46a, pcm86_ia46a);
-	iocore_attachinp(0xa46c, pcm86_inpdummy);
+	iocore_attachinp(0xa46c, pcm86_ia46c);
 	iocore_attachinp(0xa46e, pcm86_inpdummy);
 }
