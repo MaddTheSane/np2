@@ -645,7 +645,7 @@ void screenvsync(NEVENTITEM item) {
 
 // ---------------------------------------------------------------------------
 
-// #define SINGLESTEPONLY
+#define SINGLESTEPONLY
 
 #if defined(TRACE)
 static int resetcnt = 0;
@@ -702,6 +702,8 @@ void pccore_exec(BOOL draw) {
 #else
 		while(CPU_REMCLOCK > 0) {
 			CPU_STEPEXEC();
+//			if (CPU_CS == 0x11e4) TRACEOUT(("%04x:%04x", CPU_CS, CPU_IP));
+			if (CPU_CS == 0x0edb) TRACEOUT(("%04x:%04x", CPU_CS, CPU_IP));
 		}
 #endif
 		nevent_progress();

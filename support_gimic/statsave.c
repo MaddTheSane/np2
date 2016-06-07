@@ -14,29 +14,29 @@
 #include "cpucore.h"
 #include "pccore.h"
 #include "iocore.h"
-#include "gdc_sub.h"
-#include "cbuscore.h"
-#include "ideio.h"
-#include "sasiio.h"
-#include "scsiio.h"
-#include "pc9861k.h"
-#include "mpu98ii.h"
-#include "board14.h"
-#include "amd98.h"
 #include "bios/bios.h"
-#include "vram.h"
-#include "palettes.h"
-#include "maketext.h"
-#include "sound/sndcsec.h"
-#include "sound.h"
-#include "fmboard.h"
-#include "beep.h"
+#include "cbus/amd98.h"
+#include "cbus/board14.h"
+#include "cbus/cbuscore.h"
+#include "cbus/ideio.h"
+#include "cbus/sasiio.h"
+#include "cbus/scsiio.h"
+#include "cbus/pc9861k.h"
+#include "cbus/pcm86io.h"
+#include "cbus/mpu98ii.h"
 #include "fdd/fddfile.h"
 #include "fdd/fdd_mtr.h"
 #include "fdd/sxsi.h"
 #include "font/font.h"
-#include "keydisp.h"
-#include "hostdrv.h"
+#include "generic/hostdrv.h"
+#include "io/gdc_sub.h"
+#include "sound/beep.h"
+#include "sound/fmboard.h"
+#include "sound/sndcsec.h"
+#include "sound/sound.h"
+#include "vram/maketext.h"
+#include "vram/palettes.h"
+#include "vram/vram.h"
 #include "calendar.h"
 #include "keystat.h"
 
@@ -846,6 +846,7 @@ static int flagsave_fm(STFLAGH sfh, const SFENTRY *tbl)
 	if (nSaveFlags & FLAG_PCM86)
 	{
 		ret |= statflag_write(sfh, &g_pcm86, sizeof(g_pcm86));
+		ret |= statflag_write(sfh, &g_dsp73, sizeof(g_dsp73));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
@@ -888,6 +889,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	if (nSaveFlags & FLAG_PCM86)
 	{
 		ret |= statflag_read(sfh, &g_pcm86, sizeof(g_pcm86));
+		ret |= statflag_read(sfh, &g_dsp73, sizeof(g_dsp73));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
