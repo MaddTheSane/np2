@@ -46,8 +46,8 @@ struct tagHostDrvPath
 };
 typedef struct tagHostDrvPath HDRVPATH;		/*!< ’è‹` */
 
-LISTARRAY hostdrvs_getpathlist(const OEMCHAR *lpDirectory);
-BRESULT hostdrvs_getrealdir(OEMCHAR *lpPath, UINT cchPath, char *lpFcbname, const char *lpDosPath);
+LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp);
+BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath);
 BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath);
 BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath);
 void hostdrvs_fhdlallclose(LISTARRAY fileArray);
