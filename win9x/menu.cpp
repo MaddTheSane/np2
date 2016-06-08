@@ -99,7 +99,7 @@ UINT InsertMenuResource(HMENU hMenu, UINT uItem, BOOL fByPosition, UINT nMenuID)
  */
 static BOOL AppendMenuString(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem)
 {
-	std::tstring rString(LoadTString(uIDNewItem));
+	std::tstring rString(LoadTString(static_cast<UINT>(uIDNewItem)));
 	if (rString.empty())
 	{
 		return FALSE;
@@ -127,7 +127,7 @@ static BOOL AppendMenuString(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem)
  */
 static BOOL InsertMenuString(HMENU hMenu, UINT uItem, UINT uFlags, UINT_PTR uIDNewItem)
 {
-	std::tstring rString(LoadTString(uIDNewItem));
+	std::tstring rString(LoadTString(static_cast<UINT>(uIDNewItem)));
 	if (rString.empty())
 	{
 		return FALSE;
