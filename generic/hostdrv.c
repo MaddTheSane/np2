@@ -783,8 +783,7 @@ static void open_file(INTRST intrst) {
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
 	}
-//	fetch_sft(intrst, &sft);
-	ZeroMemory(&sft, sizeof(sft));
+	fetch_sft(intrst, &sft);
 
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
