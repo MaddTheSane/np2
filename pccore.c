@@ -30,6 +30,7 @@
 #include	"maketgrp.h"
 #include	"makegrph.h"
 #include	"makegrex.h"
+#include "sound/sndcsec.h"
 #include	"sound.h"
 #include	"fmboard.h"
 #include	"beep.h"
@@ -239,9 +240,15 @@ static void sound_term(void) {
 }
 #endif
 
-void pccore_init(void) {
-
+/**
+ * Initialize
+ */
+void pccore_init(void)
+{
 	CPU_INITIALIZE();
+
+	SNDCSEC_INIT;
+	SNDCSEC_ENTER;
 
 	pal_initlcdtable();
 	pal_makelcdpal();
@@ -259,7 +266,7 @@ void pccore_init(void) {
 #if !defined(DISABLE_SOUND)
 	fmboard_construct();
 	sound_init();
-#endif
+#endif	/* !defined(DISABLE_SOUND) */
 
 	rs232c_construct();
 	mpu98ii_construct();
@@ -270,9 +277,16 @@ void pccore_init(void) {
 #if defined(SUPPORT_HOSTDRV)
 	hostdrv_initialize();
 #endif
+
+	SNDCSEC_LEAVE;
 }
 
-void pccore_term(void) {
+/**
+ * Terminate
+ */
+void pccore_term(void)
+{
+	SNDCSEC_ENTER;
 
 #if defined(SUPPORT_HOSTDRV)
 	hostdrv_deinitialize();
@@ -281,7 +295,7 @@ void pccore_term(void) {
 #if !defined(DISABLE_SOUND)
 	sound_term();
 	fmboard_destruct();
-#endif
+#endif	/* !defined(DISABLE_SOUND) */
 
 	fdd_eject(0);
 	fdd_eject(1);
@@ -297,6 +311,9 @@ void pccore_term(void) {
 	sxsi_alltrash();
 
 	CPU_DEINITIALIZE();
+
+	SNDCSEC_LEAVE;
+	SNDCSEC_TERM;
 }
 
 
@@ -334,6 +351,8 @@ void pccore_reset(void) {
 
 	int		i;
 	BOOL	epson;
+
+	SNDCSEC_ENTER;
 
 	soundmng_stop();
 #if !defined(DISABLE_SOUND)
@@ -428,6 +447,8 @@ void pccore_reset(void) {
 
 	timing_reset();
 	soundmng_play();
+
+	SNDCSEC_LEAVE;
 }
 
 static void drawscreen(void) {
@@ -624,6 +645,8 @@ void pccore_exec(BOOL draw) {
 	mouseif_sync();
 	pal_eventclear();
 
+	SNDCSEC_ENTER;
+
 	gdc.vsync = 0;
 	pcstat.screendispflag = 1;
 	MEMWAIT_TRAM = np2cfg.wait[0];
@@ -664,6 +687,8 @@ void pccore_exec(BOOL draw) {
 	calendar_inc();
 	S98_sync();
 	sound_sync();
+
+	SNDCSEC_LEAVE;
 
 	if (pcstat.hardwarereset) {
 		pcstat.hardwarereset = FALSE;
