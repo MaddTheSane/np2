@@ -15,13 +15,13 @@
  */
 struct tagHostDrvFile
 {
-	char	fcbname[11];		/*!< FCB 名 */
-	UINT8	exist;				/*!< 存在するか? */
-	UINT	caps;				/*!< 情報フラグ */
-	UINT32	size;				/*!< サイズ */
-	UINT32	attr;				/*!< 属性 */
-	DOSDATE	date;				/*!< 日付 */
-	DOSTIME	time;				/*!< 時間 */
+	char	fcbname[11];	/*!< FCB 名 */
+	UINT8	exist;			/*!< 存在するか? */
+	UINT	caps;			/*!< 情報フラグ */
+	UINT32	size;			/*!< サイズ */
+	UINT32	attr;			/*!< 属性 */
+	DOSDATE	date;			/*!< 日付 */
+	DOSTIME	time;			/*!< 時間 */
 };
 typedef struct tagHostDrvFile HDRVFILE;		/*!< 定義 */
 
@@ -30,8 +30,8 @@ typedef struct tagHostDrvFile HDRVFILE;		/*!< 定義 */
  */
 struct tagHostDrvList
 {
-	HDRVFILE di;				/*!< DOS ファイル情報 */
-	OEMCHAR realname[MAX_PATH]	/*!< ファイル名 */;
+	HDRVFILE file;					/*!< DOS ファイル情報 */
+	OEMCHAR szFilename[MAX_PATH];	/*!< ファイル名 */
 };
 typedef struct tagHostDrvList _HDRVLST;		/*!< 定義 */
 typedef struct tagHostDrvList *HDRVLST;		/*!< 定義 */

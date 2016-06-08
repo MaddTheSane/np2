@@ -441,7 +441,7 @@ const HDRVFILE	*phdf;
 				hostdrv.flist = NULL;
 				break;
 			}
-			phdf = &hdl->di;
+			phdf = &hdl->file;
 		}
 		pos++;
 		ret = find_file1(is, phdf);
@@ -1356,7 +1356,7 @@ static BOOL flist_wr(void *vpItem, void *vpArg) {
 	OEMCHAR	*p;
 	UINT	len;
 
-	p = ((HDRVLST)vpItem)->realname;
+	p = ((HDRVLST)vpItem)->szFilename;
 	len = (UINT)OEMSTRLEN(p);
 	if (len < MAX_PATH) {
 		ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));

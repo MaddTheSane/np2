@@ -144,7 +144,7 @@ static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
  */
 static BOOL IsMatchName(void *vpItem, void *vpArg)
 {
-	if (!memcmp(((HDRVLST)vpItem)->di.fcbname, vpArg, 11))
+	if (!memcmp(((HDRVLST)vpItem)->file.fcbname, vpArg, 11))
 	{
 		return TRUE;
 	}
@@ -161,7 +161,7 @@ static BOOL IsMatchName(void *vpItem, void *vpArg)
 static BOOL IsMatchDir(void *vpItem, void *vpArg)
 {
 
-	if ((((HDRVLST)vpItem)->di.attr & 0x10) && (!memcmp(((HDRVLST)vpItem)->di.fcbname, vpArg, 11)))
+	if ((((HDRVLST)vpItem)->file.attr & 0x10) && (!memcmp(((HDRVLST)vpItem)->file.fcbname, vpArg, 11)))
 	{
 		return TRUE;
 	}
@@ -200,14 +200,14 @@ LISTARRAY hostdrvs_getpathlist(const OEMCHAR *lpDirectory)
 			{
 				break;
 			}
-			CopyMemory(hdd->di.fcbname, fcbname, 11);
-			hdd->di.exist = 1;
-			hdd->di.caps = fli.caps;
-			hdd->di.size = fli.size;
-			hdd->di.attr = fli.attr;
-			hdd->di.date = fli.date;
-			hdd->di.time = fli.time;
-			file_cpyname(hdd->realname, fli.path, NELEMENTS(hdd->realname));
+			CopyMemory(hdd->file.fcbname, fcbname, 11);
+			hdd->file.exist = 1;
+			hdd->file.caps = fli.caps;
+			hdd->file.size = fli.size;
+			hdd->file.attr = fli.attr;
+			hdd->file.date = fli.date;
+			hdd->file.time = fli.time;
+			file_cpyname(hdd->szFilename, fli.path, NELEMENTS(hdd->szFilename));
 		}
 	} while (file_listnext(flh, &fli) == SUCCESS);
 	if (listarray_getitems(ret) == 0)
@@ -329,8 +329,8 @@ BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 		{
 			goto hdsgrp_err;
 		}
-		file_catname(szPath, hdl->realname, NELEMENTS(szPath));
-		di = &hdl->di;
+		file_catname(szPath, hdl->szFilename, NELEMENTS(szPath));
+		di = &hdl->file;
 	}
 	if (phdp)
 	{
@@ -380,7 +380,7 @@ BRESULT hostdrvs_getrealdir(OEMCHAR *lpPath, UINT cchPath, char *lpFcbname, cons
 		hdl = (HDRVLST)listarray_enum(lst, IsMatchDir, lpFcbname);
 		if (hdl != NULL)
 		{
-			file_catname(lpPath, hdl->realname, cchPath);
+			file_catname(lpPath, hdl->szFilename, cchPath);
 		}
 		listarray_destroy(lst);
 		if (hdl == NULL)
@@ -428,10 +428,10 @@ BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
 	hdl = (HDRVLST)listarray_enum(lst, IsMatchName, fcbname);
 	if (hdl != NULL)
 	{
-		file_catname(szPath, hdl->realname, NELEMENTS(szPath));
+		file_catname(szPath, hdl->szFilename, NELEMENTS(szPath));
 		if (phdp)
 		{
-			phdp->file = hdl->di;
+			phdp->file = hdl->file;
 			file_cpyname(phdp->szPath, szPath, NELEMENTS(phdp->szPath));
 		}
 	}
