@@ -361,18 +361,21 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
  * パスを得る
  * @param[out] phdp HostDrv パス
  * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
+ * @return DOS エラー コード
  */
-BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
+UINT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 {
 	char fcbname[11];
 
 	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
 	{
-		return FAILURE;
+		return ERR_PATHNOTFOUND;
 	}
-	return FindSinglePath(phdp, fcbname);
+	if (FindSinglePath(phdp, fcbname) != SUCCESS)
+	{
+		return ERR_FILENOTFOUND;
+	}
+	return ERR_NOERROR;
 }
 
 /**
