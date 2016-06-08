@@ -1,4 +1,6 @@
 
+#pragma once
+
 typedef struct {
 	char	fcbname[11];
 	UINT8	exist;
@@ -24,13 +26,13 @@ typedef struct {
 LISTARRAY hostdrvs_getpathlist(const OEMCHAR *realpath);
 
 // ホスト側のフォルダを得る
-BRESULT hostdrvs_getrealdir(OEMCHAR *path, int size, char *fcb, char *dospath);
+BRESULT hostdrvs_getrealdir(OEMCHAR *path, UINT size, char *fcb, const char *dospath);
 
 // ホスト側のファイル名を得る
-BRESULT hostdrvs_getrealpath(HDRVPATH *hdp, char *dospath);
+BRESULT hostdrvs_getrealpath(HDRVPATH *hdp, const char *dospath);
 
 // ホスト側のファイル名を作る
-BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, char *dospath);
+BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, const char *dospath);
 
 // ファイルハンドルリスト
 void hostdrvs_fhdlallclose(LISTARRAY fhdl);

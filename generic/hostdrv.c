@@ -897,9 +897,10 @@ static void create_file(INTRST intrst) {
 /* 1B */
 static void find_first(INTRST intrst) {
 
-	_SDACDS		sc;
-	HDRVPATH	hdp;
-	LISTARRAY	flist;
+	LISTARRAY flist;
+	_SDACDS sc;
+	OEMCHAR szPath[MAX_PATH];
+	char fcbname[11];
 
 	flist = hostdrv.flist;
 	if (flist) {
@@ -917,13 +918,12 @@ static void find_first(INTRST intrst) {
 		store_dir(intrst, &hdd_volume);
 	}
 	else {
-		if ((hostdrvs_getrealpath(&hdp, intrst->current_path) != SUCCESS) ||
-			(!(hdp.di.attr & 0x10))) {
+		if (hostdrvs_getrealdir(szPath, NELEMENTS(szPath), fcbname, intrst->filename_ptr) != SUCCESS) {
 			fail(intrst, ERR_PATHNOTFOUND);
 			return;
 		}
-		TRACEOUT(("find_first %s -> %s", intrst->current_path, hdp.path));
-		hostdrv.flist = hostdrvs_getpathlist(hdp.path);
+		TRACEOUT(("find_first %s -> %s", intrst->filename_ptr, szPath));
+		hostdrv.flist = hostdrvs_getpathlist(szPath);
 		hostdrv.stat.flistpos = 0;
 		if (find_file(intrst) != SUCCESS) {
 			fail(intrst, ERR_PATHNOTFOUND);
