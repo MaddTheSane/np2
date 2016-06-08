@@ -17,11 +17,17 @@ enum {
 	HDFMODE_DELETE		= 0x04
 };
 
-typedef struct {
+/**
+ * @brief ファイル ハンドル
+ */
+struct tagHostDrvHandle
+{
 	INTPTR	hdl;
 	UINT	mode;
 	OEMCHAR	path[MAX_PATH];
-} _HDRVFILE, *HDRVFILE;
+};
+typedef struct tagHostDrvHandle _HDRVHANDLE;
+typedef struct tagHostDrvHandle *HDRVHANDLE;
 
 typedef struct {
 	struct {
