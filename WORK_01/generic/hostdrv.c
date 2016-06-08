@@ -435,6 +435,108 @@ static void inst_check(INTRST intrst) {
 	intrst->r.b.al = 0xff;					// インストール済み。追加OKだお
 }
 
+/* 01 */
+static void remove_dir(INTRST intrst)
+{
+	_SDACDS sc;
+	UINT nResult;
+	HDRVPATH hdp;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
+		return;
+	}
+
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_PATHNOTFOUND;
+			break;
+		}
+
+		if (hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR)
+		{
+			nResult = ERR_PATHNOTFOUND;
+			break;
+		}
+		if ((hdp.file.attr & 0x10) == 0)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		TRACEOUT(("remove_dir: %s -> %s", intrst->filename_ptr, hdp.szPath));
+
+		if (!IS_PERMITDELETE)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		if (file_dirdelete(hdp.szPath))
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		succeed(intrst);
+		return;
+	} while (0 /*CONSTCOND*/);
+
+	fail(intrst, (UINT16)nResult);
+}
+
+/* 03 */
+static void make_dir(INTRST intrst)
+{
+	_SDACDS sc;
+	UINT nResult;
+	HDRVPATH hdp;
+
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
+		return;
+	}
+
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_PATHNOTFOUND;
+			break;
+		}
+
+		if (hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS)
+		{
+			nResult = ERR_PATHNOTFOUND;
+			break;
+		}
+		if (hdp.file.exist)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		TRACEOUT(("make_dir: %s -> %s", intrst->filename_ptr, hdp.szPath));
+
+		if (!IS_PERMITWRITE)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		if (file_dircreate(hdp.szPath))
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		succeed(intrst);
+		return;
+	} while (0 /*CONSTCOND*/);
+
+	fail(intrst, (UINT16)nResult);
+}
+
 /* 05 */
 static void change_currdir(INTRST intrst) {
 
@@ -721,44 +823,112 @@ static void get_fileattr(INTRST intrst) {
 }
 
 /* 11 */
-static void rename_file(INTRST intrst) {
+static void rename_file(INTRST intrst)
+{
+	_SDACDS sc;
+	UINT nResult;
+	HDRVPATH hdp1;
+	HDRVPATH hdp2;
 
-	_SDACDS		sc;
-	HDRVPATH	hdp1;
-	HDRVPATH	hdp2;
-
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 
-	// ワイルドカードくるんで要修正…
-	if ((hostdrvs_getrealpath(&hdp1, intrst->filename_ptr) != ERR_NOERROR) ||
-		(hostdrvs_getrealpath(&hdp2, intrst->filename_ptr_2) != ERR_NOERROR)) {
-		fail(intrst, ERR_PATHNOTFOUND);
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_FILENOTFOUND;
+			break;
+		}
+
+		nResult = hostdrvs_getrealpath(&hdp1, intrst->filename_ptr);
+		if (nResult != ERR_NOERROR)
+		{
+			break;
+		}
+
+		if (hostdrvs_newrealpath(&hdp2, intrst->filename_ptr_2) != SUCCESS)
+		{
+			nResult = ERR_PATHNOTFOUND;
+			break;
+		}
+		if (hdp2.file.exist)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		TRACEOUT(("rename_file: %s -> %s", hdp1.szPath, hdp2.szPath));
+
+		if (!IS_PERMITDELETE)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		if (file_rename(hdp1.szPath, hdp2.szPath))
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		succeed(intrst);
 		return;
-	}
-	TRACEOUT(("rename_file %s to %s - failed", hdp1.szPath, hdp2.szPath));
-	fail(intrst, ERR_ACCESSDENIED);
+	} while (0 /*CONSTCOND*/);
+
+	fail(intrst, (UINT16)nResult);
 }
 
 /* 13 */
-static void delete_file(INTRST intrst) {
+static void delete_file(INTRST intrst)
+{
+	_SDACDS sc;
+	UINT nResult;
+	HDRVPATH hdp;
 
-	_SDACDS		sc;
-	HDRVPATH	hdp;
-
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 
-	// ワイルドカードくるんで要修正…
-	if ((hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR) ||
-		(hdp.file.attr & 0x10)) {
-		fail(intrst, ERR_PATHNOTFOUND);
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_FILENOTFOUND;
+			break;
+		}
+
+		nResult = hostdrvs_getrealpath(&hdp, intrst->filename_ptr);
+		if (nResult != ERR_NOERROR)
+		{
+			break;
+		}
+		if (hdp.file.attr & 0x10)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		TRACEOUT(("delete_file: %s -> %s", intrst->filename_ptr, hdp.szPath));
+
+		if (!IS_PERMITDELETE)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		if (file_delete(hdp.szPath))
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		succeed(intrst);
 		return;
-	}
-	TRACEOUT(("delete_file %s - failed", hdp.szPath));
-	fail(intrst, ERR_ACCESSDENIED);
+	} while (0 /*CONSTCOND*/);
+
+	fail(intrst, (UINT16)nResult);
 }
 
 /* 16 */
@@ -1204,9 +1374,9 @@ typedef void (*HDINTRFN)(INTRST intrst);
 
 static const HDINTRFN intr_func[] = {
 		inst_check,			/* 00 */
-		NULL,	//	remove_dir,			/* 01 */
+		remove_dir,			/* 01 */
 		NULL,
-		NULL,	//	make_dir,			/* 03 */
+		make_dir,			/* 03 */
 		NULL,
 		change_currdir,		/* 05 */
 		close_file,			/* 06 */
