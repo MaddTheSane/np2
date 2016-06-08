@@ -26,8 +26,6 @@
 
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
 static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
-static const HDRVFILE hdd_owner  = {{'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
-static const HDRVFILE hdd_parent = {{'.','.',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
 
 //	see int2159-BX0000
 enum {
@@ -421,30 +419,20 @@ static BRESULT find_file(INTRST is) {
 	BRESULT		ret;
 	UINT		pos;
 	HDRVLST		hdl;
-const HDRVFILE	*phdf;
 
 	store_srch(is);
 
 	ret = FAILURE;
 	pos = hostdrv.stat.flistpos;
 	do {
-		if (pos == 0) {
-			phdf = &hdd_owner;
-		}
-		else if (pos == 1) {
-			phdf = &hdd_parent;
-		}
-		else {
-			hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos - 2);
-			if (hdl == NULL) {
-				listarray_destroy(hostdrv.flist);
-				hostdrv.flist = NULL;
-				break;
-			}
-			phdf = &hdl->file;
+		hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos);
+		if (hdl == NULL) {
+			listarray_destroy(hostdrv.flist);
+			hostdrv.flist = NULL;
+			break;
 		}
 		pos++;
-		ret = find_file1(is, phdf);
+		ret = find_file1(is, &hdl->file);
 	} while(ret != SUCCESS);
 	hostdrv.stat.flistpos = pos;
 	return(ret);
@@ -916,7 +904,7 @@ static void find_first(INTRST intrst) {
 
 	LISTARRAY flist;
 	_SDACDS sc;
-	OEMCHAR szPath[MAX_PATH];
+	HDRVPATH hdp;
 	char fcbname[11];
 
 	flist = hostdrv.flist;
@@ -935,12 +923,12 @@ static void find_first(INTRST intrst) {
 		store_dir(intrst, &hdd_volume);
 	}
 	else {
-		if (hostdrvs_getrealdir(szPath, NELEMENTS(szPath), fcbname, intrst->filename_ptr) != SUCCESS) {
+		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS) {
 			fail(intrst, ERR_PATHNOTFOUND);
 			return;
 		}
-		TRACEOUT(("find_first %s -> %s", intrst->filename_ptr, szPath));
-		hostdrv.flist = hostdrvs_getpathlist(szPath);
+		TRACEOUT(("find_first %s -> %s", intrst->filename_ptr, hdp.szPath));
+		hostdrv.flist = hostdrvs_getpathlist(&hdp);
 		hostdrv.stat.flistpos = 0;
 		if (find_file(intrst) != SUCCESS) {
 			fail(intrst, ERR_PATHNOTFOUND);

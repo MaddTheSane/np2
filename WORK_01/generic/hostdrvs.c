@@ -153,61 +153,68 @@ static BOOL IsMatchName(void *vpItem, void *vpArg)
 
 /**
  * ファイル一覧を取得
- * @param[in] lpDirectory ディレクトリ
+ * @param[in] phdp パス
  * @return ファイル一覧
  */
-LISTARRAY hostdrvs_getpathlist(const OEMCHAR *lpDirectory)
+LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp)
 {
+	LISTARRAY ret;
+	HDRVLST hdd;
 	FLISTH flh;
 	FLINFO fli;
-	LISTARRAY ret;
 	char fcbname[11];
-	HDRVLST hdd;
 
-	flh = file_list1st(lpDirectory, &fli);
-	if (flh == FLISTH_INVALID)
-	{
-		goto hdgpl_err1;
-	}
 	ret = listarray_new(sizeof(_HDRVLST), 64);
-	if (ret == NULL)
+	if (ret != NULL)
 	{
-		goto hdgpl_err2;
-	}
-	do
-	{
-		if ((RealName2Fcb(fcbname, &fli) == SUCCESS) && (fcbname[0] != ' ') && (listarray_enum(ret, IsMatchName, fcbname) == NULL))
+		if ((phdp->file.exist) && (phdp->file.attr & 0x10))
 		{
 			hdd = (HDRVLST)listarray_append(ret, NULL);
-			if (hdd == NULL)
+			if (hdd != NULL)
 			{
-				break;
+				hdd->file = phdp->file;
+				memcpy(hdd->file.fcbname, ".          ", 11);
+				file_cpyname(hdd->szFilename, OEMTEXT("."), NELEMENTS(hdd->szFilename));
 			}
-			CopyMemory(hdd->file.fcbname, fcbname, 11);
-			hdd->file.exist = 1;
-			hdd->file.caps = fli.caps;
-			hdd->file.size = fli.size;
-			hdd->file.attr = fli.attr;
-			hdd->file.date = fli.date;
-			hdd->file.time = fli.time;
-			file_cpyname(hdd->szFilename, fli.path, NELEMENTS(hdd->szFilename));
+			hdd = (HDRVLST)listarray_append(ret, NULL);
+			if (hdd != NULL)
+			{
+				hdd->file = phdp->file;
+				memcpy(hdd->file.fcbname, "..         ", 11);
+				file_cpyname(hdd->szFilename, OEMTEXT(".."), NELEMENTS(hdd->szFilename));
+			}
 		}
-	} while (file_listnext(flh, &fli) == SUCCESS);
-	if (listarray_getitems(ret) == 0)
-	{
-		goto hdgpl_err3;
+
+		flh = file_list1st(phdp->szPath, &fli);
+		if (flh != FLISTH_INVALID)
+		{
+			do
+			{
+				if ((RealName2Fcb(fcbname, &fli) == SUCCESS) && (fcbname[0] != ' ') && (listarray_enum(ret, IsMatchName, fcbname) == NULL))
+				{
+					hdd = (HDRVLST)listarray_append(ret, NULL);
+					if (hdd != NULL)
+					{
+						memcpy(hdd->file.fcbname, fcbname, 11);
+						hdd->file.exist = 1;
+						hdd->file.caps = fli.caps;
+						hdd->file.size = fli.size;
+						hdd->file.attr = fli.attr;
+						hdd->file.date = fli.date;
+						hdd->file.time = fli.time;
+						file_cpyname(hdd->szFilename, fli.path, NELEMENTS(hdd->szFilename));
+					}
+				}
+			} while (file_listnext(flh, &fli) == SUCCESS);
+			file_listclose(flh);
+		}
+		if (listarray_getitems(ret) == 0)
+		{
+			listarray_destroy(ret);
+			ret = NULL;
+		}
 	}
-	file_listclose(flh);
 	return ret;
-
-hdgpl_err3:
-	listarray_destroy(ret);
-
-hdgpl_err2:
-	file_listclose(flh);
-
-hdgpl_err1:
-	return NULL;
 }
 
 /* ---- */
@@ -321,7 +328,7 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
  * @retval SUCCESS 成功
  * @retval FAILURE 失敗
  */
-BRESULT _hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
+BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
 {
 	phdp->file = s_hddroot;
 	file_cpyname(phdp->szPath, np2cfg.hdrvroot, NELEMENTS(phdp->szPath));
@@ -351,29 +358,6 @@ BRESULT _hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosP
 }
 
 /**
- * ディレクトリを得る
- * @param[out] lpPath パス バッファ
- * @param[in] cchPath パス バッファの長さ
- * @param[out] lpFcbname FCB 名
- * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
- */
-BRESULT hostdrvs_getrealdir(OEMCHAR *lpPath, UINT cchPath, char *lpFcbname, const char *lpDosPath)
-{
-	BRESULT r;
-	HDRVPATH hdp;
-
-	r = _hostdrvs_getrealdir(&hdp, lpFcbname, lpDosPath);
-	if (r == SUCCESS)
-	{
-		file_cpyname(lpPath, hdp.szPath, cchPath);
-		file_setseparator(lpPath, cchPath);
-	}
-	return r;
-}
-
-/**
  * パスを得る
  * @param[out] phdp HostDrv パス
  * @param[in] lpDosPath DOS パス
@@ -384,7 +368,7 @@ BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 {
 	char fcbname[11];
 
-	if ((_hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
+	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
 	{
 		return FAILURE;
 	}
@@ -408,7 +392,7 @@ BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
 	OEMCHAR oemname[64];
 #endif
 
-	if ((_hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
+	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
 	{
 		return FAILURE;
 	}
