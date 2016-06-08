@@ -1,40 +1,56 @@
+/**
+ * @file	hostdrvs.h
+ * @brief	Interface of host-drive
+ */
 
 #pragma once
 
-typedef struct {
-	char	fcbname[11];
-	UINT8	exist;
-	UINT	caps;
-	UINT32	size;
-	UINT32	attr;
-	DOSDATE	date;
-	DOSTIME	time;
-} HDRVDIR;
+#if defined(SUPPORT_HOSTDRV)
 
-typedef struct {
-	HDRVDIR	di;
-	OEMCHAR	realname[MAX_PATH];
-} _HDRVLST, *HDRVLST;
+#include "hostdrv.h"
+#include "dosio.h"
 
-typedef struct {
-	HDRVDIR	di;
-	OEMCHAR	path[MAX_PATH];
-} HDRVPATH;
+/**
+ * @brief DOS ファイル情報
+ */
+struct tagHostDrvDir
+{
+	char	fcbname[11];		/*!< FCB 名 */
+	UINT8	exist;				/*!< 存在するか? */
+	UINT	caps;				/*!< 情報フラグ */
+	UINT32	size;				/*!< サイズ */
+	UINT32	attr;				/*!< 属性 */
+	DOSDATE	date;				/*!< 日付 */
+	DOSTIME	time;				/*!< 時間 */
+};
+typedef struct tagHostDrvDir HDRVDIR;		/*!< 定義 */
 
+/**
+ * @brief ファイル リスト情報
+ */
+struct tagHostDrvList
+{
+	HDRVDIR	di;					/*!< DOS ファイル情報 */
+	OEMCHAR	realname[MAX_PATH]	/*!< ファイル名 */;
+};
+typedef struct tagHostDrvList _HDRVLST;		/*!< 定義 */
+typedef struct tagHostDrvList *HDRVLST;		/*!< 定義 */
 
-// 一覧取得
-LISTARRAY hostdrvs_getpathlist(const OEMCHAR *realpath);
+/**
+ * @brief パス情報
+ */
+struct tagHostDrvPath
+{
+	HDRVDIR	di;					/*!< DOS ファイル情報 */
+	OEMCHAR	path[MAX_PATH];		/*!< パス */
+};
+typedef struct tagHostDrvPath HDRVPATH;		/*!< 定義 */
 
-// ホスト側のフォルダを得る
-BRESULT hostdrvs_getrealdir(OEMCHAR *path, UINT size, char *fcb, const char *dospath);
+LISTARRAY hostdrvs_getpathlist(const OEMCHAR *lpDirectory);
+BRESULT hostdrvs_getrealdir(OEMCHAR *lpPath, UINT cchPath, char *lpFcbname, const char *lpDosPath);
+BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath);
+BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath);
+void hostdrvs_fhdlallclose(LISTARRAY fileArray);
+HDRVFILE hostdrvs_fhdlsea(LISTARRAY fileArray);
 
-// ホスト側のファイル名を得る
-BRESULT hostdrvs_getrealpath(HDRVPATH *hdp, const char *dospath);
-
-// ホスト側のファイル名を作る
-BRESULT hostdrvs_newrealpath(HDRVPATH *hdp, const char *dospath);
-
-// ファイルハンドルリスト
-void hostdrvs_fhdlallclose(LISTARRAY fhdl);
-HDRVFILE hostdrvs_fhdlsea(LISTARRAY fhdl);
-
+#endif	/* defined(SUPPORT_HOSTDRV) */
