@@ -13,7 +13,7 @@
 /**
  * @brief DOS ファイル情報
  */
-struct tagHostDrvDir
+struct tagHostDrvFile
 {
 	char	fcbname[11];		/*!< FCB 名 */
 	UINT8	exist;				/*!< 存在するか? */
@@ -23,15 +23,15 @@ struct tagHostDrvDir
 	DOSDATE	date;				/*!< 日付 */
 	DOSTIME	time;				/*!< 時間 */
 };
-typedef struct tagHostDrvDir HDRVDIR;		/*!< 定義 */
+typedef struct tagHostDrvFile HDRVFILE;		/*!< 定義 */
 
 /**
  * @brief ファイル リスト情報
  */
 struct tagHostDrvList
 {
-	HDRVDIR	di;					/*!< DOS ファイル情報 */
-	OEMCHAR	realname[MAX_PATH]	/*!< ファイル名 */;
+	HDRVFILE di;				/*!< DOS ファイル情報 */
+	OEMCHAR realname[MAX_PATH]	/*!< ファイル名 */;
 };
 typedef struct tagHostDrvList _HDRVLST;		/*!< 定義 */
 typedef struct tagHostDrvList *HDRVLST;		/*!< 定義 */
@@ -41,8 +41,8 @@ typedef struct tagHostDrvList *HDRVLST;		/*!< 定義 */
  */
 struct tagHostDrvPath
 {
-	HDRVDIR	di;					/*!< DOS ファイル情報 */
-	OEMCHAR	path[MAX_PATH];		/*!< パス */
+	HDRVFILE file;				/*!< DOS ファイル情報 */
+	OEMCHAR szPath[MAX_PATH];	/*!< パス */
 };
 typedef struct tagHostDrvPath HDRVPATH;		/*!< 定義 */
 
@@ -51,6 +51,6 @@ BRESULT hostdrvs_getrealdir(OEMCHAR *lpPath, UINT cchPath, char *lpFcbname, cons
 BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath);
 BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath);
 void hostdrvs_fhdlallclose(LISTARRAY fileArray);
-HDRVFILE hostdrvs_fhdlsea(LISTARRAY fileArray);
+HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY fileArray);
 
 #endif	/* defined(SUPPORT_HOSTDRV) */

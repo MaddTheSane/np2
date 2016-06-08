@@ -25,9 +25,9 @@
 #define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
-static const HDRVDIR hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
-static const HDRVDIR hdd_owner  = {{'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
-static const HDRVDIR hdd_parent = {{'.','.',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
+static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
+static const HDRVFILE hdd_owner  = {{'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
+static const HDRVFILE hdd_parent = {{'.','.',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
 
 //	see int2159-BX0000
 enum {
@@ -169,7 +169,7 @@ static void store_srch(INTRST is) {
 	STOREINTELWORD(srchrec->dir_sector, ((UINT16)-1));
 }
 
-static void store_dir(INTRST is, const HDRVDIR *di) {
+static void store_dir(INTRST is, const HDRVFILE *phdf) {
 
 	DIRREC	dirrec;
 	UINT8	attr;
@@ -177,36 +177,36 @@ static void store_dir(INTRST is, const HDRVDIR *di) {
 
 	// SDA内のDIRRECにセット
 	dirrec = is->dirrec_ptr;
-	CopyMemory(dirrec->file_name, di->fcbname, 11);
-	attr = (UINT8)(di->attr & 0x3f);
+	CopyMemory(dirrec->file_name, phdf->fcbname, 11);
+	attr = (UINT8)(phdf->attr & 0x3f);
 	if (!IS_PERMITWRITE) {
 		attr |= 0x01;
 	}
 	dirrec->file_attr = attr;
 	reg = 0;
-	if (di->caps & FLICAPS_TIME) {
-		reg |= (di->time.hour & 0x1f) << 11;
-		reg |= (di->time.minute & 0x3f) << 5;
-		reg |= (di->time.second & 0x3e) >> 1;
+	if (phdf->caps & FLICAPS_TIME) {
+		reg |= (phdf->time.hour & 0x1f) << 11;
+		reg |= (phdf->time.minute & 0x3f) << 5;
+		reg |= (phdf->time.second & 0x3e) >> 1;
 	}
 	STOREINTELWORD(dirrec->file_time, reg);
 	reg = 0;
-	if (di->caps & FLICAPS_DATE) {
-		reg |= ((di->date.year - 1980) & 0x7f) << 9;
-		reg |= (di->date.month & 0x0f) << 5;
-		reg |= di->date.day & 0x1f;
+	if (phdf->caps & FLICAPS_DATE) {
+		reg |= ((phdf->date.year - 1980) & 0x7f) << 9;
+		reg |= (phdf->date.month & 0x0f) << 5;
+		reg |= phdf->date.day & 0x1f;
 	}
 	STOREINTELWORD(dirrec->file_date, reg);
 	STOREINTELWORD(dirrec->start_sector, ((UINT16)-1));
-	STOREINTELDWORD(dirrec->file_size, di->size);
+	STOREINTELDWORD(dirrec->file_size, phdf->size);
 }
 
-static void fill_sft(INTRST is, SFTREC sft, UINT num, HDRVDIR *di) {
+static void fill_sft(INTRST is, SFTREC sft, UINT num, const HDRVFILE *phdf) {
 
 	UINT8	attr;
 	UINT16	reg;
 
-	attr = di->attr;
+	attr = phdf->attr;
 	if (!IS_PERMITWRITE) {
 		attr |= 0x01;
 	}
@@ -214,24 +214,24 @@ static void fill_sft(INTRST is, SFTREC sft, UINT num, HDRVDIR *di) {
 	STOREINTELWORD(sft->start_sector, (UINT16)num);
 
 	reg = 0;
-	if (di->caps & FLICAPS_TIME) {
-		reg |= (di->time.hour & 0x1f) << 11;
-		reg |= (di->time.minute & 0x3f) << 5;
-		reg |= (di->time.second & 0x3e) >> 1;
+	if (phdf->caps & FLICAPS_TIME) {
+		reg |= (phdf->time.hour & 0x1f) << 11;
+		reg |= (phdf->time.minute & 0x3f) << 5;
+		reg |= (phdf->time.second & 0x3e) >> 1;
 	}
 	STOREINTELWORD(sft->file_time, reg);
 	reg = 0;
-	if (di->caps & FLICAPS_DATE) {
-		reg |= ((di->date.year - 1980) & 0x7f) << 9;
-		reg |= (di->date.month & 0x0f) << 5;
-		reg |= di->date.day & 0x1f;
+	if (phdf->caps & FLICAPS_DATE) {
+		reg |= ((phdf->date.year - 1980) & 0x7f) << 9;
+		reg |= (phdf->date.month & 0x0f) << 5;
+		reg |= phdf->date.day & 0x1f;
 	}
 	STOREINTELWORD(sft->file_date, reg);
-	STOREINTELDWORD(sft->file_size, di->size);
+	STOREINTELDWORD(sft->file_size, phdf->size);
 	STOREINTELWORD(sft->dir_sector, (UINT16)-1);
 	sft->dir_entry_no = (UINT8)-1;
 	CopyMemory(sft->file_name, is->fcbname_ptr, 11);
-	TRACEOUT(("open -> size %d", di->size));
+	TRACEOUT(("open -> size %d", phdf->size));
 }
 
 static void init_sft(SFTREC sft) {
@@ -341,12 +341,12 @@ static BRESULT pathishostdrv(INTRST is, SDACDS sc) {
 
 static BRESULT read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 	FILEH		fh;
 	UINT8		work[1024];
 	UINT		r;
 
-	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
+	hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, num);
 	if (hdf == NULL) {
 		return(FAILURE);
 	}
@@ -368,12 +368,12 @@ static BRESULT read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
 static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 	FILEH		fh;
 	UINT8		work[1024];
 	UINT		r;
 
-	hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, num);
+	hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, num);
 	if (hdf == NULL) {
 		return(FAILURE);
 	}
@@ -399,20 +399,20 @@ static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 }
 
 
-static BRESULT find_file1(INTRST is, const HDRVDIR *di) {
+static BRESULT find_file1(INTRST is, const HDRVFILE *phdf) {
 
 	UINT8	attrmask;
 	UINT	attr;
 
 	attrmask = *is->srch_attr_ptr;
-	attr = (di->attr) & (~(attrmask));
+	attr = (phdf->attr) & (~(attrmask));
 	if (attr & 0x16) {
 		return(FAILURE);
 	}
-	if (!match2mask(is->srchrec_ptr->srch_mask, di->fcbname)) {
+	if (!match2mask(is->srchrec_ptr->srch_mask, phdf->fcbname)) {
 		return(FAILURE);
 	}
-	store_dir(is, di);
+	store_dir(is, phdf);
 	return(SUCCESS);
 }
 
@@ -421,7 +421,7 @@ static BRESULT find_file(INTRST is) {
 	BRESULT		ret;
 	UINT		pos;
 	HDRVLST		hdl;
-const HDRVDIR	*di;
+const HDRVFILE	*phdf;
 
 	store_srch(is);
 
@@ -429,10 +429,10 @@ const HDRVDIR	*di;
 	pos = hostdrv.stat.flistpos;
 	do {
 		if (pos == 0) {
-			di = &hdd_owner;
+			phdf = &hdd_owner;
 		}
 		else if (pos == 1) {
-			di = &hdd_parent;
+			phdf = &hdd_parent;
 		}
 		else {
 			hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos - 2);
@@ -441,10 +441,10 @@ const HDRVDIR	*di;
 				hostdrv.flist = NULL;
 				break;
 			}
-			di = &hdl->di;
+			phdf = &hdl->di;
 		}
 		pos++;
-		ret = find_file1(is, di);
+		ret = find_file1(is, phdf);
 	} while(ret != SUCCESS);
 	hostdrv.stat.flistpos = pos;
 	return(ret);
@@ -484,7 +484,7 @@ static void change_currdir(INTRST intrst) {
 	if ((strlen(intrst->filename_ptr) >= (67 - ROOTPATH_SIZE)) ||
 		(is_wildcards(intrst->fcbname_ptr) != FALSE) ||
 		(hostdrvs_getrealpath(&hdp, ptr) != SUCCESS) ||
-		(hdp.di.fcbname[0] == ' ') || (!(hdp.di.attr & 0x10))) {
+		(hdp.file.fcbname[0] == ' ') || (!(hdp.file.attr & 0x10))) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
@@ -500,7 +500,7 @@ static void close_file(INTRST intrst) {
 	_SFTREC		sft;
 	UINT16		handle_count;
 	UINT16		start_sector;
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
@@ -517,7 +517,7 @@ static void close_file(INTRST intrst) {
 	}
 	if (handle_count == 0) {
 		start_sector = LOADINTELWORD(sft.start_sector);
-		hdf = (HDRVFILE)listarray_getitem(hostdrv.fhdl, start_sector);
+		hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, start_sector);
 		if (hdf) {
 			file_close((FILEH)hdf->hdl);
 			hdf->hdl = (INTPTR)FILEH_INVALID;
@@ -737,8 +737,8 @@ static void get_fileattr(INTRST intrst) {
 		fail(intrst, ERR_FILENOTFOUND);
 		return;
 	}
-	TRACEOUT(("get_fileattr: %s - %x", hdp.path, hdp.di.attr));
-	ax = hdp.di.attr & 0x37;
+	TRACEOUT(("get_fileattr: %s - %x", hdp.szPath, hdp.file.attr));
+	ax = hdp.file.attr & 0x37;
 	if (!IS_PERMITWRITE) {
 		ax |= 0x01;
 	}
@@ -763,7 +763,7 @@ static void rename_file(INTRST intrst) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
-	TRACEOUT(("rename_file %s to %s - failed", hdp1.path, hdp2.path));
+	TRACEOUT(("rename_file %s to %s - failed", hdp1.szPath, hdp2.szPath));
 	fail(intrst, ERR_ACCESSDENIED);
 }
 
@@ -779,11 +779,11 @@ static void delete_file(INTRST intrst) {
 
 	// ワイルドカードくるんで要修正…
 	if ((hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.di.attr & 0x10)) {
+		(hdp.file.attr & 0x10)) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
-	TRACEOUT(("delete_file %s - failed", hdp.path));
+	TRACEOUT(("delete_file %s - failed", hdp.szPath));
 	fail(intrst, ERR_ACCESSDENIED);
 }
 
@@ -795,7 +795,7 @@ static void open_file(INTRST intrst) {
 	HDRVPATH	hdp;
 	UINT		mode;
 	FILEH		fh;
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
@@ -805,12 +805,12 @@ static void open_file(INTRST intrst) {
 
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.di.attr & 0x10)) {
+		(hdp.file.attr & 0x10)) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
 	TRACEOUT(("open_file: %s -> %s %d", intrst->filename_ptr,
-										hdp.path, sft.open_mode[0] & 7));
+										hdp.szPath, sft.open_mode[0] & 7));
 	switch(sft.open_mode[0] & 7) {
 		case 1:	// write only
 			mode = HDFMODE_WRITE;
@@ -830,10 +830,10 @@ static void open_file(INTRST intrst) {
 			fail(intrst, ERR_ACCESSDENIED);
 			return;
 		}
-		fh = file_open(hdp.path);
+		fh = file_open(hdp.szPath);
 	}
 	else {
-		fh = file_open_rb(hdp.path);
+		fh = file_open_rb(hdp.szPath);
 	}
 	if (fh == FILEH_INVALID) {
 		TRACEOUT(("file open error!"));
@@ -850,9 +850,9 @@ static void open_file(INTRST intrst) {
 
 	hdf->hdl = (INTPTR)fh;
 	hdf->mode = mode;
-	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
+	file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
 
-	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.di);
+	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
 	init_sft(&sft);
 
 	store_sft(intrst, &sft);
@@ -866,7 +866,7 @@ static void create_file(INTRST intrst) {
 	_SDACDS		sc;
 	_SFTREC		sft;
 	HDRVPATH	hdp;
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 	FILEH		fh;
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
@@ -876,12 +876,12 @@ static void create_file(INTRST intrst) {
 
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.di.attr & 0x10)) {
+		(hdp.file.attr & 0x10)) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
 	TRACEOUT(("create_file: %s -> %s %d", intrst->filename_ptr,
-										hdp.path, sft.open_mode[0] & 7));
+										hdp.szPath, sft.open_mode[0] & 7));
 
 	if (!IS_PERMITWRITE) {
 		fail(intrst, ERR_ACCESSDENIED);
@@ -893,7 +893,7 @@ static void create_file(INTRST intrst) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
-	fh = file_create(hdp.path);
+	fh = file_create(hdp.szPath);
 	if (fh == FILEH_INVALID) {
 		TRACEOUT(("file create error!"));
 		fail(intrst, ERR_ACCESSDENIED);
@@ -901,9 +901,9 @@ static void create_file(INTRST intrst) {
 	}
 	hdf->hdl = (INTPTR)fh;
 	hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
-	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
+	file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
 
-	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.di);
+	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
 	init_sft(&sft);
 
 	store_sft(intrst, &sft);
@@ -1084,7 +1084,7 @@ static void ext_openfile(INTRST intrst) {
 	REG16 		act;
 	REG16		cx;
 	FILEH		fh;
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS) {
 		return;
@@ -1094,7 +1094,7 @@ static void ext_openfile(INTRST intrst) {
 	// ファイルを探しに～
 	if ((is_wildcards(intrst->fcbname_ptr)) ||
 		(hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.di.attr & 0x10)) {
+		(hdp.file.attr & 0x10)) {
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
@@ -1118,7 +1118,7 @@ static void ext_openfile(INTRST intrst) {
 	}
 
 	create = FALSE;
-	if (hdp.di.exist) {					// ファイルが存在
+	if (hdp.file.exist) {				// ファイルが存在
 		switch(act & 3) {
 			case 1:
 				cx = 1;
@@ -1150,17 +1150,17 @@ static void ext_openfile(INTRST intrst) {
 			fail(intrst, ERR_ACCESSDENIED);
 			return;
 		}
-		fh = file_create(hdp.path);
+		fh = file_create(hdp.szPath);
 	}
 	else if (mode & HDFMODE_WRITE) {
 		if (!IS_PERMITWRITE) {
 			fail(intrst, ERR_ACCESSDENIED);
 			return;
 		}
-		fh = file_open(hdp.path);
+		fh = file_open(hdp.szPath);
 	}
 	else {
-		fh = file_open_rb(hdp.path);
+		fh = file_open_rb(hdp.szPath);
 	}
 	if (fh == FILEH_INVALID) {
 		TRACEOUT(("file open error!"));
@@ -1177,10 +1177,10 @@ static void ext_openfile(INTRST intrst) {
 
 	hdf->hdl = (INTPTR)fh;
 	hdf->mode = mode;
-	file_cpyname(hdf->path, hdp.path, sizeof(hdf->path));
+	file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
 
 	STOREINTELWORD(intrst->r.w.cx, cx);
-	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.di);
+	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
 	init_sft(&sft);
 	store_sft(intrst, &sft);
 
@@ -1250,7 +1250,7 @@ static const HDINTRFN intr_func[] = {
 void hostdrv_initialize(void) {
 
 	ZeroMemory(&hostdrv, sizeof(hostdrv));
-	hostdrv.fhdl = listarray_new(sizeof(_HDRVFILE), 16);
+	hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
 	TRACEOUT(("hostdrv_initialize"));
 }
 
@@ -1339,14 +1339,14 @@ static BOOL fhdl_wr(void *vpItem, void *vpArg) {
 	OEMCHAR	*p;
 	UINT	len;
 
-	p = ((HDRVFILE)vpItem)->path;
+	p = ((HDRVHANDLE)vpItem)->path;
 	len = (UINT)OEMSTRLEN(p);
 	statflag_write((STFLAGH)vpArg, &len, sizeof(len));
 	if (len) {
 		if (len < MAX_PATH) {
 			ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 		}
-		statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVFILE));
+		statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVHANDLE));
 	}
 	return(FALSE);
 }
@@ -1390,7 +1390,7 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
 	int			ret;
 	UINT		i;
 	UINT		len;
-	HDRVFILE	hdf;
+	HDRVHANDLE	hdf;
 	FILEH		fh;
 	HDRVLST		hdl;
 
@@ -1403,13 +1403,13 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
 	}
 	ret |= statflag_read(sfh, &hostdrv.stat, sizeof(hostdrv.stat));
 	for (i=0; i<sfhdrv.files; i++) {
-		hdf = (HDRVFILE)listarray_append(hostdrv.fhdl, NULL);
+		hdf = (HDRVHANDLE)listarray_append(hostdrv.fhdl, NULL);
 		if (hdf == NULL) {
 			return(STATFLAG_FAILURE);
 		}
 		ret |= statflag_read(sfh, &len, sizeof(len));
 		if (len) {
-			ret |= statflag_read(sfh, hdf, sizeof(_HDRVFILE));
+			ret |= statflag_read(sfh, hdf, sizeof(_HDRVHANDLE));
 			if (hdf->mode & HDFMODE_WRITE) {
 				fh = file_open(hdf->path);
 			}

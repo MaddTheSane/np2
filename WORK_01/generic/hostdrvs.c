@@ -14,7 +14,7 @@
 #include "pccore.h"
 
 /*! ルート情報 */
-static const HDRVDIR hddroot = {{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
+static const HDRVFILE hddroot = {{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
 
 /*! DOSで許可されるキャラクタ */
 static const UINT8 s_cDosCharacters[] =
@@ -301,7 +301,7 @@ BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 {
 	OEMCHAR szPath[MAX_PATH];
 	LISTARRAY lst;
-	const HDRVDIR *di;
+	const HDRVFILE *di;
 	HDRVLST hdl;
 	char fcbname[11];
 
@@ -334,8 +334,8 @@ BRESULT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 	}
 	if (phdp)
 	{
-		phdp->di = *di;
-		file_cpyname(phdp->path, szPath, NELEMENTS(phdp->path));
+		phdp->file = *di;
+		file_cpyname(phdp->szPath, szPath, NELEMENTS(phdp->szPath));
 	}
 	listarray_destroy(lst);
 	return SUCCESS;
@@ -431,8 +431,8 @@ BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
 		file_catname(szPath, hdl->realname, NELEMENTS(szPath));
 		if (phdp)
 		{
-			phdp->di = hdl->di;
-			file_cpyname(phdp->path, szPath, NELEMENTS(phdp->path));
+			phdp->file = hdl->di;
+			file_cpyname(phdp->szPath, szPath, NELEMENTS(phdp->szPath));
 		}
 	}
 	else
@@ -460,9 +460,9 @@ BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
 #endif
 		if (phdp)
 		{
-			ZeroMemory(&phdp->di, sizeof(phdp->di));
-			CopyMemory(phdp->di.fcbname, fcbname, 11);
-			file_cpyname(phdp->path, szPath, NELEMENTS(phdp->path));
+			ZeroMemory(&phdp->file, sizeof(phdp->file));
+			CopyMemory(phdp->file.fcbname, fcbname, 11);
+			file_cpyname(phdp->szPath, szPath, NELEMENTS(phdp->szPath));
 		}
 	}
 	listarray_destroy(lst);
@@ -481,10 +481,10 @@ static BOOL CloseFileHandle(void *vpItem, void *vpArg)
 {
 	INTPTR fh;
 
-	fh = ((HDRVFILE)vpItem)->hdl;
+	fh = ((HDRVHANDLE)vpItem)->hdl;
 	if (fh != (INTPTR)FILEH_INVALID)
 	{
-		((HDRVFILE)vpItem)->hdl = (INTPTR)FILEH_INVALID;
+		((HDRVHANDLE)vpItem)->hdl = (INTPTR)FILEH_INVALID;
 		file_close((FILEH)fh);
 	}
 	(void)vpArg;
@@ -509,7 +509,7 @@ void hostdrvs_fhdlallclose(LISTARRAY fileArray)
  */
 static BOOL IsHandleInvalid(void *vpItem, void *vpArg)
 {
-	if (((HDRVFILE)vpItem)->hdl == (INTPTR)FILEH_INVALID)
+	if (((HDRVHANDLE)vpItem)->hdl == (INTPTR)FILEH_INVALID)
 	{
 		return TRUE;
 	}
@@ -522,18 +522,18 @@ static BOOL IsHandleInvalid(void *vpItem, void *vpArg)
  * @param[in] fileArray ファイル リスト ハンドル
  * @return 新しいハンドル
  */
-HDRVFILE hostdrvs_fhdlsea(LISTARRAY fileArray)
+HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY fileArray)
 {
-	HDRVFILE ret;
+	HDRVHANDLE ret;
 
 	if (fileArray == NULL)
 	{
 		TRACEOUT(("hostdrvs_fhdlsea hdl == NULL"));
 	}
-	ret = (HDRVFILE)listarray_enum(fileArray, IsHandleInvalid, NULL);
+	ret = (HDRVHANDLE)listarray_enum(fileArray, IsHandleInvalid, NULL);
 	if (ret == NULL)
 	{
-		ret = (HDRVFILE)listarray_append(fileArray, NULL);
+		ret = (HDRVHANDLE)listarray_append(fileArray, NULL);
 		if (ret != NULL)
 		{
 			ret->hdl = (INTPTR)FILEH_INVALID;
