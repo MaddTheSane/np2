@@ -44,14 +44,14 @@ void pcm86_reset(void)
 	PCM86 pcm86 = &g_pcm86;
 
 	memset(pcm86, 0, sizeof(*pcm86));
-	pcm86->nFifoSize = 0x80;
+	pcm86->nFifoIntrSize = 0x80;
 	pcm86->cDacCtrl = 0x32;
 	pcm86->nStepMask = (1 << 2) - 1;
 	pcm86->cStepBits = 2;
-	pcm86->stepclock = (pccore.baseclock << 6);
-	pcm86->stepclock /= 44100;
-	pcm86->stepclock *= pccore.multiple;
-	pcm86->rescue = (PCM86_RESCUE * 32) << 2;
+	pcm86->nStepClock = (pccore.baseclock << 6);
+	pcm86->nStepClock /= 44100;
+	pcm86->nStepClock *= pccore.multiple;
+	pcm86->nExtendBufferSize = (PCM86_RESCUE * 32) << 2;
 	pcm86->cIrqLevel = 0xff;
 }
 
@@ -69,9 +69,9 @@ void pcm86_setpcmrate(REG8 val)
 	SINT32	rate;
 
 	rate = pcm86rate8[val & 7];
-	pcm86->stepclock = (pccore.baseclock << 6);
-	pcm86->stepclock /= rate;
-	pcm86->stepclock *= (pccore.multiple << 3);
+	pcm86->nStepClock = (pccore.baseclock << 6);
+	pcm86->nStepClock /= rate;
+	pcm86->nStepClock *= (pccore.multiple << 3);
 	if (pcm86cfg.rate)
 	{
 		pcm86->div = (rate << (PCM86_DIVBIT - 3)) / pcm86cfg.rate;
@@ -83,13 +83,12 @@ void pcm86_cb(NEVENTITEM item)
 {
 	PCM86 pcm86 = &g_pcm86;
 
-	if (pcm86->cReqIrq)
+	if (((pcm86->cFifoCtrl & 0xa0) == 0xa0) && (pcm86->cIrqFlag == 0))
 	{
 		sound_sync();
-//		RECALC_NOWCLKP;
-		if (pcm86->virbuf <= pcm86->nFifoSize)
+		TRACEOUT(("pcm intr? %d < %d", pcm86->nFifoRemain, pcm86->nFifoIntrSize));
+		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
-			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
 			if (pcm86->cIrqLevel != 0xff)
 			{
@@ -104,59 +103,65 @@ void pcm86_cb(NEVENTITEM item)
 	(void)item;
 }
 
-void pcm86_setnextintr(void) {
-
+/**
+ * 次の割り込みタイミングを計算する
+ */
+void pcm86_setnextintr(void)
+{
 	PCM86 pcm86 = &g_pcm86;
-	SINT32	cnt;
-	SINT32	clk;
+	SINT32 clk;
+	SINT32 cnt;
 
-	if (pcm86->cFifoCtrl & 0x80)
+	if (((pcm86->cFifoCtrl & 0xa0) == 0xa0) && (pcm86->cIrqFlag == 0))
 	{
-		cnt = pcm86->virbuf - pcm86->nFifoSize;
+		if (pccore.cpumode & CPUMODE_8MHZ)
+		{
+			clk = clk20_128[pcm86->cFifoCtrl & 7];
+		}
+		else
+		{
+			clk = clk25_128[pcm86->cFifoCtrl & 7];
+		}
+
+		cnt = pcm86->nFifoRemain - pcm86->nFifoIntrSize;
 		if (cnt > 0)
 		{
 			cnt += pcm86->nStepMask;
 			cnt >>= pcm86->cStepBits;
-//			cnt += 4;								/* ちょっと延滞させる */
-			/* ここで clk = pccore.realclock * cnt / 86pcm_rate */
-			/* clk = ((pccore.baseclock / 86pcm_rate) * cnt) * pccore.multiple */
-			if (pccore.cpumode & CPUMODE_8MHZ) {
-				clk = clk20_128[pcm86->cFifoCtrl & 7];
-			}
-			else {
-				clk = clk25_128[pcm86->cFifoCtrl & 7];
-			}
-			/* cntは最大 8000h で 32bitで収まるように… */
 			clk *= cnt;
-			clk >>= 7;
-//			clk++;						/* roundup */
-			clk *= pccore.multiple;
-			nevent_set(NEVENT_86PCM, clk, pcm86_cb, NEVENT_ABSOLUTE);
 		}
+		else if (pcm86->nFifoRemain == 0)
+		{
+			clk *= (32768 >> pcm86->cStepBits);
+		}
+		clk >>= 7;
+		clk *= pccore.multiple;
+		nevent_set(NEVENT_86PCM, clk, pcm86_cb, NEVENT_ABSOLUTE);
 	}
 }
 
 void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 {
-	long	bufs;
-	UINT32	past;
+	SINT nDiff;
+	UINT32 nPast;
 
-	past = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
-	past <<= 6;
-	past -= pcm86->lastclock;
-	if (past >= pcm86->stepclock)
+	nPast = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
+	nPast <<= 6;
+	nPast -= pcm86->nLastClock;
+	if (nPast >= pcm86->nStepClock)
 	{
-		past = past / pcm86->stepclock;
-		pcm86->lastclock += (past * pcm86->stepclock);
-		RECALC_NOWCLKWAIT(past);
+		nPast = nPast / pcm86->nStepClock;
+		pcm86->nLastClock += (nPast * pcm86->nStepClock);
+		RECALC_NOWCLKWAIT(pcm86, nPast);
 	}
 
-	bufs = pcm86->realbuf - pcm86->virbuf;
-	if (bufs < 0)									/* 処理落ちてる… */
+	nDiff = pcm86->nBufferCount - pcm86->nFifoRemain;
+	if (nDiff < 0)									/* 処理落ちてる… */
 	{
-		bufs &= ~3;
-		pcm86->virbuf += bufs;
-		if (pcm86->virbuf <= pcm86->nFifoSize)
+		nDiff &= ~3;
+		pcm86->nFifoRemain += nDiff;
+#if 0
+		if (pcm86->nFifoRemain <= pcm86->nFifoIntrSize)
 		{
 			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
@@ -169,15 +174,16 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 		{
 			pcm86_setnextintr();
 		}
+#endif
 	}
 	else
 	{
-		bufs -= PCM86_EXTBUF;
-		if (bufs > 0)
+		nDiff -= pcm86->nExtendBufferSize;
+		if (nDiff > 0)
 		{
-			bufs &= ~3;
-			pcm86->realbuf -= bufs;
-			pcm86->readpos += bufs;
+			nDiff &= ~3;
+			pcm86->nBufferCount -= nDiff;
+			pcm86->nReadPos += nDiff;
 		}
 	}
 }
@@ -190,15 +196,17 @@ BOOL pcm86gen_intrq(void)
 	{
 		return TRUE;
 	}
+#if 0
 	if (pcm86->cFifoCtrl & 0x20)
 	{
 		sound_sync();
-		if ((pcm86->cReqIrq) && (pcm86->virbuf <= pcm86->nFifoSize))
+		if ((pcm86->cReqIrq) && (pcm86->nFifoRemain <= pcm86->nFifoIntrSize))
 		{
 			pcm86->cReqIrq = 0;
 			pcm86->cIrqFlag = 1;
 			return TRUE;
 		}
 	}
+#endif
 	return FALSE;
 }
