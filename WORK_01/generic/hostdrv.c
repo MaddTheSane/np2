@@ -795,7 +795,16 @@ static void rename_file(INTRST intrst)
 	_SDACDS sc;
 	UINT nResult;
 	HDRVPATH hdp1;
+	char fcbname1[11];
 	HDRVPATH hdp2;
+	char fcbname2[11];
+	LISTARRAY lst;
+	UINT nIndex;
+	HDRVLST phdl;
+	OEMCHAR szPath[MAX_PATH];
+	HDRVPATH hdp;
+	UINT i;
+	char fcbname[11];
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS)
 	{
@@ -803,33 +812,28 @@ static void rename_file(INTRST intrst)
 	}
 
 	nResult = ERR_NOERROR;
+	lst = NULL;
 	do
 	{
-		TRACEOUT(("re_file: %s, %s", intrst->filename_ptr, intrst->filename_ptr_2));
-
-		if (is_wildcards(intrst->fcbname_ptr))
-		{
-			nResult = ERR_FILENOTFOUND;
-			break;
-		}
-
-		nResult = hostdrvs_getrealpath(&hdp1, intrst->filename_ptr);
-		if (nResult != ERR_NOERROR)
-		{
-			break;
-		}
-
-		if (hostdrvs_newrealpath(&hdp2, intrst->filename_ptr_2) != SUCCESS)
+		TRACEOUT(("rename_file: %s -> %s", intrst->filename_ptr, intrst->filename_ptr_2));
+		if (hostdrvs_getrealdir(&hdp1, fcbname1, intrst->filename_ptr) != SUCCESS)
 		{
 			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
-		if (hdp2.file.exist)
+
+		if (hostdrvs_getrealdir(&hdp2, fcbname2, intrst->filename_ptr_2) != SUCCESS)
 		{
-			nResult = ERR_ACCESSDENIED;
+			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
-		TRACEOUT(("rename_file: %s -> %s", hdp1.szPath, hdp2.szPath));
+
+		lst = hostdrvs_getpathlist(&hdp1, fcbname1, 0x37);
+		if (lst == NULL)
+		{
+			nResult = ERR_FILENOTFOUND;
+			break;
+		}
 
 		if (!IS_PERMITDELETE)
 		{
@@ -837,16 +841,50 @@ static void rename_file(INTRST intrst)
 			break;
 		}
 
-		if (file_rename(hdp1.szPath, hdp2.szPath))
+		nIndex = 0;
+		while (TRUE /*CONSTCOND*/)
 		{
-			nResult = ERR_ACCESSDENIED;
-			break;
+			phdl = (HDRVLST)listarray_getitem(lst, nIndex++);
+			if (phdl == NULL)
+			{
+				break;
+			}
+			file_cpyname(szPath, hdp1.szPath, NELEMENTS(szPath));
+			file_setseparator(szPath, NELEMENTS(szPath));
+			file_catname(szPath, phdl->szFilename, NELEMENTS(szPath));
+
+			hdp = hdp2;
+			for (i = 0; i < 11; i++)
+			{
+				fcbname[i] = (fcbname2[i] != '?') ? fcbname2[i] : phdl->file.fcbname[i];
+			}
+			if (hostdrvs_appendname(&hdp, fcbname) != ERR_FILENOTFOUND)
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
+
+			TRACEOUT(("renamed: %s -> %s", szPath, hdp.szPath));
+			if (file_rename(szPath, hdp.szPath))
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
 		}
-		succeed(intrst);
-		return;
 	} while (0 /*CONSTCOND*/);
 
-	fail(intrst, (UINT16)nResult);
+	if (lst != NULL)
+	{
+		listarray_destroy(lst);
+	}
+	if (nResult == ERR_NOERROR)
+	{
+		succeed(intrst);
+	}
+	else
+	{
+		fail(intrst, (UINT16)nResult);
+	}
 }
 
 /* 13 */
