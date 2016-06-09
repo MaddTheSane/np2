@@ -153,10 +153,24 @@ file_delete(const OEMCHAR *path)
 }
 
 short
+file_rename(const OEMCHAR *existpath, const OEMCHAR *newpath)
+{
+
+	return (short)rename(existpath, newpath);
+}
+
+short
 file_dircreate(const OEMCHAR *path)
 {
 
 	return (short)mkdir(path, 0777);
+}
+
+short
+file_dirdelete(const OEMCHAR *path)
+{
+
+	return (short)rmdir(path);
 }
 
 
