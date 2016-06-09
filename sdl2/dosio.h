@@ -1,4 +1,6 @@
 
+#pragma once
+
 typedef FILE *				FILEH;
 #define	FILEH_INVALID		NULL
 
