@@ -156,6 +156,11 @@ short file_delete(const char *path) {
 	return(remove(path));
 }
 
+short file_rename(const char *existpath, const char *newpath) {
+
+	return((short)rename(existpath, newpath));
+}
+
 short file_dircreate(const char *path) {
 
 #if defined(WIN32)
@@ -163,6 +168,11 @@ short file_dircreate(const char *path) {
 #else
 	return((short)mkdir(path, 0777));
 #endif
+}
+
+short file_dirdelete(const char *path) {
+
+	return((short)rmdir(path));
 }
 
 
