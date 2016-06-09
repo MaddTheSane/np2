@@ -250,18 +250,6 @@ static BOOL is_wildcards(const char *path) {
 	return(FALSE);
 }
 
-static BOOL match2mask(const char *mask, const char *path) {
-
-	int		i;
-
-	for (i=0; i<11; i++) {
-		if ((mask[i] != path[i]) && (mask[i] != '?')) {
-			return(FALSE);
-		}
-	}
-	return(TRUE);
-}
-
 
 // ぽいんた初期化
 static void setup_ptrs(INTRST is, SDACDS sc) {
@@ -383,45 +371,24 @@ static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
 }
 
 
-static BRESULT find_file1(INTRST is, const HDRVFILE *phdf) {
+static BRESULT find_file(INTRST is)
+{
+	HDRVLST hdl;
 
-	UINT8	attrmask;
-	UINT	attr;
-
-	attrmask = *is->srch_attr_ptr;
-	attr = (phdf->attr) & (~(attrmask));
-	if (attr & 0x16) {
-		return(FAILURE);
+	hdl = (HDRVLST)listarray_getitem(hostdrv.flist, hostdrv.stat.flistpos);
+	if (hdl != NULL)
+	{
+		store_srch(is);
+		store_dir(is, &hdl->file);
+		hostdrv.stat.flistpos++;
+		return SUCCESS;
 	}
-	if (!match2mask(is->srchrec_ptr->srch_mask, phdf->fcbname)) {
-		return(FAILURE);
+	else
+	{
+		listarray_destroy(hostdrv.flist);
+		hostdrv.flist = NULL;
+		return FAILURE;
 	}
-	store_dir(is, phdf);
-	return(SUCCESS);
-}
-
-static BRESULT find_file(INTRST is) {
-
-	BRESULT		ret;
-	UINT		pos;
-	HDRVLST		hdl;
-
-	store_srch(is);
-
-	ret = FAILURE;
-	pos = hostdrv.stat.flistpos;
-	do {
-		hdl = (HDRVLST)listarray_getitem(hostdrv.flist, pos);
-		if (hdl == NULL) {
-			listarray_destroy(hostdrv.flist);
-			hostdrv.flist = NULL;
-			break;
-		}
-		pos++;
-		ret = find_file1(is, &hdl->file);
-	} while(ret != SUCCESS);
-	hostdrv.stat.flistpos = pos;
-	return(ret);
 }
 
 
@@ -838,6 +805,8 @@ static void rename_file(INTRST intrst)
 	nResult = ERR_NOERROR;
 	do
 	{
+		TRACEOUT(("re_file: %s, %s", intrst->filename_ptr, intrst->filename_ptr_2));
+
 		if (is_wildcards(intrst->fcbname_ptr))
 		{
 			nResult = ERR_FILENOTFOUND;
@@ -886,6 +855,11 @@ static void delete_file(INTRST intrst)
 	_SDACDS sc;
 	UINT nResult;
 	HDRVPATH hdp;
+	char fcbname[11];
+	LISTARRAY lst;
+	UINT nIndex;
+	HDRVLST phdl;
+	OEMCHAR szPath[MAX_PATH];
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS)
 	{
@@ -893,42 +867,91 @@ static void delete_file(INTRST intrst)
 	}
 
 	nResult = ERR_NOERROR;
+	lst = NULL;
 	do
 	{
-		if (is_wildcards(intrst->fcbname_ptr))
+		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS)
 		{
-			nResult = ERR_FILENOTFOUND;
+			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
 
-		nResult = hostdrvs_getrealpath(&hdp, intrst->filename_ptr);
-		if (nResult != ERR_NOERROR)
+		if (!is_wildcards(fcbname))
 		{
-			break;
-		}
-		if (hdp.file.attr & 0x10)
-		{
-			nResult = ERR_ACCESSDENIED;
-			break;
-		}
-		TRACEOUT(("delete_file: %s -> %s", intrst->filename_ptr, hdp.szPath));
+			nResult = hostdrvs_appendname(&hdp, fcbname);
+			if (nResult != ERR_NOERROR)
+			{
+				break;
+			}
 
-		if (!IS_PERMITDELETE)
-		{
-			nResult = ERR_ACCESSDENIED;
-			break;
-		}
+			if (hdp.file.attr & 0x10)
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
+			TRACEOUT(("delete_file: %s -> %s", intrst->filename_ptr, hdp.szPath));
 
-		if (file_delete(hdp.szPath))
-		{
-			nResult = ERR_ACCESSDENIED;
-			break;
+			if (!IS_PERMITDELETE)
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
+
+			if (file_delete(hdp.szPath))
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
 		}
-		succeed(intrst);
-		return;
+		else
+		{
+			lst = hostdrvs_getpathlist(&hdp, fcbname, 0x27);
+			if (lst == NULL)
+			{
+				nResult = ERR_FILENOTFOUND;
+				break;
+			}
+
+			if (!IS_PERMITDELETE)
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
+
+			nIndex = 0;
+			while (TRUE /*CONSTCOND*/)
+			{
+				phdl = (HDRVLST)listarray_getitem(lst, nIndex++);
+				if (phdl == NULL)
+				{
+					break;
+				}
+				file_cpyname(szPath, hdp.szPath, NELEMENTS(szPath));
+				file_setseparator(szPath, NELEMENTS(szPath));
+				file_catname(szPath, phdl->szFilename, NELEMENTS(szPath));
+
+				TRACEOUT(("delete_file: %s -> %s", intrst->filename_ptr, szPath));
+				if (file_delete(szPath))
+				{
+					nResult = ERR_ACCESSDENIED;
+					break;
+				}
+			}
+		}
 	} while (0 /*CONSTCOND*/);
 
-	fail(intrst, (UINT16)nResult);
+	if (lst != NULL)
+	{
+		listarray_destroy(lst);
+	}
+	if (nResult == ERR_NOERROR)
+	{
+		succeed(intrst);
+	}
+	else
+	{
+		fail(intrst, (UINT16)nResult);
+	}
 }
 
 /* 16 */
@@ -1099,29 +1122,36 @@ static void find_first(INTRST intrst) {
 	char fcbname[11];
 
 	flist = hostdrv.flist;
-	if (flist) {
+	if (flist)
+	{
 		hostdrv.flist = NULL;
 		hostdrv.stat.flistpos = 0;
 		listarray_destroy(flist);
 	}
 
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 
-	if (*intrst->srch_attr_ptr == 0x08) {		// ボリュームラベル
+	if (*intrst->srch_attr_ptr == 0x08)		/* ボリュームラベル */
+	{
 		store_srch(intrst);
 		store_dir(intrst, &hdd_volume);
 	}
-	else {
-		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS) {
+	else
+	{
+		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS)
+		{
 			fail(intrst, ERR_PATHNOTFOUND);
 			return;
 		}
+
 		TRACEOUT(("find_first %s -> %s", intrst->filename_ptr, hdp.szPath));
-		hostdrv.flist = hostdrvs_getpathlist(&hdp);
+		hostdrv.flist = hostdrvs_getpathlist(&hdp, intrst->fcbname_ptr, *intrst->srch_attr_ptr);
 		hostdrv.stat.flistpos = 0;
-		if (find_file(intrst) != SUCCESS) {
+		if (find_file(intrst) != SUCCESS)
+		{
 			fail(intrst, ERR_PATHNOTFOUND);
 			return;
 		}
