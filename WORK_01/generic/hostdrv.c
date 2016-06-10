@@ -448,7 +448,7 @@ static void remove_dir(INTRST intrst)
 		}
 		succeed(intrst);
 		return;
-	} while (0 /*CONSTCOND*/);
+	} while (FALSE /*CONSTCOND*/);
 
 	fail(intrst, (UINT16)nResult);
 }
@@ -474,14 +474,14 @@ static void make_dir(INTRST intrst)
 			break;
 		}
 
-		if (hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS)
-		{
-			nResult = ERR_PATHNOTFOUND;
-			break;
-		}
-		if (hdp.file.exist)
+		nResult = hostdrvs_getrealpath(&hdp, intrst->filename_ptr);
+		if (nResult == ERR_NOERROR)
 		{
 			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		else if (nResult != ERR_FILENOTFOUND)
+		{
 			break;
 		}
 		TRACEOUT(("make_dir: %s -> %s", intrst->filename_ptr, hdp.szPath));
@@ -497,11 +497,17 @@ static void make_dir(INTRST intrst)
 			nResult = ERR_ACCESSDENIED;
 			break;
 		}
-		succeed(intrst);
-		return;
-	} while (0 /*CONSTCOND*/);
+		nResult = ERR_NOERROR;
+	} while (FALSE /*CONSTCOND*/);
 
-	fail(intrst, (UINT16)nResult);
+	if (nResult == ERR_NOERROR)
+	{
+		succeed(intrst);
+	}
+	else
+	{
+		fail(intrst, (UINT16)nResult);
+	}
 }
 
 /* 05 */
@@ -816,15 +822,15 @@ static void rename_file(INTRST intrst)
 	do
 	{
 		TRACEOUT(("rename_file: %s -> %s", intrst->filename_ptr, intrst->filename_ptr_2));
-		if (hostdrvs_getrealdir(&hdp1, fcbname1, intrst->filename_ptr) != SUCCESS)
+		nResult = hostdrvs_getrealdir(&hdp1, fcbname1, intrst->filename_ptr);
+		if (nResult != ERR_NOERROR)
 		{
-			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
 
-		if (hostdrvs_getrealdir(&hdp2, fcbname2, intrst->filename_ptr_2) != SUCCESS)
+		nResult = hostdrvs_getrealdir(&hdp2, fcbname2, intrst->filename_ptr_2);
+		if (nResult != ERR_NOERROR)
 		{
-			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
 
@@ -871,7 +877,7 @@ static void rename_file(INTRST intrst)
 				break;
 			}
 		}
-	} while (0 /*CONSTCOND*/);
+	} while (FALSE /*CONSTCOND*/);
 
 	if (lst != NULL)
 	{
@@ -908,9 +914,9 @@ static void delete_file(INTRST intrst)
 	lst = NULL;
 	do
 	{
-		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS)
+		nResult = hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr);
+		if (nResult != ERR_NOERROR)
 		{
-			nResult = ERR_PATHNOTFOUND;
 			break;
 		}
 
@@ -976,7 +982,7 @@ static void delete_file(INTRST intrst)
 				}
 			}
 		}
-	} while (0 /*CONSTCOND*/);
+	} while (FALSE /*CONSTCOND*/);
 
 	if (lst != NULL)
 	{
@@ -1082,7 +1088,7 @@ static void open_file(INTRST intrst)
 
 		hdf->hdl = (INTPTR)fh;
 		hdf->mode = nMode;
-		file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
+		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
 
 		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
 		init_sft(&sft);
@@ -1101,54 +1107,89 @@ static void open_file(INTRST intrst)
 }
 
 /* 17 */
-static void create_file(INTRST intrst) {
+static void create_file(INTRST intrst)
+{
+	_SDACDS sc;
+	_SFTREC sft;
+	UINT nResult;
+	HDRVPATH hdp;
+	HDRVHANDLE hdf;
+	FILEH fh;
 
-	_SDACDS		sc;
-	_SFTREC		sft;
-	HDRVPATH	hdp;
-	HDRVHANDLE	hdf;
-	FILEH		fh;
-
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 	fetch_sft(intrst, &sft);
 
-	if ((is_wildcards(intrst->fcbname_ptr)) ||
-		(hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.file.attr & 0x10)) {
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
-	}
-	TRACEOUT(("create_file: %s -> %s %d", intrst->filename_ptr,
-										hdp.szPath, sft.open_mode[0] & 7));
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_FILENOTFOUND;
+			break;
+		}
 
-	if (!IS_PERMITWRITE) {
-		fail(intrst, ERR_ACCESSDENIED);
-		return;
-	}
+		nResult = hostdrvs_getrealpath(&hdp, intrst->filename_ptr);
+		if (nResult == ERR_NOERROR)
+		{
+			if (hdp.file.attr & 0x10)
+			{
+				nResult = ERR_ACCESSDENIED;
+				break;
+			}
+		}
+		else if (nResult == ERR_FILENOTFOUND)
+		{
+			nResult = ERR_NOERROR;
+		}
+		else
+		{
+			break;
+		}
 
-	hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
-	if (hdf == NULL) {
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
-	}
-	fh = file_create(hdp.szPath);
-	if (fh == FILEH_INVALID) {
-		TRACEOUT(("file create error!"));
-		fail(intrst, ERR_ACCESSDENIED);
-		return;
-	}
-	hdf->hdl = (INTPTR)fh;
-	hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
-	file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
+		TRACEOUT(("create_file: %s -> %s %d", intrst->filename_ptr, hdp.szPath, sft.open_mode[0] & 7));
 
-	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
-	init_sft(&sft);
+		if (!IS_PERMITWRITE)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
 
-	store_sft(intrst, &sft);
-	store_sda_currcds(&sc);
-	succeed(intrst);
+		hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+		if (hdf == NULL)
+		{
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+		fh = file_create(hdp.szPath);
+		if (fh == FILEH_INVALID)
+		{
+			TRACEOUT(("file create error!"));
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		hdf->hdl = (INTPTR)fh;
+		hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
+		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
+
+		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
+		init_sft(&sft);
+
+		store_sft(intrst, &sft);
+		store_sda_currcds(&sc);
+	} while (FALSE /*CONSTCOND*/);
+
+	if (nResult == ERR_NOERROR)
+	{
+		succeed(intrst);
+	}
+	else
+	{
+		fail(intrst, (UINT16)nResult);
+	}
 }
 
 /* 1B */
@@ -1179,7 +1220,7 @@ static void find_first(INTRST intrst) {
 	}
 	else
 	{
-		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != SUCCESS)
+		if (hostdrvs_getrealdir(&hdp, fcbname, intrst->filename_ptr) != ERR_NOERROR)
 		{
 			fail(intrst, ERR_PATHNOTFOUND);
 			return;
@@ -1321,10 +1362,11 @@ static void unknownfunc_2d(INTRST intrst) {
 
 /* 2E */
 // for dos4+
-static void ext_openfile(INTRST intrst) {
-
+static void ext_openfile(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
+	UINT nResult;
 	HDRVPATH	hdp;
 	UINT		mode;
 	BOOL		create;
@@ -1333,106 +1375,132 @@ static void ext_openfile(INTRST intrst) {
 	FILEH		fh;
 	HDRVHANDLE	hdf;
 
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 	fetch_sft(intrst, &sft);
 
-	// ファイルを探しに～
-	if ((is_wildcards(intrst->fcbname_ptr)) ||
-		(hostdrvs_newrealpath(&hdp, intrst->filename_ptr) != SUCCESS) ||
-		(hdp.file.attr & 0x10)) {
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
-	}
-
-	sft.open_mode[0] = sc.ver4.sda.mode_2E[0] & 0x7f;
-	sft.open_mode[1] = sc.ver4.sda.mode_2E[1] & 0x00;
-	act	= LOADINTELWORD(sc.ver4.sda.action_2E);
-
-	switch(sft.open_mode[0] & 7) {
-		case 1:	// write only
-			mode = HDFMODE_WRITE;
+	nResult = ERR_NOERROR;
+	do
+	{
+		if (is_wildcards(intrst->fcbname_ptr))
+		{
+			nResult = ERR_FILENOTFOUND;
 			break;
+		}
 
-		case 2:	// read/write
-			mode = HDFMODE_READ | HDFMODE_WRITE;
-			break;
-
-		default:
-			mode = HDFMODE_READ;
-			break;
-	}
-
-	create = FALSE;
-	if (hdp.file.exist) {				// ファイルが存在
-		switch(act & 3) {
-			case 1:
-				cx = 1;
+		sft.open_mode[0] = sc.ver4.sda.mode_2E[0] & 0x7f;
+		sft.open_mode[1] = sc.ver4.sda.mode_2E[1] & 0x00;
+		switch (sft.open_mode[0] & 7)
+		{
+			case 1:	// write only
+				mode = HDFMODE_WRITE;
 				break;
 
-			case 2:
-				create = TRUE;
-				cx = 3;
+			case 2:	// read/write
+				mode = HDFMODE_READ | HDFMODE_WRITE;
 				break;
 
 			default:
-				fail(intrst, ERR_ACCESSDENIED);
-				return;
+				mode = HDFMODE_READ;
+				break;
 		}
-	}
-	else {								// 新規ファイル
-		if (act & 0x10) {
-			create = TRUE;
-			cx = 2;
+		act = LOADINTELWORD(sc.ver4.sda.action_2E);
+		create = FALSE;
+
+		nResult = hostdrvs_getrealpath(&hdp, intrst->filename_ptr);
+		if (nResult == ERR_NOERROR)				/* ファイルが存在 */
+		{
+			if (hdp.file.attr & 0x10)
+			{
+				nResult = ERR_ACCESSDENIED;
+			}
+			switch (act & 3)
+			{
+				case 1:
+					cx = 1;
+					break;
+
+				case 2:
+					create = TRUE;
+					cx = 3;
+					break;
+
+				default:
+					nResult = ERR_ACCESSDENIED;
+					return;
+			}
 		}
-		else {
-			fail(intrst, ERR_PATHNOTFOUND);
-			return;
+		else if (nResult == ERR_FILENOTFOUND)	/* 新規ファイル */
+		{
+			if (act & 0x10)
+			{
+				create = TRUE;
+				cx = 2;
+				nResult = ERR_NOERROR;
+			}
 		}
-	}
-
-	if (create) {
-		if (!IS_PERMITWRITE) {
-			fail(intrst, ERR_ACCESSDENIED);
-			return;
+		if (nResult != ERR_NOERROR)
+		{
+			break;
 		}
-		fh = file_create(hdp.szPath);
-	}
-	else if (mode & HDFMODE_WRITE) {
-		if (!IS_PERMITWRITE) {
-			fail(intrst, ERR_ACCESSDENIED);
-			return;
+
+		fh = FILEH_INVALID;
+		if (create)
+		{
+			if (IS_PERMITWRITE)
+			{
+				fh = file_create(hdp.szPath);
+			}
 		}
-		fh = file_open(hdp.szPath);
-	}
-	else {
-		fh = file_open_rb(hdp.szPath);
-	}
-	if (fh == FILEH_INVALID) {
-		TRACEOUT(("file open error!"));
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
-	}
+		else if (mode & HDFMODE_WRITE)
+		{
+			if (IS_PERMITWRITE)
+			{
+				fh = file_open(hdp.szPath);
+			}
+		}
+		else
+		{
+			fh = file_open_rb(hdp.szPath);
+		}
 
-	hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
-	if (hdf == NULL) {
-		file_close(fh);
-		fail(intrst, ERR_PATHNOTFOUND);
-		return;
+		if (fh == FILEH_INVALID)
+		{
+			TRACEOUT(("file open error!"));
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+		if (hdf == NULL)
+		{
+			file_close(fh);
+			nResult = ERR_ACCESSDENIED;
+			break;
+		}
+
+		hdf->hdl = (INTPTR)fh;
+		hdf->mode = mode;
+		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
+
+		STOREINTELWORD(intrst->r.w.cx, cx);
+		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
+		init_sft(&sft);
+		store_sft(intrst, &sft);
+
+		store_sda_currcds(&sc);
+	} while (FALSE /*CONSTCOND*/);
+
+	if (nResult == ERR_NOERROR)
+	{
+		succeed(intrst);
 	}
-
-	hdf->hdl = (INTPTR)fh;
-	hdf->mode = mode;
-	file_cpyname(hdf->path, hdp.szPath, sizeof(hdf->path));
-
-	STOREINTELWORD(intrst->r.w.cx, cx);
-	fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
-	init_sft(&sft);
-	store_sft(intrst, &sft);
-
-	store_sda_currcds(&sc);
-	succeed(intrst);
+	else
+	{
+		fail(intrst, (UINT16)nResult);
+	}
 }
 
 

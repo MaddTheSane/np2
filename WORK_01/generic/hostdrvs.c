@@ -108,9 +108,9 @@ static void RealPath2FcbSub(char *lpFcbname, UINT cchFcbname, const char *lpPath
 /**
  * パスを FCB に変換
  * @param[out] lpFcbname FCB
- * @param[in] fli パス
+ * @param[in] lpPath パス
  */
-static void RealName2Fcb(char *lpFcbname, const FLINFO *fli)
+static void RealName2Fcb(char *lpFcbname, const OEMCHAR *lpPath)
 {
 	OEMCHAR	*ext;
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
@@ -120,7 +120,7 @@ static void RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 
 	FillMemory(lpFcbname, 11, ' ');
 
-	ext = file_getext(fli->path);
+	ext = file_getext(lpPath);
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	oemtext_oemtosjis(sjis, NELEMENTS(sjis), ext, (UINT)-1);
 	RealPath2FcbSub(lpFcbname + 8, 3, sjis);
@@ -128,7 +128,7 @@ static void RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 	RealPath2FcbSub(lpFcbname + 8, 3, ext);
 #endif
 
-	file_cpyname(szFilename, fli->path, NELEMENTS(szFilename));
+	file_cpyname(szFilename, lpPath, NELEMENTS(szFilename));
 	file_cutext(szFilename);
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	oemtext_oemtosjis(sjis, NELEMENTS(sjis), szFilename, (UINT)-1);
@@ -140,8 +140,9 @@ static void RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 
 /**
  * FCB 名が一致するか?
- * @param[in] lpFcbname FCB 名
+ * @param[in] phdf ファイル情報
  * @param[in] lpMask マスク
+ * @param[in] nAttr アトリビュート マスク
  * @retval TRUE 一致
  * @retval FALSE 不一致
  */
@@ -199,7 +200,7 @@ LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp, const char *lpMask, UINT nA
 	{
 		lst = listarray_new(sizeof(file), 64);
 
-		if ((phdp->file.exist) && (phdp->file.attr & 0x10))
+		if (phdp->file.attr & 0x10)
 		{
 			file = phdp->file;
 			memcpy(file.fcbname, s_self, 11);
@@ -233,13 +234,12 @@ LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp, const char *lpMask, UINT nA
 		{
 			do
 			{
-				RealName2Fcb(file.fcbname, &fli);
+				RealName2Fcb(file.fcbname, fli.path);
 				if ((file.fcbname[0] == ' ') || (listarray_enum(lst, IsMatchName, file.fcbname) != NULL))
 				{
 					continue;
 				}
 
-				file.exist = 1;
 				file.caps = fli.caps;
 				file.size = fli.size;
 				file.attr = fli.attr;
@@ -351,11 +351,10 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
 	{
 		do
 		{
-			RealName2Fcb(fcbname, &fli);
+			RealName2Fcb(fcbname, fli.path);
 			if (memcmp(fcbname, lpFcbname, 11) == 0)
 			{
 				memcpy(phdp->file.fcbname, fcbname, 11);
-				phdp->file.exist = 1;
 				phdp->file.caps = fli.caps;
 				phdp->file.size = fli.size;
 				phdp->file.attr = fli.attr;
@@ -377,10 +376,9 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
  * @param[out] phdp HostDrv パス
  * @param[out] lpFcbname FCB 名
  * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
+ * @return DOS エラー コード
  */
-BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
+UINT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
 {
 	phdp->file = s_hddroot;
 	file_cpyname(phdp->szPath, np2cfg.hdrvroot, NELEMENTS(phdp->szPath));
@@ -391,7 +389,7 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
 	}
 	else if (lpDosPath[0] != '\0')
 	{
-		return FAILURE;
+		return ERR_PATHNOTFOUND;
 	}
 	while (TRUE /*CONSTCOND*/)
 	{
@@ -406,7 +404,7 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
 		}
 		lpDosPath++;
 	}
-	return (lpDosPath[0] == '\0') ? SUCCESS : FAILURE;
+	return (lpDosPath[0] == '\0') ? ERR_NOERROR : ERR_PATHNOTFOUND;
 }
 
 /**
@@ -471,35 +469,14 @@ UINT hostdrvs_appendname(HDRVPATH *phdp, const char *lpFcbname)
 UINT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 {
 	char fcbname[11];
+	UINT nResult;
 
-	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
+	nResult = hostdrvs_getrealdir(phdp, fcbname, lpDosPath);
+	if (nResult == ERR_NOERROR)
 	{
-		return ERR_PATHNOTFOUND;
+		nResult = hostdrvs_appendname(phdp, fcbname);
 	}
-	if (FindSinglePath(phdp, fcbname) != SUCCESS)
-	{
-		return ERR_FILENOTFOUND;
-	}
-	return ERR_NOERROR;
-}
-
-/**
- * 新規パスを得る
- * @param[out] phdp HostDrv パス
- * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
- */
-BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
-{
-	char fcbname[11];
-
-	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
-	{
-		return FAILURE;
-	}
-	hostdrvs_appendname(phdp, fcbname);
-	return SUCCESS;
+	return nResult;
 }
 
 /* ---- */
