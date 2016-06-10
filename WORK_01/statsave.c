@@ -27,6 +27,7 @@
 #include "vram.h"
 #include "palettes.h"
 #include "maketext.h"
+#include "sound/sndcsec.h"
 #include "sound.h"
 #include "fmboard.h"
 #include "beep.h"
@@ -905,7 +906,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *tbl)
 	pcm86gen_update();
 	if (nSaveFlags & FLAG_PCM86)
 	{
-		fmboard_extenable((REG8)(g_pcm86.soundflags & 1));
+		fmboard_extenable((REG8)(g_pcm86.cSoundFlags & 1));
 	}
 	if (nSaveFlags & FLAG_CS4231)
 	{
@@ -1192,6 +1193,8 @@ const SFENTRY	*tblterm;
 		return(STATFLAG_FAILURE);
 	}
 
+	SNDCSEC_ENTER;
+
 	ret = STATFLAG_SUCCESS;
 	tbl = np2tbl;
 	tblterm = tbl + NELEMENTS(np2tbl);
@@ -1257,6 +1260,9 @@ const SFENTRY	*tblterm;
 		}
 		tbl++;
 	}
+
+	SNDCSEC_LEAVE;
+
 	statflag_close(sffh);
 	return(ret);
 }
@@ -1354,6 +1360,8 @@ const SFENTRY	*tblterm;
 		statflag_close(sffh);
 		return(STATFLAG_FAILURE);
 	}
+
+	SNDCSEC_ENTER;
 
 	soundmng_stop();
 	rs232c_midipanic();
@@ -1481,6 +1489,8 @@ const SFENTRY	*tblterm;
 	MEMM_VRAM(vramop.operate);
 	fddmtr_reset();
 	soundmng_play();
+
+	SNDCSEC_LEAVE;
 
 	return(ret);
 }

@@ -9,16 +9,16 @@
 #define PCM86GET8(p, a)													\
 	do																	\
 	{																	\
-		(a) = (SINT8)((p)->buffer[(p)->readpos & PCM86_BUFMSK]) << 8;	\
-		(p)->readpos++;													\
+		(a) = (SINT8)((p)->buffer[(p)->nReadPos & PCM86_BUFMSK]) << 8;	\
+		(p)->nReadPos++;												\
 	} while (0 /*CONSTCOND*/)
 
 #define PCM86GET16(p, a)												\
 	do																	\
 	{																	\
-		(a) = (SINT8)((p)->buffer[(p)->readpos & PCM86_BUFMSK]) << 8;	\
-		(a) |= (p)->buffer[((p)->readpos + 1) & PCM86_BUFMSK];			\
-		(p)->readpos += 2;												\
+		(a) = (SINT8)((p)->buffer[(p)->nReadPos & PCM86_BUFMSK]) << 8;	\
+		(a) |= (p)->buffer[((p)->nReadPos + 1) & PCM86_BUFMSK];			\
+		(p)->nReadPos += 2;												\
 	} while (0 /*CONSTCOND*/)
 
 #define	BYVOLUME(p, s)	((((s) >> 6) * (p)->volume) >> (PCM86_DIVBIT + 4))
@@ -35,8 +35,8 @@ static void pcm86mono16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			{
 				SINT32 dat;
 				pcm86->divremain += PCM86_DIVENV;
-				pcm86->realbuf -= 2;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount -= 2;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm16_bufempty;
 				}
@@ -60,8 +60,8 @@ static void pcm86mono16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			while (1)
 			{
 				SINT32 dat;
-				pcm86->realbuf -= 2;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount -= 2;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm16_bufempty;
 				}
@@ -87,7 +87,7 @@ static void pcm86mono16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 	return;
 
 pm16_bufempty:
-	pcm86->realbuf += 2;
+	pcm86->nBufferCount += 2;
 	pcm86->divremain = 0;
 	pcm86->smp = 0;
 	pcm86->lastsmp = 0;
@@ -104,8 +104,8 @@ static void pcm86stereo16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			{
 				SINT32 dat;
 				pcm86->divremain += PCM86_DIVENV;
-				pcm86->realbuf -= 4;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount -= 4;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto ps16_bufempty;
 				}
@@ -136,8 +136,8 @@ static void pcm86stereo16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			while (1 /*CONSTCOND*/)
 			{
 				SINT32 dat;
-				pcm86->realbuf -= 4;
-				if (pcm86->realbuf < 4)
+				pcm86->nBufferCount -= 4;
+				if (pcm86->nBufferCount < 4)
 				{
 					goto ps16_bufempty;
 				}
@@ -169,7 +169,7 @@ static void pcm86stereo16(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 	return;
 
 ps16_bufempty:
-	pcm86->realbuf += 4;
+	pcm86->nBufferCount += 4;
 	pcm86->divremain = 0;
 	pcm86->smp_l = 0;
 	pcm86->smp_r = 0;
@@ -188,8 +188,8 @@ static void pcm86mono8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			{
 				SINT32 dat;
 				pcm86->divremain += PCM86_DIVENV;
-				pcm86->realbuf--;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount--;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm8_bufempty;
 				}
@@ -213,8 +213,8 @@ static void pcm86mono8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			while (1 /*CONSTCOND*/)
 			{
 				SINT32 dat;
-				pcm86->realbuf--;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount--;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm8_bufempty;
 				}
@@ -240,7 +240,7 @@ static void pcm86mono8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 	return;
 
 pm8_bufempty:
-	pcm86->realbuf += 1;
+	pcm86->nBufferCount += 1;
 	pcm86->divremain = 0;
 	pcm86->smp = 0;
 	pcm86->lastsmp = 0;
@@ -257,8 +257,8 @@ static void pcm86stereo8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			{
 				SINT32 dat;
 				pcm86->divremain += PCM86_DIVENV;
-				pcm86->realbuf -= 2;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount -= 2;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm8_bufempty;
 				}
@@ -289,8 +289,8 @@ static void pcm86stereo8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 			while (1 /*CONSTCOND*/)
 			{
 				SINT32 dat;
-				pcm86->realbuf -= 2;
-				if (pcm86->realbuf < 0)
+				pcm86->nBufferCount -= 2;
+				if (pcm86->nBufferCount < 0)
 				{
 					goto pm8_bufempty;
 				}
@@ -322,7 +322,7 @@ static void pcm86stereo8(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 	return;
 
 pm8_bufempty:
-	pcm86->realbuf += 2;
+	pcm86->nBufferCount += 2;
 	pcm86->divremain = 0;
 	pcm86->smp_l = 0;
 	pcm86->smp_r = 0;
@@ -332,9 +332,9 @@ pm8_bufempty:
 
 void SOUNDCALL pcm86gen_getpcm(PCM86 pcm86, SINT32 *lpBuffer, UINT nCount)
 {
-	if ((nCount) && (pcm86->fifo & 0x80) && (pcm86->div))
+	if ((nCount) && (pcm86->cFifoCtrl & 0x80) && (pcm86->div))
 	{
-		switch (pcm86->dactrl & 0x70)
+		switch (pcm86->cDacCtrl & 0x70)
 		{
 			case 0x00:						/* 16bit-none */
 				break;
