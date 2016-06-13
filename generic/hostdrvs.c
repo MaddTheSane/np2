@@ -16,6 +16,12 @@
 /*! ルート情報 */
 static const HDRVFILE s_hddroot = {{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, {0}, {0}};
 
+/*! 自分 */
+static const char s_self[11] = {'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+
+/*! 親 */
+static const char s_parent[11] = {'.','.',' ',' ',' ',' ',' ',' ',' ',' ',' '};
+
 /*! DOSで許可されるキャラクタ */
 static const UINT8 s_cDosCharacters[] =
 {
@@ -102,11 +108,9 @@ static void RealPath2FcbSub(char *lpFcbname, UINT cchFcbname, const char *lpPath
 /**
  * パスを FCB に変換
  * @param[out] lpFcbname FCB
- * @param[in] fli パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
+ * @param[in] lpPath パス
  */
-static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
+static void RealName2Fcb(char *lpFcbname, const OEMCHAR *lpPath)
 {
 	OEMCHAR	*ext;
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
@@ -116,7 +120,7 @@ static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 
 	FillMemory(lpFcbname, 11, ' ');
 
-	ext = file_getext(fli->path);
+	ext = file_getext(lpPath);
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	oemtext_oemtosjis(sjis, NELEMENTS(sjis), ext, (UINT)-1);
 	RealPath2FcbSub(lpFcbname + 8, 3, sjis);
@@ -124,7 +128,7 @@ static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 	RealPath2FcbSub(lpFcbname + 8, 3, ext);
 #endif
 
-	file_cpyname(szFilename, fli->path, NELEMENTS(szFilename));
+	file_cpyname(szFilename, lpPath, NELEMENTS(szFilename));
 	file_cutext(szFilename);
 #if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
 	oemtext_oemtosjis(sjis, NELEMENTS(sjis), szFilename, (UINT)-1);
@@ -132,7 +136,35 @@ static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
 #else
 	RealPath2FcbSub(lpFcbname + 0, 8, szFilename);
 #endif
-	return SUCCESS;
+}
+
+/**
+ * FCB 名が一致するか?
+ * @param[in] phdf ファイル情報
+ * @param[in] lpMask マスク
+ * @param[in] nAttr アトリビュート マスク
+ * @retval TRUE 一致
+ * @retval FALSE 不一致
+ */
+static BOOL IsMatchFcb(const HDRVFILE *phdf, const char *lpMask, UINT nAttr)
+{
+	UINT i;
+
+	if ((phdf->attr & (~nAttr)) & 0x16)
+	{
+		return FALSE;
+	}
+	if (lpMask != NULL)
+	{
+		for (i = 0; i < 11; i++)
+		{
+			if ((phdf->fcbname[i] != lpMask[i]) && (lpMask[i] != '?'))
+			{
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
 }
 
 /**
@@ -144,44 +176,56 @@ static BRESULT RealName2Fcb(char *lpFcbname, const FLINFO *fli)
  */
 static BOOL IsMatchName(void *vpItem, void *vpArg)
 {
-	if (!memcmp(((HDRVLST)vpItem)->file.fcbname, vpArg, 11))
-	{
-		return TRUE;
-	}
-	return FALSE;
+	return IsMatchFcb((HDRVFILE *)vpItem, (char *)vpArg, 0x16);
 }
 
 /**
  * ファイル一覧を取得
  * @param[in] phdp パス
+ * @param[in] lpMask マスク
+ * @param[in] nAttr アトリビュート
  * @return ファイル一覧
  */
-LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp)
+LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp, const char *lpMask, UINT nAttr)
 {
 	LISTARRAY ret;
+	LISTARRAY lst;
+	HDRVFILE file;
 	HDRVLST hdd;
 	FLISTH flh;
 	FLINFO fli;
-	char fcbname[11];
 
 	ret = listarray_new(sizeof(_HDRVLST), 64);
 	if (ret != NULL)
 	{
-		if ((phdp->file.exist) && (phdp->file.attr & 0x10))
+		lst = listarray_new(sizeof(file), 64);
+
+		if (phdp->file.attr & 0x10)
 		{
-			hdd = (HDRVLST)listarray_append(ret, NULL);
-			if (hdd != NULL)
+			file = phdp->file;
+			memcpy(file.fcbname, s_self, 11);
+			listarray_append(lst, &file);
+			if (IsMatchFcb(&file, lpMask, nAttr))
 			{
-				hdd->file = phdp->file;
-				memcpy(hdd->file.fcbname, ".          ", 11);
-				file_cpyname(hdd->szFilename, OEMTEXT("."), NELEMENTS(hdd->szFilename));
+				hdd = (HDRVLST)listarray_append(ret, NULL);
+				if (hdd != NULL)
+				{
+					hdd->file = file;
+					file_cpyname(hdd->szFilename, OEMTEXT("."), NELEMENTS(hdd->szFilename));
+				}
 			}
-			hdd = (HDRVLST)listarray_append(ret, NULL);
-			if (hdd != NULL)
+
+			file = phdp->file;
+			memcpy(file.fcbname, s_parent, 11);
+			listarray_append(lst, &file);
+			if (IsMatchFcb(&file, lpMask, nAttr))
 			{
-				hdd->file = phdp->file;
-				memcpy(hdd->file.fcbname, "..         ", 11);
-				file_cpyname(hdd->szFilename, OEMTEXT(".."), NELEMENTS(hdd->szFilename));
+				hdd = (HDRVLST)listarray_append(ret, NULL);
+				if (hdd != NULL)
+				{
+					hdd->file = file;
+					file_cpyname(hdd->szFilename, OEMTEXT(".."), NELEMENTS(hdd->szFilename));
+				}
 			}
 		}
 
@@ -190,18 +234,24 @@ LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp)
 		{
 			do
 			{
-				if ((RealName2Fcb(fcbname, &fli) == SUCCESS) && (fcbname[0] != ' ') && (listarray_enum(ret, IsMatchName, fcbname) == NULL))
+				RealName2Fcb(file.fcbname, fli.path);
+				if ((file.fcbname[0] == ' ') || (listarray_enum(lst, IsMatchName, file.fcbname) != NULL))
+				{
+					continue;
+				}
+
+				file.caps = fli.caps;
+				file.size = fli.size;
+				file.attr = fli.attr;
+				file.date = fli.date;
+				file.time = fli.time;
+				listarray_append(lst, &file);
+				if (IsMatchFcb(&file, lpMask, nAttr))
 				{
 					hdd = (HDRVLST)listarray_append(ret, NULL);
 					if (hdd != NULL)
 					{
-						memcpy(hdd->file.fcbname, fcbname, 11);
-						hdd->file.exist = 1;
-						hdd->file.caps = fli.caps;
-						hdd->file.size = fli.size;
-						hdd->file.attr = fli.attr;
-						hdd->file.date = fli.date;
-						hdd->file.time = fli.time;
+						hdd->file = file;
 						file_cpyname(hdd->szFilename, fli.path, NELEMENTS(hdd->szFilename));
 					}
 				}
@@ -213,6 +263,7 @@ LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp)
 			listarray_destroy(ret);
 			ret = NULL;
 		}
+		listarray_getitems(lst);
 	}
 	return ret;
 }
@@ -300,10 +351,10 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
 	{
 		do
 		{
-			if ((RealName2Fcb(fcbname, &fli) == SUCCESS) && (memcmp(fcbname, lpFcbname, 11) == 0))
+			RealName2Fcb(fcbname, fli.path);
+			if (memcmp(fcbname, lpFcbname, 11) == 0)
 			{
 				memcpy(phdp->file.fcbname, fcbname, 11);
-				phdp->file.exist = 1;
 				phdp->file.caps = fli.caps;
 				phdp->file.size = fli.size;
 				phdp->file.attr = fli.attr;
@@ -325,10 +376,9 @@ static BRESULT FindSinglePath(HDRVPATH *phdp, const char *lpFcbname)
  * @param[out] phdp HostDrv パス
  * @param[out] lpFcbname FCB 名
  * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
+ * @return DOS エラー コード
  */
-BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
+UINT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
 {
 	phdp->file = s_hddroot;
 	file_cpyname(phdp->szPath, np2cfg.hdrvroot, NELEMENTS(phdp->szPath));
@@ -339,7 +389,7 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
 	}
 	else if (lpDosPath[0] != '\0')
 	{
-		return FAILURE;
+		return ERR_PATHNOTFOUND;
 	}
 	while (TRUE /*CONSTCOND*/)
 	{
@@ -354,7 +404,60 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
 		}
 		lpDosPath++;
 	}
-	return (lpDosPath[0] == '\0') ? SUCCESS : FAILURE;
+	return (lpDosPath[0] == '\0') ? ERR_NOERROR : ERR_PATHNOTFOUND;
+}
+
+/**
+ * パスを結合する
+ * @param[in,out] phdp HostDrv パス
+ * @param[in] lpFcbname FCB 名
+ * @return DOS エラー コード
+ */
+UINT hostdrvs_appendname(HDRVPATH *phdp, const char *lpFcbname)
+{
+	char szDosName[16];
+	char *p;
+	UINT i;
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+	OEMCHAR oemname[64];
+#endif
+
+	if (lpFcbname[0] == ' ')
+	{
+		return ERR_PATHNOTFOUND;
+	}
+	else if (FindSinglePath(phdp, lpFcbname) == SUCCESS)
+	{
+		return ERR_NOERROR;
+	}
+	else
+	{
+		memset(&phdp->file, 0, sizeof(phdp->file));
+		memcpy(phdp->file.fcbname, lpFcbname, 11);
+		file_setseparator(phdp->szPath, NELEMENTS(phdp->szPath));
+
+		p = szDosName;
+		for (i = 0; (i < 8) && (lpFcbname[i] != ' '); i++)
+		{
+			*p++ = lpFcbname[i];
+		}
+		if (lpFcbname[8] != ' ')
+		{
+			*p++ = '.';
+			for (i = 8; (i < 11) && (lpFcbname[i] != ' '); i++)
+			{
+				*p++ = lpFcbname[i];
+			}
+		}
+		*p = '\0';
+#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
+		oemtext_sjistooem(oemname, NELEMENTS(oemname), szDosName, (UINT)-1);
+		file_catname(phdp->szPath, oemname, NELEMENTS(phdp->szPath));
+#else
+		file_catname(phdp->szPath, szDosName, NELEMENTS(phdp->szPath));
+#endif
+		return ERR_FILENOTFOUND;
+	}
 }
 
 /**
@@ -366,68 +469,14 @@ BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPa
 UINT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath)
 {
 	char fcbname[11];
+	UINT nResult;
 
-	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
+	nResult = hostdrvs_getrealdir(phdp, fcbname, lpDosPath);
+	if (nResult == ERR_NOERROR)
 	{
-		return ERR_PATHNOTFOUND;
+		nResult = hostdrvs_appendname(phdp, fcbname);
 	}
-	if (FindSinglePath(phdp, fcbname) != SUCCESS)
-	{
-		return ERR_FILENOTFOUND;
-	}
-	return ERR_NOERROR;
-}
-
-/**
- * 新規パスを得る
- * @param[out] phdp HostDrv パス
- * @param[in] lpDosPath DOS パス
- * @retval SUCCESS 成功
- * @retval FAILURE 失敗
- */
-BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath)
-{
-	char fcbname[11];
-	char szDosName[16];
-	UINT i;
-	char *p;
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-	OEMCHAR oemname[64];
-#endif
-
-	if ((hostdrvs_getrealdir(phdp, fcbname, lpDosPath) != SUCCESS) || (fcbname[0] == ' '))
-	{
-		return FAILURE;
-	}
-
-	if (FindSinglePath(phdp, fcbname) != SUCCESS)
-	{
-		memset(&phdp->file, 0, sizeof(phdp->file));
-		memcpy(phdp->file.fcbname, fcbname, 11);
-		file_setseparator(phdp->szPath, NELEMENTS(phdp->szPath));
-
-		p = szDosName;
-		for (i = 0; (i < 8) && (fcbname[i] != ' '); i++)
-		{
-			*p++ = fcbname[i];
-		}
-		if (fcbname[8] != ' ')
-		{
-			*p++ = '.';
-			for (i = 8; (i < 11) && (fcbname[i] != ' '); i++)
-			{
-				*p++ = fcbname[i];
-			}
-		}
-		*p = '\0';
-#if defined(OSLANG_EUC) || defined(OSLANG_UTF8) || defined(OSLANG_UCS2)
-		oemtext_sjistooem(oemname, NELEMENTS(oemname), szDosName, (UINT)-1);
-		file_catname(phdp->szPath, oemname, NELEMENTS(phdp->szPath));
-#else
-		file_catname(phdp->szPath, szDosName, NELEMENTS(phdp->szPath));
-#endif
-	}
-	return SUCCESS;
+	return nResult;
 }
 
 /* ---- */

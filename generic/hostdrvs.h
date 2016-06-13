@@ -34,7 +34,6 @@ enum
 struct tagHostDrvFile
 {
 	char	fcbname[11];	/*!< FCB 名 */
-	UINT8	exist;			/*!< 存在するか? */
 	UINT	caps;			/*!< 情報フラグ */
 	UINT32	size;			/*!< サイズ */
 	UINT32	attr;			/*!< 属性 */
@@ -64,10 +63,10 @@ struct tagHostDrvPath
 };
 typedef struct tagHostDrvPath HDRVPATH;		/*!< 定義 */
 
-LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp);
-BRESULT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath);
+LISTARRAY hostdrvs_getpathlist(const HDRVPATH *phdp, const char *lpMask, UINT nAttr);
+UINT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath);
+UINT hostdrvs_appendname(HDRVPATH *phdp, const char *lpFcbname);
 UINT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath);
-BRESULT hostdrvs_newrealpath(HDRVPATH *phdp, const char *lpDosPath);
 void hostdrvs_fhdlallclose(LISTARRAY fileArray);
 HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY fileArray);
 
