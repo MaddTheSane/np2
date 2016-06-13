@@ -287,7 +287,7 @@ void i286c(void) {
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode]();
+			i286op[opcode](&i286core);
 			if (I286_TRAP) {
 				i286c_interrupt(1);
 			}
@@ -300,7 +300,7 @@ void i286c(void) {
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode]();
+			i286op[opcode](&i286core);
 			dmax86();
 		} while(I286_REMCLOCK > 0);
 	}
@@ -310,7 +310,7 @@ void i286c(void) {
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode]();
+			i286op[opcode](&i286core);
 		} while(I286_REMCLOCK > 0);
 	}
 }
@@ -323,7 +323,7 @@ void i286c_step(void) {
 	I286_FLAG &= ~(O_FLAG);
 
 	GET_PCBYTE(opcode);
-	i286op[opcode]();
+	i286op[opcode](&i286core);
 
 	I286_FLAG &= ~(O_FLAG);
 	if (I286_OV) {

@@ -70,7 +70,7 @@
 #define I286FN	static void
 #define I286EXT	void
 
-typedef void (*I286OP)(void);
+typedef void (*I286OP)(I286CORE *cpu);
 
 extern void CPUCALL i286c_intnum(UINT vect, REG16 IP);
 extern UINT32 i286c_selector(UINT sel);
@@ -86,7 +86,7 @@ extern const I286OP i286op_repne[];
 #define	I286_0F	static void CPUCALL
 typedef void (CPUCALL * I286OP_0F)(I286CORE *cpu, UINT op);
 
-I286EXT i286c_cts(void);
+I286EXT i286c_cts(I286CORE *cpu);
 
 
 #define	I286_8X	static void CPUCALL
@@ -132,24 +132,24 @@ extern const I286OPF6 c_ope0xfe_table[];
 extern const I286OPF6 c_ope0xff_table[];
 
 
-extern I286EXT i286c_rep_insb(void);
-extern I286EXT i286c_rep_insw(void);
-extern I286EXT i286c_rep_outsb(void);
-extern I286EXT i286c_rep_outsw(void);
-extern I286EXT i286c_rep_movsb(void);
-extern I286EXT i286c_rep_movsw(void);
-extern I286EXT i286c_rep_lodsb(void);
-extern I286EXT i286c_rep_lodsw(void);
-extern I286EXT i286c_rep_stosb(void);
-extern I286EXT i286c_rep_stosw(void);
-extern I286EXT i286c_repe_cmpsb(void);
-extern I286EXT i286c_repne_cmpsb(void);
-extern I286EXT i286c_repe_cmpsw(void);
-extern I286EXT i286c_repne_cmpsw(void);
-extern I286EXT i286c_repe_scasb(void);
-extern I286EXT i286c_repne_scasb(void);
-extern I286EXT i286c_repe_scasw(void);
-extern I286EXT i286c_repne_scasw(void);
+extern I286EXT i286c_rep_insb(I286CORE *cpu);
+extern I286EXT i286c_rep_insw(I286CORE *cpu);
+extern I286EXT i286c_rep_outsb(I286CORE *cpu);
+extern I286EXT i286c_rep_outsw(I286CORE *cpu);
+extern I286EXT i286c_rep_movsb(I286CORE *cpu);
+extern I286EXT i286c_rep_movsw(I286CORE *cpu);
+extern I286EXT i286c_rep_lodsb(I286CORE *cpu);
+extern I286EXT i286c_rep_lodsw(I286CORE *cpu);
+extern I286EXT i286c_rep_stosb(I286CORE *cpu);
+extern I286EXT i286c_rep_stosw(I286CORE *cpu);
+extern I286EXT i286c_repe_cmpsb(I286CORE *cpu);
+extern I286EXT i286c_repne_cmpsb(I286CORE *cpu);
+extern I286EXT i286c_repe_cmpsw(I286CORE *cpu);
+extern I286EXT i286c_repne_cmpsw(I286CORE *cpu);
+extern I286EXT i286c_repe_scasb(I286CORE *cpu);
+extern I286EXT i286c_repne_scasb(I286CORE *cpu);
+extern I286EXT i286c_repe_scasw(I286CORE *cpu);
+extern I286EXT i286c_repne_scasw(I286CORE *cpu);
 
 
 #define i286_memoryread(a)			memp_read8(a)

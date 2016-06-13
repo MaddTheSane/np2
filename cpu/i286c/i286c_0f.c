@@ -291,7 +291,7 @@ I286_0F _loadall286(void)
 	I286IRQCHECKTERM
 }
 
-I286EXT i286c_cts(void)
+I286EXT i286c_cts(I286CORE *cpu)
 {
 	UINT16	ip;
 	UINT	op;
@@ -309,13 +309,13 @@ I286EXT i286c_cts(void)
 		else 
 		{
 			GET_PCBYTE(op2);
-			cts0_table[(op2 >> 3) & 7](&i286core, op2);
+			cts0_table[(op2 >> 3) & 7](cpu, op2);
 		}
 	}
 	else if (op == 1)
 	{
 		GET_PCBYTE(op2);
-		cts1_table[(op2 >> 3) & 7](&i286core, op2);
+		cts1_table[(op2 >> 3) & 7](cpu, op2);
 	}
 	else if (op == 5)
 	{
@@ -326,4 +326,3 @@ I286EXT i286c_cts(void)
 		INT_NUM(6, ip - 1);
 	}
 }
-
