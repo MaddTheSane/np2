@@ -1415,12 +1415,12 @@ I286FN _calc_ea8_i8(void) {					// 80:	op		EA8, DATA8
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			c_op8xext8_table[(op >> 3) & 7](madr);
+			c_op8xext8_table[(op >> 3) & 7](&i286core, madr);
 			return;
 		}
 		out = mem + madr;
 	}
-	c_op8xreg8_table[(op >> 3) & 7](out);
+	c_op8xreg8_table[(op >> 3) & 7](&i286core, out);
 }
 
 I286FN _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
@@ -1440,13 +1440,13 @@ I286FN _calc_ea16_i16(void) {				// 81:	op		EA16, DATA16
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			GET_PCWORD(src);
-			c_op8xext16_table[(op >> 3) & 7](madr, src);
+			c_op8xext16_table[(op >> 3) & 7](&i286core, madr, src);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCWORD(src);
-	c_op8xreg16_table[(op >> 3) & 7](out, src);
+	c_op8xreg16_table[(op >> 3) & 7](&i286core, out, src);
 }
 
 I286FN _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
@@ -1466,13 +1466,13 @@ I286FN _calc_ea16_i8(void) {				// 83:	op		EA16, DATA8
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
 			GET_PCBYTES(src);
-			c_op8xext16_table[(op >> 3) & 7](madr, src);
+			c_op8xext16_table[(op >> 3) & 7](&i286core, madr, src);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCBYTES(src);
-	c_op8xreg16_table[(op >> 3) & 7](out, src);
+	c_op8xreg16_table[(op >> 3) & 7](&i286core, out, src);
 }
 
 I286FN _test_ea_r8(void) {					// 84:	test	EA, REG8
@@ -2049,14 +2049,14 @@ I286FN _shift_ea8_data8(void) {				// C0:	shift	EA8, DATA8
 		if (madr >= I286_MEMWRITEMAX) {
 			GET_PCBYTE(cl)
 			I286_WORKCLOCK(cl);
-			sft_e8cl_table[(op >> 3) & 7](madr, cl);
+			sft_e8cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = mem + madr;
 	}
 	GET_PCBYTE(cl)
 	I286_WORKCLOCK(cl);
-	sft_r8cl_table[(op >> 3) & 7](out, cl);
+	sft_r8cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
@@ -2077,14 +2077,14 @@ I286FN _shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 		if (INHIBIT_WORDP(madr)) {
 			GET_PCBYTE(cl);
 			I286_WORKCLOCK(cl);
-			sft_e16cl_table[(op >> 3) & 7](madr, cl);
+			sft_e16cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
 	GET_PCBYTE(cl);
 	I286_WORKCLOCK(cl);
-	sft_r16cl_table[(op >> 3) & 7](out, cl);
+	sft_r16cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN _ret_near_data16(void) {				// C2:	ret near DATA16
@@ -2319,12 +2319,12 @@ I286FN _shift_ea8_1(void) {				// D0:	shift EA8, 1
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (madr >= I286_MEMWRITEMAX) {
-			sft_e8_table[(op >> 3) & 7](madr);
+			sft_e8_table[(op >> 3) & 7](&i286core, madr);
 			return;
 		}
 		out = mem + madr;
 	}
-	sft_r8_table[(op >> 3) & 7](out);
+	sft_r8_table[(op >> 3) & 7](&i286core, out);
 }
 
 I286FN _shift_ea16_1(void) {			// D1:	shift EA16, 1
@@ -2342,12 +2342,12 @@ I286FN _shift_ea16_1(void) {			// D1:	shift EA16, 1
 		I286_WORKCLOCK(7);
 		madr = CALC_EA(op);
 		if (INHIBIT_WORDP(madr)) {
-			sft_e16_table[(op >> 3) & 7](madr);
+			sft_e16_table[(op >> 3) & 7](&i286core, madr);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
-	sft_r16_table[(op >> 3) & 7](out);
+	sft_r16_table[(op >> 3) & 7](&i286core, out);
 }
 
 I286FN _shift_ea8_cl(void) {			// D2:	shift EA8, cl
@@ -2368,14 +2368,14 @@ I286FN _shift_ea8_cl(void) {			// D2:	shift EA8, cl
 		if (madr >= I286_MEMWRITEMAX) {
 			cl = I286_CL;
 			I286_WORKCLOCK(cl);
-			sft_e8cl_table[(op >> 3) & 7](madr, cl);
+			sft_e8cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = mem + madr;
 	}
 	cl = I286_CL;
 	I286_WORKCLOCK(cl);
-	sft_r8cl_table[(op >> 3) & 7](out, cl);
+	sft_r8cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN _shift_ea16_cl(void) {			// D3:	shift EA16, cl
@@ -2396,14 +2396,14 @@ I286FN _shift_ea16_cl(void) {			// D3:	shift EA16, cl
 		if (INHIBIT_WORDP(madr)) {
 			cl = I286_CL;
 			I286_WORKCLOCK(cl);
-			sft_e16cl_table[(op >> 3) & 7](madr, cl);
+			sft_e16cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
 	}
 	cl = I286_CL;
 	I286_WORKCLOCK(cl);
-	sft_r16cl_table[(op >> 3) & 7](out, cl);
+	sft_r16cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN _aam(void) {							// D4:	AAM
@@ -2634,7 +2634,7 @@ I286FN _ope0xf6(void) {						// F6:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	c_ope0xf6_table[(op >> 3) & 7](op);
+	c_ope0xf6_table[(op >> 3) & 7](&i286core, op);
 }
 
 I286FN _ope0xf7(void) {						// F7:	
@@ -2642,7 +2642,7 @@ I286FN _ope0xf7(void) {						// F7:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	c_ope0xf7_table[(op >> 3) & 7](op);
+	c_ope0xf7_table[(op >> 3) & 7](&i286core, op);
 }
 
 I286FN _clc(void) {							// F8:	clc
@@ -2704,7 +2704,7 @@ I286FN _ope0xfe(void) {						// FE:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	c_ope0xfe_table[(op >> 3) & 1](op);
+	c_ope0xfe_table[(op >> 3) & 1](&i286core, op);
 }
 
 I286FN _ope0xff(void) {						// FF:	
@@ -2712,7 +2712,7 @@ I286FN _ope0xff(void) {						// FF:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	c_ope0xff_table[(op >> 3) & 7](op);
+	c_ope0xff_table[(op >> 3) & 7](&i286core, op);
 }
 
 // -------------------------------------------------------------------------

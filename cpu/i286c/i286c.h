@@ -84,16 +84,16 @@ extern const I286OP i286op_repe[];
 extern const I286OP i286op_repne[];
 
 #define	I286_0F	static void CPUCALL
-typedef void (CPUCALL * I286OP_0F)(UINT op);
+typedef void (CPUCALL * I286OP_0F)(I286CORE *cpu, UINT op);
 
 I286EXT i286c_cts(void);
 
 
 #define	I286_8X	static void CPUCALL
-typedef void (CPUCALL * I286OP8XREG8)(UINT8 *p);
-typedef void (CPUCALL * I286OP8XEXT8)(UINT32 madr);
-typedef void (CPUCALL * I286OP8XREG16)(UINT16 *p, UINT32 src);
-typedef void (CPUCALL * I286OP8XEXT16)(UINT32 madr, UINT32 src);
+typedef void (CPUCALL * I286OP8XREG8)(I286CORE *cpu, UINT8 *p);
+typedef void (CPUCALL * I286OP8XEXT8)(I286CORE *cpu, UINT32 madr);
+typedef void (CPUCALL * I286OP8XREG16)(I286CORE *cpu, UINT16 *p, UINT32 src);
+typedef void (CPUCALL * I286OP8XEXT16)(I286CORE *cpu, UINT32 madr, UINT32 src);
 
 extern const I286OP8XREG8 c_op8xreg8_table[];
 extern const I286OP8XEXT8 c_op8xext8_table[];
@@ -102,14 +102,14 @@ extern const I286OP8XEXT16 c_op8xext16_table[];
 
 
 #define	I286_SFT static void CPUCALL
-typedef void (CPUCALL * I286OPSFTR8)(UINT8 *p);
-typedef void (CPUCALL * I286OPSFTE8)(UINT32 madr);
-typedef void (CPUCALL * I286OPSFTR16)(UINT16 *p);
-typedef void (CPUCALL * I286OPSFTE16)(UINT32 madr);
-typedef void (CPUCALL * I286OPSFTR8CL)(UINT8 *p, REG8 cl);
-typedef void (CPUCALL * I286OPSFTE8CL)(UINT32 madr, REG8 cl);
-typedef void (CPUCALL * I286OPSFTR16CL)(UINT16 *p, REG8 cl);
-typedef void (CPUCALL * I286OPSFTE16CL)(UINT32 madr, REG8 cl);
+typedef void (CPUCALL * I286OPSFTR8)(I286CORE *cpu, UINT8 *p);
+typedef void (CPUCALL * I286OPSFTE8)(I286CORE *cpu, UINT32 madr);
+typedef void (CPUCALL * I286OPSFTR16)(I286CORE *cpu, UINT16 *p);
+typedef void (CPUCALL * I286OPSFTE16)(I286CORE *cpu, UINT32 madr);
+typedef void (CPUCALL * I286OPSFTR8CL)(I286CORE *cpu, UINT8 *p, REG8 cl);
+typedef void (CPUCALL * I286OPSFTE8CL)(I286CORE *cpu, UINT32 madr, REG8 cl);
+typedef void (CPUCALL * I286OPSFTR16CL)(I286CORE *cpu, UINT16 *p, REG8 cl);
+typedef void (CPUCALL * I286OPSFTE16CL)(I286CORE *cpu, UINT32 madr, REG8 cl);
 
 extern const I286OPSFTR8 sft_r8_table[];
 extern const I286OPSFTE8 sft_e8_table[];
@@ -122,7 +122,7 @@ extern const I286OPSFTE16CL sft_e16cl_table[];
 
 
 #define	I286_F6 static void CPUCALL
-typedef void (CPUCALL * I286OPF6)(UINT op);
+typedef void (CPUCALL * I286OPF6)(I286CORE *cpu, UINT op);
 
 extern const I286OPF6 c_ope0xf6_table[];
 extern const I286OPF6 c_ope0xf7_table[];

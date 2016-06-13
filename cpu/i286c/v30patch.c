@@ -256,7 +256,7 @@ I286FN v30shift_ea8_data8(void) {			// C0:	shift	EA8, DATA8
 			else {
 				cl = max(cl, 9);
 			}
-			sft_e8cl_table[(op >> 3) & 7](madr, cl);
+			sft_e8cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = mem + madr;
@@ -274,7 +274,7 @@ I286FN v30shift_ea8_data8(void) {			// C0:	shift	EA8, DATA8
 	else {
 		cl = max(cl, 9);
 	}
-	sft_r8cl_table[(op >> 3) & 7](out, cl);
+	sft_r8cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
@@ -306,7 +306,7 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 			else {								// shift
 				cl = max(cl, 17);
 			}
-			sft_e16cl_table[(op >> 3) & 7](madr, cl);
+			sft_e16cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -324,7 +324,7 @@ I286FN v30shift_ea16_data8(void) {			// C1:	shift	EA16, DATA8
 	else {								// shift
 		cl = max(cl, 17);
 	}
-	sft_r16cl_table[(op >> 3) & 7](out, cl);
+	sft_r16cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
@@ -356,7 +356,7 @@ I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
 			else {
 				cl = max(cl, 9);
 			}
-			sft_e8cl_table[(op >> 3) & 7](madr, cl);
+			sft_e8cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = mem + madr;
@@ -374,7 +374,7 @@ I286FN v30shift_ea8_cl(void) {				// D2:	shift EA8, cl
 	else {
 		cl = max(cl, 9);
 	}
-	sft_r8cl_table[(op >> 3) & 7](out, cl);
+	sft_r8cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
@@ -406,7 +406,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 			else {								// shift
 				cl = max(cl, 17);
 			}
-			sft_e16cl_table[(op >> 3) & 7](madr, cl);
+			sft_e16cl_table[(op >> 3) & 7](&i286core, madr, cl);
 			return;
 		}
 		out = (UINT16 *)(mem + madr);
@@ -424,7 +424,7 @@ I286FN v30shift_ea16_cl(void) {				// D3:	shift EA16, cl
 	else {								// shift
 		cl = max(cl, 17);
 	}
-	sft_r16cl_table[(op >> 3) & 7](out, cl);
+	sft_r16cl_table[(op >> 3) & 7](&i286core, out, cl);
 }
 
 I286FN v30_aam(void) {						// D4:	AAM
@@ -484,53 +484,61 @@ I286FN v30_repe(void) {						// F3:	repe
 	}
 }
 
-I286_F6 v30_div_ea8(UINT op) {
-
+I286_F6 v30_div_ea8(I286CORE *cpu, UINT op)
+{
 	UINT16	tmp;
 	UINT8	src;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(14);
 		src = *(REG8_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(17);
 		src = i286_memoryread(CALC_EA(op));
 	}
 	tmp = I286_AX;
-	if ((src) && (tmp < ((UINT16)src << 8))) {
+	if ((src) && (tmp < ((UINT16)src << 8)))
+	{
 		I286_AL = tmp / src;
 		I286_AH = tmp % src;
 	}
-	else {
-		INT_NUM(0, I286_IP);									// V30
+	else
+	{
+		INT_NUM(0, I286_IP);									/* V30 */
 	}
 }
 
-I286_F6 v30_idiv_ea8(UINT op) {
-
+I286_F6 v30_idiv_ea8(I286CORE *cpu, UINT op)
+{
 	SINT16	tmp;
 	SINT16	r;
 	SINT8	src;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(17);
 		src = *(REG8_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(20);
 		src = i286_memoryread(CALC_EA(op));
 	}
 	tmp = (SINT16)I286_AX;
-	if (src) {
+	if (src)
+	{
 		r = tmp / src;
-		if (!((r + 0x80) & 0xff00)) {
+		if (!((r + 0x80) & 0xff00))
+		{
 			I286_AL = (UINT8)r;
 			I286_AH = tmp % src;
 			return;
 		}
 	}
-	INT_NUM(0, I286_IP);										// V30
+	INT_NUM(0, I286_IP);										/* V30 */
 }
 
 I286FN v30_ope0xf6(void) {					// F6:	
@@ -538,56 +546,64 @@ I286FN v30_ope0xf6(void) {					// F6:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	v30ope0xf6_table[(op >> 3) & 7](op);
+	v30ope0xf6_table[(op >> 3) & 7](&i286core, op);
 }
 
-I286_F6 v30_div_ea16(UINT op) {
-
+I286_F6 v30_div_ea16(I286CORE *cpu, UINT op)
+{
 	UINT32	tmp;
 	UINT32	src;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(22);
 		src = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(25);
 		src = i286_memoryread_w(CALC_EA(op));
 	}
 	tmp = (I286_DX << 16) + I286_AX;
-	if ((src) && (tmp < (src << 16))) {
+	if ((src) && (tmp < (src << 16)))
+	{
 		I286_AX = tmp / src;
 		I286_DX = tmp % src;
 	}
-	else {
-		INT_NUM(0, I286_IP);									// V30
+	else
+	{
+		INT_NUM(0, I286_IP);									/* V30 */
 	}
 }
 
-I286_F6 v30_idiv_ea16(UINT op) {
-
+I286_F6 v30_idiv_ea16(I286CORE *cpu, UINT op)
+{
 	SINT32	tmp;
 	SINT32	r;
 	SINT16	src;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(25);
 		src = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(28);
 		src = i286_memoryread_w(CALC_EA(op));
 	}
 	tmp = (SINT32)((I286_DX << 16) + I286_AX);
-	if ((src) && (tmp != INT_MIN)) {
+	if ((src) && (tmp != INT_MIN))
+	{
 		r = tmp / src;
-		if (!((r + 0x8000) & 0xffff0000)) {
+		if (!((r + 0x8000) & 0xffff0000))
+		{
 			I286_AX = (SINT16)r;
 			I286_DX = tmp % src;
 			return;
 		}
 	}
-	INT_NUM(0, I286_IP);										// V30
+	INT_NUM(0, I286_IP);										/* V30 */
 }
 
 I286FN v30_ope0xf7(void) {					// F7:	
@@ -595,7 +611,7 @@ I286FN v30_ope0xf7(void) {					// F7:
 	UINT	op;
 
 	GET_PCBYTE(op);
-	v30ope0xf7_table[(op >> 3) & 7](op);
+	v30ope0xf7_table[(op >> 3) & 7](&i286core, op);
 }
 
 static const V30PATCH v30patch_op[] = {

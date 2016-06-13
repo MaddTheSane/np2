@@ -1,43 +1,57 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"i286c.h"
-#include	"i286c.mcr"
+/**
+ * @file	i286c_0f.c
+ * @brief	i286 core: 0f
+ */
 
+#include "compiler.h"
+#include "cpucore.h"
+#include "i286c.h"
+#include "i286c.mcr"
 
-I286_0F _sldt(UINT op) {
-
-	if (op >= 0xc0) {
+/**
+ * SLDT
+ * @param[in] op オペコード
+ */
+I286_0F _sldt(I286CORE *cpu, UINT op)
+{
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(2);
 		*(REG16_B20(op)) = I286_LDTR;
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(3);
 		i286_memorywrite_w(CALC_EA(op), I286_LDTR);
 	}
 }
 
-I286_0F _str(UINT op) {
-
-	if (op >= 0xc0) {
+I286_0F _str(I286CORE *cpu, UINT op)
+{
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(3);
 		*(REG16_B20(op)) = I286_TR;
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(6);
 		i286_memorywrite_w(CALC_EA(op), I286_TR);
 	}
 }
 
-I286_0F _lldt(UINT op) {
-
+I286_0F _lldt(I286CORE *cpu, UINT op)
+{
 	REG16	r;
 	UINT32	addr;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(17);
 		r = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(19);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
@@ -48,16 +62,18 @@ I286_0F _lldt(UINT op) {
 	I286_LDTRC.base24 = i286_memoryread(addr + 4);
 }
 
-I286_0F _ltr(UINT op) {
-
+I286_0F _ltr(I286CORE *cpu, UINT op)
+{
 	REG16	r;
 	UINT32	addr;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(17);
 		r = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(19);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
@@ -68,152 +84,171 @@ I286_0F _ltr(UINT op) {
 	I286_TRC.base24 = i286_memoryread(addr + 4);
 }
 
-I286_0F _verr(UINT op) {
-
+I286_0F _verr(I286CORE *cpu, UINT op)
+{
 	REG16	r;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(14);
 		r = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(16);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
 }
 
-I286_0F _verw(UINT op) {
-
+I286_0F _verw(I286CORE *cpu, UINT op)
+{
 	REG16	r;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(14);
 		r = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(16);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
 }
 
-I286_0F __sgdt(UINT op) {
-
+I286_0F __sgdt(I286CORE *cpu, UINT op)
+{
 	UINT32	addr;
 
 	I286_WORKCLOCK(11);
-	if (op < 0xc0) {
+	if (op < 0xc0)
+	{
 		addr = CALC_EA(op);
 		i286_memorywrite_w(addr, I286_GDTR.limit);
 		i286_memorywrite_w(addr + 2, I286_GDTR.base);
 		i286_memorywrite_w(addr + 4, (REG16)(0xff00 + I286_GDTR.base24));
 	}
-	else {
+	else
+	{
 		INT_NUM(6, I286_IP - 2);
 	}
 }
 
-I286_0F _sidt(UINT op) {
-
+I286_0F _sidt(I286CORE *cpu, UINT op)
+{
 	UINT32	addr;
 
 	I286_WORKCLOCK(12);
-	if (op < 0xc0) {
+	if (op < 0xc0)
+	{
 		addr = CALC_EA(op);
 		i286_memorywrite_w(addr, I286_IDTR.limit);
 		i286_memorywrite_w(addr + 2, I286_IDTR.base);
 		i286_memorywrite_w(addr + 4, (REG16)(0xff00 + I286_IDTR.base24));
 	}
-	else {
+	else
+	{
 		INT_NUM(6, I286_IP - 2);
 	}
 }
 
-I286_0F __lgdt(UINT op) {
-
+I286_0F __lgdt(I286CORE *cpu, UINT op)
+{
 	UINT32	addr;
 
 	I286_WORKCLOCK(11);
-	if (op < 0xc0) {
+	if (op < 0xc0)
+	{
 		addr = CALC_EA(op);
 		I286_GDTR.limit = i286_memoryread_w(addr);
 		I286_GDTR.base = i286_memoryread_w(addr + 2);
 		I286_GDTR.base24 = i286_memoryread(addr + 4);
 	}
-	else {
+	else
+	{
 		INT_NUM(6, I286_IP - 2);
 	}
 }
 
-I286_0F _lidt(UINT op) {
-
+I286_0F _lidt(I286CORE *cpu, UINT op)
+{
 	UINT32	addr;
 
 	I286_WORKCLOCK(12);
-	if (op < 0xc0) {
+	if (op < 0xc0)
+	{
 		addr = CALC_EA(op);
 		I286_IDTR.limit = i286_memoryread_w(addr);
 		I286_IDTR.base = i286_memoryread_w(addr + 2);
 		I286_IDTR.base24 = i286_memoryread(addr + 4);
 	}
-	else {
+	else
+	{
 		INT_NUM(6, I286_IP - 2);
 	}
 }
 
-I286_0F _smsw(UINT op) {
-
-	if (op >= 0xc0) {
+I286_0F _smsw(I286CORE *cpu, UINT op)
+{
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(2);
 		*(REG16_B20(op)) = I286_MSW;
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(3);
 		i286_memorywrite_w(CALC_EA(op), I286_MSW);
 	}
 }
 
-I286_0F _lmsw(UINT op) {
-
+I286_0F _lmsw(I286CORE *cpu, UINT op)
+{
 	REG16	msw;
 
-	if (op >= 0xc0) {
+	if (op >= 0xc0)
+	{
 		I286_WORKCLOCK(3);
 		msw = *(REG16_B20(op));
 	}
-	else {
+	else
+	{
 		I286_WORKCLOCK(6);
 		msw = i286_memoryread_w(CALC_EA(op));
 	}
 	I286_MSW = msw | (I286_MSW & MSW_PE);
-	if (msw & MSW_PE) {
-		TRACEOUT(("80286 ProtectMode Enable... / MSW=%.4x [%.4x:%.4x]",
-												I286_MSW, I286_CS, I286_IP));
+	if (msw & MSW_PE)
+	{
+		TRACEOUT(("80286 ProtectMode Enable... / MSW=%.4x [%.4x:%.4x]", I286_MSW, I286_CS, I286_IP));
 	}
 }
 
-static const I286OP_0F cts0_table[] = {
-			_sldt,	_str,	_lldt,	_ltr,
-			_verr,	_verw,	_verr,	_verw};
+static const I286OP_0F cts0_table[] =
+{
+	_sldt,	_str,	_lldt,	_ltr,
+	_verr,	_verw,	_verr,	_verw
+};
 
-static const I286OP_0F cts1_table[] = {
-			__sgdt,	_sidt,	__lgdt,	_lidt,
-			_smsw,	_smsw,	_lmsw,	_lmsw};
+static const I286OP_0F cts1_table[] =
+{
+	__sgdt,	_sidt,	__lgdt,	_lidt,
+	_smsw,	_smsw,	_lmsw,	_lmsw
+};
 
-
-I286_0F _loadall286(void) {
-
+I286_0F _loadall286(void)
+{
 	UINT16	tmp;
 	UINT32	base;
 
 	I286_WORKCLOCK(195);
 	I286_MSW = LOADINTELWORD(mem + 0x804);
-	I286_TR = LOADINTELWORD(mem + 0x816);			// ver0.73
+	I286_TR = LOADINTELWORD(mem + 0x816);			/* ver0.73 */
 	tmp = LOADINTELWORD(mem + 0x818);
 	I286_OV = tmp & O_FLAG;
 	I286_FLAG = tmp & (0xfff ^ O_FLAG);
 	I286_TRAP = ((tmp & 0x300) == 0x300);
 	I286_IP = LOADINTELWORD(mem + 0x81a);
-	I286_LDTR = LOADINTELWORD(mem + 0x81c);			// ver0.73
+	I286_LDTR = LOADINTELWORD(mem + 0x81c);			/* ver0.73 */
 	I286_DS = LOADINTELWORD(mem + 0x81e);
 	I286_SS = LOADINTELWORD(mem + 0x820);
 	I286_CS = LOADINTELWORD(mem + 0x822);
@@ -256,8 +291,8 @@ I286_0F _loadall286(void) {
 	I286IRQCHECKTERM
 }
 
-I286EXT i286c_cts(void) {
-
+I286EXT i286c_cts(void)
+{
 	UINT16	ip;
 	UINT	op;
 	UINT	op2;
@@ -265,23 +300,29 @@ I286EXT i286c_cts(void) {
 	ip = I286_IP;
 	GET_PCBYTE(op);
 
-	if (op == 0) {
-		if (!(I286_MSW & MSW_PE)) {
+	if (op == 0)
+	{
+		if (!(I286_MSW & MSW_PE))
+		{
 			INT_NUM(6, ip - 1);
 		}
-		else {
+		else 
+		{
 			GET_PCBYTE(op2);
-			cts0_table[(op2 >> 3) & 7](op2);
+			cts0_table[(op2 >> 3) & 7](&i286core, op2);
 		}
 	}
-	else if (op == 1) {
+	else if (op == 1)
+	{
 		GET_PCBYTE(op2);
-		cts1_table[(op2 >> 3) & 7](op2);
+		cts1_table[(op2 >> 3) & 7](&i286core, op2);
 	}
-	else if (op == 5) {
+	else if (op == 5)
+	{
 		_loadall286();
 	}
-	else {
+	else
+	{
 		INT_NUM(6, ip - 1);
 	}
 }
