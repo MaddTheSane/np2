@@ -10,6 +10,7 @@
 #include	"menubase.h"
 #include	"menustr.h"
 
+
 enum {
 	DID_FOLDER	= DID_USER,
 	DID_PARENT,
