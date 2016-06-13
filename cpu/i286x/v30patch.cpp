@@ -6,13 +6,13 @@
 #include	"i286xrep.h"
 #include	"i286xcts.h"
 #include	"pccore.h"
-#include	"bios.h"
+#include	"bios/bios.h"
 #include	"iocore.h"
 #include	"i286x.mcr"
 #include	"i286xea.mcr"
 #include	"dmax86.h"
 #if defined(ENABLE_TRAP)
-#include	"steptrap.h"
+#include "trap/steptrap.h"
 #endif
 
 

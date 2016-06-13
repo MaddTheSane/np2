@@ -4,10 +4,6 @@ enum {
 	FAILURE		= 1
 };
 
-#ifndef PI
-#define PI 3.14159265357989
-#endif
-
 #ifndef BRESULT
 #define	BRESULT		UINT
 #endif
@@ -40,7 +36,7 @@ enum {
 #endif
 
 #ifndef	NELEMENTS
-#define	NELEMENTS(a)	((int)(sizeof(a) / sizeof(a[0])))
+#define	NELEMENTS(a)	((UINT)(sizeof(a) / sizeof(a[0])))
 #endif
 
 
@@ -85,20 +81,7 @@ enum {
 #ifndef OEMTEXT
 #define	OEMTEXT(string)			string
 #endif
-#ifndef OEMNULLSTR
-#define	OEMNULLSTR				OEMTEXT("")
-#endif
 
-
-#if 0
-#ifndef STRLITERAL
-#ifdef UNICODE
-#define	STRLITERAL(string)		_T(string)
-#else
-#define	STRLITERAL(string)		(string)
-#endif
-#endif
-#endif
 
 #if !defined(RGB16)
 #define	RGB16		UINT16

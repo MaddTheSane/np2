@@ -45,9 +45,6 @@ typedef	unsigned int		UINT32;
 typedef	unsigned char	BOOL;
 #endif
 
-typedef	signed char		CHAR;
-typedef	unsigned char	BYTE;
-
 #ifndef	TRUE
 #define	TRUE	1
 #endif
@@ -109,10 +106,9 @@ typedef	unsigned char	BYTE;
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
 
+#define SUPPORT_EXTERNALCHIP
+
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 
 #define	SCREEN_BPP		16
-
-//! countof macro
-#define _countof(a)		(sizeof(a) / sizeof((a)[0]))

@@ -212,6 +212,18 @@ short DOSIOCALL file_attr(const OEMCHAR* lpPathName)
 }
 
 /**
+ * ファイルの移動
+ * @param[in] lpExistFile ファイル名
+ * @param[in] lpNewFile ファイル名
+ * @retval 0 成功
+ * @retval -1 失敗
+ */
+short DOSIOCALL file_rename(const OEMCHAR* lpExistFile, const OEMCHAR* lpNewFile)
+{
+	return (::MoveFile(lpExistFile, lpNewFile)) ? 0 : -1;
+}
+
+/**
  * ディレクトリ作成
  * @param[in] lpPathName パス
  * @retval 0 成功
@@ -220,6 +232,17 @@ short DOSIOCALL file_attr(const OEMCHAR* lpPathName)
 short DOSIOCALL file_dircreate(const OEMCHAR* lpPathName)
 {
 	return (::CreateDirectory(lpPathName, NULL)) ? 0 : -1;
+}
+
+/**
+ * ディレクトリ削除
+ * @param[in] lpPathName パス
+ * @retval 0 成功
+ * @retval -1 失敗
+ */
+short DOSIOCALL file_dirdelete(const OEMCHAR* lpPathName)
+{
+	return (::RemoveDirectory(lpPathName)) ? 0 : -1;
 }
 
 

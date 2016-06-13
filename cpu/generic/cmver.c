@@ -6,7 +6,7 @@
 #if defined(VERMOUTH_LIB)
 
 #include	"sound.h"
-#include	"vermouth.h"
+#include	"sound/vermouth/vermouth.h"
 #include	"keydisp.h"
 
 #define MIDIOUTS(a, b, c)	(((c) << 16) + (b << 8) + (a))

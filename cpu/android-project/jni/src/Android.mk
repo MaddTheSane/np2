@@ -12,24 +12,17 @@ NP2_PATH := $(LOCAL_PATH)/../np2
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include \
 	$(LOCAL_PATH) \
 	$(NP2_PATH) \
-	$(NP2_PATH)/bios \
 	$(NP2_PATH)/cbus \
-	$(NP2_PATH)/codecnv \
 	$(NP2_PATH)/common \
 	$(NP2_PATH)/embed \
 	$(NP2_PATH)/embed/menu \
 	$(NP2_PATH)/embed/menubase \
-	$(NP2_PATH)/fdd \
-	$(NP2_PATH)/font \
 	$(NP2_PATH)/generic \
 	$(NP2_PATH)/i286c \
 	$(NP2_PATH)/io \
-	$(NP2_PATH)/lio \
 	$(NP2_PATH)/mem \
 	$(NP2_PATH)/sdl2 \
 	$(NP2_PATH)/sound \
-	$(NP2_PATH)/sound/getsnd \
-	$(NP2_PATH)/sound/vermouth \
 	$(NP2_PATH)/vram
 
 # Add your application source files here...
@@ -58,6 +51,7 @@ LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.c \
 		$(wildcard $(NP2_PATH)/lio/*.c) \
 		$(wildcard $(NP2_PATH)/mem/*.c) \
 		$(wildcard $(NP2_PATH)/sdl2/*.c) \
+		$(wildcard $(NP2_PATH)/sdl2/*.cpp) \
 		$(wildcard $(NP2_PATH)/sound/*.c) \
 		$(wildcard $(NP2_PATH)/sound/getsnd/*.c) \
 		$(wildcard $(NP2_PATH)/sound/vermouth/*.c) \

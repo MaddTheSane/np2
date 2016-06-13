@@ -37,7 +37,7 @@ static struct {
 
 	joymng_devinfo_t **devlist;
 
-	BYTE pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
+	UINT8 pad1btn[NELEMENTS(np2oscfg.JOY1BTN)];
 	REG8 flag;
 } joyinfo = {
 	NULL,
@@ -51,14 +51,14 @@ static struct {
 
 typedef struct {
 	SINT16	axis[JOY_NAXIS];
-	BYTE	button[JOY_NBUTTON];
+	UINT8	button[JOY_NBUTTON];
 } JOYINFO_T;
 
 static joymng_devinfo_t **joydrv_initialize(void);
 static void joydrv_terminate(void);
 static void *joydrv_open(const char *dev);
 static void joydrv_close(void *hdl);
-static BOOL joydrv_getstat(void *hdl, JOYINFO_T *ji);
+static BRESULT joydrv_getstat(void *hdl, JOYINFO_T *ji);
 
 void
 joymng_initialize(void)
@@ -350,7 +350,7 @@ joydrv_close(void *hdl)
 	_MFREE(shdl);
 }
 
-static BOOL
+static BRESULT
 joydrv_getstat(void *hdl, JOYINFO_T *ji)
 {
 	joydrv_sdl_hdl_t *shdl = (joydrv_sdl_hdl_t *)hdl;

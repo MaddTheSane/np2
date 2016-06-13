@@ -5,7 +5,8 @@
 
 #include "compiler.h"
 #include "WndProc.h"
-#include "..\resource.h"
+#include <assert.h>
+#define ASSERT assert	/*!< assert */
 
 //! 基底クラス名
 // static const TCHAR s_szClassName[] = TEXT("WndProcBase");
@@ -18,7 +19,7 @@ HINSTANCE CWndProc::sm_hResource;
 DWORD CWndProc::sm_dwThreadId;						//!< 自分のスレッド ID
 HHOOK CWndProc::sm_hHookOldCbtFilter;				//!< フック フィルター
 CWndProc* CWndProc::sm_pWndInit;					//!< 初期化中のインスタンス
-std::map<HWND, CWndProc*> CWndProc::sm_mapWnd;		//!< ウィンドウ マップ
+std::map<HWND, CWndProc*>* CWndProc::sm_pWndMap;	//!< ウィンドウ マップ
 
 /**
  * 初期化
@@ -31,6 +32,8 @@ void CWndProc::Initialize(HINSTANCE hInstance)
 
 	sm_dwThreadId = ::GetCurrentThreadId();
 	sm_hHookOldCbtFilter = ::SetWindowsHookEx(WH_CBT, CbtFilterHook, NULL, sm_dwThreadId);
+
+	sm_pWndMap = new std::map<HWND, CWndProc*>;
 
 #if 0
 	WNDCLASS wc;
@@ -59,6 +62,22 @@ void CWndProc::Deinitialize()
 }
 
 /**
+ * リソースの検索
+ * @param[in] lpszName リソース ID
+ * @param[in] lpszType リソースの型へのポインタ
+ * @return インスタンス
+ */
+HINSTANCE CWndProc::FindResourceHandle(LPCTSTR lpszName, LPCTSTR lpszType)
+{
+	HINSTANCE hInst = GetResourceHandle();
+	if ((hInst != GetInstanceHandle()) && (::FindResource(hInst, lpszName, lpszType) != NULL))
+	{
+		return hInst;
+	}
+	return GetInstanceHandle();
+}
+
+/**
  * コンストラクタ
  */
 CWndProc::CWndProc()
@@ -82,15 +101,16 @@ CWndProc::~CWndProc()
  */
 CWndProc* CWndProc::FromHandlePermanent(HWND hWnd)
 {
-	std::map<HWND, CWndProc*>::iterator it = sm_mapWnd.find(hWnd);
-	if (it != sm_mapWnd.end())
+	std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+	if (pMap)
 	{
-		return it->second;
+		std::map<HWND, CWndProc*>::iterator it = pMap->find(hWnd);
+		if (it != pMap->end())
+		{
+			return it->second;
+		}
 	}
-	else
-	{
-		return NULL;
-	}
+	return NULL;
 }
 
 /**
@@ -101,9 +121,10 @@ CWndProc* CWndProc::FromHandlePermanent(HWND hWnd)
  */
 BOOL CWndProc::Attach(HWND hWndNew)
 {
-	if (hWndNew != NULL)
+	std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+	if ((hWndNew != NULL) && (pMap))
 	{
-		sm_mapWnd[hWndNew] = this;
+		(*pMap)[hWndNew] = this;
 		m_hWnd = hWndNew;
 		return TRUE;
 	}
@@ -122,10 +143,14 @@ HWND CWndProc::Detach()
 	HWND hWnd = m_hWnd;
 	if (hWnd != NULL)
 	{
-		std::map<HWND, CWndProc*>::iterator it = sm_mapWnd.find(hWnd);
-		if (it != sm_mapWnd.end())
+		std::map<HWND, CWndProc*>* pMap = sm_pWndMap;
+		if (pMap)
 		{
-			sm_mapWnd.erase(it);
+			std::map<HWND, CWndProc*>::iterator it = pMap->find(hWnd);
+			if (it != pMap->end())
+			{
+				pMap->erase(it);
+			}
 		}
 		m_hWnd = NULL;
 	}
@@ -240,11 +265,10 @@ BOOL CWndProc::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 		return FALSE;
 	}
 
-	sm_pWndInit = this;
+	HookWindowCreate(this);
 	HWND hWnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
-	if (sm_pWndInit != NULL)
+	if (!UnhookWindowCreate())
 	{
-		sm_pWndInit = NULL;
 		PostNcDestroy();
 	}
 
@@ -259,6 +283,42 @@ BOOL CWndProc::CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName, LPCTSTR lpszWind
 BOOL CWndProc::PreCreateWindow(CREATESTRUCT& cs)
 {
 	return TRUE;
+}
+
+/**
+ * ウィンドウ作成をフック
+ * @param[in] pWnd ウィンドウ
+ */
+void CWndProc::HookWindowCreate(CWndProc* pWnd)
+{
+	// 同じスレッドのみ許す
+	ASSERT(sm_dwThreadId == ::GetCurrentThreadId());
+
+	if (sm_pWndInit == pWnd)
+	{
+		return;
+	}
+
+	ASSERT(sm_hHookOldCbtFilter != NULL);
+	ASSERT(pWnd != NULL);
+	ASSERT(pWnd->m_hWnd == NULL);
+	ASSERT(sm_pWndInit == NULL);
+	sm_pWndInit = pWnd;
+}
+
+/**
+ * ウィンドウ作成をアンフック
+ * @retval true フックした
+ * @retval false フックしなかった
+ */
+bool CWndProc::UnhookWindowCreate()
+{
+	if (sm_pWndInit != NULL)
+	{
+		sm_pWndInit = NULL;
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -353,7 +413,19 @@ LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 	}
-	if (nMsg == WM_NCDESTROY)
+	else if (nMsg == WM_NOTIFY)
+	{
+		NMHDR* pNMHDR = reinterpret_cast<NMHDR*>(lParam);
+		if (pNMHDR->hwndFrom != NULL)
+		{
+			LRESULT lResult = 0;
+			if (OnNotify(wParam, lParam, &lResult))
+			{
+				return lResult;
+			}
+		}
+	}
+	else if (nMsg == WM_NCDESTROY)
 	{
 		OnNcDestroy(wParam, lParam);
 		return 0;
@@ -368,6 +440,19 @@ LRESULT CWndProc::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
  * @retval TRUE アプリケーションがこのメッセージを処理した
  */
 BOOL CWndProc::OnCommand(WPARAM wParam, LPARAM lParam)
+{
+	return FALSE;
+}
+
+/**
+ * フレームワークは、イベントがコントロールに発生する場合や、コントロールが一部の種類の情報を要求するコントロールを親ウィンドウに通知するために、このメンバー関数を呼び出します
+ * @param[in] wParam メッセージがコントロールからそのメッセージを送信するコントロールを識別します
+ * @param[in] lParam 通知コードと追加情報を含む通知メッセージ (NMHDR) の構造体へのポインター
+ * @param[out] pResult メッセージが処理されたとき結果を格納するコードする LRESULT の変数へのポインター
+ * @retval TRUE メッセージを処理した
+ * @retval FALSE メッセージを処理しなかった
+ */
+BOOL CWndProc::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	return FALSE;
 }

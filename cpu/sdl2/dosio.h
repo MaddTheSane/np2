@@ -1,4 +1,6 @@
 
+#pragma once
+
 typedef FILE *				FILEH;
 #define	FILEH_INVALID		NULL
 
@@ -68,7 +70,9 @@ UINT file_getsize(FILEH handle);
 short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime);
 short file_delete(const char *path);
 short file_attr(const char *path);
+short file_rename(const char *existpath, const char *newpath);
 short file_dircreate(const char *path);
+short file_dirdelete(const char *path);
 
 /* カレントファイル操作 */
 void file_setcd(const char *exepath);
@@ -80,7 +84,7 @@ short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
 FLISTH file_list1st(const char *dir, FLINFO *fli);
-BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 
 #define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)

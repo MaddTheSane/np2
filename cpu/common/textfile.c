@@ -2,7 +2,7 @@
 #include	"strres.h"
 #include	"textfile.h"
 #if defined(SUPPORT_TEXTCNV)
-#include	"textcnv.h"
+#include	"codecnv/textcnv.h"
 #endif
 #if defined(SUPPORT_ARC)
 #include	"arc.h"
@@ -565,7 +565,7 @@ const void		*buf;
 		flushfile(tf);
 		tf->mode = TFMODE_WRITE;
 	}
-	leng = OEMSTRLEN(buffer);
+	leng = (UINT)OEMSTRLEN(buffer);
 #if defined(SUPPORT_TEXTCNV)
 	if (tf->fromoem != NULL) {
 		leng = (tf->fromoem)(tf->cnvbuf, tf->cnvbufsize / tf->width,

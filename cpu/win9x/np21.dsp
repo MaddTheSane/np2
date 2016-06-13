@@ -46,11 +46,11 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -72,11 +72,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_UNICODE" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "SUPPORT_PC9821" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_UNICODE" /D "UNICODE" /D "SUPPORT_PC9821" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -99,11 +99,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "SUPPORT_IDEIO" /D "NP2APPDEV" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -126,11 +126,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /D "ENABLE_TRAP" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "NDEBUG" /D "TRACE" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /D "NP2APPDEV" /D "ENABLE_TRAP" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "NDEBUG"
-# ADD RSC /l 0x411 /d "NDEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "NDEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -152,11 +152,11 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I ".\dialog" /I "..\\" /I "..\common" /I "..\codecnv" /I "..\i386c" /I "..\i386c\ia32" /I "..\i386c\ia32\instructions" /I "..\i386c\ia32\instructions\fpu" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\bios" /I "..\lio" /I "..\vram" /I "..\sound" /I "..\sound\vermouth" /I "..\sound\getsnd" /I "..\fdd" /I "..\font" /I "..\generic" /I "..\trap" /I "..\zlib" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I ".\\" /I ".\x86" /I "..\\" /I "..\common" /I "..\i386c" /I "..\mem" /I "..\io" /I "..\cbus" /I "..\vram" /I "..\sound" /I "..\generic" /I "..\zlib" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SUPPORT_PC9821" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x411 /d "_DEBUG"
-# ADD RSC /l 0x411 /d "_DEBUG" /d "SUPPORT_PC9821"
+# ADD RSC /l 0x411 /d "_DEBUG" /d "NEEDS_MANIFEST" /d "SUPPORT_PC9821"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -176,6 +176,154 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "bios"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS09.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS0C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS12.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS13.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS18.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS19.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1A.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1B.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\BIOS1F.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\BIOS\SXSIBIOS.C
+# End Source File
+# End Group
+# Begin Group "cbus"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\CBUS\AMD98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\ATAPICMD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARD118.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARD14.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARD26K.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARD86.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\cbus\boardso.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARDSPB.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\BOARDX2.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\CBUSCORE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\CS4231IO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\IDEIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\MPU98II.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\PC9861K.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\PCM86IO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SASIIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SCSICMD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CBUS\SCSIIO.C
+# End Source File
+# End Group
+# Begin Group "codecnv"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\CODECNV\TCSWAP16.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CODECNV\UCS2UTF8.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\CODECNV\UTF8UCS2.C
+# End Source File
+# End Group
 # Begin Group "common"
 
 # PROP Default_Filter ""
@@ -287,22 +435,6 @@ SOURCE=..\COMMON\TEXTFILE.C
 SOURCE=..\COMMON\WAVEFILE.C
 # End Source File
 # End Group
-# Begin Group "codecnv"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\CODECNV\TCSWAP16.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CODECNV\UCS2UTF8.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CODECNV\UTF8UCS2.C
-# End Source File
-# End Group
 # Begin Group "cpu"
 
 # PROP Default_Filter ""
@@ -392,21 +524,6 @@ SOURCE=..\I386C\ia32\debug.c
 # Begin Source File
 
 SOURCE=..\I386C\ia32\disasm.c
-
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -462,594 +579,16 @@ SOURCE=..\i386c\cpumem.c
 SOURCE=..\i386c\cpumem.h
 # End Source File
 # End Group
-# Begin Group "mem"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\MEM\DMAX86.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMEGC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMEMS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMEPP.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMTRAM.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMVGA.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\MEM\MEMVRAM.C
-# End Source File
-# End Group
-# Begin Group "io"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\IO\ARTIC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\CGROM.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\CPUIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\CRTC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\DIPSW.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\DMAC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\EGC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\EMSIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\EPSONIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\FDC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\FDD320.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\GDC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\GDC_PSET.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\GDC_SUB.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\IOCORE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\MOUSEIF.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\NECIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\NMIIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\NP2SYSP.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\PCIDEV.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\PIC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\PIT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\PRINTIF.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\SERIAL.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\SYSPORT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\IO\UPD4990.C
-# End Source File
-# End Group
-# Begin Group "cbus"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\CBUS\AMD98.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\ATAPICMD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\BOARD14.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\BOARD26K.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\BOARD86.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\BOARDSPB.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\BOARDX2.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\CBUSCORE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\CS4231IO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\IDEIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\MPU98II.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\PC9861K.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\PCM86IO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\SASIIO.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\SCSICMD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\CBUS\SCSIIO.C
-# End Source File
-# End Group
-# Begin Group "bios"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS09.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS0C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS12.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS13.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS18.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS19.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1A.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1B.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\BIOS1F.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\BIOS\SXSIBIOS.C
-# End Source File
-# End Group
-# Begin Group "lio"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\LIO\GCIRCLE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GLINE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPSET.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GPUT1.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\GSCREEN.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\LIO\LIO.C
-# End Source File
-# End Group
-# Begin Group "vram"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\VRAM\DISPSYNC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\MAKEGREX.C
-# End Source File
-# Begin Source File
-
-SOURCE=.\x86\MAKEGRPH.X86
-
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\rel21
-InputPath=.\x86\MAKEGRPH.X86
-InputName=MAKEGRPH
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\relnt21
-InputPath=.\x86\MAKEGRPH.X86
-InputName=MAKEGRPH
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trc21
-InputPath=.\x86\MAKEGRPH.X86
-InputName=MAKEGRPH
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trap21
-InputPath=.\x86\MAKEGRPH.X86
-InputName=MAKEGRPH
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\dbg21
-InputPath=.\x86\MAKEGRPH.X86
-InputName=MAKEGRPH
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\MAKETEXT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\MAKETGRP.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\PALETTES.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\SCRNDRAW.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\SCRNSAVE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\SDRAW.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\VRAM\VRAM.C
-# End Source File
-# End Group
-# Begin Group "sound"
-
-# PROP Default_Filter ""
-# Begin Group "vermouth"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDIMOD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDINST.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDIOUT.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
-# End Source File
-# End Group
-# Begin Group "getsnd"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETSMIX.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETSND.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\GETSND\GETWAVE.C
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=..\SOUND\ADPCMC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\ADPCMG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\BEEPC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\BEEPG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\CS4231C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\CS4231G.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\FMBOARD.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\FMTIMER.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\OPNGENC.C
-# End Source File
-# Begin Source File
-
-SOURCE=.\x86\OPNGENG.X86
-
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\rel21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\relnt21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trc21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trap21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\dbg21
-InputPath=.\x86\OPNGENG.X86
-InputName=OPNGENG
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PCM86C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PCM86G.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PSGGENC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\PSGGENG.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\RHYTHMC.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\S98.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\SOUND.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\SOUNDROM.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\TMS3631C.C
-# End Source File
-# Begin Source File
-
-SOURCE=..\SOUND\TMS3631G.C
-# End Source File
-# End Group
 # Begin Group "fdd"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\FDD\DISKDRV.C
+SOURCE=..\fdd\diskdrv.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\fdd\diskdrv.h
 # End Source File
 # Begin Source File
 
@@ -1168,6 +707,421 @@ SOURCE=..\GENERIC\SOFTKBD.C
 SOURCE=..\GENERIC\UNASM.C
 # End Source File
 # End Group
+# Begin Group "io"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\IO\ARTIC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\CGROM.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\CPUIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\CRTC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\DIPSW.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\DMAC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\EGC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\EMSIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\EPSONIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\FDC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\FDD320.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\GDC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\GDC_PSET.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\GDC_SUB.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\IOCORE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\MOUSEIF.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\NECIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\NMIIO.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\NP2SYSP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\PCIDEV.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\PIC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\PIT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\PRINTIF.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\SERIAL.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\SYSPORT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\IO\UPD4990.C
+# End Source File
+# End Group
+# Begin Group "lio"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\LIO\GCIRCLE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GLINE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPSET.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GPUT1.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\GSCREEN.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\LIO\LIO.C
+# End Source File
+# End Group
+# Begin Group "mem"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\MEM\DMAX86.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEGC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEMS.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMEPP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMTRAM.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVGA.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\MEM\MEMVRAM.C
+# End Source File
+# End Group
+# Begin Group "sound"
+
+# PROP Default_Filter ""
+# Begin Group "vermouth"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDIMOD.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDINST.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDIOUT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDTABLE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\VERMOUTH\MIDVOICE.C
+# End Source File
+# End Group
+# Begin Group "getsnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSMIX.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETSND.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\GETSND\GETWAVE.C
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\SOUND\ADPCMC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\ADPCMG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\BEEPC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\BEEPG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\CS4231C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\CS4231G.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\FMBOARD.C
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\opl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opl3.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\oplgeng.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\opna.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opna.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngen.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngenc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opngencfg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\x86\opngeng.x86
+
+!IF  "$(CFG)" == "np21 - Win32 Release"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\rel21
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\relnt21
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trc21
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trap21
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\dbg21
+InputPath=.\x86\opngeng.x86
+InputName=opngeng
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\opntimer.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PCM86C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PCM86G.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\pcmmix.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\pcmmix.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PSGGENC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\PSGGENG.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\RHYTHMC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\S98.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\sndcsec.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\sound\sndcsec.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\SOUND.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\SOUNDROM.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\TMS3631C.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\SOUND\TMS3631G.C
+# End Source File
+# End Group
 # Begin Group "trap"
 
 # PROP Default_Filter ""
@@ -1180,55 +1134,242 @@ SOURCE=..\TRAP\INTTRAP.C
 SOURCE=..\TRAP\STEPTRAP.C
 # End Source File
 # End Group
+# Begin Group "vram"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\VRAM\DISPSYNC.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\MAKEGREX.C
+# End Source File
+# Begin Source File
+
+SOURCE=.\x86\MAKEGRPH.X86
+
+!IF  "$(CFG)" == "np21 - Win32 Release"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\rel21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\relnt21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trc21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\trap21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
+
+# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
+IntDir=.\..\obj\dbg21
+InputPath=.\x86\MAKEGRPH.X86
+InputName=MAKEGRPH
+
+"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	nasm -f win32 -o $(IntDir)\$(InputName).obj -i.\x86\ -i..\i386c\x86\ -i..\io\x86\ $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\MAKETEXT.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\MAKETGRP.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\PALETTES.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\SCRNDRAW.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\SCRNSAVE.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\SDRAW.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\VRAM\VRAM.C
+# End Source File
+# End Group
 # Begin Group "win9x"
 
 # PROP Default_Filter ""
-# Begin Group "dialog"
+# Begin Group "commng"
+
+# PROP Default_Filter ""
+# Begin Group "vsthost"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\DIALOG\D_ABOUT.CPP
+SOURCE=.\commng\vsthost\vstbuffer.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_BMP.CPP
+SOURCE=.\commng\vsthost\vstbuffer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CLND.CPP
+SOURCE=.\commng\vsthost\vsteditwnd.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_CONFIG.CPP
+SOURCE=.\commng\vsthost\vsteditwnd.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_DISK.CPP
+SOURCE=.\commng\vsthost\vsteditwndbase.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_MPU98.CPP
+SOURCE=.\commng\vsthost\vsteffect.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SCREEN.CPP
+SOURCE=.\commng\vsthost\vsteffect.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SERIAL.CPP
+SOURCE=.\commng\vsthost\vstmidievent.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\D_SOUND.CPP
+SOURCE=.\commng\vsthost\vstmidievent.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\commng\cmbase.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\DIALOGS.CPP
+SOURCE=.\commng\cmbase.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DIALOG\NP2CLASS.CPP
+SOURCE=.\commng\cmmidi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiin32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiin32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidiout32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutmt32sound.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvermouth.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmmidioutvst.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmnull.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmpara.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng\cmserial.h
 # End Source File
 # End Group
 # Begin Group "debuguty"
@@ -1299,6 +1440,94 @@ SOURCE=.\debuguty\viewsnd.cpp
 SOURCE=.\debuguty\viewsnd.h
 # End Source File
 # End Group
+# Begin Group "dialog"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\dialog\c_combodata.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_combodata.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_dipsw.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_dipsw.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_midi.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_slidervalue.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\c_slidervalue.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_about.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_bmp.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_clnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_config.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_disk.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_font.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_mpu98.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_screen.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_serial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_sound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\d_soundlog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\dialog\dialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DIALOG\NP2CLASS.CPP
+# End Source File
+# End Group
 # Begin Group "ext"
 
 # PROP Default_Filter ""
@@ -1317,6 +1546,10 @@ SOURCE=.\ext\c86ctl\c86ctlif.cpp
 
 SOURCE=.\ext\c86ctl\c86ctlif.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ext\c86ctl\cbus_boardtype.h
+# End Source File
 # End Group
 # Begin Group "romeo"
 
@@ -1334,29 +1567,53 @@ SOURCE=.\ext\romeo\juliet.h
 SOURCE=.\ext\romeo\romeo.h
 # End Source File
 # End Group
-# Begin Group "rebirth"
+# Begin Group "scci"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.cpp
+SOURCE=.\ext\scci\scci.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\rebirth.h
+SOURCE=.\ext\scci\SCCIDefines.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\scci.h
+SOURCE=.\ext\scci\scciif.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ext\rebirth\SCCIDefines.h
+SOURCE=.\ext\scci\scciif.h
 # End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\ext\extendmodule.h
+SOURCE=.\ext\externalchip.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalchipmanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopl3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalopm.h
 # End Source File
 # Begin Source File
 
@@ -1366,10 +1623,34 @@ SOURCE=.\ext\externalopna.cpp
 
 SOURCE=.\ext\externalopna.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\externalpsg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\mt32snd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ext\mt32snd.h
+# End Source File
 # End Group
 # Begin Group "misc"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\misc\DlgProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\DlgProc.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\misc\extrom.cpp
@@ -1380,11 +1661,47 @@ SOURCE=.\misc\extrom.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\misc\guard.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\PropProc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\threadbase.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\misc\tickcounter.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\misc\tickcounter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\trace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\trace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tstring.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\misc\tstring.h
 # End Source File
 # Begin Source File
 
@@ -1403,25 +1720,113 @@ SOURCE=.\misc\WndProc.cpp
 SOURCE=.\misc\WndProc.h
 # End Source File
 # End Group
+# Begin Group "soundmng"
+
+# PROP Default_Filter ""
+# Begin Group "asio"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\BOARD118.CPP
+SOURCE=.\soundmng\asio\asiodriverlist.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMMIDI.CPP
+SOURCE=.\soundmng\asio\asiodriverlist.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMPARA.CPP
+SOURCE=.\soundmng\asio\asiosdk.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\soundmng\sdasio.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CMSERIAL.CPP
+SOURCE=.\soundmng\sdasio.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\COMMNG.CPP
+SOURCE=.\soundmng\sdbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\soundmng\sddsound3.h
+# End Source File
+# End Group
+# Begin Group "subwnd"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dclock.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dd2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\dd2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\kdispwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\kdispwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\mdbgwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\mdbgwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\skbdwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\skbdwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\subwnd.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\toolwnd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\subwnd\toolwnd.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\commng.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\commng.h
 # End Source File
 # Begin Source File
 
@@ -1492,81 +1897,6 @@ InputName=CPUTYPE
 # End Source File
 # Begin Source File
 
-SOURCE=.\DCLOCK.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\DCLOCKD.X86
-
-!IF  "$(CFG)" == "np21 - Win32 Release"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\rel21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Release NT"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\relnt21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trace"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trc21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Trap"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\trap21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "np21 - Win32 Debug"
-
-# Begin Custom Build - ±¾ÝÌÞÙ’†... $(InputPath)
-IntDir=.\..\obj\dbg21
-InputPath=.\DCLOCKD.X86
-InputName=DCLOCKD
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	nasm -f win32 -o $(IntDir)\$(InputName).obj $(InputPath)
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\DD2.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\DOSIO.CPP
 # End Source File
 # Begin Source File
@@ -1591,10 +1921,6 @@ SOURCE=.\MOUSEMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\MT32SND.CPP
-# End Source File
-# Begin Source File
-
 SOURCE=.\NP2.CPP
 # End Source File
 # Begin Source File
@@ -1607,15 +1933,23 @@ SOURCE=.\OEMTEXT.CPP
 # End Source File
 # Begin Source File
 
+SOURCE=.\recvideo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\recvideo.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SCRNMNG.CPP
 # End Source File
 # Begin Source File
 
-SOURCE=.\SOUNDMNG.CPP
+SOURCE=.\soundmng.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\SUBWIND.CPP
+SOURCE=.\soundmng.h
 # End Source File
 # Begin Source File
 
@@ -1628,18 +1962,6 @@ SOURCE=.\TASKMNG.CPP
 # Begin Source File
 
 SOURCE=.\TIMEMNG.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TOOLWIN.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\TRACE.CPP
-# End Source File
-# Begin Source File
-
-SOURCE=.\WIN32SUB.CPP
 # End Source File
 # Begin Source File
 

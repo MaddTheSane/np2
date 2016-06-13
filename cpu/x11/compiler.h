@@ -80,7 +80,7 @@
 #include <unistd.h>
 
 #define	X11
-#define	OSLANG_EUC
+#define	OSLANG_UTF8
 #define	OSLINEBREAK_LF
 
 #include <glib.h>
@@ -98,10 +98,9 @@ typedef	guint16		UINT16;
 typedef	guint32		UINT32;
 typedef	guint64		UINT64;
 
-typedef	guint8		BYTE;
-typedef	gchar		TCHAR;
-
 typedef	gboolean	BOOL;
+
+#define	INTPTR		gintptr
 
 #define PTR_TO_UINT32(p)	((UINT32)GPOINTER_TO_UINT(p))
 #define UINT32_TO_PTR(v)	GUINT_TO_POINTER((UINT32)(v))
@@ -163,7 +162,9 @@ typedef	gboolean	BOOL;
 #endif
 #endif /* __GNUC__ */
 
+G_BEGIN_DECLS
 UINT32 gettick(void);
+G_END_DECLS
 #define	GETTICK()	gettick()
 #define	GETRAND()	random()
 #define	SPRINTF		sprintf
@@ -171,7 +172,6 @@ UINT32 gettick(void);
 
 #define	OEMCHAR		gchar
 #define OEMTEXT(s)	s
-#define OEMNULLSTR	OEMTEXT("")
 #define	OEMSPRINTF	sprintf
 #define	OEMSTRLEN	strlen
 
@@ -231,6 +231,7 @@ UINT32 gettick(void);
 #endif
 
 #define	SUPPORT_EUC
+#define	SUPPORT_UTF8
 
 #undef	SUPPORT_8BPP
 #define	SUPPORT_16BPP
@@ -240,6 +241,7 @@ UINT32 gettick(void);
 
 #undef	SOUND_CRITICAL
 #undef	SOUNDRESERVE
+#define	SUPPORT_EXTERNALCHIP
 
 #define	SUPPORT_PC9861K
 #define	SUPPORT_HOSTDRV

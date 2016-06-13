@@ -8,20 +8,20 @@
 // ---- non connect
 
 static UINT
-ncread(COMMNG self, BYTE *data)
+ncread(COMMNG self, UINT8 *data)
 {
 
 	return 0;
 }
 
 static UINT
-ncwrite(COMMNG self, BYTE data)
+ncwrite(COMMNG self, UINT8 data)
 {
 
 	return 0;
 }
 
-static BYTE
+static UINT8
 ncgetstat(COMMNG self)
 {
 

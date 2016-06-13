@@ -1,3 +1,11 @@
+/**
+ * @file	psggen.h
+ * @brief	Interface of the PSG
+ */
+
+#pragma once
+
+#include "sound.h"
 
 enum {
 	PSGFREQPADBIT		= 12,
@@ -78,4 +86,3 @@ void SOUNDCALL psggen_getpcm(PSGGEN psg, SINT32 *pcm, UINT count);
 #ifdef __cplusplus
 }
 #endif
-

@@ -8,10 +8,10 @@ enum {
 extern "C" {
 #endif
 
-BOOL sysmenu_create(void);
+BRESULT sysmenu_create(void);
 void sysmenu_destroy(void);
 
-BOOL sysmenu_menuopen(UINT menutype, int x, int y);
+BRESULT sysmenu_menuopen(UINT menutype, int x, int y);
 
 #ifdef __cplusplus
 }

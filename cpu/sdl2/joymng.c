@@ -2,7 +2,7 @@
 #include	"joymng.h"
 
 
-BYTE joymng_getstat(void) {
+UINT8 joymng_getstat(void) {
 
 	return(0xff);
 }
