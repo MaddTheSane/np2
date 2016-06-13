@@ -95,26 +95,28 @@ const UINT8 iflags[512] = {					// Z_FLAG, S_FLAG, P_FLAG
 	UINT16	*_reg16_b20[256];
 #endif
 
-void i286c_initialize(void) {
-
+void i286c_initialize(void)
+{
+	I286CORE *cpu = &i286core;
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 	UINT	i;
 #endif
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
-	for (i=0; i<0x100; i++) {
+	for (i = 0; i < 0x100; i++)
+	{
 		int pos;
 #if defined(BYTESEX_LITTLE)
-		pos = ((i & 0x20)?1:0);
+		pos = ((i & 0x20) ? 1 : 0);
 #else
-		pos = ((i & 0x20)?0:1);
+		pos = ((i & 0x20) ? 0 : 1);
 #endif
 		pos += ((i >> 3) & 3) * 2;
 		_reg8_b53[i] = ((UINT8 *)&I286_REG) + pos;
 #if defined(BYTESEX_LITTLE)
-		pos = ((i & 0x4)?1:0);
+		pos = ((i & 0x4) ? 1 : 0);
 #else
-		pos = ((i & 0x4)?0:1);
+		pos = ((i & 0x4) ? 0 : 1);
 #endif
 		pos += (i & 3) * 2;
 		_reg8_b20[i] = ((UINT8 *)&I286_REG) + pos;
@@ -126,19 +128,24 @@ void i286c_initialize(void) {
 #endif
 
 #if !defined(MEMOPTIMIZE)
-	for (i=0; i<0x10000; i++) {
+	for (i = 0; i < 0x10000; i++)
+	{
 		REG8 f;
 		UINT bit;
 		f = P_FLAG;
-		for (bit=0x80; bit; bit>>=1) {
-			if (i & bit) {
+		for (bit = 0x80; bit; bit >>= 1)
+		{
+			if (i & bit)
+			{
 				f ^= P_FLAG;
 			}
 		}
-		if (!i) {
+		if (!i)
+		{
 			f |= Z_FLAG;
 		}
-		if (i & 0x8000) {
+		if (i & 0x8000)
+		{
 			f |= S_FLAG;
 		}
 		_szpflag16[i] = f;
@@ -148,7 +155,7 @@ void i286c_initialize(void) {
 	i286cea_initialize();
 #endif
 	v30cinit();
-	ZeroMemory(&i286core, sizeof(i286core));
+	memset(cpu, 0, sizeof(*cpu));
 }
 
 void i286c_deinitialize(void) {
@@ -160,24 +167,28 @@ void i286c_deinitialize(void) {
 	}
 }
 
-static void i286c_initreg(void) {
-
+static void i286c_initreg(I286CORE *cpu)
+{
 	I286_CS = 0xf000;
 	CS_BASE = 0xf0000;
 	I286_IP = 0xfff0;
 	I286_ADRSMASK = 0xfffff;
 }
 
-void i286c_reset(void) {
+void i286c_reset(void)
+{
+	I286CORE *cpu = &i286core;
 
-	ZeroMemory(&i286core.s, sizeof(i286core.s));
-	i286c_initreg();
+	memset(&cpu->s, 0, sizeof(cpu->s));
+	i286c_initreg(cpu);
 }
 
-void i286c_shut(void) {
+void i286c_shut(void)
+{
+	I286CORE *cpu = &i286core;
 
-	ZeroMemory(&i286core.s, offsetof(I286STAT, cpu_type));
-	i286c_initreg();
+	memset(&cpu->s, 0, offsetof(I286STAT, cpu_type));
+	i286c_initreg(cpu);
 }
 
 void i286c_setextsize(UINT32 size) {
@@ -235,9 +246,10 @@ void i286c_setemm(UINT frame, UINT32 addr) {
 }
 
 
-void CPUCALL i286c_intnum(UINT vect, REG16 IP) {
-
-const UINT8	*ptr;
+void CPUCALL i286c_intnum(UINT vect, REG16 IP)
+{
+	I286CORE *cpu = &i286core;
+	const UINT8	*ptr;
 
 	if (vect < 0x10) TRACEOUT(("i286c_intnum - %.2x", vect));
 	REGPUSH0(REAL_FLAGREG)
@@ -254,13 +266,15 @@ const UINT8	*ptr;
 	I286_WORKCLOCK(20);
 }
 
-void CPUCALL i286c_interrupt(REG8 vect) {
-
+void CPUCALL i286c_interrupt(REG8 vect)
+{
+	I286CORE *cpu = &i286core;
 	UINT	op;
 const UINT8	*ptr;
 
 	op = i286_memoryread(I286_IP + CS_BASE);
-	if (op == 0xf4) {							// hlt
+	if (op == 0xf4)								// hlt
+	{
 		I286_IP++;
 	}
 	REGPUSH0(REAL_FLAGREG)						// ‚±‚±V30‚Ε’Òελ‚ª‡‚ν‚Θ‚Ά
@@ -277,56 +291,66 @@ const UINT8	*ptr;
 	I286_WORKCLOCK(20);
 }
 
-void i286c(void) {
-
+void i286c(void)
+{
+	I286CORE *cpu = &i286core;
 	UINT	opcode;
 
-	if (I286_TRAP) {
-		do {
+	if (I286_TRAP)
+	{
+		do
+		{
 #if defined(ENABLE_TRAP)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode](&i286core);
-			if (I286_TRAP) {
+			i286op[opcode](cpu);
+			if (I286_TRAP)
+			{
 				i286c_interrupt(1);
 			}
 			dmax86();
-		} while(I286_REMCLOCK > 0);
+		} while (I286_REMCLOCK > 0);
 	}
-	else if (dmac.working) {
-		do {
+	else if (dmac.working)
+	{
+		do
+		{
 #if defined(ENABLE_TRAP)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode](&i286core);
+			i286op[opcode](cpu);
 			dmax86();
-		} while(I286_REMCLOCK > 0);
+		} while (I286_REMCLOCK > 0);
 	}
-	else {
-		do {
+	else
+	{
+		do
+		{
 #if defined(ENABLE_TRAP)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			i286op[opcode](&i286core);
-		} while(I286_REMCLOCK > 0);
+			i286op[opcode](cpu);
+		} while (I286_REMCLOCK > 0);
 	}
 }
 
-void i286c_step(void) {
-
+void i286c_step(void)
+{
+	I286CORE *cpu = &i286core;
 	UINT	opcode;
 
 	I286_OV = I286_FLAG & O_FLAG;
 	I286_FLAG &= ~(O_FLAG);
 
 	GET_PCBYTE(opcode);
-	i286op[opcode](&i286core);
+	i286op[opcode](cpu);
 
 	I286_FLAG &= ~(O_FLAG);
-	if (I286_OV) {
+	if (I286_OV)
+	{
 		I286_FLAG |= (O_FLAG);
 	}
 	dmax86();

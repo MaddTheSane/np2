@@ -500,7 +500,7 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 	}
 
 
-#define	SEGSELECT(c)	((I286_MSW & MSW_PE)?i286c_selector(c):((c) << 4))
+#define	SEGSELECT(c)	((I286_MSW & MSW_PE)?i286c_selector(cpu, c):((c) << 4))
 
 #define	INT_NUM(a, b)	i286c_intnum((a), (REG16)(b))
 

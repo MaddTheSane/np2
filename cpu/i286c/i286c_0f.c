@@ -55,7 +55,7 @@ I286_0F _lldt(I286CORE *cpu, UINT op)
 		I286_WORKCLOCK(19);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
-	addr = i286c_selector(r);
+	addr = i286c_selector(cpu, r);
 	I286_LDTR = r;
 	I286_LDTRC.limit = i286_memoryread_w(addr);
 	I286_LDTRC.base = i286_memoryread_w(addr + 2);
@@ -77,7 +77,7 @@ I286_0F _ltr(I286CORE *cpu, UINT op)
 		I286_WORKCLOCK(19);
 		r = i286_memoryread_w(CALC_EA(op));
 	}
-	addr = i286c_selector(r);
+	addr = i286c_selector(cpu, r);
 	I286_TR = r;
 	I286_TRC.limit = i286_memoryread_w(addr);
 	I286_TRC.base = i286_memoryread_w(addr + 2);
@@ -235,7 +235,7 @@ static const I286OP_0F cts1_table[] =
 	_smsw,	_smsw,	_lmsw,	_lmsw
 };
 
-I286_0F _loadall286(void)
+I286_0F _loadall286(I286CORE *cpu)
 {
 	UINT16	tmp;
 	UINT32	base;
@@ -319,7 +319,7 @@ I286EXT i286c_cts(I286CORE *cpu)
 	}
 	else if (op == 5)
 	{
-		_loadall286();
+		_loadall286(cpu);
 	}
 	else
 	{

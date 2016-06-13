@@ -974,18 +974,18 @@ UINT calc_a(UINT op, UINT32 *seg) {
 #endif
 
 
-UINT32 i286c_selector(UINT sel) {
-
+UINT32 i286c_selector(I286CORE *cpu, UINT sel)
+{
 	I286DTR	*dtr;
 	UINT32	addr;
 	UINT32	ret;
 
-	dtr = (sel & 4)?&I286_LDTRC:&I286_GDTR;
+	dtr = (sel & 4) ? &I286_LDTRC : &I286_GDTR;
 	addr = (dtr->base24 << 16) + dtr->base + (sel & (~7));
 	ret = i286_memoryread_w(addr+2);
 	ret += i286_memoryread(addr+4) << 16;
 	TRACEOUT(("ProtectMode: selector idx=%x %s rpl=%d - real addr = %.6x",
 					(sel >> 3), (sel & 4)?"LDT":"GDT", sel & 3, ret));
-	return(ret);
+	return ret;
 }
 

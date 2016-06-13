@@ -923,7 +923,7 @@ static void v30patching(I286OP *op, const V30PATCH *patch, int cnt)
 	{
 		op[patch->opnum] = patch->v30opcode;
 		patch++;
-	} while(--cnt);
+	} while (--cnt);
 }
 
 #define	V30PATCHING(a, b)	v30patching(a, b, sizeof(b)/sizeof(V30PATCH))
@@ -946,6 +946,7 @@ void v30cinit(void)
 
 void v30c(void)
 {
+	I286CORE *cpu = &i286core;
 	UINT	opcode;
 
 	if (I286_TRAP)
@@ -956,13 +957,13 @@ void v30c(void)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			v30op[opcode](&i286core);
+			v30op[opcode](cpu);
 			if (I286_TRAP)
 			{
 				i286c_interrupt(1);
 			}
 			dmav30();
-		} while(I286_REMCLOCK > 0);
+		} while (I286_REMCLOCK > 0);
 	}
 	else if (dmac.working)
 	{
@@ -972,9 +973,9 @@ void v30c(void)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			v30op[opcode](&i286core);
+			v30op[opcode](cpu);
 			dmav30();
-		} while(I286_REMCLOCK > 0);
+		} while (I286_REMCLOCK > 0);
 	}
 	else
 	{
@@ -984,20 +985,21 @@ void v30c(void)
 			steptrap(CPU_CS, CPU_IP);
 #endif
 			GET_PCBYTE(opcode);
-			v30op[opcode](&i286core);
-		} while(I286_REMCLOCK > 0);
+			v30op[opcode](cpu);
+		} while (I286_REMCLOCK > 0);
 	}
 }
 
 void v30c_step(void)
 {
+	I286CORE *cpu = &i286core;
 	UINT	opcode;
 
 	I286_OV = I286_FLAG & O_FLAG;
 	I286_FLAG &= ~(O_FLAG);
 
 	GET_PCBYTE(opcode);
-	v30op[opcode](&i286core);
+	v30op[opcode](cpu);
 
 	I286_FLAG &= ~(O_FLAG);
 	if (I286_OV)
