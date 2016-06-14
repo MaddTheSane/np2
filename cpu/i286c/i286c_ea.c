@@ -34,12 +34,12 @@ enum {
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
 
-static UINT32 ea_bx_si(void) {
+static UINT32 ea_bx_si(I286CORE *cpu) {
 
 	return(LOW16(I286_BX + I286_SI) + DS_FIX);
 }
 
-static UINT32 ea_bx_si_disp8(void) {
+static UINT32 ea_bx_si_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -47,7 +47,7 @@ static UINT32 ea_bx_si_disp8(void) {
 	return(LOW16(adrs + I286_BX + I286_SI) + DS_FIX);
 }
 
-static UINT32 ea_bx_si_disp16(void) {
+static UINT32 ea_bx_si_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -55,12 +55,12 @@ static UINT32 ea_bx_si_disp16(void) {
 	return(LOW16(adrs + I286_BX + I286_SI) + DS_FIX);
 }
 
-static UINT32 ea_bx_di(void) {
+static UINT32 ea_bx_di(I286CORE *cpu) {
 
 	return(LOW16(I286_BX + I286_DI) + DS_FIX);
 }
 
-static UINT32 ea_bx_di_disp8(void) {
+static UINT32 ea_bx_di_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -68,7 +68,7 @@ static UINT32 ea_bx_di_disp8(void) {
 	return(LOW16(adrs + I286_BX + I286_DI) + DS_FIX);
 }
 
-static UINT32 ea_bx_di_disp16(void) {
+static UINT32 ea_bx_di_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -76,12 +76,12 @@ static UINT32 ea_bx_di_disp16(void) {
 	return(LOW16(adrs + I286_BX + I286_DI) + DS_FIX);
 }
 
-static UINT32 ea_bp_si(void) {
+static UINT32 ea_bp_si(I286CORE *cpu) {
 
 	return(LOW16(I286_BP + I286_SI) + SS_FIX);
 }
 
-static UINT32 ea_bp_si_disp8(void) {
+static UINT32 ea_bp_si_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -89,7 +89,7 @@ static UINT32 ea_bp_si_disp8(void) {
 	return(LOW16(adrs + I286_BP + I286_SI) + SS_FIX);
 }
 
-static UINT32 ea_bp_si_disp16(void) {
+static UINT32 ea_bp_si_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -97,12 +97,12 @@ static UINT32 ea_bp_si_disp16(void) {
 	return(LOW16(adrs + I286_BP + I286_SI) + SS_FIX);
 }
 
-static UINT32 ea_bp_di(void) {
+static UINT32 ea_bp_di(I286CORE *cpu) {
 
 	return(LOW16(I286_BP + I286_DI) + SS_FIX);
 }
 
-static UINT32 ea_bp_di_disp8(void) {
+static UINT32 ea_bp_di_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -110,7 +110,7 @@ static UINT32 ea_bp_di_disp8(void) {
 	return(LOW16(adrs + I286_BP + I286_DI) + SS_FIX);
 }
 
-static UINT32 ea_bp_di_disp16(void) {
+static UINT32 ea_bp_di_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -118,12 +118,12 @@ static UINT32 ea_bp_di_disp16(void) {
 	return(LOW16(adrs + I286_BP + I286_DI) + SS_FIX);
 }
 
-static UINT32 ea_si(void) {
+static UINT32 ea_si(I286CORE *cpu) {
 
 	return(I286_SI + DS_FIX);
 }
 
-static UINT32 ea_si_disp8(void) {
+static UINT32 ea_si_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -131,7 +131,7 @@ static UINT32 ea_si_disp8(void) {
 	return(LOW16(adrs + I286_SI) + DS_FIX);
 }
 
-static UINT32 ea_si_disp16(void) {
+static UINT32 ea_si_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -139,12 +139,12 @@ static UINT32 ea_si_disp16(void) {
 	return(LOW16(adrs + I286_SI) + DS_FIX);
 }
 
-static UINT32 ea_di(void) {
+static UINT32 ea_di(I286CORE *cpu) {
 
 	return(I286_DI + DS_FIX);
 }
 
-static UINT32 ea_di_disp8(void) {
+static UINT32 ea_di_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -152,7 +152,7 @@ static UINT32 ea_di_disp8(void) {
 	return(LOW16(adrs + I286_DI) + DS_FIX);
 }
 
-static UINT32 ea_di_disp16(void) {
+static UINT32 ea_di_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -160,7 +160,7 @@ static UINT32 ea_di_disp16(void) {
 	return(LOW16(adrs + I286_DI) + DS_FIX);
 }
 
-static UINT32 ea_disp16(void) {
+static UINT32 ea_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -168,7 +168,7 @@ static UINT32 ea_disp16(void) {
 	return(adrs + DS_FIX);
 }
 
-static UINT32 ea_bp_disp8(void) {
+static UINT32 ea_bp_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -176,7 +176,7 @@ static UINT32 ea_bp_disp8(void) {
 	return(LOW16(adrs + I286_BP) + SS_FIX);
 }
 
-static UINT32 ea_bp_disp16(void) {
+static UINT32 ea_bp_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -184,12 +184,12 @@ static UINT32 ea_bp_disp16(void) {
 	return(LOW16(adrs + I286_BP) + SS_FIX);
 }
 
-static UINT32 ea_bx(void) {
+static UINT32 ea_bx(I286CORE *cpu) {
 
 	return(I286_BX + DS_FIX);
 }
 
-static UINT32 ea_bx_disp8(void) {
+static UINT32 ea_bx_disp8(I286CORE *cpu) {
 
 	SINT32	adrs;
 
@@ -197,7 +197,7 @@ static UINT32 ea_bx_disp8(void) {
 	return(LOW16(adrs + I286_BX) + DS_FIX);
 }
 
-static UINT32 ea_bx_disp16(void) {
+static UINT32 ea_bx_disp16(I286CORE *cpu) {
 
 	UINT32	adrs;
 
@@ -222,12 +222,12 @@ static const CALCEA i286c_ea_dst_tbl[] = {
 
 // ----
 
-static UINT16 lea_bx_si(void) {
+static UINT16 lea_bx_si(I286CORE *cpu) {
 
 	return(I286_BX + I286_SI);
 }
 
-static UINT16 lea_bx_si_disp8(void) {
+static UINT16 lea_bx_si_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -235,7 +235,7 @@ static UINT16 lea_bx_si_disp8(void) {
 	return(adrs + I286_BX + I286_SI);
 }
 
-static UINT16 lea_bx_si_disp16(void) {
+static UINT16 lea_bx_si_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -243,12 +243,12 @@ static UINT16 lea_bx_si_disp16(void) {
 	return(adrs + I286_BX + I286_SI);
 }
 
-static UINT16 lea_bx_di(void) {
+static UINT16 lea_bx_di(I286CORE *cpu) {
 
 	return(I286_BX + I286_DI);
 }
 
-static UINT16 lea_bx_di_disp8(void) {
+static UINT16 lea_bx_di_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -256,7 +256,7 @@ static UINT16 lea_bx_di_disp8(void) {
 	return(adrs + I286_BX + I286_DI);
 }
 
-static UINT16 lea_bx_di_disp16(void) {
+static UINT16 lea_bx_di_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -264,12 +264,12 @@ static UINT16 lea_bx_di_disp16(void) {
 	return(adrs + I286_BX + I286_DI);
 }
 
-static UINT16 lea_bp_si(void) {
+static UINT16 lea_bp_si(I286CORE *cpu) {
 
 	return(I286_BP + I286_SI);
 }
 
-static UINT16 lea_bp_si_disp8(void) {
+static UINT16 lea_bp_si_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -277,7 +277,7 @@ static UINT16 lea_bp_si_disp8(void) {
 	return(adrs + I286_BP + I286_SI);
 }
 
-static UINT16 lea_bp_si_disp16(void) {
+static UINT16 lea_bp_si_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -285,12 +285,12 @@ static UINT16 lea_bp_si_disp16(void) {
 	return(adrs + I286_BP + I286_SI);
 }
 
-static UINT16 lea_bp_di(void) {
+static UINT16 lea_bp_di(I286CORE *cpu) {
 
 	return(I286_BP + I286_DI);
 }
 
-static UINT16 lea_bp_di_disp8(void) {
+static UINT16 lea_bp_di_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -298,7 +298,7 @@ static UINT16 lea_bp_di_disp8(void) {
 	return(adrs + I286_BP + I286_DI);
 }
 
-static UINT16 lea_bp_di_disp16(void) {
+static UINT16 lea_bp_di_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -306,12 +306,12 @@ static UINT16 lea_bp_di_disp16(void) {
 	return(adrs + I286_BP + I286_DI);
 }
 
-static UINT16 lea_si(void) {
+static UINT16 lea_si(I286CORE *cpu) {
 
 	return(I286_SI);
 }
 
-static UINT16 lea_si_disp8(void) {
+static UINT16 lea_si_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -319,7 +319,7 @@ static UINT16 lea_si_disp8(void) {
 	return(adrs + I286_SI);
 }
 
-static UINT16 lea_si_disp16(void) {
+static UINT16 lea_si_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -327,12 +327,12 @@ static UINT16 lea_si_disp16(void) {
 	return(adrs + I286_SI);
 }
 
-static UINT16 lea_di(void) {
+static UINT16 lea_di(I286CORE *cpu) {
 
 	return(I286_DI);
 }
 
-static UINT16 lea_di_disp8(void) {
+static UINT16 lea_di_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -340,7 +340,7 @@ static UINT16 lea_di_disp8(void) {
 	return(adrs + I286_DI);
 }
 
-static UINT16 lea_di_disp16(void) {
+static UINT16 lea_di_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -348,7 +348,7 @@ static UINT16 lea_di_disp16(void) {
 	return(adrs + I286_DI);
 }
 
-static UINT16 lea_disp16(void) {
+static UINT16 lea_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -356,7 +356,7 @@ static UINT16 lea_disp16(void) {
 	return(adrs);
 }
 
-static UINT16 lea_bp_disp8(void) {
+static UINT16 lea_bp_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -364,7 +364,7 @@ static UINT16 lea_bp_disp8(void) {
 	return(adrs + I286_BP);
 }
 
-static UINT16 lea_bp_disp16(void) {
+static UINT16 lea_bp_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -372,12 +372,12 @@ static UINT16 lea_bp_disp16(void) {
 	return(adrs + I286_BP);
 }
 
-static UINT16 lea_bx(void) {
+static UINT16 lea_bx(I286CORE *cpu) {
 
 	return(I286_BX);
 }
 
-static UINT16 lea_bx_disp8(void) {
+static UINT16 lea_bx_disp8(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -385,7 +385,7 @@ static UINT16 lea_bx_disp8(void) {
 	return(adrs + I286_BX);
 }
 
-static UINT16 lea_bx_disp16(void) {
+static UINT16 lea_bx_disp16(I286CORE *cpu) {
 
 	UINT16	adrs;
 
@@ -410,13 +410,13 @@ static const CALCLEA i286c_lea_tbl[] = {
 
 // ----
 
-static UINT a_bx_si(UINT32 *seg) {
+static UINT a_bx_si(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = DS_FIX;
 	return(LOW16(I286_BX + I286_SI));
 }
 
-static UINT a_bx_si_disp8(UINT32 *seg) {
+static UINT a_bx_si_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -425,7 +425,7 @@ static UINT a_bx_si_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BX + I286_SI));
 }
 
-static UINT a_bx_si_disp16(UINT32 *seg) {
+static UINT a_bx_si_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -434,13 +434,13 @@ static UINT a_bx_si_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_BX + I286_SI));
 }
 
-static UINT a_bx_di(UINT32 *seg) {
+static UINT a_bx_di(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = DS_FIX;
 	return(LOW16(I286_BX + I286_DI));
 }
 
-static UINT a_bx_di_disp8(UINT32 *seg) {
+static UINT a_bx_di_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -449,7 +449,7 @@ static UINT a_bx_di_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BX + I286_DI));
 }
 
-static UINT a_bx_di_disp16(UINT32 *seg) {
+static UINT a_bx_di_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -458,13 +458,13 @@ static UINT a_bx_di_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_BX + I286_DI));
 }
 
-static UINT a_bp_si(UINT32 *seg) {
+static UINT a_bp_si(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = SS_FIX;
 	return(LOW16(I286_BP + I286_SI));
 }
 
-static UINT a_bp_si_disp8(UINT32 *seg) {
+static UINT a_bp_si_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -473,7 +473,7 @@ static UINT a_bp_si_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP + I286_SI));
 }
 
-static UINT a_bp_si_disp16(UINT32 *seg) {
+static UINT a_bp_si_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -482,13 +482,13 @@ static UINT a_bp_si_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP + I286_SI));
 }
 
-static UINT a_bp_di(UINT32 *seg) {
+static UINT a_bp_di(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = SS_FIX;
 	return(LOW16(I286_BP + I286_DI));
 }
 
-static UINT a_bp_di_disp8(UINT32 *seg) {
+static UINT a_bp_di_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -497,7 +497,7 @@ static UINT a_bp_di_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP + I286_DI));
 }
 
-static UINT a_bp_di_disp16(UINT32 *seg) {
+static UINT a_bp_di_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -506,13 +506,13 @@ static UINT a_bp_di_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP + I286_DI));
 }
 
-static UINT a_si(UINT32 *seg) {
+static UINT a_si(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = DS_FIX;
 	return(I286_SI);
 }
 
-static UINT a_si_disp8(UINT32 *seg) {
+static UINT a_si_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -521,7 +521,7 @@ static UINT a_si_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_SI));
 }
 
-static UINT a_si_disp16(UINT32 *seg) {
+static UINT a_si_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -530,13 +530,13 @@ static UINT a_si_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_SI));
 }
 
-static UINT a_di(UINT32 *seg) {
+static UINT a_di(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = DS_FIX;
 	return(I286_DI);
 }
 
-static UINT a_di_disp8(UINT32 *seg) {
+static UINT a_di_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -545,7 +545,7 @@ static UINT a_di_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_DI));
 }
 
-static UINT a_di_disp16(UINT32 *seg) {
+static UINT a_di_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -554,7 +554,7 @@ static UINT a_di_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_DI));
 }
 
-static UINT a_disp16(UINT32 *seg) {
+static UINT a_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -563,7 +563,7 @@ static UINT a_disp16(UINT32 *seg) {
 	return(adrs);
 }
 
-static UINT a_bp_disp8(UINT32 *seg) {
+static UINT a_bp_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -572,7 +572,7 @@ static UINT a_bp_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP));
 }
 
-static UINT a_bp_disp16(UINT32 *seg) {
+static UINT a_bp_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -581,13 +581,13 @@ static UINT a_bp_disp16(UINT32 *seg) {
 	return(LOW16(adrs + I286_BP));
 }
 
-static UINT a_bx(UINT32 *seg) {
+static UINT a_bx(I286CORE *cpu, UINT32 *seg) {
 
 	*seg = DS_FIX;
 	return(I286_BX);
 }
 
-static UINT a_bx_disp8(UINT32 *seg) {
+static UINT a_bx_disp8(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -596,7 +596,7 @@ static UINT a_bx_disp8(UINT32 *seg) {
 	return(LOW16(adrs + I286_BX));
 }
 
-static UINT a_bx_disp16(UINT32 *seg) {
+static UINT a_bx_disp16(I286CORE *cpu, UINT32 *seg) {
 
 	UINT	adrs;
 
@@ -626,30 +626,32 @@ static const GETLEA i286c_ea_tbl[] = {
 	CALCLEA	_calc_lea[192];
 	GETLEA	_get_ea[192];
 
-static UINT32 ea_nop(void) {
+static UINT32 ea_nop(I286CORE *cpu) {
 
 	return(0);
 }
 
-void i286cea_initialize(void) {
-
+void i286cea_initialize(void)
+{
 	UINT	i;
 	UINT	pos;
 
-	for (i=0; i<0xc0; i++) {
+	for (i = 0; i < 0xc0; i++)
+	{
 		pos = ((i >> 3) & 0x18) + (i & 0x07);
 		_calc_ea_dst[i] = i286c_ea_dst_tbl[pos];
 		_calc_lea[i] = i286c_lea_tbl[pos];
 		_get_ea[i] = i286c_ea_tbl[pos];
 	}
-	for (; i<0x100; i++) {
+	for (; i < 0x100; i++)
+	{
 		_calc_ea_dst[i] = ea_nop;
 	}
 }
 
 #else								// ARM‚¾‚Æswitch‚É‚µ‚½‚Ù[‚ª‘‚¢‚Í‚¸c
 
-UINT32 calc_ea_dst(UINT op) {
+UINT32 calc_ea_dst(I286CORE *cpu, UINT op) {
 
 	UINT32	adrs;
 
@@ -748,7 +750,7 @@ UINT32 calc_ea_dst(UINT op) {
 	}
 }
 
-UINT16 calc_lea(UINT op) {
+UINT16 calc_lea(I286CORE *cpu, UINT op) {
 
 	UINT16	adrs;
 
@@ -847,7 +849,7 @@ UINT16 calc_lea(UINT op) {
 	}
 }
 
-UINT calc_a(UINT op, UINT32 *seg) {
+UINT calc_a(I286CORE *cpu,  UINT op, UINT32 *seg) {
 
 	UINT	adrs;
 

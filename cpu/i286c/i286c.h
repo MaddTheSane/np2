@@ -10,18 +10,18 @@
 #define	I286_SEGREG		cpu->s.r.w.es
 
 #define	I286_AX			cpu->s.r.w.ax
-#define	I286_BX			i286core.s.r.w.bx
+#define	I286_BX			cpu->s.r.w.bx
 #define	I286_CX			cpu->s.r.w.cx
 #define	I286_DX			cpu->s.r.w.dx
-#define	I286_SI			i286core.s.r.w.si
-#define	I286_DI			i286core.s.r.w.di
-#define	I286_BP			i286core.s.r.w.bp
+#define	I286_SI			cpu->s.r.w.si
+#define	I286_DI			cpu->s.r.w.di
+#define	I286_BP			cpu->s.r.w.bp
 #define	I286_SP			cpu->s.r.w.sp
 #define	I286_CS			cpu->s.r.w.cs
 #define	I286_DS			cpu->s.r.w.ds
 #define	I286_ES			cpu->s.r.w.es
 #define	I286_SS			cpu->s.r.w.ss
-#define	I286_IP			i286core.s.r.w.ip
+#define	I286_IP			cpu->s.r.w.ip
 
 #if 0
 #define	SEG_BASE		cpu->s.es_base
@@ -30,8 +30,8 @@
 #define	SS_BASE			cpu->s.ss_base
 #define	DS_BASE			cpu->s.ds_base
 #endif
-#define	SS_FIX			i286core.s.ss_fix
-#define	DS_FIX			i286core.s.ds_fix
+#define	SS_FIX			cpu->s.ss_fix
+#define	DS_FIX			cpu->s.ds_fix
 
 #define	I286_AL			cpu->s.r.b.al
 #define	I286_BL			cpu->s.r.b.bl

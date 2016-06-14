@@ -88,22 +88,22 @@ extern	UINT16	*_reg16_b20[256];
 // ---- ea
 
 #if !defined(MEMOPTIMIZE) || (MEMOPTIMIZE < 2)
-typedef UINT32 (*CALCEA)(void);
-typedef UINT16 (*CALCLEA)(void);
-typedef UINT (*GETLEA)(UINT32 *seg);
+typedef UINT32 (*CALCEA)(I286CORE *cpu);
+typedef UINT16 (*CALCLEA)(I286CORE *cpu);
+typedef UINT (*GETLEA)(I286CORE *cpu, UINT32 *seg);
 extern	CALCEA	_calc_ea_dst[];
 extern	CALCLEA	_calc_lea[];
 extern	GETLEA	_get_ea[];
-#define	CALC_EA(o)		(_calc_ea_dst[(o)]())
-#define	CALC_LEA(o)		(_calc_lea[(o)]())
-#define	GET_EA(o, s)	(_get_ea[(o)](s))
+#define	CALC_EA(o)		(_calc_ea_dst[(o)](cpu))
+#define	CALC_LEA(o)		(_calc_lea[(o)](cpu))
+#define	GET_EA(o, s)	(_get_ea[(o)](cpu, s))
 #else
-extern UINT32 calc_ea_dst(UINT op);
-extern UINT16 calc_lea(UINT op);
-extern UINT calc_a(UINT op, UINT32 *seg);
-#define	CALC_EA(o)		(calc_ea_dst(o))
-#define	CALC_LEA(o)		(calc_lea(o))
-#define	GET_EA(o, s)	(calc_a(o, s))
+extern UINT32 calc_ea_dst(I286CORE *cpu, UINT op);
+extern UINT16 calc_lea(I286CORE *cpu, UINT op);
+extern UINT calc_a(I286CORE *cpu, UINT op, UINT32 *seg);
+#define	CALC_EA(o)		(calc_ea_dst(cpu, o))
+#define	CALC_LEA(o)		(calc_lea(cpu, o))
+#define	GET_EA(o, s)	(calc_a(cpu, o, s))
 #endif
 
 
