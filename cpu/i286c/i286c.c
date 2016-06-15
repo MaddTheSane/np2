@@ -301,7 +301,7 @@ void i286c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			i286op[opcode](cpu);
@@ -317,7 +317,7 @@ void i286c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			i286op[opcode](cpu);
@@ -329,7 +329,7 @@ void i286c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			i286op[opcode](cpu);

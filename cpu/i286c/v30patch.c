@@ -954,7 +954,7 @@ void v30c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode](cpu);
@@ -970,7 +970,7 @@ void v30c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode](cpu);
@@ -982,7 +982,7 @@ void v30c(void)
 		do
 		{
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode](cpu);
