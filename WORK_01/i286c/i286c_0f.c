@@ -227,14 +227,14 @@ I286_0F _loadall286(void) {
 	I286_CX = LOADINTELWORD(mem + 0x832);
 	I286_AX = LOADINTELWORD(mem + 0x834);
 	base = LOADINTELDWORD(mem + 0x836) & 0x00ffffff;
-	ES_BASE = base;
+	I286_ES_BASE = base;
 	base = LOADINTELDWORD(mem + 0x83c) & 0x00ffffff;
-	CS_BASE = base;
+	I286_CS_BASE = base;
 	base = LOADINTELDWORD(mem + 0x842) & 0x00ffffff;
-	SS_BASE = base;
+	I286_SS_BASE = base;
 	I286_SS_FIX = base;
 	base = LOADINTELDWORD(mem + 0x848) & 0x00ffffff;
-	DS_BASE = base;
+	I286_DS_BASE = base;
 	I286_DS_FIX = base;
 
 	I286_GDTR.base = LOADINTELWORD(mem + 0x84e);

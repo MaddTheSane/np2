@@ -100,8 +100,8 @@ I286FN v30_reserved(void) {
 
 I286FN v30segprefix_es(void) {				// 26: es:
 
-	I286_SS_FIX = ES_BASE;
-	I286_DS_FIX = ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -117,8 +117,8 @@ I286FN v30segprefix_es(void) {				// 26: es:
 
 I286FN v30segprefix_cs(void) {				// 2e: cs:
 
-	I286_SS_FIX = CS_BASE;
-	I286_DS_FIX = CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -134,8 +134,8 @@ I286FN v30segprefix_cs(void) {				// 2e: cs:
 
 I286FN v30segprefix_ss(void) {				// 36: ss:
 
-	I286_SS_FIX = SS_BASE;
-	I286_DS_FIX = SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -151,8 +151,8 @@ I286FN v30segprefix_ss(void) {				// 36: ss:
 
 I286FN v30segprefix_ds(void) {				// 3e: ds:
 
-	I286_SS_FIX = DS_BASE;
-	I286_DS_FIX = DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -188,25 +188,25 @@ I286FN v30mov_seg_ea(void) {				// 8E:	mov		segrem, EA
 	switch(op & 0x18) {
 		case 0x00:			// es
 			I286_ES = (UINT16)tmp;
-			ES_BASE = tmp << 4;
+			I286_ES_BASE = tmp << 4;
 			break;
 
 		case 0x08:			// cs
 			I286_CS = (UINT16)tmp;
-			CS_BASE = tmp << 4;
+			I286_CS_BASE = tmp << 4;
 			break;
 
 		case 0x10:			// ss
 			I286_SS = (UINT16)tmp;
-			SS_BASE = tmp << 4;
-			I286_SS_FIX = SS_BASE;
+			I286_SS_BASE = tmp << 4;
+			I286_SS_FIX = I286_SS_BASE;
 			NEXT_OPCODE
 			break;
 
 		case 0x18:			// ds
 			I286_DS = (UINT16)tmp;
-			DS_BASE = tmp << 4;
-			I286_DS_FIX = DS_BASE;
+			I286_DS_BASE = tmp << 4;
+			I286_DS_FIX = I286_DS_BASE;
 			break;
 	}
 }
@@ -630,8 +630,8 @@ static const V30PATCH v30patch_op[] = {
 
 I286FN v30repe_segprefix_es(void) {
 
-	I286_DS_FIX = ES_BASE;
-	I286_SS_FIX = ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -647,8 +647,8 @@ I286FN v30repe_segprefix_es(void) {
 
 I286FN v30repe_segprefix_cs(void) {
 
-	I286_DS_FIX = CS_BASE;
-	I286_SS_FIX = CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -664,8 +664,8 @@ I286FN v30repe_segprefix_cs(void) {
 
 I286FN v30repe_segprefix_ss(void) {
 
-	I286_DS_FIX = SS_BASE;
-	I286_SS_FIX = SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -681,8 +681,8 @@ I286FN v30repe_segprefix_ss(void) {
 
 I286FN v30repe_segprefix_ds(void) {
 
-	I286_DS_FIX = DS_BASE;
-	I286_SS_FIX = DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -728,8 +728,8 @@ static const V30PATCH v30patch_repe[] = {
 
 I286FN v30repne_segprefix_es(void) {
 
-	I286_DS_FIX = ES_BASE;
-	I286_SS_FIX = ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -745,8 +745,8 @@ I286FN v30repne_segprefix_es(void) {
 
 I286FN v30repne_segprefix_cs(void) {
 
-	I286_DS_FIX = CS_BASE;
-	I286_SS_FIX = CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -762,8 +762,8 @@ I286FN v30repne_segprefix_cs(void) {
 
 I286FN v30repne_segprefix_ss(void) {
 
-	I286_DS_FIX = SS_BASE;
-	I286_SS_FIX = SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
@@ -779,8 +779,8 @@ I286FN v30repne_segprefix_ss(void) {
 
 I286FN v30repne_segprefix_ds(void) {
 
-	I286_DS_FIX = DS_BASE;
-	I286_SS_FIX = DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX) {
 		UINT op;
