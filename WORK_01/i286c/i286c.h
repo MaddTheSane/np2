@@ -29,8 +29,8 @@
 #define	SS_BASE			i286core.s.ss_base
 #define	DS_BASE			i286core.s.ds_base
 #endif
-#define	SS_FIX			i286core.s.ss_fix
-#define	DS_FIX			i286core.s.ds_fix
+#define	I286_SS_FIX		i286core.s.ss_fix
+#define	I286_DS_FIX		i286core.s.ds_fix
 
 #define	I286_AL			i286core.s.r.b.al
 #define	I286_BL			i286core.s.r.b.bl

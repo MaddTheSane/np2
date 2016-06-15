@@ -130,8 +130,8 @@ extern UINT calc_a(UINT op, UINT32 *seg);
 
 
 #define	REMOVE_PREFIX												\
-		SS_FIX = SS_BASE;											\
-		DS_FIX = DS_BASE;
+		I286_SS_FIX = SS_BASE;										\
+		I286_DS_FIX = DS_BASE;
 
 
 #define	I286_WORKCLOCK(c)	I286_REMCLOCK -= (c)
