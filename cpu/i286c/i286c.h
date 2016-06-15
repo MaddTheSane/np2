@@ -23,15 +23,12 @@
 #define	I286_SS			cpu->s.r.w.ss
 #define	I286_IP			cpu->s.r.w.ip
 
-#if 0
-#define	SEG_BASE		cpu->s.es_base
-#define	ES_BASE			cpu->s.es_base
-#define	CS_BASE			cpu->s.cs_base
-#define	SS_BASE			cpu->s.ss_base
-#define	DS_BASE			cpu->s.ds_base
-#endif
-#define	SS_FIX			cpu->s.ss_fix
-#define	DS_FIX			cpu->s.ds_fix
+#define	I286_ES_BASE	i286core.s.es_base
+#define	I286_CS_BASE	i286core.s.cs_base
+#define	I286_SS_BASE	i286core.s.ss_base
+#define	I286_DS_BASE	i286core.s.ds_base
+#define	I286_SS_FIX		cpu->s.ss_fix
+#define	I286_DS_FIX		cpu->s.ds_fix
 
 #define	I286_AL			cpu->s.r.b.al
 #define	I286_BL			cpu->s.r.b.bl

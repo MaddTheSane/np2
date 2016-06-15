@@ -99,8 +99,8 @@ I286FN v30_reserved(I286CORE *cpu)
 
 I286FN v30segprefix_es(I286CORE *cpu)				/* 26: es: */
 {
-	SS_FIX = ES_BASE;
-	DS_FIX = ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -118,8 +118,8 @@ I286FN v30segprefix_es(I286CORE *cpu)				/* 26: es: */
 
 I286FN v30segprefix_cs(I286CORE *cpu)				/* 2e: cs: */
 {
-	SS_FIX = CS_BASE;
-	DS_FIX = CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -137,8 +137,8 @@ I286FN v30segprefix_cs(I286CORE *cpu)				/* 2e: cs: */
 
 I286FN v30segprefix_ss(I286CORE *cpu)				/* 36: ss: */
 {
-	SS_FIX = SS_BASE;
-	DS_FIX = SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -156,8 +156,8 @@ I286FN v30segprefix_ss(I286CORE *cpu)				/* 36: ss: */
 
 I286FN v30segprefix_ds(I286CORE *cpu)				/* 3e: ds:*/
 {
-	SS_FIX = DS_BASE;
-	DS_FIX = DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -198,25 +198,25 @@ I286FN v30mov_seg_ea(I286CORE *cpu)					/* 8E:	mov		segrem, EA */
 	{
 		case 0x00:			/* es */
 			I286_ES = (UINT16)tmp;
-			ES_BASE = tmp << 4;
+			I286_ES_BASE = tmp << 4;
 			break;
 
 		case 0x08:			/* cs */
 			I286_CS = (UINT16)tmp;
-			CS_BASE = tmp << 4;
+			I286_CS_BASE = tmp << 4;
 			break;
 
 		case 0x10:			/* ss */
 			I286_SS = (UINT16)tmp;
-			SS_BASE = tmp << 4;
-			SS_FIX = SS_BASE;
+			I286_SS_BASE = tmp << 4;
+			I286_SS_FIX = I286_SS_BASE;
 			NEXT_OPCODE
 			break;
 
 		case 0x18:			/* ds */
 			I286_DS = (UINT16)tmp;
-			DS_BASE = tmp << 4;
-			DS_FIX = DS_BASE;
+			I286_DS_BASE = tmp << 4;
+			I286_DS_FIX = I286_DS_BASE;
 			break;
 	}
 }
@@ -507,7 +507,7 @@ I286FN v30_aad(I286CORE *cpu)						/* D5:	AAD */
 I286FN v30_xlat(I286CORE *cpu)						/* D6:	xlat */
 {
 	I286_WORKCLOCK(5);
-	I286_AL = i286_memoryread(LOW16(I286_AL + I286_BX) + DS_FIX);
+	I286_AL = i286_memoryread(LOW16(I286_AL + I286_BX) + I286_DS_FIX);
 }
 
 I286FN v30_repne(I286CORE *cpu)						/* F2:	repne */
@@ -705,8 +705,8 @@ static const V30PATCH v30patch_op[] =
 
 I286FN v30repe_segprefix_es(I286CORE *cpu)
 {
-	DS_FIX = ES_BASE;
-	SS_FIX = ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -724,8 +724,8 @@ I286FN v30repe_segprefix_es(I286CORE *cpu)
 
 I286FN v30repe_segprefix_cs(I286CORE *cpu)
 {
-	DS_FIX = CS_BASE;
-	SS_FIX = CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -743,8 +743,8 @@ I286FN v30repe_segprefix_cs(I286CORE *cpu)
 
 I286FN v30repe_segprefix_ss(I286CORE *cpu)
 {
-	DS_FIX = SS_BASE;
-	SS_FIX = SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -762,8 +762,8 @@ I286FN v30repe_segprefix_ss(I286CORE *cpu)
 
 I286FN v30repe_segprefix_ds(I286CORE *cpu)
 {
-	DS_FIX = DS_BASE;
-	SS_FIX = DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -812,8 +812,8 @@ static const V30PATCH v30patch_repe[] =
 
 I286FN v30repne_segprefix_es(I286CORE *cpu)
 {
-	DS_FIX = ES_BASE;
-	SS_FIX = ES_BASE;
+	I286_DS_FIX = I286_ES_BASE;
+	I286_SS_FIX = I286_ES_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -831,8 +831,8 @@ I286FN v30repne_segprefix_es(I286CORE *cpu)
 
 I286FN v30repne_segprefix_cs(I286CORE *cpu)
 {
-	DS_FIX = CS_BASE;
-	SS_FIX = CS_BASE;
+	I286_DS_FIX = I286_CS_BASE;
+	I286_SS_FIX = I286_CS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -850,8 +850,8 @@ I286FN v30repne_segprefix_cs(I286CORE *cpu)
 
 I286FN v30repne_segprefix_ss(I286CORE *cpu)
 {
-	DS_FIX = SS_BASE;
-	SS_FIX = SS_BASE;
+	I286_DS_FIX = I286_SS_BASE;
+	I286_SS_FIX = I286_SS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{
@@ -869,8 +869,8 @@ I286FN v30repne_segprefix_ss(I286CORE *cpu)
 
 I286FN v30repne_segprefix_ds(I286CORE *cpu)
 {
-	DS_FIX = DS_BASE;
-	SS_FIX = DS_BASE;
+	I286_DS_FIX = I286_DS_BASE;
+	I286_SS_FIX = I286_DS_BASE;
 	I286_PREFIX++;
 	if (I286_PREFIX < MAX_PREFIX)
 	{

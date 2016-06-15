@@ -16,7 +16,7 @@ I286EXT i286c_rep_insb(I286CORE *cpu)
 		do
 		{
 			REG8 dat = iocore_inp8(I286_DX);
-			i286_memorywrite(I286_DI + ES_BASE, dat);
+			i286_memorywrite(I286_DI + I286_ES_BASE, dat);
 			I286_DI += stp;
 			I286_WORKCLOCK(4);
 		} while (--I286_CX);
@@ -32,7 +32,7 @@ I286EXT i286c_rep_insw(I286CORE *cpu)
 		do
 		{
 			REG16 dat = iocore_inp16(I286_DX);
-			i286_memorywrite_w(I286_DI + ES_BASE, dat);
+			i286_memorywrite_w(I286_DI + I286_ES_BASE, dat);
 			I286_DI += stp;
 			I286_WORKCLOCK(4);
 		} while (--I286_CX);
@@ -49,7 +49,7 @@ I286EXT i286c_rep_outsb(I286CORE *cpu)
 		int stp = STRING_DIR;
 		do
 		{
-			REG8 dat = i286_memoryread(I286_SI + DS_FIX);
+			REG8 dat = i286_memoryread(I286_SI + I286_DS_FIX);
 			I286_SI += stp;
 			iocore_out8(I286_DX, (UINT8)dat);
 			I286_WORKCLOCK(4);
@@ -65,7 +65,7 @@ I286EXT i286c_rep_outsw(I286CORE *cpu)
 		int stp = STRING_DIRx2;
 		do
 		{
-			REG16 dat = i286_memoryread_w(I286_SI + DS_FIX);
+			REG16 dat = i286_memoryread_w(I286_SI + I286_DS_FIX);
 			I286_SI += stp;
 			iocore_out16(I286_DX, (UINT16)dat);
 			I286_WORKCLOCK(4);
@@ -92,8 +92,8 @@ I286EXT i286c_rep_movsb(I286CORE *cpu)
 		r_di = I286_DI;
 		while (TRUE /*CONSTCOND*/)
 		{
-			REG8 dat = i286_memoryread(DS_FIX + r_si);
-			i286_memorywrite(ES_BASE + r_di, dat);
+			REG8 dat = i286_memoryread(I286_DS_FIX + r_si);
+			i286_memorywrite(I286_ES_BASE + r_di, dat);
 			r_si += stp;
 			r_di += stp;
 			I286_WORKCLOCK(4);
@@ -130,8 +130,8 @@ I286EXT i286c_rep_movsw(I286CORE *cpu)
 		r_di = I286_DI;
 		while (TRUE /*CONSTCOND*/)
 		{
-			REG16 dat = i286_memoryread_w(DS_FIX + r_si);
-			i286_memorywrite_w(ES_BASE + r_di, dat);
+			REG16 dat = i286_memoryread_w(I286_DS_FIX + r_si);
+			i286_memorywrite_w(I286_ES_BASE + r_di, dat);
 			r_si += stp;
 			r_di += stp;
 			I286_WORKCLOCK(4);
@@ -160,8 +160,8 @@ I286EXT i286c_rep_movsb(I286CORE *cpu)
 		int stp = STRING_DIR;
 		while (TRUE /*CONSTCOND*/)
 		{
-			REG8 dat = i286_memoryread(I286_SI + DS_FIX);
-			i286_memorywrite(I286_DI + ES_BASE, dat);
+			REG8 dat = i286_memoryread(I286_SI + I286_DS_FIX);
+			i286_memorywrite(I286_DI + I286_ES_BASE, dat);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(4);
@@ -187,8 +187,8 @@ I286EXT i286c_rep_movsw(I286CORE *cpu)
 		int stp = STRING_DIRx2;
 		while (TRUE /*CONSTCOND*/)
 		{
-			REG16 dat = i286_memoryread_w(I286_SI + DS_FIX);
-			i286_memorywrite_w(I286_DI + ES_BASE, dat);
+			REG16 dat = i286_memoryread_w(I286_SI + I286_DS_FIX);
+			i286_memorywrite_w(I286_DI + I286_ES_BASE, dat);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(4);
@@ -217,7 +217,7 @@ I286EXT i286c_rep_lodsb(I286CORE *cpu)
 		int stp = STRING_DIR;
 		while (TRUE /*CONSTCOND*/)
 		{
-			I286_AL = i286_memoryread(I286_SI + DS_FIX);
+			I286_AL = i286_memoryread(I286_SI + I286_DS_FIX);
 			I286_SI += stp;
 			I286_WORKCLOCK(4);
 			I286_CX--;
@@ -242,7 +242,7 @@ I286EXT i286c_rep_lodsw(I286CORE *cpu)
 		int stp = STRING_DIRx2;
 		while (TRUE /*CONSTCOND*/)
 		{
-			I286_AX = i286_memoryread_w(I286_SI + DS_FIX);
+			I286_AX = i286_memoryread_w(I286_SI + I286_DS_FIX);
 			I286_SI += stp;
 			I286_WORKCLOCK(4);
 		 	I286_CX--;
@@ -269,7 +269,7 @@ I286EXT i286c_rep_stosb(I286CORE *cpu)
 		int stp = STRING_DIR;
 		while (TRUE /*CONSTCOND*/)
 		{
-			i286_memorywrite(I286_DI + ES_BASE, I286_AL);
+			i286_memorywrite(I286_DI + I286_ES_BASE, I286_AL);
 			I286_DI += stp;
 			I286_WORKCLOCK(3);
 			I286_CX--;
@@ -294,7 +294,7 @@ I286EXT i286c_rep_stosw(I286CORE *cpu)
 		int stp = STRING_DIRx2;
 		while (TRUE /*CONSTCOND*/)
 		{
-			i286_memorywrite_w(I286_DI + ES_BASE, I286_AX);
+			i286_memorywrite_w(I286_DI + I286_ES_BASE, I286_AX);
 			I286_DI += stp;
 			I286_WORKCLOCK(3);
 			I286_CX--;
@@ -322,8 +322,8 @@ I286EXT i286c_repe_cmpsb(I286CORE *cpu)
 		do
 		{
 			UINT res;
-			UINT dst = i286_memoryread(I286_SI + DS_FIX);
-			UINT src = i286_memoryread(I286_DI + ES_BASE);
+			UINT dst = i286_memoryread(I286_SI + I286_DS_FIX);
+			UINT src = i286_memoryread(I286_DI + I286_ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
@@ -342,8 +342,8 @@ I286EXT i286c_repne_cmpsb(I286CORE *cpu)
 		do
 		{
 			UINT res;
-			UINT dst = i286_memoryread(I286_SI + DS_FIX);
-			UINT src = i286_memoryread(I286_DI + ES_BASE);
+			UINT dst = i286_memoryread(I286_SI + I286_DS_FIX);
+			UINT src = i286_memoryread(I286_DI + I286_ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
@@ -362,8 +362,8 @@ I286EXT i286c_repe_cmpsw(I286CORE *cpu)
 		do
 		{
 			UINT32 res;
-			UINT32 dst = i286_memoryread_w(I286_SI + DS_FIX);
-			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 dst = i286_memoryread_w(I286_SI + I286_DS_FIX);
+			UINT32 src = i286_memoryread_w(I286_DI + I286_ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
@@ -382,8 +382,8 @@ I286EXT i286c_repne_cmpsw(I286CORE *cpu)
 		do
 		{
 			UINT32 res;
-			UINT32 dst = i286_memoryread_w(I286_SI + DS_FIX);
-			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 dst = i286_memoryread_w(I286_SI + I286_DS_FIX);
+			UINT32 src = i286_memoryread_w(I286_DI + I286_ES_BASE);
 			I286_SI += stp;
 			I286_DI += stp;
 			I286_WORKCLOCK(9);
@@ -405,7 +405,7 @@ I286EXT i286c_repe_scasb(I286CORE *cpu)
 		do
 		{
 			UINT res;
-			UINT src = i286_memoryread(I286_DI + ES_BASE);
+			UINT src = i286_memoryread(I286_DI + I286_ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
 			SUBBYTE(res, dst, src)
@@ -424,7 +424,7 @@ I286EXT i286c_repne_scasb(I286CORE *cpu)
 		do
 		{
 			UINT res;
-			UINT src = i286_memoryread(I286_DI + ES_BASE);
+			UINT src = i286_memoryread(I286_DI + I286_ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
 			SUBBYTE(res, dst, src)
@@ -443,7 +443,7 @@ I286EXT i286c_repe_scasw(I286CORE *cpu)
 		do
 		{
 			UINT32 res;
-			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 src = i286_memoryread_w(I286_DI + I286_ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
 			SUBWORD(res, dst, src)
@@ -462,7 +462,7 @@ I286EXT i286c_repne_scasw(I286CORE *cpu)
 		do
 		{
 			UINT32 res;
-			UINT32 src = i286_memoryread_w(I286_DI + ES_BASE);
+			UINT32 src = i286_memoryread_w(I286_DI + I286_ES_BASE);
 			I286_DI += stp;
 			I286_WORKCLOCK(8);
 			SUBWORD(res, dst, src)
