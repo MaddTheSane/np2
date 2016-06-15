@@ -246,9 +246,8 @@ void i286c_setemm(UINT frame, UINT32 addr) {
 }
 
 
-void CPUCALL i286c_intnum(UINT vect, REG16 IP)
+void CPUCALL i286c_intnum(I286CORE *cpu, UINT vect, REG16 IP)
 {
-	I286CORE *cpu = &i286core;
 	const UINT8	*ptr;
 
 	if (vect < 0x10) TRACEOUT(("i286c_intnum - %.2x", vect));

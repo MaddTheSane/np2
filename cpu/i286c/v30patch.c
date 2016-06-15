@@ -194,7 +194,7 @@ I286FN v30mov_seg_ea(I286CORE *cpu)					/* 8E:	mov		segrem, EA */
 		I286_WORKCLOCK(5);
 		tmp = i286_memoryread_w(CALC_EA(op));
 	}
-	switch(op & 0x18)
+	switch (op & 0x18)
 	{
 		case 0x00:			/* es */
 			I286_ES = (UINT16)tmp;

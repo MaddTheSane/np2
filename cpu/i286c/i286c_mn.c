@@ -1786,7 +1786,7 @@ I286FN _mov_seg_ea(I286CORE *cpu)					/* 8E:	mov		segrem, EA */
 		tmp = i286_memoryread_w(CALC_EA(op));
 	}
 	base = SEGSELECT(tmp);
-	switch(op & 0x18)
+	switch (op & 0x18)
 	{
 		case 0x00:			/* es */
 			I286_ES = (UINT16)tmp;
