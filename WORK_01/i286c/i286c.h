@@ -6,9 +6,6 @@
 #undef MEMOPTIMIZE
 #endif
 
-
-#define	I286_STAT		i286core.s.r
-
 #define	I286_REG		i286core.s.r
 #define	I286_SEGREG		i286core.s.r.w.es
 
@@ -26,11 +23,12 @@
 #define	I286_SS			i286core.s.r.w.ss
 #define	I286_IP			i286core.s.r.w.ip
 
-#define	SEG_BASE		i286core.s.es_base
+#if 0
 #define	ES_BASE			i286core.s.es_base
 #define	CS_BASE			i286core.s.cs_base
 #define	SS_BASE			i286core.s.ss_base
 #define	DS_BASE			i286core.s.ds_base
+#endif
 #define	SS_FIX			i286core.s.ss_fix
 #define	DS_FIX			i286core.s.ds_fix
 
