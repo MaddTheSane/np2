@@ -857,7 +857,7 @@ void v30c(void) {
 	if (I286_TRAP) {
 		do {
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
@@ -870,7 +870,7 @@ void v30c(void) {
 	else if (dmac.working) {
 		do {
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();
@@ -880,7 +880,7 @@ void v30c(void) {
 	else {
 		do {
 #if defined(ENABLE_TRAP)
-			steptrap(CPU_CS, CPU_IP);
+			steptrap(I286_CS, I286_IP);
 #endif
 			GET_PCBYTE(opcode);
 			v30op[opcode]();

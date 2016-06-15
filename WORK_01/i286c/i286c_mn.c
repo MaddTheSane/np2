@@ -2269,7 +2269,7 @@ I286FN _int_data8(void) {					// CD:	int		DATA8
 	I286_WORKCLOCK(3);
 	GET_PCBYTE(vect)
 #if defined(ENABLE_TRAP)
-	softinttrap(CPU_CS, CPU_IP - 2, vect);
+	softinttrap(I286_CS, I286_IP - 2, vect);
 #endif
 	INT_NUM(vect, I286_IP);
 }
