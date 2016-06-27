@@ -9,8 +9,8 @@
 #include	<HIDUtilities/HID_Utilities_External.h>
 
 typedef struct {
-    pRecElement Element;
-    pRecDevice Device;
+    IOHIDElementRef Element;
+    IOHIDDeviceRef Device;
 } pRecSetting;
 
 #ifdef __cplusplus

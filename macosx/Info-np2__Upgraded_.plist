@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>Japanese</string>
+	<string>ja</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

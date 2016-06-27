@@ -1041,7 +1041,7 @@ void toolwin_open(void) {
         }
         SetDrawerOffsets(hWnd, width/2-11, width/2-11);
         SetDrawerPreferredEdge(hWnd, kWindowEdgeTop);
-		const HISize  size = {bounds.right-bounds.left, bounds.bottom-bounds.top};
+		const HISize  size = {static_cast<CGFloat>(bounds.right-bounds.left), static_cast<CGFloat>(bounds.bottom-bounds.top)};
 		SetWindowResizeLimits(hWnd, &size, &size);
         OpenDrawer(hWnd, kWindowEdgeDefault, 1);
     }

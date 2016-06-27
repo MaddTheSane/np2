@@ -12,9 +12,50 @@
 
 #define hasAxis 1
 
-static void getElementName (pRecElement pElement, char * cstr);
+static void getElementName (IOHIDElementRef pElement, char * cstr);
 static pRecSetting readJoyConfig(const char * key);
 static void initSetting (pRecSetting *setting);
+
+static int HIDGetElementValue( IOHIDDeviceRef pDevice, IOHIDElementRef pElement )
+{
+	/*
+	IOReturn result = kIOReturnSuccess;
+	IOHIDEventStruct hidEvent;
+	hidEvent.value = 0;
+	
+	if (pDevice)
+	{
+		if (pElement)
+		{
+			if (pDevice->interface)
+			{
+				result = (*(IOHIDDeviceInterface **) pDevice->interface)->getElementValue (pDevice->interface, pElement->cookie, &hidEvent);
+				if (kIOReturnSuccess != result)
+					HIDReportErrorNum ("Could not get HID element value via getElementValue.", result);
+				// on 10.0.x this returns the incorrect result for negative ranges, so fix it!!!
+				// this is not required on Mac OS X 10.1+
+				if ((pElement->min < 0) && (hidEvent.value > pElement->max)) // assume range problem
+					hidEvent.value = hidEvent.value + pElement->min - pElement->max - 1;
+			}
+			else
+				HIDReportError ("Did not have interface for device prior to getting element value.");
+		}
+		else
+			HIDReportError ("Bad element passed to GetElementValue.");
+	}
+	else
+		HIDReportError ("Bad device passed to GetElementValue.");
+	// record min and max for auto scale and auto ...
+	if (hidEvent.value < pElement->minReport)
+		pElement->minReport = hidEvent.value;
+	if (hidEvent.value > pElement->maxReport)
+		pElement->maxReport = hidEvent.value;
+	
+	return hidEvent.value;
+	 */
+	return 0;
+} /* HIDGetElementValue */
+
 
 static pRecSetting up;
 static pRecSetting down;
@@ -32,7 +73,7 @@ static pRecSetting temporalButton2;
 
 
 void hid_init(void) {
-    pRecDevice pHIDDevice = NULL;
+    IOHIDDeviceRef pHIDDevice = NULL;
     
     initSetting(&up);
     initSetting(&down);
@@ -89,12 +130,13 @@ bool getCurrentPosition(int num, bool getPositiveValue) {
 
     if ( p.Element == NULL )	return false;	// 無し
     
-    if (p.Element->type!=hasAxis) {
+    if ( IOHIDElementGetType(p.Element)!=kIOHIDElementTypeInput_Axis) {
         return getCurrenButton(num);
     }
 
-    int raw = (HIDCalibrateValue (HIDGetElementValue(p.Device, p.Element), p.Element) - p.Element->min) / 3;//X1EMx0.5（3で割ることにした）
-    int middle = (p.Element->max - p.Element->min - 1) / 2 / 3;
+	int raw = IOHIDElement_GetValue(p.Element, kIOHIDValueScaleTypeCalibrated);
+    //int raw = (HIDCalibrateValue (HIDGetElementValue(p.Device, p.Element), p.Element) - IOHIDElement_GetCalibrationMin(p.Element)) / 3; //X1EMx0.5（3で割ることにした）
+    int middle = (IOHIDElement_GetCalibrationMax(p.Element) - IOHIDElement_GetCalibrationMin(p.Element) - 1) / 2 / 3;
     if ( raw == middle )
     {
         return false;	// 中心
@@ -138,8 +180,8 @@ bool getCurrenButton(int num)
 }
 
 Boolean setJoypad(OSType type, char* name) {
-    pRecElement element;
-    pRecDevice device;
+    IOHIDElementRef element;
+    IOHIDDeviceRef device;
 
     if (HIDConfigureAction (&device, &element, 10.0)) // timeout ticks
     {
@@ -179,8 +221,8 @@ Boolean setJoypad(OSType type, char* name) {
     return false;
 }    
 
-static void getElementName (pRecElement pElement, char * cstr) {
-
+static void getElementName (IOHIDElementRef pElement, char * cstr) {
+#if 0
     if (*(pElement->name))
         BlockMoveData (pElement->name, cstr, 256);
     else // if no name
@@ -189,6 +231,9 @@ static void getElementName (pRecElement pElement, char * cstr) {
         if (!*cstr) // if not usage
             sprintf (cstr, "No Name");
     }
+#else
+	sprintf (cstr, "No Name");
+#endif
 }
 
 void changeJoyPadSetup (void ) {
@@ -202,8 +247,8 @@ void changeJoyPadSetup (void ) {
 }
 
 static pRecSetting readJoyConfig(const char *key) {
-    pRecDevice pDevice = NULL;
-    pRecElement pElement = NULL;
+    IOHIDDeviceRef pDevice = NULL;
+    IOHIDElementRef pElement = NULL;
     pRecSetting setting;
 
     bool result = false;
@@ -213,7 +258,8 @@ static pRecSetting readJoyConfig(const char *key) {
     if (keyString) CFRelease(keyString);
 
     if (pDevice) {
-        if (pDevice->vendorID == 0 && pDevice->productID == 0) result = false;
+        if ( IOHIDDevice_GetVendorID(pDevice) == 0 && IOHIDDevice_GetProductID(pDevice) == 0)
+			result = false;
     }
     if (pDevice && pElement && result)
     {

@@ -780,6 +780,9 @@ extern OSStatus PMPrintDialog(
 #pragma mark CGContext
 extern OSStatus SyncCGContextOriginWithPort(CGContextRef, CGrafPtr);
 extern OSStatus CreateCGContextForPort(CGrafPtr, CGContextRef *);
+extern CFIndex CGDisplayBitsPerPixel(CGDirectDisplayID);
+extern OSStatus QDBeginCGContext(CGrafPtr inPort, CGContextRef *outContext);
+extern OSStatus QDEndCGContext(CGrafPtr inPort, CGContextRef *inoutContext);
 
 //misc.
 extern GDHandle DMGetFirstScreenDevice(Boolean);

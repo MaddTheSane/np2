@@ -12,11 +12,6 @@
 #include	"softkbd.h"
 #include	<CoreGraphics/CoreGraphics.h>
 
-extern "C" {
-	extern OSStatus QDBeginCGContext(CGrafPtr inPort, CGContextRef *outContext);
-	extern OSStatus QDEndCGContext(CGrafPtr inPort, CGContextRef *inoutContext);
-};
-
 #if !defined(SUPPORT_PC9821)
 static const char inifile[] = "np2.cfg";			// same file name..
 #else
