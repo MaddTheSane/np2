@@ -1,6 +1,6 @@
 #include	"compiler.h"
 
-// win‚Åidentify‚Ü‚Å‚Íæ“¾‚És‚­‚ñ‚¾‚¯‚Ç‚Èc‚Á‚ÄAnex86‚à“¯‚¶‚©
+// winã§identifyã¾ã§ã¯å–å¾—ã«è¡Œãã‚“ã ã‘ã©ãªâ€¦ã£ã¦Anex86ã‚‚åŒã˜ã‹
 
 #if defined(SUPPORT_IDEIO)
 
@@ -68,7 +68,7 @@ static BRESULT setidentify(IDEDRV drv) {
 	}
 
 	ZeroMemory(tmp, sizeof(tmp));
-	// ‚Æ‚è‚ ‚¦‚¸g‚Á‚Ä‚é•”•ª‚¾‚¯
+	// ã¨ã‚Šã‚ãˆãšä½¿ã£ã¦ã‚‹éƒ¨åˆ†ã ã‘
 	if (drv->device == IDETYPE_HDD) {
 		tmp[0] = 0x0040;		// non removable device
 		tmp[1] = sxsi->cylinders;

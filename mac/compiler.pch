@@ -1,0 +1,14 @@
+//
+//  compiler.pch
+//  Neko Project 2
+//
+//  Created by C.W. Betts on 6/24/16.
+//  Copyright © 2016 C.W. Betts. All rights reserved.
+//
+
+#ifndef compiler_pch
+#define compiler_pch
+
+#include "compiler.h"
+
+#endif /* compiler_pch */

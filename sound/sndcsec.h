@@ -48,6 +48,15 @@ extern SDL_mutex* g_sndcsec;
 #define	SNDCSEC_ENTER	SDL_LockMutex(g_sndcsec)
 #define	SNDCSEC_LEAVE	SDL_UnlockMutex(g_sndcsec)
 
+#elif defined(NP2VER_MACOSX)
+	
+extern pthread_mutex_t g_sndcsec;
+	
+#define	SNDCSEC_INIT	pthread_mutex_init(&g_sndcsec, NULL)
+#define	SNDCSEC_TERM	pthread_mutex_destroy(&g_sndcsec)
+#define	SNDCSEC_ENTER	pthread_mutex_lock(&g_sndcsec)
+#define	SNDCSEC_LEAVE	pthread_mutex_unlock(&g_sndcsec)
+
 #endif
 
 #else	/* defined(SOUND_CRITICAL) */

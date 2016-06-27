@@ -49,7 +49,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val)
 	sound_sync();
 	xchgbit = g_pcm86.cFifoCtrl ^ val;
 
-	/* ƒoƒbƒtƒ@ƒŠƒZƒbƒg */
+	/* ãƒãƒƒãƒ•ã‚¡ãƒªã‚»ãƒƒãƒˆ */
 	if ((xchgbit & 8) && (val & 8))
 	{
 		g_pcm86.nReadPos = 0;
@@ -60,14 +60,14 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val)
 		g_pcm86.nLastClock <<= 6;
 	}
 
-	/* Š„‚è‚İƒNƒŠƒA */
+	/* å‰²ã‚Šè¾¼ã¿ã‚¯ãƒªã‚¢ */
 	if ((xchgbit & 0x10) && (!(val & 0x10)))
 	{
 		g_pcm86.cIrqFlag = 0;
 //		g_pcm86.cReqIrq = 0;
 	}
 
-	/* ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg•ÏX */
+	/* ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆå¤‰æ›´ */
 	if (xchgbit & 7)
 	{
 		g_pcm86.nExtendBufferSize = pcm86rescue[val & 7] << g_pcm86.cStepBits;
@@ -75,7 +75,7 @@ static void IOOUTCALL pcm86_oa468(UINT port, REG8 val)
 	}
 	g_pcm86.cFifoCtrl = val;
 
-	/* Ä¶ƒtƒ‰ƒO */
+	/* å†ç”Ÿãƒ•ãƒ©ã‚° */
 	if ((xchgbit & 0x80) && (val & 0x80))
 	{
 		g_pcm86.nLastClock = CPU_CLOCK + CPU_BASECLOCK - CPU_REMCLOCK;
@@ -121,7 +121,7 @@ static void IOOUTCALL pcm86_oa46c(UINT port, REG8 val)
 	g_pcm86.buffer[g_pcm86.nWritePos] = val;
 	g_pcm86.nWritePos = (g_pcm86.nWritePos + 1) & PCM86_BUFMSK;
 	g_pcm86.nBufferCount++;
-	/* ƒoƒbƒtƒ@ƒI[ƒo[ƒtƒ[‚ÌŠÄ‹ */
+	/* ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ¼ãƒãƒ¼ãƒ•ãƒ­ãƒ¼ã®ç›£è¦– */
 	if (g_pcm86.nBufferCount >= (PCM86_LOGICALBUF + g_pcm86.nExtendBufferSize))
 	{
 		g_pcm86.nBufferCount -= 4;
@@ -159,11 +159,11 @@ static REG8 IOINPCALL pcm86_ia466(UINT port)
 		}
 	}
 	ret = ((nPast << 1) >= nStepClock) ? 1 : 0;
-	if (g_pcm86.nFifoRemain >= PCM86_LOGICALBUF)		/* ƒoƒbƒtƒ@ƒtƒ‹ */
+	if (g_pcm86.nFifoRemain >= PCM86_LOGICALBUF)		/* ãƒãƒƒãƒ•ã‚¡ãƒ•ãƒ« */
 	{
 		ret |= 0x80;
 	}
-	else if (!g_pcm86.nFifoRemain)						/* ƒoƒbƒtƒ@‚O */
+	else if (!g_pcm86.nFifoRemain)						/* ãƒãƒƒãƒ•ã‚¡ï¼ */
 	{
 		ret |= 0x40;
 	}

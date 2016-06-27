@@ -44,28 +44,28 @@ struct tagPcm86
 	SINT32	smp_r;
 	SINT32	lastsmp_r;
 
-	UINT nReadPos;				/*!< DSOUNDÄ¶ˆÊ’u */
-	UINT nWritePos;				/*!< ‘ž‚ÝˆÊ’u */
-	SINT nBufferCount;			/*!< DSOUND—p‚Ìƒf[ƒ^” */
-	SINT nFifoRemain;			/*!< 86PCM(bufsize:0x8000)‚Ìƒf[ƒ^” */
-	SINT nExtendBufferSize;		/*!< ƒoƒbƒtƒ@‚Ì’Ç‰ÁƒTƒCƒY */
+	UINT nReadPos;				/*!< DSOUNDå†ç”Ÿä½ç½® */
+	UINT nWritePos;				/*!< æ›¸è¾¼ã¿ä½ç½® */
+	SINT nBufferCount;			/*!< DSOUNDç”¨ã®ãƒ‡ãƒ¼ã‚¿æ•° */
+	SINT nFifoRemain;			/*!< 86PCM(bufsize:0x8000)ã®ãƒ‡ãƒ¼ã‚¿æ•° */
+	SINT nExtendBufferSize;		/*!< ãƒãƒƒãƒ•ã‚¡ã®è¿½åŠ ã‚µã‚¤ã‚º */
 
-	SINT nFifoIntrSize;			/*!< Š„‚èž‚Ý—v‹ƒTƒCƒY */
+	SINT nFifoIntrSize;			/*!< å‰²ã‚Šè¾¼ã¿è¦æ±‚ã‚µã‚¤ã‚º */
 	SINT32	volume;
 	SINT32	vol5;
 
-	UINT32 nLastClock;			/*!< ÅŒã‚Éˆ—‚µ‚½ƒNƒƒbƒN */
-	UINT32 nStepClock;			/*!< ƒTƒ“ƒvƒ‹1‚Â‚ÌƒNƒƒbƒN */
-	UINT nStepMask;				/*!< ƒXƒeƒbƒv ƒ}ƒXƒN */
+	UINT32 nLastClock;			/*!< æœ€å¾Œã«å‡¦ç†ã—ãŸã‚¯ãƒ­ãƒƒã‚¯ */
+	UINT32 nStepClock;			/*!< ã‚µãƒ³ãƒ—ãƒ«1ã¤ã®ã‚¯ãƒ­ãƒƒã‚¯ */
+	UINT nStepMask;				/*!< ã‚¹ãƒ†ãƒƒãƒ— ãƒžã‚¹ã‚¯ */
 
-	UINT8 cFifoCtrl;			/*!< FIFO ƒRƒ“ƒgƒ[ƒ‹ */
-	UINT8 cSoundFlags;			/*!< ƒTƒEƒ“ƒh ƒtƒ‰ƒO (A460) */
-	UINT8 cDacCtrl;				/*!< DAC Ý’è */
+	UINT8 cFifoCtrl;			/*!< FIFO ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« */
+	UINT8 cSoundFlags;			/*!< ã‚µã‚¦ãƒ³ãƒ‰ ãƒ•ãƒ©ã‚° (A460) */
+	UINT8 cDacCtrl;				/*!< DAC è¨­å®š */
 	UINT8 __write;
-	UINT8 cStepBits;			/*!< PCM ƒAƒ‰ƒCƒƒ“ƒg */
-	UINT8 cIrqLevel;			/*!< Š„‚èž‚ÝƒŒƒxƒ‹ */
+	UINT8 cStepBits;			/*!< PCM ã‚¢ãƒ©ã‚¤ãƒ¡ãƒ³ãƒˆ */
+	UINT8 cIrqLevel;			/*!< å‰²ã‚Šè¾¼ã¿ãƒ¬ãƒ™ãƒ« */
 	UINT8 __cReqIrq;
-	UINT8 cIrqFlag;				/*!< Š„‚èž‚Ýƒtƒ‰ƒO */
+	UINT8 cIrqFlag;				/*!< å‰²ã‚Šè¾¼ã¿ãƒ•ãƒ©ã‚° */
 
 	UINT8	buffer[PCM86_BUFSIZE];
 };

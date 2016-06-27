@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		55851B731D1DEBE000FDAD85 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BACA730B195ACE5F00784174 /* IOKit.framework */; };
+		55851B751D1DEBF100FDAD85 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55851B741D1DEBF100FDAD85 /* libz.tbd */; };
+		55851B761D1DEC5F00FDAD85 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84E4A195AA35E00183062 /* SDL2.framework */; };
+		55851B771D1DEC5F00FDAD85 /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84E4A195AA35E00183062 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BA2CAE551C2E7EFE00288316 /* oplgenc.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE521C2E7EFE00288316 /* oplgenc.c */; };
 		BA2CAE561C2E7EFE00288316 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE541C2E7EFE00288316 /* oplgeng.c */; };
 		BA99F2D51BD4DD1000B97E10 /* externalchipmanager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA99F2D31BD4DD1000B97E10 /* externalchipmanager.cpp */; };
@@ -216,7 +220,6 @@
 		BAF84E42195AA10500183062 /* sdraw.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D49195AA10500183062 /* sdraw.c */; };
 		BAF84E45195AA10500183062 /* sdrawq16.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D4D195AA10500183062 /* sdrawq16.c */; };
 		BAF84E46195AA10500183062 /* vram.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84D4E195AA10500183062 /* vram.c */; };
-		BAF84E4B195AA35E00183062 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84E4A195AA35E00183062 /* SDL2.framework */; };
 		BAF84E85195AA38300183062 /* adpcmc.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E4E195AA38300183062 /* adpcmc.c */; };
 		BAF84E86195AA38300183062 /* adpcmg.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E4F195AA38300183062 /* adpcmg.c */; };
 		BAF84E87195AA38300183062 /* beepc.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E51195AA38300183062 /* beepc.c */; };
@@ -248,11 +251,25 @@
 		BAF84EA3195AA38300183062 /* midiout.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E7E195AA38300183062 /* midiout.c */; };
 		BAF84EA4195AA38300183062 /* midtable.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E80195AA38300183062 /* midtable.c */; };
 		BAF84EA5195AA38300183062 /* midvoice.c in Sources */ = {isa = PBXBuildFile; fileRef = BAF84E82195AA38300183062 /* midvoice.c */; };
-		BAF84EA7195AA40E00183062 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */; };
 		BAF84EAB195AAAD900183062 /* np2.icns in Resources */ = {isa = PBXBuildFile; fileRef = BAF84EAA195AAAD900183062 /* np2.icns */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		55851B781D1DEC5F00FDAD85 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				55851B771D1DEC5F00FDAD85 /* SDL2.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		55851B741D1DEBF100FDAD85 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		BA2CAE511C2E7EFE00288316 /* oplgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgen.h; sourceTree = "<group>"; };
 		BA2CAE521C2E7EFE00288316 /* oplgenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgenc.c; sourceTree = "<group>"; };
 		BA2CAE531C2E7EFE00288316 /* oplgencfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oplgencfg.h; sourceTree = "<group>"; };
@@ -595,7 +612,7 @@
 		BAF84C9F195AA10500183062 /* commng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commng.c; sourceTree = "<group>"; };
 		BAF84CA0195AA10500183062 /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commng.h; sourceTree = "<group>"; };
 		BAF84CA1195AA10500183062 /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dosio.c; sourceTree = "<group>"; };
-		BAF84CA2195AA10500183062 /* dosio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosio.h; sourceTree = "<group>"; };
+		BAF84CA2195AA10500183062 /* dosio.h */ = {isa = PBXFileReference; fileEncoding = 2147486209; lastKnownFileType = sourcecode.c.h; path = dosio.h; sourceTree = "<group>"; };
 		BAF84CA3195AA10500183062 /* fontmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fontmng.c; sourceTree = "<group>"; };
 		BAF84CA4195AA10500183062 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmng.h; sourceTree = "<group>"; };
 		BAF84CA5195AA10500183062 /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ini.c; sourceTree = "<group>"; };
@@ -653,7 +670,7 @@
 		BAF84D4D195AA10500183062 /* sdrawq16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sdrawq16.c; sourceTree = "<group>"; };
 		BAF84D4E195AA10500183062 /* vram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vram.c; sourceTree = "<group>"; };
 		BAF84D4F195AA10500183062 /* vram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vram.h; sourceTree = "<group>"; };
-		BAF84E4A195AA35E00183062 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
+		BAF84E4A195AA35E00183062 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
 		BAF84E4D195AA38300183062 /* adpcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adpcm.h; sourceTree = "<group>"; };
 		BAF84E4E195AA38300183062 /* adpcmc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adpcmc.c; sourceTree = "<group>"; };
 		BAF84E4F195AA38300183062 /* adpcmg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = adpcmg.c; sourceTree = "<group>"; };
@@ -706,7 +723,6 @@
 		BAF84E82195AA38300183062 /* midvoice.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = midvoice.c; sourceTree = "<group>"; };
 		BAF84E83195AA38300183062 /* midvoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midvoice.h; sourceTree = "<group>"; };
 		BAF84E84195AA38300183062 /* vermouth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vermouth.h; sourceTree = "<group>"; };
-		BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		BAF84EAA195AAAD900183062 /* np2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = np2.icns; sourceTree = "<group>"; };
 		BAFFDA261B5901D500C5DE2E /* opna.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = opna.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -716,9 +732,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BAF84EA7195AA40E00183062 /* libz.1.2.5.dylib in Frameworks */,
+				55851B761D1DEC5F00FDAD85 /* SDL2.framework in Frameworks */,
+				55851B751D1DEBF100FDAD85 /* libz.tbd in Frameworks */,
 				BAF84B17195AA04F00183062 /* Cocoa.framework in Frameworks */,
-				BAF84E4B195AA35E00183062 /* SDL2.framework in Frameworks */,
+				55851B731D1DEBE000FDAD85 /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -816,8 +833,8 @@
 		BAF84B15195AA04F00183062 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				55851B741D1DEBF100FDAD85 /* libz.tbd */,
 				BACA730B195ACE5F00784174 /* IOKit.framework */,
-				BAF84EA6195AA40E00183062 /* libz.1.2.5.dylib */,
 				BAF84E4A195AA35E00183062 /* SDL2.framework */,
 				BAF84B16195AA04F00183062 /* Cocoa.framework */,
 				BAF84B35195AA04F00183062 /* XCTest.framework */,
@@ -1431,6 +1448,7 @@
 				BAF84B0F195AA04F00183062 /* Sources */,
 				BAF84B10195AA04F00183062 /* Frameworks */,
 				BAF84B11195AA04F00183062 /* Resources */,
+				55851B781D1DEC5F00FDAD85 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1765,6 +1783,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1805,6 +1824,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1825,6 +1845,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
@@ -1846,6 +1867,7 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1859,6 +1881,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
@@ -1880,6 +1903,7 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = "np2sdl2/np2sdl2-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

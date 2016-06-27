@@ -13,11 +13,14 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <unistd.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 
 #define	BYTESEX_LITTLE
 #define	OSLANG_UTF8
-#define	OSLINEBREAK_CRLF
+#define	OSLINEBREAK_LF
 #define RESOURCE_US
 
 typedef	signed int			SINT;

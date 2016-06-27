@@ -68,7 +68,7 @@ static UINT8 rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 		if (event >= eventterm) {
 			break;
 		}
-		// ‚¨•Ù“–‚Í‚ ‚Á‚½H
+		// ãŠå¼å½“ã¯ã‚ã£ãŸï¼Ÿ
 		if (clk < event->clock) {
 			if (!(np2cfg.LCD_MODE & 1)) {
 				pal_makeanalog(pal, 0xffff);
@@ -84,7 +84,7 @@ static UINT8 rasterdraw(SDRAWFN sdrawfn, SDRAW sdraw, int maxy) {
 			}
 			(*sdrawfn)(sdraw, y);
 			nextupdate = y;
-			// ‚¨•Ù“–‚ğH‚×‚é
+			// ãŠå¼å½“ã‚’é£Ÿã¹ã‚‹
 			while(clk < event->clock) {
 				((UINT8 *)pal)[event->color] = event->value;
 				event++;
