@@ -178,6 +178,7 @@
 		556F2BCB1D20BABB00335DF9 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0640BAA5FFF0323A11CA0E50 /* CoreServices.framework */; };
 		556F2BCC1D20BABF00335DF9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0640BAA4FFF0323A11CA0E50 /* ApplicationServices.framework */; };
 		556F2BCE1D20BB7500335DF9 /* fpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 556F2BCD1D20BB7500335DF9 /* fpu.c */; };
+		55793C1D1D2171B40043CD89 /* Non-localized.r in Rez */ = {isa = PBXBuildFile; fileRef = 55793C1B1D2171A50043CD89 /* Non-localized.r */; };
 		55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
 		55842DD31D2084C60017B417 /* np2.nib in Resources */ = {isa = PBXBuildFile; fileRef = 96EFFA58054716B900000102 /* np2.nib */; };
 		55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70230563FAF800000103 /* nekop2.bmp */; };
@@ -417,18 +418,11 @@
 		5595B6671D20F6C400DDA319 /* cmndraw.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6571D20F6C400DDA319 /* cmndraw.h */; };
 		5595B6681D20F6C400DDA319 /* cmver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6581D20F6C400DDA319 /* cmver.h */; };
 		5595B6691D20F6C400DDA319 /* dipswbmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6591D20F6C400DDA319 /* dipswbmp.h */; };
-		5595B66A1D20F6C400DDA319 /* dipswbmp.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B65A1D20F6C400DDA319 /* dipswbmp.res */; };
 		5595B66B1D20F6C400DDA319 /* hostdrv.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B65B1D20F6C400DDA319 /* hostdrv.h */; };
-		5595B66C1D20F6C400DDA319 /* hostdrv.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 5595B65C1D20F6C400DDA319 /* hostdrv.tbl */; };
 		5595B66D1D20F6C400DDA319 /* hostdrvs.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B65D1D20F6C400DDA319 /* hostdrvs.h */; };
 		5595B66E1D20F6C400DDA319 /* keydisp.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B65E1D20F6C400DDA319 /* keydisp.h */; };
-		5595B66F1D20F6C400DDA319 /* keydisp.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B65F1D20F6C400DDA319 /* keydisp.res */; };
 		5595B6701D20F6C400DDA319 /* np2info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6601D20F6C400DDA319 /* np2info.h */; };
 		5595B6711D20F6C400DDA319 /* softkbd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6611D20F6C400DDA319 /* softkbd.h */; };
-		5595B6721D20F6C400DDA319 /* softkbd.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B6621D20F6C400DDA319 /* softkbd.res */; };
-		5595B6731D20F6C400DDA319 /* softkbd1.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B6631D20F6C400DDA319 /* softkbd1.res */; };
-		5595B6741D20F6C400DDA319 /* softkbd2.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B6641D20F6C400DDA319 /* softkbd2.res */; };
-		5595B6751D20F6C400DDA319 /* softkbd3.res in Resources */ = {isa = PBXBuildFile; fileRef = 5595B6651D20F6C400DDA319 /* softkbd3.res */; };
 		5595B6771D20F7C400DDA319 /* mimpidef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6761D20F7C400DDA319 /* mimpidef.h */; };
 /* End PBXBuildFile section */
 
@@ -626,6 +620,7 @@
 		556F2BC71D20AF4800335DF9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		556F2BCD1D20BB7500335DF9 /* fpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fpu.c; sourceTree = "<group>"; };
+		55793C1B1D2171A50043CD89 /* Non-localized.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; path = "Non-localized.r"; sourceTree = "<group>"; };
 		55842EC91D2084C60017B417 /* Info-np2__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-np2__Upgraded_.plist"; sourceTree = "<group>"; };
 		55842ECA1D2084C60017B417 /* Neko Project 21x.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Neko Project 21x.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5595B6461D20F67400DDA319 /* dmav30.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmav30.h; sourceTree = "<group>"; };
@@ -970,6 +965,7 @@
 				961B70250563FAF800000103 /* np2tool.bmp */,
 				556F2BC51D20A9EC00335DF9 /* Media.xcassets */,
 				96EFFA58054716B900000102 /* np2.nib */,
+				55793C1B1D2171A50043CD89 /* Non-localized.r */,
 				9603DE6D06CFE8C300012F11 /* np2.r */,
 				0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */,
 			);
@@ -1771,17 +1767,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5595B6751D20F6C400DDA319 /* softkbd3.res in Resources */,
-				5595B66F1D20F6C400DDA319 /* keydisp.res in Resources */,
 				55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */,
-				5595B66C1D20F6C400DDA319 /* hostdrv.tbl in Resources */,
 				55842DD31D2084C60017B417 /* np2.nib in Resources */,
-				5595B66A1D20F6C400DDA319 /* dipswbmp.res in Resources */,
 				55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */,
-				5595B6731D20F6C400DDA319 /* softkbd1.res in Resources */,
 				55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */,
-				5595B6741D20F6C400DDA319 /* softkbd2.res in Resources */,
-				5595B6721D20F6C400DDA319 /* softkbd.res in Resources */,
 				55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */,
 				556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */,
 				55842DE31D2084C60017B417 /* Localizable.strings in Resources */,
@@ -1795,6 +1784,7 @@
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55793C1D1D2171B40043CD89 /* Non-localized.r in Rez */,
 				55842EC41D2084C60017B417 /* np2.r in Rez */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2125,10 +2115,9 @@
 				INFOPLIST_FILE = "Info-np2__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = ./;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
+				OTHER_REZFLAGS = "-d COMPILING_REZ";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.retropc.Neko-Project-21x";
 				PRODUCT_NAME = "Neko Project 21x";
 				SECTORDER_FLAGS = "";
@@ -2172,10 +2161,9 @@
 				INFOPLIST_FILE = "Info-np2__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = ./;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
+				OTHER_REZFLAGS = "-d COMPILING_REZ";
 				PRODUCT_BUNDLE_IDENTIFIER = "net.retropc.Neko-Project-21x";
 				PRODUCT_NAME = "Neko Project 21x";
 				SECTORDER_FLAGS = "";

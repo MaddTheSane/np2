@@ -26,6 +26,7 @@ enum {
 	IDM_OTHER			= 142,
 	IDM_HELP			= 143,
 
+#ifndef COMPILING_REZ
 	IDM_ABOUT			= MAKE_MENUID(IDM_APPLE, 1),
 
 	IDM_RESET			= MAKE_MENUID(IDM_EMULATE, 1),
@@ -134,6 +135,7 @@ enum {
 	IDM_I286SAVE		= MAKE_MENUID(IDM_OTHER, 13),
 	
 	IDM_NP2HELP			= MAKE_MENUID(IDM_HELP, 1),
+#endif
 };
 
 // -------------------------------------------------------------------- dialog
