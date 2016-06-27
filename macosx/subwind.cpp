@@ -90,14 +90,14 @@ static void drawwithcopybits(WindowPtr hWnd) {
 	CMNVRAM			vram;
 	RgnHandle		theVisibleRgn;
 	bool			portchanged;
-	CGContextRef	cgContext;
+	//CGContextRef	cgContext;
 
 	port = GetWindowPort(hWnd);
 	GetWindowBounds(hWnd, kWindowContentRgn, &rect);
-	QDBeginCGContext(port, &cgContext);
-	CGContextSaveGState(cgContext);
+	//QDBeginCGContext(port, &cgContext);
+	//CGContextSaveGState(cgContext);
 	
-	/*OffsetRect(&rect, -rect.left, -rect.top);
+	OffsetRect(&rect, -rect.left, -rect.top);
 	
 	if (NewGWorld(&gw, CGDisplayBitsPerPixel(kCGDirectMainDisplay), &rect, NULL, NULL, useTempMem) == noErr) {
 		pm = GetGWorldPixMap(gw);
@@ -125,10 +125,10 @@ static void drawwithcopybits(WindowPtr hWnd) {
 		}
 		UnlockPixels(pm);
 		DisposeGWorld(gw);
-	}*/
+	}
 	
-	CGContextRestoreGState(cgContext);
-	QDEndCGContext(port, &cgContext);
+	//CGContextRestoreGState(cgContext);
+	//QDEndCGContext(port, &cgContext);
 }
 
 static void kddrawkeys(WindowPtr hWnd, BOOL redraw) {
