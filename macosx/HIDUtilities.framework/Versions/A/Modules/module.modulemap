@@ -1,0 +1,8 @@
+framework module HIDUtilities [extern_c] {
+	umbrella header "HID_Utilities_External.h"
+	
+	export *
+	module * {
+		export *
+	}
+}

@@ -10,6 +10,12 @@
 #include	"cmndraw.h"
 #include	"dosio.h"
 #include	"softkbd.h"
+#include	<CoreGraphics/CoreGraphics.h>
+
+extern "C" {
+	extern OSStatus QDBeginCGContext(CGrafPtr inPort, CGContextRef *outContext);
+	extern OSStatus QDEndCGContext(CGrafPtr inPort, CGContextRef *inoutContext);
+};
 
 #if !defined(SUPPORT_PC9821)
 static const char inifile[] = "np2.cfg";			// same file name..
@@ -85,14 +91,18 @@ static void drawwithcopybits(WindowPtr hWnd) {
 	PixMapHandle	pm;
 	Rect			rect;
 	GrafPtr			dst;
-	GrafPtr			port;
+	CGrafPtr		port;
 	CMNVRAM			vram;
 	RgnHandle		theVisibleRgn;
 	bool			portchanged;
+	CGContextRef	cgContext;
 
 	port = GetWindowPort(hWnd);
 	GetWindowBounds(hWnd, kWindowContentRgn, &rect);
-	OffsetRect(&rect, -rect.left, -rect.top);
+	QDBeginCGContext(port, &cgContext);
+	CGContextSaveGState(cgContext);
+	
+	/*OffsetRect(&rect, -rect.left, -rect.top);
 	
 	if (NewGWorld(&gw, CGDisplayBitsPerPixel(kCGDirectMainDisplay), &rect, NULL, NULL, useTempMem) == noErr) {
 		pm = GetGWorldPixMap(gw);
@@ -120,7 +130,10 @@ static void drawwithcopybits(WindowPtr hWnd) {
 		}
 		UnlockPixels(pm);
 		DisposeGWorld(gw);
-	}
+	}*/
+	
+	CGContextRestoreGState(cgContext);
+	QDEndCGContext(port, &cgContext);
 }
 
 static void kddrawkeys(WindowPtr hWnd, BOOL redraw) {

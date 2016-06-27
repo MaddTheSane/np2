@@ -10,3 +10,5 @@
 #define	NP2GCC
 
 #define CPUCORE_IA32
+
+#include "OldCarbHeaders.h"

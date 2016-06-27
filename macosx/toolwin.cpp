@@ -207,7 +207,7 @@ const char		*p;
 #if 0
 	GetControlBounds(hwnd, &rc);
 	width = rc.right - rc.left - 6;			// border size?
-	basedir[0] = '\0';
+	basedir[0] = '¥0';
 	if (sel < fdd->cnt) {
 		milstr_ncpy(basedir, fdd->name[fdd->pos[sel]], sizeof(basedir));
 		file_cutname(basedir);
@@ -274,14 +274,14 @@ static void sellist(UINT drv) {
 	ControlRef	hwnd;
 	TOOLFDD	*fdd;
 	UINT	sel;
-    SInt16	selmenu;
+    MenuItemIndex	selmenu;
 
 	if (drv >= FDDLIST_DRV) {
 		return;
 	}
 	hwnd = toolwin.sub[fddlist[drv]];
 	fdd = np2tool.fdd + drv;
-    GetBevelButtonMenuValue(hwnd, &selmenu);
+	::GetBevelButtonMenuValue(hwnd, &selmenu);
     sel = (UINT)--selmenu;
 	if (sel < fdd->cnt) {
 		diskdrv_setfdd(drv, fdd->name[fdd->pos[sel]], 0);
@@ -858,7 +858,7 @@ const char	*base;
     char	longname[256];
 
 	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, 0, 0);
-	AppendMenu(ret, "\p-");
+	::AppendMenu(ret, "\p-");
 
 	base = np2tool.skin;
 	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("<Base Skin>"),"Base Skin"), kMenuItemAttrIconDisabled, 0, 0);

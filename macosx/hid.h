@@ -6,7 +6,7 @@
  *
  */
 
-#include	"HID_Utilities_External.h"
+#include	<HIDUtilities/HID_Utilities_External.h>
 
 typedef struct {
     pRecElement Element;
