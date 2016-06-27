@@ -2,7 +2,7 @@
 static const char np2toolclass[] = "np2-toolwin";
 static const char np2tooltitle[] = "NP2 tool";
 
-static const char str_deffont[] = "‚l‚r ‚oƒSƒVƒbƒN";
+static const char str_deffont[] = "ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯";
 static const char str_browse[] = "...";
 static const char str_eject[] = "Eject";
 static const char str_reset[] = "Reset";

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		556F2A691D208F0300335DF9 /* np2tool.png in Resources */ = {isa = PBXBuildFile; fileRef = 556F2A681D208F0300335DF9 /* np2tool.png */; };
 		556F2A6D1D2098E900335DF9 /* HIDUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; };
 		556F2A6E1D2098E900335DF9 /* HIDUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		556F2A711D20999300335DF9 /* _memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2A701D20999300335DF9 /* _memory.h */; };
@@ -121,23 +120,65 @@
 		556F2B491D20A0DC00335DF9 /* tms3631.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B3B1D20A0DC00335DF9 /* tms3631.h */; };
 		556F2B4B1D20A1C400335DF9 /* np2gcc_ia32.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4A1D20A1C400335DF9 /* np2gcc_ia32.h */; };
 		556F2B4E1D20A27800335DF9 /* OldCarbHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */; };
+		556F2B591D20A6E300335DF9 /* aboutdlg.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4F1D20A6E300335DF9 /* aboutdlg.h */; };
+		556F2B5A1D20A6E300335DF9 /* configure.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B501D20A6E300335DF9 /* configure.h */; };
+		556F2B5B1D20A6E300335DF9 /* dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B511D20A6E300335DF9 /* dialog.h */; };
+		556F2B5C1D20A6E300335DF9 /* dialogutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B521D20A6E300335DF9 /* dialogutils.h */; };
+		556F2B5D1D20A6E300335DF9 /* macalert.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B531D20A6E300335DF9 /* macalert.h */; };
+		556F2B5E1D20A6E300335DF9 /* macclnd.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B541D20A6E300335DF9 /* macclnd.h */; };
+		556F2B5F1D20A6E300335DF9 /* macnewdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B551D20A6E300335DF9 /* macnewdisk.h */; };
+		556F2B601D20A6E300335DF9 /* midiopt.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B561D20A6E300335DF9 /* midiopt.h */; };
+		556F2B611D20A6E300335DF9 /* screenopt.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B571D20A6E300335DF9 /* screenopt.h */; };
+		556F2B621D20A6E300335DF9 /* soundopt.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B581D20A6E300335DF9 /* soundopt.h */; };
+		556F2B7C1D20A73900335DF9 /* cmmidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B631D20A73900335DF9 /* cmmidi.h */; };
+		556F2B7D1D20A73900335DF9 /* commng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B641D20A73900335DF9 /* commng.h */; };
+		556F2B7E1D20A73900335DF9 /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B651D20A73900335DF9 /* compiler.h */; };
+		556F2B7F1D20A73900335DF9 /* dosio.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B661D20A73900335DF9 /* dosio.h */; };
+		556F2B801D20A73900335DF9 /* fdefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B671D20A73900335DF9 /* fdefine.h */; };
+		556F2B811D20A73900335DF9 /* fontmng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B681D20A73900335DF9 /* fontmng.h */; };
+		556F2B821D20A73900335DF9 /* ini.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B691D20A73900335DF9 /* ini.h */; };
+		556F2B831D20A73900335DF9 /* joymng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6A1D20A73900335DF9 /* joymng.h */; };
+		556F2B841D20A73900335DF9 /* mackbd.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6B1D20A73900335DF9 /* mackbd.h */; };
+		556F2B851D20A73900335DF9 /* macossub.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6C1D20A73900335DF9 /* macossub.h */; };
+		556F2B861D20A73900335DF9 /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6D1D20A73900335DF9 /* menu.h */; };
+		556F2B871D20A73900335DF9 /* mousemng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6E1D20A73900335DF9 /* mousemng.h */; };
+		556F2B881D20A73900335DF9 /* np2.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B6F1D20A73900335DF9 /* np2.h */; };
+		556F2B891D20A73900335DF9 /* np2opening.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B701D20A73900335DF9 /* np2opening.h */; };
+		556F2B8A1D20A73900335DF9 /* resource.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B711D20A73900335DF9 /* resource.h */; };
+		556F2B8B1D20A73900335DF9 /* scrnmng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B721D20A73900335DF9 /* scrnmng.h */; };
+		556F2B8C1D20A73900335DF9 /* soundmng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B731D20A73900335DF9 /* soundmng.h */; };
+		556F2B8D1D20A73900335DF9 /* soundrecording.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B741D20A73900335DF9 /* soundrecording.h */; };
+		556F2B8E1D20A73900335DF9 /* subwind.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B751D20A73900335DF9 /* subwind.h */; };
+		556F2B8F1D20A73900335DF9 /* sysmng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B761D20A73900335DF9 /* sysmng.h */; };
+		556F2B901D20A73900335DF9 /* taskmng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B771D20A73900335DF9 /* taskmng.h */; };
+		556F2B911D20A73900335DF9 /* timemng.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B781D20A73900335DF9 /* timemng.h */; };
+		556F2B921D20A73900335DF9 /* toolwin.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B791D20A73900335DF9 /* toolwin.h */; };
+		556F2B931D20A73900335DF9 /* toolwin.res in Resources */ = {isa = PBXBuildFile; fileRef = 556F2B7A1D20A73900335DF9 /* toolwin.res */; };
+		556F2B941D20A73900335DF9 /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B7B1D20A73900335DF9 /* trace.h */; };
+		556F2B9E1D20A81600335DF9 /* calendar.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B951D20A81600335DF9 /* calendar.h */; };
+		556F2B9F1D20A81600335DF9 /* debugsub.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B961D20A81600335DF9 /* debugsub.h */; };
+		556F2BA01D20A81600335DF9 /* keystat.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B971D20A81600335DF9 /* keystat.h */; };
+		556F2BA21D20A81600335DF9 /* nevent.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B991D20A81600335DF9 /* nevent.h */; };
+		556F2BA31D20A81600335DF9 /* pccore.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B9A1D20A81600335DF9 /* pccore.h */; };
+		556F2BA41D20A81600335DF9 /* statsave.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B9B1D20A81600335DF9 /* statsave.h */; };
+		556F2BA61D20A81600335DF9 /* timing.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B9D1D20A81600335DF9 /* timing.h */; };
+		556F2BB41D20A86200335DF9 /* dispsync.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BA71D20A86200335DF9 /* dispsync.h */; };
+		556F2BB51D20A86200335DF9 /* makegrex.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BA81D20A86200335DF9 /* makegrex.h */; };
+		556F2BB61D20A86200335DF9 /* makegrph.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BA91D20A86200335DF9 /* makegrph.h */; };
+		556F2BB81D20A86200335DF9 /* maketext.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BAB1D20A86200335DF9 /* maketext.h */; };
+		556F2BB91D20A86200335DF9 /* maketgrp.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BAC1D20A86200335DF9 /* maketgrp.h */; };
+		556F2BBA1D20A86200335DF9 /* palettes.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BAD1D20A86200335DF9 /* palettes.h */; };
+		556F2BBB1D20A86200335DF9 /* scrnbmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BAE1D20A86200335DF9 /* scrnbmp.h */; };
+		556F2BBC1D20A86200335DF9 /* scrndraw.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BAF1D20A86200335DF9 /* scrndraw.h */; };
+		556F2BBD1D20A86200335DF9 /* scrnsave.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BB01D20A86200335DF9 /* scrnsave.h */; };
+		556F2BC01D20A86200335DF9 /* vram.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BB31D20A86200335DF9 /* vram.h */; };
+		556F2BC31D20A8CC00335DF9 /* lio.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BC11D20A8CC00335DF9 /* lio.h */; };
+		556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 556F2BC51D20A9EC00335DF9 /* Media.xcassets */; };
 		55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
 		55842DD31D2084C60017B417 /* np2.nib in Resources */ = {isa = PBXBuildFile; fileRef = 96EFFA58054716B900000102 /* np2.nib */; };
-		55842DD41D2084C60017B417 /* beta.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A8348055A60A500000103 /* beta.icns */; };
-		55842DD51D2084C60017B417 /* d88.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A8349055A60A500000103 /* d88.icns */; };
-		55842DD61D2084C60017B417 /* hdi.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834A055A60A500000103 /* hdi.icns */; };
-		55842DD71D2084C60017B417 /* Neko Project IIx.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834B055A60A500000103 /* Neko Project IIx.icns */; };
-		55842DD81D2084C60017B417 /* plug-in.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834C055A60A500000103 /* plug-in.icns */; };
-		55842DD91D2084C60017B417 /* preference.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834D055A60A500000103 /* preference.icns */; };
-		55842DDA1D2084C60017B417 /* thd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834E055A60A500000103 /* thd.icns */; };
-		55842DDB1D2084C60017B417 /* xdf.icns in Resources */ = {isa = PBXBuildFile; fileRef = 969A834F055A60A500000103 /* xdf.icns */; };
 		55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70230563FAF800000103 /* nekop2.bmp */; };
 		55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 961B70240563FAF800000103 /* np2logo.tiff */; };
 		55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70250563FAF800000103 /* np2tool.bmp */; };
-		55842DDF1D2084C60017B417 /* ROM.icns in Resources */ = {isa = PBXBuildFile; fileRef = 961B71C905641E6C00000103 /* ROM.icns */; };
-		55842DE01D2084C60017B417 /* fdi.icns in Resources */ = {isa = PBXBuildFile; fileRef = 96C722A505CC3C56005B39D9 /* fdi.icns */; };
-		55842DE11D2084C60017B417 /* hdd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 96C722A905CC3C60005B39D9 /* hdd.icns */; };
-		55842DE21D2084C60017B417 /* nhd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 96C722AD05CC3C69005B39D9 /* nhd.icns */; };
 		55842DE31D2084C60017B417 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9603DE2B06CFCD4800012F11 /* Localizable.strings */; };
 		55842DE51D2084C60017B417 /* _memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 967C91330557786900000103 /* _memory.c */; };
 		55842DE61D2084C60017B417 /* bmpdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 967C91350557786900000103 /* bmpdata.c */; };
@@ -381,7 +422,6 @@
 		0640BAA5FFF0323A11CA0E50 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		556F2A671D208E0800335DF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		556F2A681D208F0300335DF9 /* np2tool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = np2tool.png; path = Icon/np2tool.png; sourceTree = "<group>"; };
 		556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
 		556F2A701D20999300335DF9 /* _memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _memory.h; sourceTree = "<group>"; };
 		556F2A721D2099AA00335DF9 /* bmpdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmpdata.h; sourceTree = "<group>"; };
@@ -494,6 +534,66 @@
 		556F2B3B1D20A0DC00335DF9 /* tms3631.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tms3631.h; sourceTree = "<group>"; };
 		556F2B4A1D20A1C400335DF9 /* np2gcc_ia32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2gcc_ia32.h; sourceTree = "<group>"; };
 		556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldCarbHeaders.h; sourceTree = "<group>"; };
+		556F2B4F1D20A6E300335DF9 /* aboutdlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aboutdlg.h; sourceTree = "<group>"; };
+		556F2B501D20A6E300335DF9 /* configure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = configure.h; sourceTree = "<group>"; };
+		556F2B511D20A6E300335DF9 /* dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialog.h; sourceTree = "<group>"; };
+		556F2B521D20A6E300335DF9 /* dialogutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialogutils.h; sourceTree = "<group>"; };
+		556F2B531D20A6E300335DF9 /* macalert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macalert.h; sourceTree = "<group>"; };
+		556F2B541D20A6E300335DF9 /* macclnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macclnd.h; sourceTree = "<group>"; };
+		556F2B551D20A6E300335DF9 /* macnewdisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macnewdisk.h; sourceTree = "<group>"; };
+		556F2B561D20A6E300335DF9 /* midiopt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midiopt.h; sourceTree = "<group>"; };
+		556F2B571D20A6E300335DF9 /* screenopt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screenopt.h; sourceTree = "<group>"; };
+		556F2B581D20A6E300335DF9 /* soundopt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundopt.h; sourceTree = "<group>"; };
+		556F2B631D20A73900335DF9 /* cmmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmmidi.h; sourceTree = "<group>"; };
+		556F2B641D20A73900335DF9 /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commng.h; sourceTree = "<group>"; };
+		556F2B651D20A73900335DF9 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		556F2B661D20A73900335DF9 /* dosio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dosio.h; sourceTree = "<group>"; };
+		556F2B671D20A73900335DF9 /* fdefine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fdefine.h; sourceTree = "<group>"; };
+		556F2B681D20A73900335DF9 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmng.h; sourceTree = "<group>"; };
+		556F2B691D20A73900335DF9 /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ini.h; sourceTree = "<group>"; };
+		556F2B6A1D20A73900335DF9 /* joymng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = joymng.h; sourceTree = "<group>"; };
+		556F2B6B1D20A73900335DF9 /* mackbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mackbd.h; sourceTree = "<group>"; };
+		556F2B6C1D20A73900335DF9 /* macossub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macossub.h; sourceTree = "<group>"; };
+		556F2B6D1D20A73900335DF9 /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = menu.h; sourceTree = "<group>"; };
+		556F2B6E1D20A73900335DF9 /* mousemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mousemng.h; sourceTree = "<group>"; };
+		556F2B6F1D20A73900335DF9 /* np2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2.h; sourceTree = "<group>"; };
+		556F2B701D20A73900335DF9 /* np2opening.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2opening.h; sourceTree = "<group>"; };
+		556F2B711D20A73900335DF9 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
+		556F2B721D20A73900335DF9 /* scrnmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
+		556F2B731D20A73900335DF9 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundmng.h; sourceTree = "<group>"; };
+		556F2B741D20A73900335DF9 /* soundrecording.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundrecording.h; sourceTree = "<group>"; };
+		556F2B751D20A73900335DF9 /* subwind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = subwind.h; sourceTree = "<group>"; };
+		556F2B761D20A73900335DF9 /* sysmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmng.h; sourceTree = "<group>"; };
+		556F2B771D20A73900335DF9 /* taskmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = taskmng.h; sourceTree = "<group>"; };
+		556F2B781D20A73900335DF9 /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timemng.h; sourceTree = "<group>"; };
+		556F2B791D20A73900335DF9 /* toolwin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = toolwin.h; sourceTree = "<group>"; };
+		556F2B7A1D20A73900335DF9 /* toolwin.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = toolwin.res; sourceTree = "<group>"; };
+		556F2B7B1D20A73900335DF9 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace.h; sourceTree = "<group>"; };
+		556F2B951D20A81600335DF9 /* calendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = calendar.h; sourceTree = "<group>"; };
+		556F2B961D20A81600335DF9 /* debugsub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugsub.h; sourceTree = "<group>"; };
+		556F2B971D20A81600335DF9 /* keystat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keystat.h; sourceTree = "<group>"; };
+		556F2B981D20A81600335DF9 /* keystat.tbl */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = keystat.tbl; sourceTree = "<group>"; };
+		556F2B991D20A81600335DF9 /* nevent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nevent.h; sourceTree = "<group>"; };
+		556F2B9A1D20A81600335DF9 /* pccore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pccore.h; sourceTree = "<group>"; };
+		556F2B9B1D20A81600335DF9 /* statsave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = statsave.h; sourceTree = "<group>"; };
+		556F2B9C1D20A81600335DF9 /* statsave.tbl */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = statsave.tbl; sourceTree = "<group>"; };
+		556F2B9D1D20A81600335DF9 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timing.h; sourceTree = "<group>"; };
+		556F2BA71D20A86200335DF9 /* dispsync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dispsync.h; sourceTree = "<group>"; };
+		556F2BA81D20A86200335DF9 /* makegrex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = makegrex.h; sourceTree = "<group>"; };
+		556F2BA91D20A86200335DF9 /* makegrph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = makegrph.h; sourceTree = "<group>"; };
+		556F2BAA1D20A86200335DF9 /* makegrph.mcr */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = makegrph.mcr; sourceTree = "<group>"; };
+		556F2BAB1D20A86200335DF9 /* maketext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketext.h; sourceTree = "<group>"; };
+		556F2BAC1D20A86200335DF9 /* maketgrp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maketgrp.h; sourceTree = "<group>"; };
+		556F2BAD1D20A86200335DF9 /* palettes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = palettes.h; sourceTree = "<group>"; };
+		556F2BAE1D20A86200335DF9 /* scrnbmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnbmp.h; sourceTree = "<group>"; };
+		556F2BAF1D20A86200335DF9 /* scrndraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrndraw.h; sourceTree = "<group>"; };
+		556F2BB01D20A86200335DF9 /* scrnsave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnsave.h; sourceTree = "<group>"; };
+		556F2BB11D20A86200335DF9 /* sdraw.mcr */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = sdraw.mcr; sourceTree = "<group>"; };
+		556F2BB21D20A86200335DF9 /* sdrawex.mcr */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = sdrawex.mcr; sourceTree = "<group>"; };
+		556F2BB31D20A86200335DF9 /* vram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vram.h; sourceTree = "<group>"; };
+		556F2BC11D20A8CC00335DF9 /* lio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lio.h; sourceTree = "<group>"; };
+		556F2BC21D20A8CC00335DF9 /* lio.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = lio.res; sourceTree = "<group>"; };
+		556F2BC51D20A9EC00335DF9 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		55842EC91D2084C60017B417 /* Info-np2__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-np2__Upgraded_.plist"; sourceTree = "<group>"; };
 		55842ECA1D2084C60017B417 /* Neko Project 21x.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Neko Project 21x.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		55A8D1DB1D20860B00A85AC9 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/np2.nib; sourceTree = "<group>"; };
@@ -508,7 +608,6 @@
 		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = nekop2.bmp; path = Icon/nekop2.bmp; sourceTree = "<group>"; };
 		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = np2logo.tiff; path = Icon/np2logo.tiff; sourceTree = "<group>"; };
 		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = np2tool.bmp; path = Icon/np2tool.bmp; sourceTree = "<group>"; };
-		961B71C905641E6C00000103 /* ROM.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ROM.icns; sourceTree = "<group>"; };
 		9621596705C3C2630070042E /* emsio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = emsio.c; sourceTree = "<group>"; };
 		962EA92B060C86B500BD925D /* bios1f.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = bios1f.c; sourceTree = "<group>"; };
 		962EA933060C86D500BD925D /* pcidev.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = pcidev.c; sourceTree = "<group>"; };
@@ -522,7 +621,7 @@
 		9645C2D305BFA3B90090B4FD /* getsmix.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getsmix.c; sourceTree = "<group>"; };
 		9645C2D405BFA3B90090B4FD /* getsnd.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getsnd.c; sourceTree = "<group>"; };
 		9645C2D805BFA3B90090B4FD /* getwave.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getwave.c; sourceTree = "<group>"; };
-		965751AE05E66EE8002889CD /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = keystat.c; path = ../keystat.c; sourceTree = "<group>"; };
+		965751AE05E66EE8002889CD /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = keystat.c; sourceTree = "<group>"; };
 		965751CD05E66FBF002889CD /* np2info.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = np2info.c; sourceTree = "<group>"; };
 		9668EEFB069F4E1A00E35005 /* gcircle.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = gcircle.c; sourceTree = "<group>"; };
 		9668F291069FB00C00E35005 /* macclnd.cpp */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.cpp.cpp; path = macclnd.cpp; sourceTree = "<group>"; };
@@ -665,29 +764,18 @@
 		967C92B5055778CC00000103 /* scrndraw.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = scrndraw.c; sourceTree = "<group>"; };
 		967C92B7055778CC00000103 /* sdraw.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = sdraw.c; sourceTree = "<group>"; };
 		967C92BA055778CC00000103 /* vram.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = vram.c; sourceTree = "<group>"; };
-		967C93FE05577A1F00000103 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = calendar.c; path = ../calendar.c; sourceTree = "<group>"; };
-		967C93FF05577A1F00000103 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = debugsub.c; path = ../debugsub.c; sourceTree = "<group>"; };
-		967C940005577A1F00000103 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = nevent.c; path = ../nevent.c; sourceTree = "<group>"; };
-		967C940105577A1F00000103 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = pccore.c; path = ../pccore.c; sourceTree = "<group>"; };
-		967C940205577A1F00000103 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = statsave.c; path = ../statsave.c; sourceTree = "<group>"; };
-		967C940305577A1F00000103 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; name = timing.c; path = ../timing.c; sourceTree = "<group>"; };
+		967C93FE05577A1F00000103 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = calendar.c; sourceTree = "<group>"; };
+		967C93FF05577A1F00000103 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = debugsub.c; sourceTree = "<group>"; };
+		967C940005577A1F00000103 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = nevent.c; sourceTree = "<group>"; };
+		967C940105577A1F00000103 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = pccore.c; sourceTree = "<group>"; };
+		967C940205577A1F00000103 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = statsave.c; sourceTree = "<group>"; };
+		967C940305577A1F00000103 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
 		968D8BC305F5229D00CFB890 /* cmmidi.cpp */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.cpp.cpp; path = cmmidi.cpp; sourceTree = "<group>"; };
 		968D8C7105F5274200CFB890 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		968D8D8C05F532C900CFB890 /* macalert.cpp */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.cpp.cpp; path = macalert.cpp; sourceTree = "<group>"; };
 		969790E9059DE00F009015EE /* epsonio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = epsonio.c; sourceTree = "<group>"; };
 		969A219F063041AE007FE890 /* softkbd.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = softkbd.c; sourceTree = "<group>"; };
-		969A8348055A60A500000103 /* beta.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = beta.icns; sourceTree = "<group>"; };
-		969A8349055A60A500000103 /* d88.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = d88.icns; sourceTree = "<group>"; };
-		969A834A055A60A500000103 /* hdi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = hdi.icns; sourceTree = "<group>"; };
-		969A834B055A60A500000103 /* Neko Project IIx.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Neko Project IIx.icns"; sourceTree = "<group>"; };
-		969A834C055A60A500000103 /* plug-in.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "plug-in.icns"; sourceTree = "<group>"; };
-		969A834D055A60A500000103 /* preference.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = preference.icns; sourceTree = "<group>"; };
-		969A834E055A60A500000103 /* thd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = thd.icns; sourceTree = "<group>"; };
-		969A834F055A60A500000103 /* xdf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xdf.icns; sourceTree = "<group>"; };
 		96A2026D0549B38300000102 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = System/Library/Frameworks/QuickTime.framework; sourceTree = SDKROOT; };
-		96C722A505CC3C56005B39D9 /* fdi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = fdi.icns; sourceTree = "<group>"; };
-		96C722A905CC3C60005B39D9 /* hdd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = hdd.icns; sourceTree = "<group>"; };
-		96C722AD05CC3C69005B39D9 /* nhd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = nhd.icns; sourceTree = "<group>"; };
 		96E2F92005AF0FFB00E73373 /* hostdrv.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = hostdrv.c; sourceTree = "<group>"; };
 		96E2F92105AF0FFB00E73373 /* hostdrvs.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = hostdrvs.c; sourceTree = "<group>"; };
 		96EBF1F805DD686400DA3983 /* cpucore.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = cpucore.c; sourceTree = "<group>"; };
@@ -791,14 +879,24 @@
 				967C92A7055778CC00000103 /* vram */,
 				967C9204055778CB00000103 /* macosx */,
 				967C93FE05577A1F00000103 /* calendar.c */,
+				556F2B951D20A81600335DF9 /* calendar.h */,
 				967C93FF05577A1F00000103 /* debugsub.c */,
+				556F2B961D20A81600335DF9 /* debugsub.h */,
 				965751AE05E66EE8002889CD /* keystat.c */,
+				556F2B971D20A81600335DF9 /* keystat.h */,
+				556F2B981D20A81600335DF9 /* keystat.tbl */,
 				967C940005577A1F00000103 /* nevent.c */,
+				556F2B991D20A81600335DF9 /* nevent.h */,
 				967C940105577A1F00000103 /* pccore.c */,
+				556F2B9A1D20A81600335DF9 /* pccore.h */,
 				967C940205577A1F00000103 /* statsave.c */,
+				556F2B9B1D20A81600335DF9 /* statsave.h */,
+				556F2B9C1D20A81600335DF9 /* statsave.tbl */,
 				967C940305577A1F00000103 /* timing.c */,
+				556F2B9D1D20A81600335DF9 /* timing.h */,
 			);
 			name = Sources;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
@@ -809,8 +907,7 @@
 				961B70240563FAF800000103 /* np2logo.tiff */,
 				9603DE2B06CFCD4800012F11 /* Localizable.strings */,
 				961B70250563FAF800000103 /* np2tool.bmp */,
-				556F2A681D208F0300335DF9 /* np2tool.png */,
-				969A8347055A60A500000103 /* Icon */,
+				556F2BC51D20A9EC00335DF9 /* Media.xcassets */,
 				96EFFA58054716B900000102 /* np2.nib */,
 				9603DE6D06CFE8C300012F11 /* np2.r */,
 				0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */,
@@ -869,8 +966,7 @@
 				967C91490557786900000103 /* wavefile.c */,
 				556F2A801D2099E100335DF9 /* wavefile.h */,
 			);
-			name = common;
-			path = ../common;
+			path = common;
 			sourceTree = "<group>";
 		};
 		967C9164055778CB00000103 /* bios */ = {
@@ -894,8 +990,7 @@
 				9645C29B05BF64CE0090B4FD /* sxsibios.c */,
 				556F2A881D209A0B00335DF9 /* sxsibios.h */,
 			);
-			name = bios;
-			path = ../bios;
+			path = bios;
 			sourceTree = "<group>";
 		};
 		967C9177055778CB00000103 /* cbus */ = {
@@ -931,8 +1026,7 @@
 				9645C2A105BF64FB0090B4FD /* scsiio.c */,
 				556F2A9B1D209A5700335DF9 /* scsiio.h */,
 			);
-			name = cbus;
-			path = ../cbus;
+			path = cbus;
 			sourceTree = "<group>";
 		};
 		967C9190055778CB00000103 /* fdd */ = {
@@ -958,8 +1052,7 @@
 				96F971C2083CFEDE0036D494 /* sxsihdd.c */,
 				556F2AB31D209A8100335DF9 /* sxsihdd.h */,
 			);
-			name = fdd;
-			path = ../fdd;
+			path = fdd;
 			sourceTree = "<group>";
 		};
 		967C91A0055778CB00000103 /* font */ = {
@@ -978,8 +1071,7 @@
 				967C91AC055778CB00000103 /* fontx1.c */,
 				967C91AD055778CB00000103 /* fontx68k.c */,
 			);
-			name = font;
-			path = ../font;
+			path = font;
 			sourceTree = "<group>";
 		};
 		967C91C5055778CB00000103 /* io */ = {
@@ -1037,8 +1129,7 @@
 				967C91F7055778CB00000103 /* upd4990.c */,
 				556F2B121D20A08500335DF9 /* upd4990.h */,
 			);
-			name = io;
-			path = ../io;
+			path = io;
 			sourceTree = "<group>";
 		};
 		967C91F9055778CB00000103 /* lio */ = {
@@ -1050,9 +1141,10 @@
 				967C91FF055778CB00000103 /* gput1.c */,
 				967C9200055778CB00000103 /* gscreen.c */,
 				967C9202055778CB00000103 /* lio.c */,
+				556F2BC11D20A8CC00335DF9 /* lio.h */,
+				556F2BC21D20A8CC00335DF9 /* lio.res */,
 			);
-			name = lio;
-			path = ../lio;
+			path = lio;
 			sourceTree = "<group>";
 		};
 		967C9204055778CB00000103 /* macosx */ = {
@@ -1060,48 +1152,83 @@
 			children = (
 				967C9221055778CB00000103 /* dialog */,
 				968D8BC305F5229D00CFB890 /* cmmidi.cpp */,
+				556F2B631D20A73900335DF9 /* cmmidi.h */,
 				967C921E055778CB00000103 /* commng.cpp */,
+				556F2B641D20A73900335DF9 /* commng.h */,
+				556F2B651D20A73900335DF9 /* compiler.h */,
 				967C9233055778CB00000103 /* dosio.cpp */,
+				556F2B661D20A73900335DF9 /* dosio.h */,
 				967C923D055778CB00000103 /* fdefine.cpp */,
+				556F2B671D20A73900335DF9 /* fdefine.h */,
 				967C923F055778CB00000103 /* fontmng.cpp */,
+				556F2B681D20A73900335DF9 /* fontmng.h */,
 				967C9241055778CB00000103 /* hid.cpp */,
 				556F2AFA1D209C0100335DF9 /* hid.h */,
 				967C9244055778CB00000103 /* ini.cpp */,
+				556F2B691D20A73900335DF9 /* ini.h */,
 				967C9246055778CB00000103 /* joymng.cpp */,
+				556F2B6A1D20A73900335DF9 /* joymng.h */,
 				967C924B055778CB00000103 /* mackbd.cpp */,
+				556F2B6B1D20A73900335DF9 /* mackbd.h */,
 				967C924D055778CB00000103 /* macossub.cpp */,
+				556F2B6C1D20A73900335DF9 /* macossub.h */,
 				967C924F055778CB00000103 /* menu.cpp */,
+				556F2B6D1D20A73900335DF9 /* menu.h */,
 				967C9251055778CB00000103 /* mousemng.cpp */,
+				556F2B6E1D20A73900335DF9 /* mousemng.h */,
 				967C9254055778CB00000103 /* np2.cpp */,
-				967C925F055778CC00000103 /* np2opening.cpp */,
-				967C9263055778CC00000103 /* scrnmng.cpp */,
-				967C9265055778CC00000103 /* soundmng.cpp */,
-				967C9267055778CC00000103 /* soundrecording.cpp */,
-				96F4749E0632E583006DDB7A /* subwind.cpp */,
-				967C9269055778CC00000103 /* sysmng.cpp */,
-				967C926B055778CC00000103 /* taskmng.cpp */,
-				967C926D055778CC00000103 /* timemng.cpp */,
-				967C926F055778CC00000103 /* toolwin.cpp */,
+				556F2B6F1D20A73900335DF9 /* np2.h */,
 				556F2B4A1D20A1C400335DF9 /* np2gcc_ia32.h */,
-				967C9272055778CC00000103 /* trace.cpp */,
+				967C925F055778CC00000103 /* np2opening.cpp */,
+				556F2B701D20A73900335DF9 /* np2opening.h */,
 				556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */,
+				556F2B711D20A73900335DF9 /* resource.h */,
+				967C9263055778CC00000103 /* scrnmng.cpp */,
+				556F2B721D20A73900335DF9 /* scrnmng.h */,
+				967C9265055778CC00000103 /* soundmng.cpp */,
+				556F2B731D20A73900335DF9 /* soundmng.h */,
+				967C9267055778CC00000103 /* soundrecording.cpp */,
+				556F2B741D20A73900335DF9 /* soundrecording.h */,
+				96F4749E0632E583006DDB7A /* subwind.cpp */,
+				556F2B751D20A73900335DF9 /* subwind.h */,
+				967C9269055778CC00000103 /* sysmng.cpp */,
+				556F2B761D20A73900335DF9 /* sysmng.h */,
+				967C926B055778CC00000103 /* taskmng.cpp */,
+				556F2B771D20A73900335DF9 /* taskmng.h */,
+				967C926D055778CC00000103 /* timemng.cpp */,
+				556F2B781D20A73900335DF9 /* timemng.h */,
+				967C926F055778CC00000103 /* toolwin.cpp */,
+				556F2B791D20A73900335DF9 /* toolwin.h */,
+				556F2B7A1D20A73900335DF9 /* toolwin.res */,
+				967C9272055778CC00000103 /* trace.cpp */,
+				556F2B7B1D20A73900335DF9 /* trace.h */,
 			);
 			name = macosx;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		967C9221055778CB00000103 /* dialog */ = {
 			isa = PBXGroup;
 			children = (
-				967C9223055778CB00000103 /* configure.cpp */,
-				967C9225055778CB00000103 /* dialog.cpp */,
-				967C9227055778CB00000103 /* dialogutils.cpp */,
-				968D8D8C05F532C900CFB890 /* macalert.cpp */,
-				9668F291069FB00C00E35005 /* macclnd.cpp */,
-				967C922B055778CB00000103 /* macnewdisk.cpp */,
-				967C922D055778CB00000103 /* midiopt.cpp */,
-				967C922F055778CB00000103 /* screenopt.cpp */,
-				967C9231055778CB00000103 /* soundopt.cpp */,
 				961B7003056048F500000103 /* aboutdlg.cpp */,
+				556F2B4F1D20A6E300335DF9 /* aboutdlg.h */,
+				967C9223055778CB00000103 /* configure.cpp */,
+				556F2B501D20A6E300335DF9 /* configure.h */,
+				967C9225055778CB00000103 /* dialog.cpp */,
+				556F2B511D20A6E300335DF9 /* dialog.h */,
+				967C9227055778CB00000103 /* dialogutils.cpp */,
+				556F2B521D20A6E300335DF9 /* dialogutils.h */,
+				968D8D8C05F532C900CFB890 /* macalert.cpp */,
+				556F2B531D20A6E300335DF9 /* macalert.h */,
+				9668F291069FB00C00E35005 /* macclnd.cpp */,
+				556F2B541D20A6E300335DF9 /* macclnd.h */,
+				967C922B055778CB00000103 /* macnewdisk.cpp */,
+				556F2B551D20A6E300335DF9 /* macnewdisk.h */,
+				967C922D055778CB00000103 /* midiopt.cpp */,
+				556F2B561D20A6E300335DF9 /* midiopt.h */,
+				967C922F055778CB00000103 /* screenopt.cpp */,
+				556F2B571D20A6E300335DF9 /* screenopt.h */,
+				967C9231055778CB00000103 /* soundopt.cpp */,
+				556F2B581D20A6E300335DF9 /* soundopt.h */,
 			);
 			path = dialog;
 			sourceTree = "<group>";
@@ -1111,44 +1238,43 @@
 			children = (
 				9645C2D005BFA3B90090B4FD /* getsnd */,
 				967C929A055778CC00000103 /* vermouth */,
+				556F2B2E1D20A0DC00335DF9 /* adpcm.h */,
 				967C9277055778CC00000103 /* adpcmc.c */,
 				967C9278055778CC00000103 /* adpcmg.c */,
-				556F2B2E1D20A0DC00335DF9 /* adpcm.h */,
 				556F2B2F1D20A0DC00335DF9 /* beep.h */,
-				556F2B301D20A0DC00335DF9 /* cs4231.h */,
-				556F2B311D20A0DC00335DF9 /* fmboard.h */,
-				556F2B321D20A0DC00335DF9 /* fmtimer.h */,
-				556F2B331D20A0DC00335DF9 /* opngen.h */,
-				556F2B341D20A0DC00335DF9 /* pcm86.h */,
-				556F2B351D20A0DC00335DF9 /* psggen.h */,
-				556F2B361D20A0DC00335DF9 /* rhythm.h */,
-				556F2B371D20A0DC00335DF9 /* s98.h */,
-				556F2B381D20A0DC00335DF9 /* sndcsec.h */,
-				556F2B391D20A0DC00335DF9 /* sound.h */,
-				556F2B3A1D20A0DC00335DF9 /* soundrom.h */,
-				556F2B3B1D20A0DC00335DF9 /* tms3631.h */,
 				967C927A055778CC00000103 /* beepc.c */,
 				967C927B055778CC00000103 /* beepg.c */,
+				556F2B301D20A0DC00335DF9 /* cs4231.h */,
 				967C927D055778CC00000103 /* cs4231c.c */,
 				967C927E055778CC00000103 /* cs4231g.c */,
 				967C927F055778CC00000103 /* fmboard.c */,
+				556F2B311D20A0DC00335DF9 /* fmboard.h */,
 				967C9281055778CC00000103 /* fmtimer.c */,
+				556F2B321D20A0DC00335DF9 /* fmtimer.h */,
+				556F2B331D20A0DC00335DF9 /* opngen.h */,
 				967C9284055778CC00000103 /* opngenc.c */,
 				967C9285055778CC00000103 /* opngeng.c */,
+				556F2B341D20A0DC00335DF9 /* pcm86.h */,
 				967C9287055778CC00000103 /* pcm86c.c */,
 				967C9288055778CC00000103 /* pcm86g.c */,
+				556F2B351D20A0DC00335DF9 /* psggen.h */,
 				967C928A055778CC00000103 /* psggenc.c */,
 				967C928B055778CC00000103 /* psggeng.c */,
+				556F2B361D20A0DC00335DF9 /* rhythm.h */,
 				967C928D055778CC00000103 /* rhythmc.c */,
 				967C928F055778CC00000103 /* s98.c */,
+				556F2B371D20A0DC00335DF9 /* s98.h */,
 				967C9291055778CC00000103 /* sndcsec.c */,
+				556F2B381D20A0DC00335DF9 /* sndcsec.h */,
 				967C9293055778CC00000103 /* sound.c */,
+				556F2B391D20A0DC00335DF9 /* sound.h */,
 				967C9295055778CC00000103 /* soundrom.c */,
+				556F2B3A1D20A0DC00335DF9 /* soundrom.h */,
+				556F2B3B1D20A0DC00335DF9 /* tms3631.h */,
 				967C9298055778CC00000103 /* tms3631c.c */,
 				967C9299055778CC00000103 /* tms3631g.c */,
 			);
-			name = sound;
-			path = ../sound;
+			path = sound;
 			sourceTree = "<group>";
 		};
 		967C929A055778CC00000103 /* vermouth */ = {
@@ -1167,37 +1293,30 @@
 			isa = PBXGroup;
 			children = (
 				967C92A8055778CC00000103 /* dispsync.c */,
+				556F2BA71D20A86200335DF9 /* dispsync.h */,
 				963AD38C05FA6B8900B4736B /* makegrex.c */,
+				556F2BA81D20A86200335DF9 /* makegrex.h */,
 				967C92AA055778CC00000103 /* makegrph.c */,
+				556F2BA91D20A86200335DF9 /* makegrph.h */,
+				556F2BAA1D20A86200335DF9 /* makegrph.mcr */,
 				967C92AD055778CC00000103 /* maketext.c */,
+				556F2BAB1D20A86200335DF9 /* maketext.h */,
 				967C92AF055778CC00000103 /* maketgrp.c */,
+				556F2BAC1D20A86200335DF9 /* maketgrp.h */,
 				967C92B1055778CC00000103 /* palettes.c */,
+				556F2BAD1D20A86200335DF9 /* palettes.h */,
 				967C92B3055778CC00000103 /* scrnbmp.c */,
+				556F2BAE1D20A86200335DF9 /* scrnbmp.h */,
 				967C92B5055778CC00000103 /* scrndraw.c */,
+				556F2BAF1D20A86200335DF9 /* scrndraw.h */,
+				556F2BB01D20A86200335DF9 /* scrnsave.h */,
 				967C92B7055778CC00000103 /* sdraw.c */,
+				556F2BB11D20A86200335DF9 /* sdraw.mcr */,
+				556F2BB21D20A86200335DF9 /* sdrawex.mcr */,
 				967C92BA055778CC00000103 /* vram.c */,
+				556F2BB31D20A86200335DF9 /* vram.h */,
 			);
-			name = vram;
-			path = ../vram;
-			sourceTree = "<group>";
-		};
-		969A8347055A60A500000103 /* Icon */ = {
-			isa = PBXGroup;
-			children = (
-				969A8348055A60A500000103 /* beta.icns */,
-				969A8349055A60A500000103 /* d88.icns */,
-				96C722A505CC3C56005B39D9 /* fdi.icns */,
-				96C722A905CC3C60005B39D9 /* hdd.icns */,
-				969A834A055A60A500000103 /* hdi.icns */,
-				969A834B055A60A500000103 /* Neko Project IIx.icns */,
-				96C722AD05CC3C69005B39D9 /* nhd.icns */,
-				969A834C055A60A500000103 /* plug-in.icns */,
-				969A834D055A60A500000103 /* preference.icns */,
-				961B71C905641E6C00000103 /* ROM.icns */,
-				969A834E055A60A500000103 /* thd.icns */,
-				969A834F055A60A500000103 /* xdf.icns */,
-			);
-			path = Icon;
+			path = vram;
 			sourceTree = "<group>";
 		};
 		96EBF1F705DD686400DA3983 /* i386c */ = {
@@ -1209,8 +1328,7 @@
 				96EBF23A05DD686500DA3983 /* memory.c */,
 				556F2AD71D209B4400335DF9 /* memory.h */,
 			);
-			name = i386c;
-			path = ../i386c;
+			path = i386c;
 			sourceTree = "<group>";
 		};
 		96EBF1FE05DD686500DA3983 /* ia32 */ = {
@@ -1302,8 +1420,7 @@
 				965751CD05E66FBF002889CD /* np2info.c */,
 				969A219F063041AE007FE890 /* softkbd.c */,
 			);
-			name = generic;
-			path = ../generic;
+			path = generic;
 			sourceTree = "<group>";
 		};
 		96F97183083CFCF60036D494 /* mem */ = {
@@ -1318,9 +1435,8 @@
 				96F97190083CFCF60036D494 /* memvga.c */,
 				96F97192083CFCF60036D494 /* memvram.c */,
 			);
-			name = mem;
-			path = ../mem;
-			sourceTree = SOURCE_ROOT;
+			path = mem;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -1329,23 +1445,33 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				556F2BB41D20A86200335DF9 /* dispsync.h in Headers */,
 				556F2AD81D209B4400335DF9 /* cpucore.h in Headers */,
+				556F2B7C1D20A73900335DF9 /* cmmidi.h in Headers */,
 				556F2ABA1D209A8100335DF9 /* newdisk.h in Headers */,
 				556F2AEC1D209B9900335DF9 /* bin_arith.h in Headers */,
 				556F2B451D20A0DC00335DF9 /* s98.h in Headers */,
+				556F2B611D20A6E300335DF9 /* screenopt.h in Headers */,
 				556F2AB61D209A8100335DF9 /* fdd_d88.h in Headers */,
+				556F2BB91D20A86200335DF9 /* maketgrp.h in Headers */,
 				556F2ACF1D209B1900335DF9 /* exception.h in Headers */,
+				556F2B841D20A73900335DF9 /* mackbd.h in Headers */,
+				556F2B941D20A73900335DF9 /* trace.h in Headers */,
 				556F2A9C1D209A5700335DF9 /* amd98.h in Headers */,
+				556F2B871D20A73900335DF9 /* mousemng.h in Headers */,
 				556F2ADF1D209B5B00335DF9 /* fontmake.h in Headers */,
 				556F2B201D20A08500335DF9 /* iocore.h in Headers */,
 				556F2B2C1D20A09900335DF9 /* np2sysp.h in Headers */,
+				556F2B5F1D20A6E300335DF9 /* macnewdisk.h in Headers */,
 				556F2AF41D209B9900335DF9 /* seg_reg.h in Headers */,
 				556F2B411D20A0DC00335DF9 /* opngen.h in Headers */,
 				556F2B231D20A08500335DF9 /* nmiio.h in Headers */,
 				556F2AD21D209B1900335DF9 /* paging.h in Headers */,
 				556F2AC51D209AF600335DF9 /* interface.h in Headers */,
 				556F2B1E1D20A08500335DF9 /* gdc_sub.h in Headers */,
+				556F2BB81D20A86200335DF9 /* maketext.h in Headers */,
 				556F2B421D20A0DC00335DF9 /* pcm86.h in Headers */,
+				556F2B861D20A73900335DF9 /* menu.h in Headers */,
 				556F2AF11D209B9900335DF9 /* flag_ctrl.h in Headers */,
 				556F2AA81D209A5700335DF9 /* scsicmd.h in Headers */,
 				556F2B481D20A0DC00335DF9 /* soundrom.h in Headers */,
@@ -1355,20 +1481,31 @@
 				556F2A9E1D209A5700335DF9 /* board26k.h in Headers */,
 				556F2ADD1D209B5B00335DF9 /* font.h in Headers */,
 				556F2A7B1D2099CF00335DF9 /* parts.h in Headers */,
+				556F2BBC1D20A86200335DF9 /* scrndraw.h in Headers */,
 				556F2AA31D209A5700335DF9 /* cs4231io.h in Headers */,
+				556F2B851D20A73900335DF9 /* macossub.h in Headers */,
+				556F2B5C1D20A6E300335DF9 /* dialogutils.h in Headers */,
+				556F2B7E1D20A73900335DF9 /* compiler.h in Headers */,
 				556F2AB91D209A8100335DF9 /* fddfile.h in Headers */,
 				556F2AF91D209BA900335DF9 /* fp.h in Headers */,
 				556F2A811D2099E100335DF9 /* strres.h in Headers */,
 				556F2B141D20A08500335DF9 /* cgrom.h in Headers */,
 				556F2AD41D209B1900335DF9 /* segments.h in Headers */,
 				556F2B431D20A0DC00335DF9 /* psggen.h in Headers */,
+				556F2B811D20A73900335DF9 /* fontmng.h in Headers */,
+				556F2B7D1D20A73900335DF9 /* commng.h in Headers */,
 				556F2B291D20A08500335DF9 /* upd4990.h in Headers */,
 				556F2A731D2099AA00335DF9 /* bmpdata.h in Headers */,
+				556F2B8B1D20A73900335DF9 /* scrnmng.h in Headers */,
 				556F2ABB1D209A8100335DF9 /* sxsi.h in Headers */,
 				556F2B401D20A0DC00335DF9 /* fmtimer.h in Headers */,
 				556F2AEE1D209B9900335DF9 /* ctrl_trans.h in Headers */,
 				556F2A831D2099E100335DF9 /* wavefile.h in Headers */,
 				556F2B131D20A08500335DF9 /* artic.h in Headers */,
+				556F2B8F1D20A73900335DF9 /* sysmng.h in Headers */,
+				556F2BA61D20A81600335DF9 /* timing.h in Headers */,
+				556F2BB61D20A86200335DF9 /* makegrph.h in Headers */,
+				556F2B601D20A6E300335DF9 /* midiopt.h in Headers */,
 				556F2B1D1D20A08500335DF9 /* gdc_pset.h in Headers */,
 				556F2AC11D209AE300335DF9 /* cpu_io.h in Headers */,
 				556F2B4B1D20A1C400335DF9 /* np2gcc_ia32.h in Headers */,
@@ -1379,8 +1516,14 @@
 				556F2AA21D209A5700335DF9 /* cbuscore.h in Headers */,
 				556F2AF51D209B9900335DF9 /* shift_rotate.h in Headers */,
 				556F2B251D20A08500335DF9 /* pit.h in Headers */,
+				556F2BBD1D20A86200335DF9 /* scrnsave.h in Headers */,
+				556F2B591D20A6E300335DF9 /* aboutdlg.h in Headers */,
+				556F2B821D20A73900335DF9 /* ini.h in Headers */,
+				556F2B7F1D20A73900335DF9 /* dosio.h in Headers */,
 				556F2B1A1D20A08500335DF9 /* emsio.h in Headers */,
+				556F2BA21D20A81600335DF9 /* nevent.h in Headers */,
 				556F2B271D20A08500335DF9 /* serial.h in Headers */,
+				556F2B9E1D20A81600335DF9 /* calendar.h in Headers */,
 				556F2A8C1D209A0B00335DF9 /* rsbios.h in Headers */,
 				556F2A7D1D2099CF00335DF9 /* rect.h in Headers */,
 				556F2AA71D209A5700335DF9 /* sasiio.h in Headers */,
@@ -1390,22 +1533,31 @@
 				556F2A8D1D209A0B00335DF9 /* sxsibios.h in Headers */,
 				556F2A771D2099BA00335DF9 /* milstr.h in Headers */,
 				556F2A9D1D209A5700335DF9 /* board14.h in Headers */,
+				556F2B5E1D20A6E300335DF9 /* macclnd.h in Headers */,
 				556F2AB81D209A8100335DF9 /* fdd_xdf.h in Headers */,
 				556F2AF21D209B9900335DF9 /* logic_arith.h in Headers */,
 				556F2AF01D209B9900335DF9 /* dec_arith.h in Headers */,
+				556F2BA01D20A81600335DF9 /* keystat.h in Headers */,
 				556F2AD11D209B1900335DF9 /* inst_table.h in Headers */,
 				556F2B1C1D20A08500335DF9 /* fdd320.h in Headers */,
 				556F2B241D20A08500335DF9 /* pic.h in Headers */,
 				556F2B4E1D20A27800335DF9 /* OldCarbHeaders.h in Headers */,
 				556F2B1B1D20A08500335DF9 /* fdc.h in Headers */,
+				556F2B911D20A73900335DF9 /* timemng.h in Headers */,
+				556F2B5A1D20A6E300335DF9 /* configure.h in Headers */,
 				556F2AC21D209AE300335DF9 /* cpu_mem.h in Headers */,
 				556F2B1F1D20A08500335DF9 /* gdc.h in Headers */,
 				556F2A9F1D209A5700335DF9 /* board86.h in Headers */,
 				556F2AF31D209B9900335DF9 /* misc_inst.h in Headers */,
+				556F2B801D20A73900335DF9 /* fdefine.h in Headers */,
 				556F2B491D20A0DC00335DF9 /* tms3631.h in Headers */,
 				556F2AA51D209A5700335DF9 /* pc9861k.h in Headers */,
 				556F2B3F1D20A0DC00335DF9 /* fmboard.h in Headers */,
+				556F2BC01D20A86200335DF9 /* vram.h in Headers */,
+				556F2BBB1D20A86200335DF9 /* scrnbmp.h in Headers */,
 				556F2B3C1D20A0DC00335DF9 /* adpcm.h in Headers */,
+				556F2B891D20A73900335DF9 /* np2opening.h in Headers */,
+				556F2B881D20A73900335DF9 /* np2.h in Headers */,
 				556F2AF61D209B9900335DF9 /* string_inst.h in Headers */,
 				556F2AD51D209B1900335DF9 /* task.h in Headers */,
 				556F2B441D20A0DC00335DF9 /* rhythm.h in Headers */,
@@ -1413,6 +1565,7 @@
 				556F2AB51D209A8100335DF9 /* diskdrv.h in Headers */,
 				556F2AFB1D209C0100335DF9 /* hid.h in Headers */,
 				556F2A711D20999300335DF9 /* _memory.h in Headers */,
+				556F2B921D20A73900335DF9 /* toolwin.h in Headers */,
 				556F2ABC1D209A8100335DF9 /* sxsicd.h in Headers */,
 				556F2AB41D209A8100335DF9 /* d88head.h in Headers */,
 				556F2AA61D209A5700335DF9 /* pcm86io.h in Headers */,
@@ -1423,20 +1576,35 @@
 				556F2AD91D209B4400335DF9 /* memory.h in Headers */,
 				556F2AED1D209B9900335DF9 /* bit_byte.h in Headers */,
 				556F2A751D2099B200335DF9 /* lstarray.h in Headers */,
+				556F2B901D20A73900335DF9 /* taskmng.h in Headers */,
+				556F2B8E1D20A73900335DF9 /* subwind.h in Headers */,
+				556F2B8D1D20A73900335DF9 /* soundrecording.h in Headers */,
+				556F2B9F1D20A81600335DF9 /* debugsub.h in Headers */,
+				556F2BA41D20A81600335DF9 /* statsave.h in Headers */,
 				556F2B261D20A08500335DF9 /* printif.h in Headers */,
 				556F2B471D20A0DC00335DF9 /* sound.h in Headers */,
+				556F2BBA1D20A86200335DF9 /* palettes.h in Headers */,
+				556F2B5B1D20A6E300335DF9 /* dialog.h in Headers */,
 				556F2B191D20A08500335DF9 /* egc.h in Headers */,
+				556F2B831D20A73900335DF9 /* joymng.h in Headers */,
+				556F2B5D1D20A6E300335DF9 /* macalert.h in Headers */,
 				556F2AA41D209A5700335DF9 /* mpu98ii.h in Headers */,
 				556F2B171D20A08500335DF9 /* dipsw.h in Headers */,
 				556F2B211D20A08500335DF9 /* mouseif.h in Headers */,
 				556F2B2D1D20A09900335DF9 /* pcidev.h in Headers */,
+				556F2B8C1D20A73900335DF9 /* soundmng.h in Headers */,
 				556F2A891D209A0B00335DF9 /* bios.h in Headers */,
 				556F2A8A1D209A0B00335DF9 /* biosmem.h in Headers */,
 				556F2AC31D209AE300335DF9 /* cpu.h in Headers */,
 				556F2B3D1D20A0DC00335DF9 /* beep.h in Headers */,
+				556F2B8A1D20A73900335DF9 /* resource.h in Headers */,
+				556F2BA31D20A81600335DF9 /* pccore.h in Headers */,
+				556F2B621D20A6E300335DF9 /* soundopt.h in Headers */,
 				556F2AA91D209A5700335DF9 /* scsiio.h in Headers */,
 				556F2AD01D209B1900335DF9 /* groups.h in Headers */,
 				556F2AF71D209B9900335DF9 /* system_inst.h in Headers */,
+				556F2BB51D20A86200335DF9 /* makegrex.h in Headers */,
+				556F2BC31D20A8CC00335DF9 /* lio.h in Headers */,
 				556F2AA11D209A5700335DF9 /* boardx2.h in Headers */,
 				556F2ADE1D209B5B00335DF9 /* fontdata.h in Headers */,
 				556F2B281D20A08500335DF9 /* sysport.h in Headers */,
@@ -1498,22 +1666,11 @@
 			files = (
 				55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */,
 				55842DD31D2084C60017B417 /* np2.nib in Resources */,
-				55842DD41D2084C60017B417 /* beta.icns in Resources */,
-				55842DD51D2084C60017B417 /* d88.icns in Resources */,
-				55842DD61D2084C60017B417 /* hdi.icns in Resources */,
-				55842DD71D2084C60017B417 /* Neko Project IIx.icns in Resources */,
-				55842DD81D2084C60017B417 /* plug-in.icns in Resources */,
-				55842DD91D2084C60017B417 /* preference.icns in Resources */,
-				556F2A691D208F0300335DF9 /* np2tool.png in Resources */,
-				55842DDA1D2084C60017B417 /* thd.icns in Resources */,
-				55842DDB1D2084C60017B417 /* xdf.icns in Resources */,
 				55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */,
 				55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */,
 				55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */,
-				55842DDF1D2084C60017B417 /* ROM.icns in Resources */,
-				55842DE01D2084C60017B417 /* fdi.icns in Resources */,
-				55842DE11D2084C60017B417 /* hdd.icns in Resources */,
-				55842DE21D2084C60017B417 /* nhd.icns in Resources */,
+				556F2B931D20A73900335DF9 /* toolwin.res in Resources */,
+				556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */,
 				55842DE31D2084C60017B417 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1819,6 +1976,7 @@
 		55842EC61D2084C60017B417 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Neko Project IIx";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1867,6 +2025,7 @@
 		55842EC71D2084C60017B417 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Neko Project IIx";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
 				GCC_DYNAMIC_NO_PIC = YES;
