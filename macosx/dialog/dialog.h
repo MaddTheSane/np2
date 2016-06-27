@@ -17,4 +17,4 @@ void dialog_writebmp(void);
 void dialog_s98(void);
 
 BOOL dialog_fileselect(char *name, int size, WindowRef parent, int opentype);
-BOOL dialog_filewriteselect(OSType type, char *title, FSSpec *fsc, WindowRef parentWindow);
+BOOL dialog_filewriteselect(OSType type, const char *title, FSSpec *fsc, WindowRef parentWindow);

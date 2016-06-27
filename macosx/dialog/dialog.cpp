@@ -61,7 +61,7 @@ void fsspec2path(FSSpec *fs, char *dst, int leng) {
 	cipbr.dirInfo.ioNamePtr = dname;
 	do {
 		cipbr.dirInfo.ioDrDirID = cipbr.dirInfo.ioDrParID;
-		if (PBGetCatInfo(&cipbr, FALSE) != noErr) {
+		if (PBGetCatInfoSync(&cipbr) != noErr) {
 			break;
 		}
 		backpalcalcat(dst, leng, pathsep);
@@ -215,7 +215,7 @@ fsel_exit:
 	return(ret);
 }
 
-BOOL dialog_filewriteselect(OSType type, char *title, FSSpec *fsc, WindowRef parentWindow)
+BOOL dialog_filewriteselect(OSType type, const char *title, FSSpec *fsc, WindowRef parentWindow)
 {	
 	OSType				sign='SMil';
 	NavEventUPP			eventUPP;

@@ -104,7 +104,7 @@ void *fontmng_create(int size, UINT type, const TCHAR *fontface) {
 		return(NULL);
 	}
 	fnt.pm = GetGWorldPixMap(fnt.gw);
-	GetFNum("\pOsaka|“™•", &fnt.fontid);
+	GetFNum("\pOsaka\201\174\223\231\225\235", &fnt.fontid);
 	fnt.fg.red = 0xffff;
 	fnt.fg.green = 0xffff;
 	fnt.fg.blue = 0xffff;
@@ -241,7 +241,7 @@ static void fontmng_getchar(FNTMNG fhdl, FNTDAT fdat, const char *string) {
 	GetFontInfo(&info);
 	GetForeColor(&bak);
 #if TARGET_API_MAC_CARBON
-	// ‚â‚è•û‰ğ‚ç‚È‚¢‚Ì‚Å ©‘O‚Åíœ‚µ‚Ü‚·^^;
+	// ã‚„ã‚Šæ–¹è§£ã‚‰ãªã„ã®ã§ è‡ªå‰ã§å‰Šé™¤ã—ã¾ã™^^;
 	{
 		BYTE	*q;
 		int		r;

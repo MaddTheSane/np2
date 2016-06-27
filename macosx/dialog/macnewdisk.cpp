@@ -129,7 +129,7 @@ static SInt32 initNewDisk( void ) {
     return(err);
 }
 
-// ‚Æ‚è‚ ‚¦‚¸ƒ‚[ƒ_ƒ‹‚Å
+// ã¨ã‚Šã‚ãˆãšãƒ¢ãƒ¼ãƒ€ãƒ«ã§
 void newdisk(void) {
 
     FSSpec	fss;

@@ -55,7 +55,7 @@ static void changeclientsize(int width, int height, BYTE mode) {
 
 #if defined(SUPPORT_16BPP)
 UINT16 scrnmng_makepal16(RGB32 pal32) {
-//win9x‚Ì‚ð‚¿‚å‚±‚Á‚Æ‰ü‘¢(tk800)
+//win9xã®ã‚’ã¡ã‚‡ã“ã£ã¨æ”¹é€ (tk800)
 	RGB32	pal;
 
 	pal.d = pal32.d & 0xF8F8F8;
@@ -68,7 +68,7 @@ UINT16 scrnmng_makepal16(RGB32 pal32) {
 }
 #endif
 
-//ƒfƒBƒXƒvƒŒƒC‚ÌF[“x‚ð•Ô‚·(tk800)
+//ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã®è‰²æ·±åº¦ã‚’è¿”ã™(tk800)
 int	scrnmng_getbpp(void) {
     return(CGDisplayBitsPerPixel(kCGDirectMainDisplay));
 }
@@ -87,7 +87,7 @@ BOOL scrnmng_create(BYTE mode) {
 	QDRAW	qd;
 
 	qd = &qdraw;
-//GWorld‚Ì‘ã‚í‚è‚É’¼ÚƒEƒBƒ“ƒhƒEƒoƒbƒtƒ@‚ðÝ’è(tk800)
+//GWorldã®ä»£ã‚ã‚Šã«ç›´æŽ¥ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒƒãƒ•ã‚¡ã‚’è¨­å®š(tk800)
     GrafPtr		dstport;
     dstport = GetWindowPort(hWndMain);
     if (dstport) {
@@ -153,8 +153,8 @@ const SCRNSURF *scrnmng_surflock(void) {
 
 	scrnsurf.width = qd->width;
 	scrnsurf.height = qd->height;
-//•`‰æˆÊ’u‚ðƒEƒBƒ“ƒhƒEƒo[‚Ì‰º‚ÉÝ’è(tk800) 
-    LockPortBits(GetWindowPort(hWndMain));//‚±‚¤‚µ‚È‚¢‚Æ•`‰æˆÊ’u‚ª‚¨‚©‚µ‚­‚È‚é(tk800)
+//æç”»ä½ç½®ã‚’ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ¼ã®ä¸‹ã«è¨­å®š(tk800) 
+    LockPortBits(GetWindowPort(hWndMain));//ã“ã†ã—ãªã„ã¨æç”»ä½ç½®ãŒãŠã‹ã—ããªã‚‹(tk800)
 	LockPixels(qd->pm);
     long	rowbyte = GetPixRowBytes(qd->pm);
 	scrnsurf.bpp = scrnmng_getbpp();
@@ -189,7 +189,7 @@ void scrnmng_surfunlock(const SCRNSURF *surf) {
 	if (surf) {
 		qd = &qdraw;
 
-//‰æ–Ê‚ðXV‚·‚é‚æ‚¤Window Server‚ÉŽwŽ¦(tk800)
+//ç”»é¢ã‚’æ›´æ–°ã™ã‚‹ã‚ˆã†Window Serverã«æŒ‡ç¤º(tk800)
         GrafPtr		dstport;
         dstport = GetWindowPort(qd->hWnd);
         QDAddRectToDirtyRegion(dstport, &qd->rect);

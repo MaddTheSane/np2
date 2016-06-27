@@ -96,7 +96,7 @@ static	char	target[MAX_PATH] = DEFAULTPATH;
 static const char np2resume[] = "sav";
 
 
-// ---- ‚¨‚Ü‚¶‚È‚¢
+// ---- ãŠã¾ã˜ãªã„
 
 #define	AEProc(fn)	NewAEEventHandlerUPP((AEEventHandlerProcPtr)(fn))
 
@@ -1072,7 +1072,7 @@ int main(int argc, char *argv[]) {
 	return(0);
 }
 
-//ˆÈ‰ºA‚²‚Á‚»‚èIIx‚©‚çƒ}[ƒW
+//ä»¥ä¸‹ã€ã”ã£ãã‚ŠIIxã‹ã‚‰ãƒãƒ¼ã‚¸
 static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef event, void* userData)
 {
     OSStatus	result = eventNotHandledErr;

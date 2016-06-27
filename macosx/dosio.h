@@ -1,6 +1,6 @@
 
 enum {
-	FTYPE_INI		= -1		// Tool Window iniƒtƒ@ƒCƒ‹
+	FTYPE_INI		= -1		// Tool Window iniãƒ•ã‚¡ã‚¤ãƒ«
 };
 
 #define	FILEH			SInt16
@@ -57,10 +57,10 @@ typedef struct {
 extern "C" {
 #endif
 
-											// DOSIO:ŠÖ”‚Ì€”õ
+											// DOSIO:é–¢æ•°ã®æº–å‚™
 void dosio_init(void);
 void dosio_term(void);
-											// ƒtƒ@ƒCƒ‹‘€ì
+											// ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ
 FILEH file_open(const char *path);
 FILEH file_open_rb(const char *path);
 FILEH file_create(const char *path);
@@ -74,7 +74,7 @@ short file_delete(const char *path);
 short file_attr(const char *path);
 short file_dircreate(const char *path);
 
-											// ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì
+											// ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ
 void file_setcd(const char *exepath);
 char *file_getcd(const char *path);
 FILEH file_open_c(const char *path);

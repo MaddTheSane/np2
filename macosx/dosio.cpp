@@ -10,7 +10,7 @@ static	char	*curfilep = curpath + 1;
 void dosio_init(void) { }
 void dosio_term(void) { }
 
-											// ƒtƒ@ƒCƒ‹‘€ì
+											// ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ
 FILEH file_open(const char *path) {
 
 	FILEH	ret;
@@ -238,7 +238,7 @@ short file_dircreate(const char *path) {
 	return(-1);
 }
 
-											// ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì
+											// ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ
 void file_setcd(const char *exepath) {
 
 	file_cpyname(curpath, exepath, sizeof(curpath));

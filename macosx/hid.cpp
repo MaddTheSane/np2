@@ -128,18 +128,18 @@ bool getCurrentPosition(int num, bool getPositiveValue) {
             return false;
     }
 
-    if ( p.Element == NULL )	return false;	// ñ≥Çµ
+    if ( p.Element == NULL )	return false;	// ÁÑ°„Åó
     
     if ( IOHIDElementGetType(p.Element)!=kIOHIDElementTypeInput_Axis) {
         return getCurrenButton(num);
     }
 
 	int raw = IOHIDElement_GetValue(p.Element, kIOHIDValueScaleTypeCalibrated);
-    //int raw = (HIDCalibrateValue (HIDGetElementValue(p.Device, p.Element), p.Element) - IOHIDElement_GetCalibrationMin(p.Element)) / 3; //X1EMx0.5Åi3Ç≈äÑÇÈÇ±Ç∆Ç…ÇµÇΩÅj
+    //int raw = (HIDCalibrateValue (HIDGetElementValue(p.Device, p.Element), p.Element) - IOHIDElement_GetCalibrationMin(p.Element)) / 3; //X1EMx0.5Ôºà3„ÅßÂâ≤„Çã„Åì„Å®„Å´„Åó„ÅüÔºâ
     int middle = (IOHIDElement_GetCalibrationMax(p.Element) - IOHIDElement_GetCalibrationMin(p.Element) - 1) / 2 / 3;
     if ( raw == middle )
     {
-        return false;	// íÜêS
+        return false;	// ‰∏≠ÂøÉ
     }
     if (getPositiveValue && (raw > middle)) {
         return true;
@@ -175,7 +175,7 @@ bool getCurrenButton(int num)
         default:
             return false;
     }
-    if ( p.Element == NULL )	return false;	// ñ≥Çµ
+    if ( p.Element == NULL )	return false;	// ÁÑ°„Åó
     return (bool)HIDGetElementValue(p.Device, p.Element);
 }
 

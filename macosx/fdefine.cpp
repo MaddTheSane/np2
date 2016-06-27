@@ -11,44 +11,44 @@ void Setfiletype(int ftype, OSType *creator, OSType *fileType) {
 //	*fileType = '????';
 
 	switch(ftype) {
-//		case FTYPE_SMIL:			// ƒVƒXƒeƒ€—\–ñ
+//		case FTYPE_SMIL:			// ã‚·ã‚¹ãƒ†ãƒ äºˆç´„
 
-		case FTYPE_TEXT:			// ƒeƒLƒXƒgƒtƒ@ƒCƒ‹
+		case FTYPE_TEXT:			// ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«
 
 			*creator = 'ttxt';
 			*fileType = 'TEXT';
 			break;
 
 //		case FTYPE_BMP:				// Bitmap
-//		case FTYPE_PICT:			// Picture (—\–ñ)
-//		case FTYPE_PNG:				// Png (—\–ñ)
+//		case FTYPE_PICT:			// Picture (äºˆç´„)
+//		case FTYPE_PNG:				// Png (äºˆç´„)
 //		case FTYPE_WAV:				// Wave
 
 		case FTYPE_D88:				// D88
 			*fileType = '.D88';
 			break;
 
-		case FTYPE_BETA:			// ƒxƒ^ƒCƒ[ƒW
+		case FTYPE_BETA:			// ãƒ™ã‚¿ã‚¤ãƒ¡ãƒ¼ã‚¸
 			*fileType = 'BETA';
 			break;
 
-		case FTYPE_THD:				// .thd ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
+		case FTYPE_THD:				// .thd ãƒãƒ¼ãƒ‰ãƒ‡ã‚£ã‚¹ã‚¯ã‚¤ãƒ¡ãƒ¼ã‚¸
 			*fileType = '.THD';
 			break;
 
-		case FTYPE_HDI:				// .hdi ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
+		case FTYPE_HDI:				// .hdi ãƒãƒ¼ãƒ‰ãƒ‡ã‚£ã‚¹ã‚¯ã‚¤ãƒ¡ãƒ¼ã‚¸
 			*fileType = '.HDI';
 			break;
 
-		case FTYPE_HDD:				// .hdd ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW (—\–ñ)
+		case FTYPE_HDD:				// .hdd ãƒãƒ¼ãƒ‰ãƒ‡ã‚£ã‚¹ã‚¯ã‚¤ãƒ¡ãƒ¼ã‚¸ (äºˆç´„)
 			*fileType = '.HDD';
 			break;
 
-		case FTYPE_S98:				// .s98 ƒn[ƒhƒfƒBƒXƒNƒCƒ[ƒW
+		case FTYPE_S98:				// .s98 ãƒãƒ¼ãƒ‰ãƒ‡ã‚£ã‚¹ã‚¯ã‚¤ãƒ¡ãƒ¼ã‚¸
 			*fileType = '.S98';
 			break;
 
-		case FTYPE_MIMPI:			// mimpi defaultƒtƒ@ƒCƒ‹
+		case FTYPE_MIMPI:			// mimpi defaultãƒ•ã‚¡ã‚¤ãƒ«
 			*fileType = '.DEF';
 			break;
 #if 0
