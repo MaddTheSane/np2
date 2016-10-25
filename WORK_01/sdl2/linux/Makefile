@@ -7,7 +7,7 @@ RM		=	rm -f
 
 NP2_PATH	= ../..
 
-CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -I. -I.. \
+CFLAGS	=	-Wall -O3 -Wstrict-overflow=0 -Wstrict-aliasing=0 -I. -I.. \
 			-I$(NP2_PATH) \
 			-I$(NP2_PATH)/cbus \
 			-I$(NP2_PATH)/common \
