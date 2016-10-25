@@ -25,7 +25,7 @@
 #define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
-static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
+static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0x08, {0}, {0}};
 
 	HOSTDRV		hostdrv;
 
@@ -1567,6 +1567,7 @@ void hostdrv_initialize(void) {
 	ZeroMemory(&hostdrv, sizeof(hostdrv));
 	hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
 	TRACEOUT(("hostdrv_initialize"));
+	TRACEOUT(("hostdrv_initialize %d %d %d", hdd_volume.size, hdd_volume.attr, hdd_volume.date.year));
 }
 
 // èIÇÌÇËÇ…àÍâÒÇæÇØåƒÇÒÇ≈ÇÀ(ÇÕÅ[Ç∆
