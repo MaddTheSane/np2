@@ -1567,7 +1567,6 @@ void hostdrv_initialize(void) {
 	ZeroMemory(&hostdrv, sizeof(hostdrv));
 	hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
 	TRACEOUT(("hostdrv_initialize"));
-	TRACEOUT(("hostdrv_initialize %d %d %d", hdd_volume.size, hdd_volume.attr, hdd_volume.date.year));
 }
 
 // I‚í‚è‚Éˆê‰ñ‚¾‚¯ŒÄ‚ñ‚Å‚Ë(‚Í[‚Æ
