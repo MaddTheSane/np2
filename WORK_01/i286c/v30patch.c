@@ -173,9 +173,7 @@ I286FN v30mov_seg_ea(void) {				// 8E:	mov		segrem, EA
 
 	UINT	op;
 	UINT	tmp;
-	UINT16	ipbak;
 
-	ipbak = I286_IP;
 	GET_PCBYTE(op);
 	if (op >= 0xc0) {
 		I286_WORKCLOCK(2);

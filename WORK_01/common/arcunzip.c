@@ -406,7 +406,6 @@ static ARCFH openzipfile(ARCH arch, const ZIPCAT *cat) {
 	ZIPHDL	*hdl;
 	UINT	method;
 	long	fpos;
-	UINT	size;
 	FILEH	fh;
 	ZIPDAT	zd;
 
@@ -415,7 +414,6 @@ static ARCFH openzipfile(ARCH arch, const ZIPCAT *cat) {
 //	TRACEOUT(("method = %d", method));
 
 	fpos = LOADINTELDWORD(cat->internalfpos);
-	size = LOADINTELDWORD(cat->compresssize);
 
 //	TRACEOUT(("fpos = %d", fpos));
 	fh = hdl->fh;
