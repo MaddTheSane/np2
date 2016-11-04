@@ -1,6 +1,5 @@
 #include "compiler.h"
 #include <sys/stat.h>
-#include <unistd.h>
 #include <time.h>
 #if defined(WIN32) && defined(OSLANG_UTF8)
 #include "codecnv/codecnv.h"
@@ -9,6 +8,7 @@
 #if defined(WIN32)
 #include <direct.h>
 #else
+#include <unistd.h>
 #include <dirent.h>
 #endif
 
