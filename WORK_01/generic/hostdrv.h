@@ -1,6 +1,6 @@
 /**
  * @file	hostdrv.h
- * @brief	Interface of host drive
+ * @brief	Interface of host-drive
  */
 
 #pragma once
@@ -18,19 +18,24 @@ enum {
 };
 
 /**
- * @brief ファイル ハンドル
+ * @brief The handle of file
  */
 struct tagHostDrvHandle
 {
-	INTPTR	hdl;
-	UINT	mode;
-	OEMCHAR	path[MAX_PATH];
+	INTPTR hdl;					/*!< File handle */
+	UINT mode;					/*!< Open mode */
+	OEMCHAR path[MAX_PATH];		/*!< Path */
 };
-typedef struct tagHostDrvHandle _HDRVHANDLE;
-typedef struct tagHostDrvHandle *HDRVHANDLE;
+typedef struct tagHostDrvHandle _HDRVHANDLE;		/*!< define */
+typedef struct tagHostDrvHandle *HDRVHANDLE;		/*!< define */
 
-typedef struct {
-	struct {
+/**
+ * @brief The instance of HostDrv
+ */
+struct tagHostDrv
+{
+	struct
+	{
 		UINT8	is_mount;
 		UINT8	drive_no;
 		UINT8	dosver_major;
@@ -38,25 +43,23 @@ typedef struct {
 		UINT16	sda_off;
 		UINT16	sda_seg;
 		UINT	flistpos;
-	}			stat;
+	} stat;
 
 //	LISTARRAY	cache[DIRMAX_DEPTH];
 	LISTARRAY	fhdl;
 	LISTARRAY	flist;
-} HOSTDRV;
-
+};
+typedef struct tagHostDrv HOSTDRV;					/*!< define */
+typedef struct tagHostDrv *PHOSTDRV;				/*!< define */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-extern	HOSTDRV		hostdrv;
+extern "C"
+{
+#endif	/* __cplusplus */
 
 void hostdrv_initialize(void);
 void hostdrv_deinitialize(void);
 void hostdrv_reset(void);
-// void save_hostdrv(void);
-// void load_hostdrv(void);
 
 void hostdrv_mount(const void *arg1, long arg2);
 void hostdrv_unmount(const void *arg1, long arg2);
@@ -67,7 +70,6 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl);
 
 #ifdef __cplusplus
 }
-#endif
+#endif	/* __cplusplus */
 
-#endif
-
+#endif	/* defined(SUPPORT_HOSTDRV) */

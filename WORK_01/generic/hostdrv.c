@@ -1,4 +1,9 @@
-#include	"compiler.h"
+/**
+ * @file	hostdrv.c
+ * @brief	Implementation of host-drive
+ */
+
+#include "compiler.h"
 
 #if defined(SUPPORT_HOSTDRV)
 
@@ -9,14 +14,13 @@
 	更に、手抜き版だし(マテ
 */
 
-#include	"dosio.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"hostdrv.h"
-#include	"hostdrvs.h"
-#include	"hostdrv.tbl"
-
+#include "dosio.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "hostdrv.h"
+#include "hostdrvs.h"
+#include "hostdrv.tbl"
 
 #define IS_PERMITWRITE		(np2cfg.hdrvacc & HDFMODE_WRITE)
 #define IS_PERMITDELETE		(np2cfg.hdrvacc & HDFMODE_DELETE)
@@ -27,25 +31,36 @@
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
 static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0x08, {0}, {0}};
 
-	HOSTDRV		hostdrv;
+static HOSTDRV s_hostdrv;
 
-// ---- i/f
+/* i/f */
 
-static void succeed(INTRST intrst) {
-
+/**
+ * Succeed
+ * @param[in] intrst The status of interrupt
+ */
+static void succeed(INTRST intrst)
+{
 	intrst->r.b.flag_l &= ~C_FLAG;
 	STOREINTELWORD(intrst->r.w.ax, ERR_NOERROR);
 }
 
-static void fail(INTRST intrst, UINT16 err_code) {
-
+/**
+ * Failed
+ * @param[in] intrst The status of interrupt
+ * @param[in] err_code The error code
+ */
+static void fail(INTRST intrst, UINT16 err_code)
+{
 	intrst->r.b.flag_l |= C_FLAG;
 	STOREINTELWORD(intrst->r.w.ax, err_code);
 }
 
-
-static void fetch_if4dos(void) {
-
+/**
+ * fetch
+ */
+static void fetch_if4dos(void)
+{
 	REG16	off;
 	REG16	seg;
 	IF4DOS	if4dos;
@@ -53,65 +68,71 @@ static void fetch_if4dos(void) {
 	off = MEMR_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 0);
 	seg = MEMR_READ16(IF4DOSPTR_SEG, IF4DOSPTR_OFF + 2);
 	MEMR_READS(seg, off, &if4dos, sizeof(if4dos));
-	hostdrv.stat.drive_no = if4dos.drive_no;
-	hostdrv.stat.dosver_major = if4dos.dosver_major;
-	hostdrv.stat.dosver_minor = if4dos.dosver_minor;
-	hostdrv.stat.sda_off = LOADINTELWORD(if4dos.sda_off);
-	hostdrv.stat.sda_seg = LOADINTELWORD(if4dos.sda_seg);
+	s_hostdrv.stat.drive_no = if4dos.drive_no;
+	s_hostdrv.stat.dosver_major = if4dos.dosver_major;
+	s_hostdrv.stat.dosver_minor = if4dos.dosver_minor;
+	s_hostdrv.stat.sda_off = LOADINTELWORD(if4dos.sda_off);
+	s_hostdrv.stat.sda_seg = LOADINTELWORD(if4dos.sda_seg);
 
 	TRACEOUT(("hostdrv:drive_no = %d", if4dos.drive_no));
 	TRACEOUT(("hostdrv:dosver = %d.%.2d", if4dos.dosver_major, if4dos.dosver_minor));
-	TRACEOUT(("hostdrv.sda = %.4x:%.4x", hostdrv.stat.sda_seg, hostdrv.stat.sda_off));
+	TRACEOUT(("hostdrv.sda = %.4x:%.4x", hostdrv->stat.sda_seg, hostdrv->stat.sda_off));
 }
 
-
-static void fetch_intr_regs(INTRST is) {
-
+/**
+ * fetch status
+ * @param[in] intrst The status of interrupt
+ */
+static void fetch_intr_regs(INTRST is)
+{
 	MEMR_READS(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
-static void store_intr_regs(INTRST is) {
-
+/**
+ * store status
+ * @param[in] intrst The status of interrupt
+ */
+static void store_intr_regs(INTRST is)
+{
 	MEMR_WRITES(CPU_SS, CPU_BP, &is->r, sizeof(is->r));
 }
 
-
-static void fetch_sda_currcds(SDACDS sc) {
-
+static void fetch_sda_currcds(SDACDS sc)
+{
 	REG16	off;
 	REG16	seg;
 
-	if (hostdrv.stat.dosver_major == 3) {
-		MEMR_READS(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
-										&sc->ver3.sda, sizeof(sc->ver3.sda));
+	if (s_hostdrv.stat.dosver_major == 3)
+	{
+		MEMR_READS(s_hostdrv.stat.sda_seg, s_hostdrv.stat.sda_off, &sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
 		MEMR_READS(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
-	else {
-		MEMR_READS(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
-										&sc->ver4.sda, sizeof(sc->ver4.sda));
+	else
+	{
+		MEMR_READS(s_hostdrv.stat.sda_seg, s_hostdrv.stat.sda_off, &sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
 		MEMR_READS(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
 	}
 }
 
-static void store_sda_currcds(SDACDS sc) {
-
+static void store_sda_currcds(SDACDS sc)
+{
 	REG16	off;
 	REG16	seg;
 
-	if (hostdrv.stat.dosver_major == 3) {
-		MEMR_WRITES(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
-										&sc->ver3.sda, sizeof(sc->ver3.sda));
+	if (s_hostdrv.stat.dosver_major == 3)
+	{
+		MEMR_WRITES(s_hostdrv.stat.sda_seg, s_hostdrv.stat.sda_off, &sc->ver3.sda, sizeof(sc->ver3.sda));
 		off = LOADINTELWORD(sc->ver3.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver3.sda.cdsptr.seg);
 		MEMR_WRITES(seg, off, &sc->ver3.cds, sizeof(sc->ver3.cds));
 	}
-	else {
-		MEMR_WRITES(hostdrv.stat.sda_seg, hostdrv.stat.sda_off,
-										&sc->ver4.sda, sizeof(sc->ver4.sda));
+	else
+	{
+		MEMR_WRITES(s_hostdrv.stat.sda_seg, s_hostdrv.stat.sda_off, &sc->ver4.sda, sizeof(sc->ver4.sda));
 		off = LOADINTELWORD(sc->ver4.sda.cdsptr.off);
 		seg = LOADINTELWORD(sc->ver4.sda.cdsptr.seg);
 		MEMR_WRITES(seg, off, &sc->ver4.cds, sizeof(sc->ver4.cds));
@@ -119,8 +140,8 @@ static void store_sda_currcds(SDACDS sc) {
 }
 
 
-static void fetch_sft(INTRST is, SFTREC sft) {
-
+static void fetch_sft(INTRST is, SFTREC sft)
+{
 	REG16	off;
 	REG16	seg;
 
@@ -129,8 +150,8 @@ static void fetch_sft(INTRST is, SFTREC sft) {
 	MEMR_READS(seg, off, sft, sizeof(_SFTREC));
 }
 
-static void store_sft(INTRST is, SFTREC sft) {
-
+static void store_sft(INTRST is, SFTREC sft)
+{
 	REG16	off;
 	REG16	seg;
 
@@ -140,42 +161,45 @@ static void store_sft(INTRST is, SFTREC sft) {
 }
 
 
-static void store_srch(INTRST is) {
-
+static void store_srch(INTRST is)
+{
 	SRCHREC	srchrec;
 
-	// SDA内のSRCHRECにセット
+	/* SDA内のSRCHRECにセット */
 	srchrec = is->srchrec_ptr;
-	srchrec->drive_no = 0xc0 | hostdrv.stat.drive_no;
+	srchrec->drive_no = 0xc0 | s_hostdrv.stat.drive_no;
 	CopyMemory(srchrec->srch_mask, is->fcbname_ptr, 11);
 	srchrec->attr_mask = *is->srch_attr_ptr;
 	STOREINTELWORD(srchrec->dir_entry_no, ((UINT16)-1));
 	STOREINTELWORD(srchrec->dir_sector, ((UINT16)-1));
 }
 
-static void store_dir(INTRST is, const HDRVFILE *phdf) {
-
+static void store_dir(INTRST is, const HDRVFILE *phdf)
+{
 	DIRREC	dirrec;
 	UINT8	attr;
 	UINT16	reg;
 
-	// SDA内のDIRRECにセット
+	/* SDA内のDIRRECにセット */
 	dirrec = is->dirrec_ptr;
 	CopyMemory(dirrec->file_name, phdf->fcbname, 11);
 	attr = (UINT8)(phdf->attr & 0x3f);
-	if (!IS_PERMITWRITE) {
+	if (!IS_PERMITWRITE)
+	{
 		attr |= 0x01;
 	}
 	dirrec->file_attr = attr;
 	reg = 0;
-	if (phdf->caps & FLICAPS_TIME) {
+	if (phdf->caps & FLICAPS_TIME)
+	{
 		reg |= (phdf->time.hour & 0x1f) << 11;
 		reg |= (phdf->time.minute & 0x3f) << 5;
 		reg |= (phdf->time.second & 0x3e) >> 1;
 	}
 	STOREINTELWORD(dirrec->file_time, reg);
 	reg = 0;
-	if (phdf->caps & FLICAPS_DATE) {
+	if (phdf->caps & FLICAPS_DATE)
+	{
 		reg |= ((phdf->date.year - 1980) & 0x7f) << 9;
 		reg |= (phdf->date.month & 0x0f) << 5;
 		reg |= phdf->date.day & 0x1f;
@@ -185,27 +209,30 @@ static void store_dir(INTRST is, const HDRVFILE *phdf) {
 	STOREINTELDWORD(dirrec->file_size, phdf->size);
 }
 
-static void fill_sft(INTRST is, SFTREC sft, UINT num, const HDRVFILE *phdf) {
-
+static void fill_sft(INTRST is, SFTREC sft, UINT num, const HDRVFILE *phdf)
+{
 	UINT8	attr;
 	UINT16	reg;
 
 	attr = phdf->attr;
-	if (!IS_PERMITWRITE) {
+	if (!IS_PERMITWRITE)
+	{
 		attr |= 0x01;
 	}
 	sft->file_attr = attr;
 	STOREINTELWORD(sft->start_sector, (UINT16)num);
 
 	reg = 0;
-	if (phdf->caps & FLICAPS_TIME) {
+	if (phdf->caps & FLICAPS_TIME)
+	{
 		reg |= (phdf->time.hour & 0x1f) << 11;
 		reg |= (phdf->time.minute & 0x3f) << 5;
 		reg |= (phdf->time.second & 0x3e) >> 1;
 	}
 	STOREINTELWORD(sft->file_time, reg);
 	reg = 0;
-	if (phdf->caps & FLICAPS_DATE) {
+	if (phdf->caps & FLICAPS_DATE)
+	{
 		reg |= ((phdf->date.year - 1980) & 0x7f) << 9;
 		reg |= (phdf->date.month & 0x0f) << 5;
 		reg |= phdf->date.day & 0x1f;
@@ -218,46 +245,50 @@ static void fill_sft(INTRST is, SFTREC sft, UINT num, const HDRVFILE *phdf) {
 	TRACEOUT(("open -> size %d", phdf->size));
 }
 
-static void init_sft(SFTREC sft) {
-
-	if (sft->open_mode[1] & 0x80) {	// fcb mode
+static void init_sft(SFTREC sft)
+{
+	if (sft->open_mode[1] & 0x80)	/* fcb mode */
+	{
 		sft->open_mode[0] |= 0xf0;
 	}
-	else {
+	else
+	{
 		sft->open_mode[0] &= 0x0f;
 	}
-	sft->dev_info_word[0] = (UINT8)(0x40 | hostdrv.stat.drive_no);
+	sft->dev_info_word[0] = (UINT8)(0x40 | s_hostdrv.stat.drive_no);
 	sft->dev_info_word[1] = 0x80;
 	STOREINTELDWORD(sft->dev_drvr_ptr, 0);
 	STOREINTELDWORD(sft->file_pos, 0);
 	STOREINTELWORD(sft->rel_sector, (UINT16)-1);
 	STOREINTELWORD(sft->abs_sector, (UINT16)-1);
-	if (sft->open_mode[1] & 0x80) {	// fcb mode
+	if (sft->open_mode[1] & 0x80)	/* fcb mode */
+	{
 		CPU_FLAG |= C_FLAG;
 	}
 }
 
-
-static BOOL is_wildcards(const char *path) {
-
+static BOOL is_wildcards(const char *path)
+{
 	int		i;
 
-	for (i=0; i<11; i++) {
-		if (path[i] == '?') {
-			return(TRUE);
+	for (i=0; i<11; i++)
+	{
+		if (path[i] == '?')
+		{
+			return TRUE;
 		}
 	}
-	return(FALSE);
+	return FALSE;
 }
 
-
-// ぽいんた初期化
-static void setup_ptrs(INTRST is, SDACDS sc) {
-
+/* ぽいんた初期化 */
+static void setup_ptrs(INTRST is, SDACDS sc)
+{
 	char	*rootpath;
 	int		off;
 
-	if (hostdrv.stat.dosver_major == 3) {
+	if (s_hostdrv.stat.dosver_major == 3)
+	{
 		is->fcbname_ptr = sc->ver3.sda.fcb_name;
 		is->filename_ptr = sc->ver3.sda.file_name + ROOTPATH_SIZE - 1;
 		is->fcbname_ptr_2 = sc->ver3.sda.fcb_name_2;
@@ -274,7 +305,8 @@ static void setup_ptrs(INTRST is, SDACDS sc) {
 		is->root_path = rootpath;
 		is->current_path = rootpath + off;
 	}
-	else {
+	else
+	{
 		is->fcbname_ptr = sc->ver4.sda.fcb_name;
 		is->filename_ptr = sc->ver4.sda.file_name + ROOTPATH_SIZE - 1;
 		is->fcbname_ptr_2 = sc->ver4.sda.fcb_name_2;
@@ -294,80 +326,92 @@ static void setup_ptrs(INTRST is, SDACDS sc) {
 }
 
 
-static BRESULT pathishostdrv(INTRST is, SDACDS sc) {
-
+static BRESULT pathishostdrv(INTRST is, SDACDS sc)
+{
 	fetch_sda_currcds(sc);
 	setup_ptrs(is, sc);
 
-	if (memcmp(is->root_path, ROOTPATH, ROOTPATH_SIZE)) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
-		return(FAILURE);
+	if (memcmp(is->root_path, ROOTPATH, ROOTPATH_SIZE))
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
+		return FAILURE;
 	}
-	if (is->is_chardev) {
+	if (is->is_chardev)
+	{
 		fail(is, ERR_ACCESSDENIED);
-		return(FAILURE);
+		return FAILURE;
 	}
-	return(SUCCESS);
+	return SUCCESS;
 }
 
 
-static BRESULT read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
-
+static BRESULT read_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off)
+{
 	HDRVHANDLE	hdf;
 	FILEH		fh;
 	UINT8		work[1024];
 	UINT		r;
 
-	hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, num);
-	if (hdf == NULL) {
-		return(FAILURE);
+	hdf = (HDRVHANDLE)listarray_getitem(s_hostdrv.fhdl, num);
+	if (hdf == NULL)
+	{
+		return FAILURE;
 	}
 	fh = (FILEH)hdf->hdl;
-	if (file_seek(fh, (long)pos, FSEEK_SET) != (long)pos) {
-		return(FAILURE);
+	if (file_seek(fh, (long)pos, FSEEK_SET) != (long)pos)
+	{
+		return FAILURE;
 	}
-	while(size) {
+	while (size)
+	{
 		r = min(size, sizeof(work));
-		if (file_read(fh, work, r) != r) {
-			return(FAILURE);
+		if (file_read(fh, work, r) != r)
+		{
+			return FAILURE;
 		}
 		MEMR_WRITES(seg, off, work, r);
 		off += r;
 		size -= r;
 	}
-	return(SUCCESS);
+	return SUCCESS;
 }
 
-static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off) {
-
+static BRESULT write_data(UINT num, UINT32 pos, UINT size, UINT seg, UINT off)
+{
 	HDRVHANDLE	hdf;
 	FILEH		fh;
 	UINT8		work[1024];
 	UINT		r;
 
-	hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, num);
-	if (hdf == NULL) {
-		return(FAILURE);
+	hdf = (HDRVHANDLE)listarray_getitem(s_hostdrv.fhdl, num);
+	if (hdf == NULL)
+	{
+		return FAILURE;
 	}
 	fh = (FILEH)hdf->hdl;
-	if (file_seek(fh, (long)pos, FSEEK_SET) != (long)pos) {
-		return(FAILURE);
+	if (file_seek(fh, (long)pos, FSEEK_SET) != (long)pos)
+	{
+		return FAILURE;
 	}
-	if (!size) {
+	if (!size)
+	{
 		file_write(fh, work, 0);
 	}
-	else {
-		do {
+	else
+	{
+		do
+		{
 			r = min(size, sizeof(work));
 			MEMR_READS(seg, off, work, r);
-			if (file_write(fh, work, r) != r) {
-				return(FAILURE);
+			if (file_write(fh, work, r) != r)
+			{
+				return FAILURE;
 			}
 			off += r;
 			size -= r;
-		} while(size);
+		} while (size);
 	}
-	return(SUCCESS);
+	return SUCCESS;
 }
 
 
@@ -375,31 +419,30 @@ static BRESULT find_file(INTRST is)
 {
 	HDRVLST hdl;
 
-	hdl = (HDRVLST)listarray_getitem(hostdrv.flist, hostdrv.stat.flistpos);
+	hdl = (HDRVLST)listarray_getitem(s_hostdrv.flist, s_hostdrv.stat.flistpos);
 	if (hdl != NULL)
 	{
 		store_srch(is);
 		store_dir(is, &hdl->file);
-		hostdrv.stat.flistpos++;
+		s_hostdrv.stat.flistpos++;
 		return SUCCESS;
 	}
 	else
 	{
-		listarray_destroy(hostdrv.flist);
-		hostdrv.flist = NULL;
+		listarray_destroy(s_hostdrv.flist);
+		s_hostdrv.flist = NULL;
 		return FAILURE;
 	}
 }
 
-
-// ----
+/* ---- */
 
 /* cmd in int2f11 */
 /* 00 */
-static void inst_check(INTRST intrst) {
-
+static void inst_check(INTRST intrst)
+{
 	intrst->r.b.flag_l &= ~C_FLAG;
-	intrst->r.b.al = 0xff;					// インストール済み。追加OKだお
+	intrst->r.b.al = 0xff;					/* インストール済み。追加OKだお */
 }
 
 /* 01 */
@@ -511,19 +554,21 @@ static void make_dir(INTRST intrst)
 }
 
 /* 05 */
-static void change_currdir(INTRST intrst) {
-
+static void change_currdir(INTRST intrst)
+{
 	_SDACDS		sc;
 	char		*ptr;
 	HDRVPATH	hdp;
 
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 
 	ptr = intrst->filename_ptr;
 	TRACEOUT(("change_currdir %s", intrst->filename_ptr));
-	if (ptr[0] == '\0') {							// るーと
+	if (ptr[0] == '\0')								/* root */
+	{
 		strcpy(intrst->filename_ptr, "\\");
 		strcpy(intrst->current_path, intrst->filename_ptr);
 		store_sda_currcds(&sc);
@@ -533,7 +578,8 @@ static void change_currdir(INTRST intrst) {
 	if ((strlen(intrst->filename_ptr) >= (67 - ROOTPATH_SIZE)) ||
 		(is_wildcards(intrst->fcbname_ptr) != FALSE) ||
 		(hostdrvs_getrealpath(&hdp, ptr) != ERR_NOERROR) ||
-		(hdp.file.fcbname[0] == ' ') || (!(hdp.file.attr & 0x10))) {
+		(hdp.file.fcbname[0] == ' ') || (!(hdp.file.attr & 0x10)))
+	{
 		fail(intrst, ERR_PATHNOTFOUND);
 		return;
 	}
@@ -543,8 +589,8 @@ static void change_currdir(INTRST intrst) {
 }
 
 /* 06 */
-static void close_file(INTRST intrst) {
-
+static void close_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 	UINT16		handle_count;
@@ -555,19 +601,23 @@ static void close_file(INTRST intrst) {
 	fetch_sft(intrst, &sft);
 	setup_ptrs(intrst, &sc);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
 	handle_count = LOADINTELWORD(sft.handle_count);
 
-	if (handle_count) {
+	if (handle_count)
+	{
 		handle_count--;
 	}
-	if (handle_count == 0) {
+	if (handle_count == 0)
+	{
 		start_sector = LOADINTELWORD(sft.start_sector);
-		hdf = (HDRVHANDLE)listarray_getitem(hostdrv.fhdl, start_sector);
-		if (hdf) {
+		hdf = (HDRVHANDLE)listarray_getitem(s_hostdrv.fhdl, start_sector);
+		if (hdf)
+		{
 			file_close((FILEH)hdf->hdl);
 			hdf->hdl = (INTPTR)FILEH_INVALID;
 			hdf->path[0] = '\0';
@@ -579,26 +629,27 @@ static void close_file(INTRST intrst) {
 }
 
 /* 07 */
-static void commit_file(INTRST intrst) {
-
+static void commit_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
 
-	// なんもしないよー
+	/* なんもしないよー */
 	succeed(intrst);
 }
 
 /* 08 */
-static void read_file(INTRST intrst) {
-
+static void read_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 	UINT16		cx;
@@ -609,11 +660,13 @@ static void read_file(INTRST intrst) {
 	fetch_sft(intrst, &sft);
 	setup_ptrs(intrst, &sc);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
-	if (sft.open_mode[0] & 1) {
+	if (sft.open_mode[0] & 1)
+	{
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
@@ -621,17 +674,20 @@ static void read_file(INTRST intrst) {
 	cx = LOADINTELWORD(intrst->r.w.cx);
 	file_size = LOADINTELDWORD(sft.file_size);
 	file_pos = LOADINTELDWORD(sft.file_pos);
-	if (cx > (file_size - file_pos)) {
+	if (cx > (file_size - file_pos))
+	{
 		cx = (UINT16)(file_size - file_pos);
 		STOREINTELWORD(intrst->r.w.cx, cx);
 	}
-	if (cx == 0) {
+	if (cx == 0)
+	{
 		succeed(intrst);
 		return;
 	}
 	if (read_data(LOADINTELWORD(sft.start_sector), file_pos, cx,
 					LOADINTELWORD(sc.ver3.sda.current_dta.seg),
-					LOADINTELWORD(sc.ver3.sda.current_dta.off)) != SUCCESS) {
+					LOADINTELWORD(sc.ver3.sda.current_dta.off)) != SUCCESS)
+	{
 		fail(intrst, ERR_READFAULT);
 		return;
 	}
@@ -640,13 +696,13 @@ static void read_file(INTRST intrst) {
 	STOREINTELDWORD(sft.file_pos, file_pos);
 
 	store_sft(intrst, &sft);
-//	store_sda_currcds(&sc);						// ver0.74 Yui / sdaは変更無し
+//	store_sda_currcds(&sc);						/* ver0.74 Yui / sdaは変更無し */
 	succeed(intrst);
 }
 
 /* 09 */
-static void write_file(INTRST intrst) {
-
+static void write_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 	UINT16		cx;
@@ -657,13 +713,14 @@ static void write_file(INTRST intrst) {
 	fetch_sft(intrst, &sft);
 	setup_ptrs(intrst, &sc);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
 
-	if ((!IS_PERMITWRITE) ||
-		(!(sft.open_mode[0] & 3))) {	// read only
+	if ((!IS_PERMITWRITE) || (!(sft.open_mode[0] & 3)))	/* read only */
+	{
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
@@ -673,17 +730,21 @@ static void write_file(INTRST intrst) {
 	file_pos = LOADINTELDWORD(sft.file_pos);
 	if (write_data(LOADINTELWORD(sft.start_sector), file_pos, cx,
 					LOADINTELWORD(sc.ver3.sda.current_dta.seg),
-					LOADINTELWORD(sc.ver3.sda.current_dta.off)) != SUCCESS) {
+					LOADINTELWORD(sc.ver3.sda.current_dta.off)) != SUCCESS)
+	{
 		fail(intrst, ERR_WRITEFAULT);
 		return;
 	}
-	if (cx) {
+	if (cx)
+	{
 		file_pos += cx;
-		if (file_size < file_pos) {
+		if (file_size < file_pos)
+		{
 			file_size = file_pos;
 		}
 	}
-	else {
+	else
+	{
 		file_size = file_pos;
 	}
 
@@ -694,36 +755,38 @@ static void write_file(INTRST intrst) {
 }
 
 /* 0A */
-static void lock_file(INTRST intrst) {
-
+static void lock_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
-	// 未実装
+	/* 未実装 */
 	TRACEOUT(("hostdrv: lock_file"));
 }
 
 /* 0B */
-static void unlock_file(INTRST intrst) {
-
+static void unlock_file(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
-	// 未実装
+	/* 未実装 */
 	TRACEOUT(("hostdrv: unlock_file"));
 }
 
@@ -745,50 +808,54 @@ static void get_diskspace(INTRST intrst)
 }
 
 /* 0E */
-static void set_fileattr(INTRST intrst) {
-
+static void set_fileattr(INTRST intrst)
+{
 	_SDACDS		sc;
 	HDRVPATH	hdp;
 	REG16		attr;
 
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
-	if ((is_wildcards(intrst->fcbname_ptr)) ||
-		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR)) {
+	if ((is_wildcards(intrst->fcbname_ptr)) || (hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR))
+	{
 		fail(intrst, ERR_FILENOTFOUND);
 		return;
 	}
-	if (!IS_PERMITWRITE) {
+	if (!IS_PERMITWRITE)
+	{
 		fail(intrst, ERR_ACCESSDENIED);
 		return;
 	}
 	attr = MEMR_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR)) & 0x37;
 
-	// 成功したことにする...
+	/* 成功したことにする... */
 	succeed(intrst);
 }
 
 /* 0F */
-static void get_fileattr(INTRST intrst) {
-
+static void get_fileattr(INTRST intrst)
+{
 	_SDACDS		sc;
 	HDRVPATH	hdp;
 	UINT16		ax;
 
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 
 	TRACEOUT(("get_fileattr: ->%s", intrst->fcbname_ptr));
-	if ((is_wildcards(intrst->fcbname_ptr)) ||
-		(hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR)) {
+	if ((is_wildcards(intrst->fcbname_ptr)) || (hostdrvs_getrealpath(&hdp, intrst->filename_ptr) != ERR_NOERROR))
+	{
 		fail(intrst, ERR_FILENOTFOUND);
 		return;
 	}
 	TRACEOUT(("get_fileattr: %s - %x", hdp.szPath, hdp.file.attr));
 	ax = hdp.file.attr & 0x37;
-	if (!IS_PERMITWRITE) {
+	if (!IS_PERMITWRITE)
+	{
 		ax |= 0x01;
 	}
 	intrst->r.b.flag_l &= ~C_FLAG;
@@ -1079,7 +1146,7 @@ static void open_file(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			nResult = ERR_NOHANDLESLEFT;
@@ -1090,7 +1157,7 @@ static void open_file(INTRST intrst)
 		hdf->mode = nMode;
 		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
 
-		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
+		fill_sft(intrst, &sft, listarray_getpos(s_hostdrv.fhdl, hdf), &hdp.file);
 		init_sft(&sft);
 
 		store_sft(intrst, &sft);
@@ -1157,7 +1224,7 @@ static void create_file(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			nResult = ERR_ACCESSDENIED;
@@ -1175,7 +1242,7 @@ static void create_file(INTRST intrst)
 		hdf->mode = HDFMODE_READ | HDFMODE_WRITE;
 		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
 
-		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
+		fill_sft(intrst, &sft, listarray_getpos(s_hostdrv.fhdl, hdf), &hdp.file);
 		init_sft(&sft);
 
 		store_sft(intrst, &sft);
@@ -1193,18 +1260,18 @@ static void create_file(INTRST intrst)
 }
 
 /* 1B */
-static void find_first(INTRST intrst) {
-
+static void find_first(INTRST intrst)
+{
 	LISTARRAY flist;
 	_SDACDS sc;
 	HDRVPATH hdp;
 	char fcbname[11];
 
-	flist = hostdrv.flist;
+	flist = s_hostdrv.flist;
 	if (flist)
 	{
-		hostdrv.flist = NULL;
-		hostdrv.stat.flistpos = 0;
+		s_hostdrv.flist = NULL;
+		s_hostdrv.stat.flistpos = 0;
 		listarray_destroy(flist);
 	}
 
@@ -1227,8 +1294,8 @@ static void find_first(INTRST intrst) {
 		}
 
 		TRACEOUT(("find_first %s -> %s", intrst->filename_ptr, hdp.szPath));
-		hostdrv.flist = hostdrvs_getpathlist(&hdp, intrst->fcbname_ptr, *intrst->srch_attr_ptr);
-		hostdrv.stat.flistpos = 0;
+		s_hostdrv.flist = hostdrvs_getpathlist(&hdp, intrst->fcbname_ptr, *intrst->srch_attr_ptr);
+		s_hostdrv.stat.flistpos = 0;
 		if (find_file(intrst) != SUCCESS)
 		{
 			fail(intrst, ERR_PATHNOTFOUND);
@@ -1240,8 +1307,8 @@ static void find_first(INTRST intrst) {
 }
 
 /* 1C */
-static void find_next(INTRST intrst) {
-
+static void find_next(INTRST intrst)
+{
 	_SDACDS		sc;
 	SRCHREC		srchrec;
 
@@ -1249,12 +1316,13 @@ static void find_next(INTRST intrst) {
 	setup_ptrs(intrst, &sc);
 
 	srchrec = intrst->srchrec_ptr;
-	if ((!(srchrec->drive_no & 0x40)) ||
-		((srchrec->drive_no & 0x1f) != hostdrv.stat.drive_no)) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((!(srchrec->drive_no & 0x40)) || ((srchrec->drive_no & 0x1f) != s_hostdrv.stat.drive_no))
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
-	if (find_file(intrst) != SUCCESS) {
+	if (find_file(intrst) != SUCCESS)
+	{
 		fail(intrst, ERR_NOMOREFILES);
 		return;
 	}
@@ -1262,31 +1330,33 @@ static void find_next(INTRST intrst) {
 	succeed(intrst);
 }
 
-#if 1
 /* 1E */
-static void do_redir(INTRST intrst) {
-
+static void do_redir(INTRST intrst)
+{
 	_SDACDS		sc;
 	REG16		mode;
 	REG16		bx;
 	char		tmp[4];
 
 	TRACEOUT(("do_redir"));
-	if (pathishostdrv(intrst, &sc) != SUCCESS) {
+	if (pathishostdrv(intrst, &sc) != SUCCESS)
+	{
 		return;
 	}
 	mode = MEMR_READ16(CPU_SS, CPU_BP + sizeof(IF4INTR));
 	TRACEOUT(("do_redir: %.4x", mode));
-	switch(mode) {
+	switch (mode)
+	{
 		case 0x5f02:
 			bx = LOADINTELWORD(intrst->r.w.bx);
-			if (bx) {
+			if (bx)
+			{
 				fail(intrst, 0x12);
 				return;
 			}
 			MEMR_WRITE16(CPU_DS, CPU_BX + 2, 4);
 			MEMR_WRITE16(CPU_DS, CPU_BX + 4, 1);
-			tmp[0] = (char)('A' + hostdrv.stat.drive_no);
+			tmp[0] = (char)('A' + s_hostdrv.stat.drive_no);
 			tmp[1] = ':';
 			tmp[2] = '\0';
 			MEMR_WRITES(LOADINTELWORD(intrst->r.w.ds),
@@ -1297,17 +1367,16 @@ static void do_redir(INTRST intrst) {
 			break;
 
 		default:
-			CPU_FLAG &= ~Z_FLAG;	// chain
+			CPU_FLAG &= ~Z_FLAG;	/* chain */
 			return;
 	}
 	succeed(intrst);
 }
-#endif
 
 /* 21 */
-// dos4以降呼ばれることはあんまない・・・
-static void seek_fromend(INTRST intrst) {
-
+/* dos4以降呼ばれることはあんまない・・・ */
+static void seek_fromend(INTRST intrst)
+{
 	_SDACDS		sc;
 	_SFTREC		sft;
 	UINT16		reg;
@@ -1317,8 +1386,9 @@ static void seek_fromend(INTRST intrst) {
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
 
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
 	reg = LOADINTELWORD(intrst->r.w.cx);
@@ -1326,7 +1396,8 @@ static void seek_fromend(INTRST intrst) {
 	reg = LOADINTELWORD(intrst->r.w.dx);
 	pos += reg;
 	file_size = LOADINTELDWORD(sft.file_size);
-	if (pos > file_size) {
+	if (pos > file_size)
+	{
 		pos = file_size;
 	}
 	reg = (UINT16)(pos >> 16);
@@ -1341,15 +1412,16 @@ static void seek_fromend(INTRST intrst) {
 }
 
 /* 2D */
-static void unknownfunc_2d(INTRST intrst) {
-
-	_SDACDS		sc;
-	_SFTREC		sft;
+static void unknownfunc_2d(INTRST intrst)
+{
+	_SDACDS	sc;
+	_SFTREC	sft;
 
 	fetch_sda_currcds(&sc);
 	fetch_sft(intrst, &sft);
-	if ((sft.dev_info_word[0] & 0x3f) != hostdrv.stat.drive_no) {
-		CPU_FLAG &= ~Z_FLAG;	// chain
+	if ((sft.dev_info_word[0] & 0x3f) != s_hostdrv.stat.drive_no)
+	{
+		CPU_FLAG &= ~Z_FLAG;	/* chain */
 		return;
 	}
 #if 1
@@ -1361,7 +1433,7 @@ static void unknownfunc_2d(INTRST intrst) {
 }
 
 /* 2E */
-// for dos4+
+/* for dos4+ */
 static void ext_openfile(INTRST intrst)
 {
 	_SDACDS		sc;
@@ -1394,11 +1466,11 @@ static void ext_openfile(INTRST intrst)
 		sft.open_mode[1] = sc.ver4.sda.mode_2E[1] & 0x00;
 		switch (sft.open_mode[0] & 7)
 		{
-			case 1:	// write only
+			case 1:	/* write only */
 				mode = HDFMODE_WRITE;
 				break;
 
-			case 2:	// read/write
+			case 2:	/* read/write */
 				mode = HDFMODE_READ | HDFMODE_WRITE;
 				break;
 
@@ -1473,7 +1545,7 @@ static void ext_openfile(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			file_close(fh);
@@ -1486,7 +1558,7 @@ static void ext_openfile(INTRST intrst)
 		file_cpyname(hdf->path, hdp.szPath, NELEMENTS(hdf->path));
 
 		STOREINTELWORD(intrst->r.w.cx, cx);
-		fill_sft(intrst, &sft, listarray_getpos(hostdrv.fhdl, hdf), &hdp.file);
+		fill_sft(intrst, &sft, listarray_getpos(s_hostdrv.fhdl, hdf), &hdp.file);
 		init_sft(&sft);
 		store_sft(intrst, &sft);
 
@@ -1503,12 +1575,10 @@ static void ext_openfile(INTRST intrst)
 	}
 }
 
-
-// ----
-
 typedef void (*HDINTRFN)(INTRST intrst);
 
-static const HDINTRFN intr_func[] = {
+static const HDINTRFN intr_func[] =
+{
 		inst_check,			/* 00 */
 		remove_dir,			/* 01 */
 		NULL,
@@ -1558,67 +1628,91 @@ static const HDINTRFN intr_func[] = {
 		ext_openfile		/* 2E */
 };
 
+/* Manage */
 
-// ----
-
-// 始めに一回だけ呼んでね(はーと
-void hostdrv_initialize(void) {
-
-	ZeroMemory(&hostdrv, sizeof(hostdrv));
-	hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
+/**
+ *Initialize
+ */
+void hostdrv_initialize(void)
+{
+	ZeroMemory(&s_hostdrv, sizeof(s_hostdrv));
+	s_hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
 	TRACEOUT(("hostdrv_initialize"));
 }
 
-// 終わりに一回だけ呼んでね(はーと
-void hostdrv_deinitialize(void) {
-
-	listarray_destroy(hostdrv.flist);
-	hostdrvs_fhdlallclose(hostdrv.fhdl);
-	listarray_destroy(hostdrv.fhdl);
+/**
+ * Deinitialize
+ */
+void hostdrv_deinitialize(void)
+{
+	listarray_destroy(s_hostdrv.flist);
+	hostdrvs_fhdlallclose(s_hostdrv.fhdl);
+	listarray_destroy(s_hostdrv.fhdl);
 	TRACEOUT(("hostdrv_deinitialize"));
 }
 
-// リセットルーチンで呼ぶべしべし
-void hostdrv_reset(void) {
-
+/**
+ * Reset
+ */
+void hostdrv_reset(void)
+{
 	hostdrv_deinitialize();
 	hostdrv_initialize();
 }
 
 
-// ---- for np2sysp
+/* for np2sysp */
 
-void hostdrv_mount(const void *arg1, long arg2) {
-
-	if ((np2cfg.hdrvroot[0] == '\0') || (hostdrv.stat.is_mount)) {
+/**
+ * Mount
+ * @param[in] arg1 user parameter-1
+ * @param[in] arg2 user parameter-2
+ */
+void hostdrv_mount(const void *arg1, long arg2)
+{
+	if ((np2cfg.hdrvroot[0] == '\0') || (s_hostdrv.stat.is_mount))
+	{
 		np2sysp_outstr(OEMTEXT("ng"), 0);
 		return;
 	}
-	hostdrv.stat.is_mount = TRUE;
+	s_hostdrv.stat.is_mount = TRUE;
 	fetch_if4dos();
 	np2sysp_outstr(OEMTEXT("ok"), 0);
 	(void)arg1;
 	(void)arg2;
 }
 
-void hostdrv_unmount(const void *arg1, long arg2) {
+/**
+ * Unmount
+ * @param[in] arg1 user parameter-1
+ * @param[in] arg2 user parameter-2
+ */
+void hostdrv_unmount(const void *arg1, long arg2)
+{
 
-	if (hostdrv.stat.is_mount) {
+	if (s_hostdrv.stat.is_mount)
+	{
 		hostdrv_reset();
 	}
 	(void)arg1;
 	(void)arg2;
 }
 
-void hostdrv_intr(const void *arg1, long arg2) {
-
+/**
+ * Interrput
+ * @param[in] arg1 user parameter-1
+ * @param[in] arg2 user parameter-2
+ */
+void hostdrv_intr(const void *arg1, long arg2)
+{
 	_INTRST	intrst;
 
 	ZeroMemory(&intrst, sizeof(intrst));
 	intrst.is_chardev = (CPU_FLAG & C_FLAG) == 0;
-	CPU_FLAG &= ~(C_FLAG | Z_FLAG);				// not fcb / chain
+	CPU_FLAG &= ~(C_FLAG | Z_FLAG);				/* not fcb / chain */
 
-	if (!hostdrv.stat.is_mount) {
+	if (!s_hostdrv.stat.is_mount)
+	{
 		return;
 	}
 
@@ -1626,12 +1720,12 @@ void hostdrv_intr(const void *arg1, long arg2) {
 
 	TRACEOUT(("hostdrv: AL=%.2x", intrst.r.b.al));
 
-	if ((intrst.r.b.al >= NELEMENTS(intr_func)) ||
-		(intr_func[intrst.r.b.al] == NULL)) {
+	if ((intrst.r.b.al >= NELEMENTS(intr_func)) || (intr_func[intrst.r.b.al] == NULL))
+	{
 		return;
 	}
 
-	CPU_FLAG |= Z_FLAG;							// not chain
+	CPU_FLAG |= Z_FLAG;							/* not chain */
 	(*intr_func[intrst.r.b.al])(&intrst);
 
 	store_intr_regs(&intrst);
@@ -1640,67 +1734,83 @@ void hostdrv_intr(const void *arg1, long arg2) {
 	(void)arg2;
 }
 
+/* for statsave */
 
-// ---- for statsave
-
-typedef struct {
+typedef struct
+{
 	UINT	stat;
 	UINT	files;
 	UINT	flists;
 } SFHDRV;
 
-static BOOL fhdl_wr(void *vpItem, void *vpArg) {
-
+static BOOL fhdl_wr(void *vpItem, void *vpArg)
+{
 	OEMCHAR	*p;
 	UINT	len;
 
 	p = ((HDRVHANDLE)vpItem)->path;
 	len = (UINT)OEMSTRLEN(p);
 	statflag_write((STFLAGH)vpArg, &len, sizeof(len));
-	if (len) {
-		if (len < MAX_PATH) {
+	if (len)
+	{
+		if (len < MAX_PATH)
+		{
 			ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 		}
 		statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVHANDLE));
 	}
-	return(FALSE);
+	return FALSE;
 }
 
-static BOOL flist_wr(void *vpItem, void *vpArg) {
-
+static BOOL flist_wr(void *vpItem, void *vpArg)
+{
 	OEMCHAR	*p;
 	UINT	len;
 
 	p = ((HDRVLST)vpItem)->szFilename;
 	len = (UINT)OEMSTRLEN(p);
-	if (len < MAX_PATH) {
+	if (len < MAX_PATH)
+	{
 		ZeroMemory(p + len, (MAX_PATH - len) * sizeof(OEMCHAR));
 	}
 	statflag_write((STFLAGH)vpArg, vpItem, sizeof(_HDRVLST));
-	return(FALSE);
+	return FALSE;
 }
 
-int hostdrv_sfsave(STFLAGH sfh, const SFENTRY *tbl) {
-
+/**
+ * Stat save
+ * @param[in] sfh The Handle of state
+ * @param[in] tbl The entry
+ * @return The result
+ */
+int hostdrv_sfsave(STFLAGH sfh, const SFENTRY *tbl)
+{
 	SFHDRV	sfhdrv;
 	int		ret;
 
-	if (!hostdrv.stat.is_mount) {
-		return(STATFLAG_SUCCESS);
+	if (!s_hostdrv.stat.is_mount)
+	{
+		return STATFLAG_SUCCESS;
 	}
-	sfhdrv.stat = sizeof(hostdrv.stat);
-	sfhdrv.files = listarray_getitems(hostdrv.fhdl);
-	sfhdrv.flists = listarray_getitems(hostdrv.flist);
+	sfhdrv.stat = sizeof(s_hostdrv.stat);
+	sfhdrv.files = listarray_getitems(s_hostdrv.fhdl);
+	sfhdrv.flists = listarray_getitems(s_hostdrv.flist);
 	ret = statflag_write(sfh, &sfhdrv, sizeof(sfhdrv));
-	ret |= statflag_write(sfh, &hostdrv.stat, sizeof(hostdrv.stat));
-	listarray_enum(hostdrv.fhdl, fhdl_wr, sfh);
-	listarray_enum(hostdrv.flist, flist_wr, sfh);
+	ret |= statflag_write(sfh, &s_hostdrv.stat, sizeof(s_hostdrv.stat));
+	listarray_enum(s_hostdrv.fhdl, fhdl_wr, sfh);
+	listarray_enum(s_hostdrv.flist, flist_wr, sfh);
 	(void)tbl;
-	return(ret);
+	return ret;
 }
 
-int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
-
+/**
+ * Stat load
+ * @param[in] sfh The Handle of state
+ * @param[in] tbl The entry
+ * @return The result
+ */
+int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl)
+{
 	SFHDRV		sfhdrv;
 	int			ret;
 	UINT		i;
@@ -1709,40 +1819,47 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl) {
 	FILEH		fh;
 	HDRVLST		hdl;
 
-	listarray_clr(hostdrv.fhdl);
-	listarray_clr(hostdrv.flist);
+	listarray_clr(s_hostdrv.fhdl);
+	listarray_clr(s_hostdrv.flist);
 
 	ret = statflag_read(sfh, &sfhdrv, sizeof(sfhdrv));
-	if (sfhdrv.stat != sizeof(hostdrv.stat)) {
-		return(STATFLAG_FAILURE);
+	if (sfhdrv.stat != sizeof(s_hostdrv.stat))
+	{
+		return STATFLAG_FAILURE;
 	}
-	ret |= statflag_read(sfh, &hostdrv.stat, sizeof(hostdrv.stat));
-	for (i=0; i<sfhdrv.files; i++) {
-		hdf = (HDRVHANDLE)listarray_append(hostdrv.fhdl, NULL);
-		if (hdf == NULL) {
-			return(STATFLAG_FAILURE);
+	ret |= statflag_read(sfh, &s_hostdrv.stat, sizeof(s_hostdrv.stat));
+	for (i=0; i<sfhdrv.files; i++)
+	{
+		hdf = (HDRVHANDLE)listarray_append(s_hostdrv.fhdl, NULL);
+		if (hdf == NULL)
+		{
+			return STATFLAG_FAILURE;
 		}
 		ret |= statflag_read(sfh, &len, sizeof(len));
-		if (len) {
+		if (len)
+		{
 			ret |= statflag_read(sfh, hdf, sizeof(_HDRVHANDLE));
-			if (hdf->mode & HDFMODE_WRITE) {
+			if (hdf->mode & HDFMODE_WRITE)
+			{
 				fh = file_open(hdf->path);
 			}
-			else {
+			else
+			{
 				fh = file_open_rb(hdf->path);
 			}
 			hdf->hdl = (INTPTR)fh;
 		}
 	}
-	for (i=0; i<sfhdrv.flists; i++) {
-		hdl = (HDRVLST)listarray_append(hostdrv.flist, NULL);
-		if (hdl == NULL) {
-			return(STATFLAG_FAILURE);
+	for (i=0; i<sfhdrv.flists; i++)
+	{
+		hdl = (HDRVLST)listarray_append(s_hostdrv.flist, NULL);
+		if (hdl == NULL)
+		{
+			return STATFLAG_FAILURE;
 		}
 		ret |= statflag_read(sfh, hdl, sizeof(_HDRVLST));
 	}
 	(void)tbl;
-	return(ret);
+	return ret;
 }
 #endif
-
