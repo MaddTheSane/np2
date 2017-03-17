@@ -8,6 +8,7 @@
 #if defined(WIN32)
 #include <direct.h>
 #else
+#include <unistd.h>
 #include <dirent.h>
 #endif
 
