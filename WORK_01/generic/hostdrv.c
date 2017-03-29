@@ -76,7 +76,7 @@ static void fetch_if4dos(void)
 
 	TRACEOUT(("hostdrv:drive_no = %d", if4dos.drive_no));
 	TRACEOUT(("hostdrv:dosver = %d.%.2d", if4dos.dosver_major, if4dos.dosver_minor));
-	TRACEOUT(("hostdrv.sda = %.4x:%.4x", hostdrv->stat.sda_seg, hostdrv->stat.sda_off));
+	TRACEOUT(("hostdrv.sda = %.4x:%.4x", s_hostdrv.stat.sda_seg, s_hostdrv.stat.sda_off));
 }
 
 /**
