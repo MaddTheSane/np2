@@ -94,7 +94,7 @@ typedef struct {
 	UINT8	open_mode[2];
 	UINT8	file_attr;
 	UINT8	dev_info_word[2];
-	UINT8 	dev_drvr_ptr[4];
+	UINT8	dev_drvr_ptr[4];
 	UINT8	start_sector[2];
 	UINT8	file_time[2];
 	UINT8	file_date[2];
@@ -208,17 +208,17 @@ typedef struct {
 		IF4INTR		w;
 	}		r;
 
-	char	*fcbname_ptr;
-	char	*filename_ptr;
-	char	*fcbname_ptr_2;
-	char	*filename_ptr_2;
+	const char *fcbname_ptr;
+	char *filename_ptr;
+	const char *fcbname_ptr_2;
+	const char *filename_ptr_2;
 	SRCHREC	srchrec_ptr;
 	DIRREC	dirrec_ptr;
 	SRCHREC	srchrec_ptr_2;
 	DIRREC	dirrec_ptr_2;
-	UINT8	*srch_attr_ptr;
-	char	*root_path;
-	char	*current_path;
+	const UINT8 *srch_attr_ptr;
+	const char *root_path;
+	char *current_path;
 } _INTRST, *INTRST;
 
 

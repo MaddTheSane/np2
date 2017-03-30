@@ -290,9 +290,9 @@ static void setup_ptrs(INTRST is, SDACDS sc)
 	if (s_hostdrv.stat.dosver_major == 3)
 	{
 		is->fcbname_ptr = sc->ver3.sda.fcb_name;
-		is->filename_ptr = sc->ver3.sda.file_name + ROOTPATH_SIZE - 1;
+		is->filename_ptr = sc->ver3.sda.file_name;
 		is->fcbname_ptr_2 = sc->ver3.sda.fcb_name_2;
-		is->filename_ptr_2 = sc->ver3.sda.file_name_2 + ROOTPATH_SIZE - 1;
+		is->filename_ptr_2 = sc->ver3.sda.file_name_2;
 
 		is->srchrec_ptr = &sc->ver3.sda.srchrec;
 		is->dirrec_ptr = &sc->ver3.sda.dirrec;
@@ -302,15 +302,13 @@ static void setup_ptrs(INTRST is, SDACDS sc)
 
 		rootpath = sc->ver3.cds.current_path;
 		off = LOADINTELWORD(sc->ver3.cds.root_ofs);
-		is->root_path = rootpath;
-		is->current_path = rootpath + off;
 	}
 	else
 	{
 		is->fcbname_ptr = sc->ver4.sda.fcb_name;
-		is->filename_ptr = sc->ver4.sda.file_name + ROOTPATH_SIZE - 1;
+		is->filename_ptr = sc->ver4.sda.file_name;
 		is->fcbname_ptr_2 = sc->ver4.sda.fcb_name_2;
-		is->filename_ptr_2 = sc->ver4.sda.file_name_2 + ROOTPATH_SIZE - 1;
+		is->filename_ptr_2 = sc->ver4.sda.file_name_2;
 
 		is->srchrec_ptr = &sc->ver4.sda.srchrec;
 		is->dirrec_ptr = &sc->ver4.sda.dirrec;
@@ -320,9 +318,11 @@ static void setup_ptrs(INTRST is, SDACDS sc)
 
 		rootpath = sc->ver4.cds.current_path;
 		off = LOADINTELWORD(sc->ver4.cds.root_ofs);
-		is->root_path = rootpath;
-		is->current_path = rootpath + off;
 	}
+	is->filename_ptr += ROOTPATH_SIZE - 1;
+	is->filename_ptr_2 += ROOTPATH_SIZE - 1;
+	is->root_path = rootpath;
+	is->current_path = rootpath + off;
 }
 
 
@@ -557,7 +557,7 @@ static void make_dir(INTRST intrst)
 static void change_currdir(INTRST intrst)
 {
 	_SDACDS		sc;
-	char		*ptr;
+	const char	*ptr;
 	HDRVPATH	hdp;
 
 	if (pathishostdrv(intrst, &sc) != SUCCESS)

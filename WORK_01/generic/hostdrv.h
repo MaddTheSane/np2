@@ -9,8 +9,6 @@
 
 #include "statsave.h"
 
-#define	DIRMAX_DEPTH		8
-
 enum {
 	HDFMODE_READ		= 0x01,
 	HDFMODE_WRITE		= 0x02,
@@ -45,12 +43,10 @@ struct tagHostDrv
 		UINT	flistpos;
 	} stat;
 
-//	LISTARRAY	cache[DIRMAX_DEPTH];
 	LISTARRAY	fhdl;
 	LISTARRAY	flist;
 };
 typedef struct tagHostDrv HOSTDRV;					/*!< define */
-typedef struct tagHostDrv *PHOSTDRV;				/*!< define */
 
 #ifdef __cplusplus
 extern "C"
