@@ -1146,7 +1146,7 @@ static void open_file(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(&s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			nResult = ERR_NOHANDLESLEFT;
@@ -1224,7 +1224,7 @@ static void create_file(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(&s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			nResult = ERR_ACCESSDENIED;
@@ -1545,7 +1545,7 @@ static void ext_openfile(INTRST intrst)
 			break;
 		}
 
-		hdf = hostdrvs_fhdlsea(s_hostdrv.fhdl);
+		hdf = hostdrvs_fhdlsea(&s_hostdrv.fhdl);
 		if (hdf == NULL)
 		{
 			file_close(fh);
@@ -1636,7 +1636,6 @@ static const HDINTRFN intr_func[] =
 void hostdrv_initialize(void)
 {
 	ZeroMemory(&s_hostdrv, sizeof(s_hostdrv));
-	s_hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
 	TRACEOUT(("hostdrv_initialize"));
 }
 
@@ -1819,8 +1818,11 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl)
 	FILEH		fh;
 	HDRVLST		hdl;
 
-	listarray_clr(s_hostdrv.fhdl);
-	listarray_clr(s_hostdrv.flist);
+	hostdrvs_fhdlallclose(s_hostdrv.fhdl);
+	listarray_destroy(s_hostdrv.fhdl);
+	s_hostdrv.fhdl = NULL;
+	listarray_destroy(s_hostdrv.flist);
+	s_hostdrv.flist = NULL;
 
 	ret = statflag_read(sfh, &sfhdrv, sizeof(sfhdrv));
 	if (sfhdrv.stat != sizeof(s_hostdrv.stat))
@@ -1828,6 +1830,11 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl)
 		return STATFLAG_FAILURE;
 	}
 	ret |= statflag_read(sfh, &s_hostdrv.stat, sizeof(s_hostdrv.stat));
+
+	if (sfhdrv.files)
+	{
+		s_hostdrv.fhdl = listarray_new(sizeof(_HDRVHANDLE), 16);
+	}
 	for (i=0; i<sfhdrv.files; i++)
 	{
 		hdf = (HDRVHANDLE)listarray_append(s_hostdrv.fhdl, NULL);
@@ -1849,6 +1856,11 @@ int hostdrv_sfload(STFLAGH sfh, const SFENTRY *tbl)
 			}
 			hdf->hdl = (INTPTR)fh;
 		}
+	}
+
+	if (sfhdrv.flists)
+	{
+		s_hostdrv.flist = listarray_new(sizeof(_HDRVLST), 64);
 	}
 	for (i=0; i<sfhdrv.flists; i++)
 	{

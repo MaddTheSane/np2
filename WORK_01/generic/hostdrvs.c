@@ -529,20 +529,22 @@ static BOOL IsHandleInvalid(void *vpItem, void *vpArg)
 
 /**
  * 新しいハンドルを得る
- * @param[in] fileArray ファイル リスト ハンドル
+ * @param[in,out] pFileArray ファイル リスト ハンドル
  * @return 新しいハンドル
  */
-HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY fileArray)
+HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY *pFileArray)
 {
 	HDRVHANDLE ret;
 
-	if (fileArray == NULL)
-	{
-		TRACEOUT(("hostdrvs_fhdlsea hdl == NULL"));
-	}
+	LISTARRAY fileArray = *pFileArray;
 	ret = (HDRVHANDLE)listarray_enum(fileArray, IsHandleInvalid, NULL);
 	if (ret == NULL)
 	{
+		if (fileArray == NULL)
+		{
+			fileArray = listarray_new(sizeof(_HDRVHANDLE), 16);
+			*pFileArray = fileArray;
+		}
 		ret = (HDRVHANDLE)listarray_append(fileArray, NULL);
 		if (ret != NULL)
 		{
