@@ -778,6 +778,8 @@ INPUT                  = ./commng/ \
                          ./ext/romeo/ \
                          ./ext/scci/ \
                          ./misc/ \
+                         ./soundmng/ \
+                         ./soundmng/asio/ \
                          ./subwnd/dclock.cpp \
                          ./subwnd/dclock.h \
                          ./subwnd/dd2.cpp \

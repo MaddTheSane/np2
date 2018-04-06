@@ -14,6 +14,10 @@
 #include	"sound.h"
 #include	"idebios.res"
 
+#if 1
+#undef	TRACEOUT
+#define	TRACEOUT(s)
+#endif	/* 0 */
 
 	IDEIO	ideio;
 

@@ -72,7 +72,9 @@ UINT file_getsize(FILEH handle);
 short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime);
 short file_delete(const OEMCHAR *path);
 short file_attr(const OEMCHAR *path);
+short file_rename(const OEMCHAR *exitstpath, const OEMCHAR *newpath);
 short file_dircreate(const OEMCHAR *path);
+short file_dirdelete(const OEMCHAR *path);
 
 /* カレントファイル操作 */
 void file_setcd(const OEMCHAR *exepath);

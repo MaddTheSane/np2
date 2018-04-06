@@ -1,8 +1,8 @@
 #include	"compiler.h"
 
-#if 0
+#if 1
 #undef	TRACEOUT
-#define	TRACEOUT(s)	trace_fmt s
+#define	TRACEOUT(s)
 #endif	/* 0 */
 
 // ‚±‚êAscsicmd‚Æ‚Ç‚¤“‡‚·‚é‚Ì‚æH
