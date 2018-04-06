@@ -68,6 +68,6 @@ UINT hostdrvs_getrealdir(HDRVPATH *phdp, char *lpFcbname, const char *lpDosPath)
 UINT hostdrvs_appendname(HDRVPATH *phdp, const char *lpFcbname);
 UINT hostdrvs_getrealpath(HDRVPATH *phdp, const char *lpDosPath);
 void hostdrvs_fhdlallclose(LISTARRAY fileArray);
-HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY *pFileArray);
+HDRVHANDLE hostdrvs_fhdlsea(LISTARRAY fileArray);
 
 #endif	/* defined(SUPPORT_HOSTDRV) */
