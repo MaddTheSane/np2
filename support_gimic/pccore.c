@@ -198,10 +198,6 @@ static void pccore_set(const NP2CFG *pConfig)
 
 // --------------------------------------------------------------------------
 
-#ifdef _DEBUG
-BOOL g_sndlock = FALSE;
-#endif	/* _DEBUG */
-
 #if !defined(DISABLE_SOUND)
 static void sound_init(void)
 {
@@ -253,9 +249,6 @@ void pccore_init(void)
 
 	SNDCSEC_INIT;
 	SNDCSEC_ENTER;
-#ifdef _DEBUG
-	g_sndlock = TRUE;
-#endif	/* _DEBUG */
 
 	pal_initlcdtable();
 	pal_makelcdpal();
@@ -285,9 +278,6 @@ void pccore_init(void)
 	hostdrv_initialize();
 #endif
 
-#ifdef _DEBUG
-	g_sndlock = FALSE;
-#endif	/* _DEBUG */
 	SNDCSEC_LEAVE;
 }
 
@@ -297,9 +287,6 @@ void pccore_init(void)
 void pccore_term(void)
 {
 	SNDCSEC_ENTER;
-#ifdef _DEBUG
-	g_sndlock = TRUE;
-#endif	/* _DEBUG */
 
 #if defined(SUPPORT_HOSTDRV)
 	hostdrv_deinitialize();
@@ -325,9 +312,6 @@ void pccore_term(void)
 
 	CPU_DEINITIALIZE();
 
-#ifdef _DEBUG
-	g_sndlock = FALSE;
-#endif	/* _DEBUG */
 	SNDCSEC_LEAVE;
 	SNDCSEC_TERM;
 }
@@ -369,9 +353,6 @@ void pccore_reset(void) {
 	BOOL	epson;
 
 	SNDCSEC_ENTER;
-#ifdef _DEBUG
-	g_sndlock = TRUE;
-#endif	/* _DEBUG */
 
 	soundmng_stop();
 #if !defined(DISABLE_SOUND)
@@ -467,9 +448,6 @@ void pccore_reset(void) {
 	timing_reset();
 	soundmng_play();
 
-#ifdef _DEBUG
-	g_sndlock = FALSE;
-#endif	/* _DEBUG */
 	SNDCSEC_LEAVE;
 }
 
@@ -668,9 +646,6 @@ void pccore_exec(BOOL draw) {
 	pal_eventclear();
 
 	SNDCSEC_ENTER;
-#ifdef _DEBUG
-	g_sndlock = TRUE;
-#endif	/* _DEBUG */
 
 	gdc.vsync = 0;
 	pcstat.screendispflag = 1;
@@ -720,9 +695,6 @@ if (r) { TRACEOUT(("%04x:%04x", CPU_CS, CPU_IP)); }
 	S98_sync();
 	sound_sync();
 
-#ifdef _DEBUG
-	g_sndlock = FALSE;
-#endif	/* _DEBUG */
 	SNDCSEC_LEAVE;
 
 	if (pcstat.hardwarereset) {

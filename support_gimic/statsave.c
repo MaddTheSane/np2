@@ -1365,9 +1365,6 @@ const SFENTRY	*tblterm;
 	}
 
 	SNDCSEC_ENTER;
-#ifdef _DEBUG
-	g_sndlock = TRUE;
-#endif	/* _DEBUG */
 
 	soundmng_stop();
 	rs232c_midipanic();
@@ -1496,9 +1493,6 @@ const SFENTRY	*tblterm;
 	fddmtr_reset();
 	soundmng_play();
 
-#ifdef _DEBUG
-	g_sndlock = FALSE;
-#endif	/* _DEBUG */
 	SNDCSEC_LEAVE;
 
 	return(ret);
