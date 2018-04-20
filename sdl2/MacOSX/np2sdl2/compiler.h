@@ -98,6 +98,7 @@ typedef	unsigned char	BOOL;
 #define	SUPPORT_UTF8
 
 #define	SUPPORT_16BPP
+#define SUPPORT_32BPP
 #define	MEMOPTIMIZE		2
 
 #define SOUND_CRITICAL
@@ -114,4 +115,4 @@ typedef	unsigned char	BOOL;
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 
-#define	SCREEN_BPP		16
+#define	SCREEN_BPP		32

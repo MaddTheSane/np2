@@ -1849,6 +1849,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"NP2VER_SDL2=NP2VER_CORE",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					./np2sdl2,
@@ -1885,6 +1889,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = np2sdl2/compiler.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"NP2VER_SDL2=NP2VER_CORE",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					./np2sdl2,
