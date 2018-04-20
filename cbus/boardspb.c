@@ -189,8 +189,8 @@ void boardspr_reset(const NP2CFG *pConfig)
 	opna_timer(&g_opna[0], (pConfig->spbopt & 0xc0) | 0x10, NEVENT_FMTIMERA, NEVENT_FMTIMERB);
 	opna_reset(&g_opna[1], OPNA_MODE_3438 | OPNA_HAS_VR);
 
-	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x0f);
-	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x0f);
+	opngen_setcfg(&g_opna[0].opngen, 6, OPN_STEREO | 0x3f);
+	opngen_setcfg(&g_opna[1].opngen, 6, OPN_STEREO | 0x3f);
 	soundrom_loadex(pConfig->spbopt & 7, OEMTEXT("SPB"));
 	g_opna[0].s.base = (pConfig->spbopt & 0x10) ? 0x000 : 0x100;
 }
@@ -201,6 +201,7 @@ void boardspr_reset(const NP2CFG *pConfig)
 void boardspr_bind(void)
 {
 	opna_bind(&g_opna[0]);
+	opna_bind(&g_opna[1]);
 	cbuscore_attachsndex(0x188 - g_opna[0].s.base, spb_o, spb_i);
 	cbuscore_attachsndex(0x588 - g_opna[0].s.base, spr_o, spr_i);
 }

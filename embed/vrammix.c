@@ -2609,12 +2609,8 @@ const UINT8	*p;
 	UINT	alpha;
 	int		cnt;
 	UINT	col16;
-	int		c16[3];
 
 	col16 = MAKE16PAL(color);
-	c16[0] = col16 & B16MASK;
-	c16[1] = col16 & G16MASK;
-	c16[2] = col16 & R16MASK;
 
 	p = (UINT8 *)(fnt + 1);
 	p += mr->srcpos;

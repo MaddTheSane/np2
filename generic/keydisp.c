@@ -744,7 +744,7 @@ void keydisp_opl3keyon(const UINT8 *pcRegister, REG8 nChannelNum, REG8 cData)
 		return;
 	}
 
-	for (i = 0; i < s_keydisp.opnamax; i++)
+	for (i = 0; i < s_keydisp.opl3max; i++)
 	{
 		k = &s_keydisp.opl3ctl[i];
 		if (k->pcRegister == pcRegister)
@@ -818,6 +818,7 @@ void keydisp_reset(void)
 	ClearDelayList(&s_keydisp);
 	memset(&s_keydisp.opnactl, 0, sizeof(s_keydisp.opnactl));
 	memset(&s_keydisp.psgctl, 0, sizeof(s_keydisp.psgctl));
+	memset(&s_keydisp.opl3ctl, 0, sizeof(s_keydisp.opl3ctl));
 
 	if (s_keydisp.mode == KEYDISP_MODEFM)
 	{

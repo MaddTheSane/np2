@@ -25,7 +25,7 @@
 #define ROOTPATH_SIZE		(sizeof(ROOTPATH_NAME) - 1)
 
 static const char ROOTPATH[ROOTPATH_SIZE + 1] = ROOTPATH_NAME;
-static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0, 0x08, {0}, {0}};
+static const HDRVFILE hdd_volume = {{'_','H','O','S','T','D','R','I','V','E','_'}, 0, 0, 0x08, {0}, {0}};
 
 	HOSTDRV		hostdrv;
 

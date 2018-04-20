@@ -14,7 +14,7 @@
 #include "pccore.h"
 
 /*! ルート情報 */
-static const HDRVFILE s_hddroot = {{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0, 0x10, 0, 0};
+static const HDRVFILE s_hddroot = {{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '}, 0, 0, 0x10, {0}, {0}};
 
 /*! 自分 */
 static const char s_self[11] = {'.',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};

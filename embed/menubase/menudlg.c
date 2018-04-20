@@ -311,12 +311,6 @@ dbcre_err:
 
 static void dlgbase_paint(MENUDLG dlg, DLGHDL hdl) {
 
-	OEMCHAR	*title;
-
-	title = NULL;
-	if (hdl->prm) {
-		title = hdl->prm->str;
-	}
 	menuvram_base(dlg->vram);
 	vrammix_cpy(dlg->vram, NULL, hdl->vram, NULL);
 	menubase_setrect(dlg->vram, NULL);
@@ -1213,9 +1207,6 @@ static void *dlgtablist_setfont(DLGHDL hdl, void *font) {
 
 static BRESULT dlgtablist_create(MENUDLG dlg, DLGHDL hdl, const void *arg) {
 
-	RECT_T	rct;
-
-	rct.right = hdl->rect.right - hdl->rect.left;
 	hdl->val = -1;
 	dlgtablist_setfont(hdl, dlg->font);
 	(void)arg;

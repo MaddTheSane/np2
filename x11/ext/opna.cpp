@@ -165,7 +165,7 @@ void opna_bind(POPNA opna)
 			{
 				nChipType = IExternalChip::kYM2608;
 			}
-			else if (cCaps == OPNA_MODE_3438)
+			else if (!(cCaps & (OPNA_HAS_PSG | OPNA_HAS_RHYTHM)))
 			{
 				nChipType = IExternalChip::kYM3438;
 			}

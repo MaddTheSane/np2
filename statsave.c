@@ -961,6 +961,7 @@ static int flagload_fdd(STFLAGH sfh, const SFENTRY *tbl) {
 
 	ret = STATFLAG_SUCCESS;
 	for (i=0; i<4; i++) {
+		memset(&sp, 0, sizeof(sp));
 		ret |= statflag_read(sfh, &sp, sizeof(sp));
 		if (sp.path[0]) {
 			fdd_set(i, sp.path, sp.ftype, sp.readonly);
