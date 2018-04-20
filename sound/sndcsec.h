@@ -39,7 +39,7 @@ extern pthread_mutex_t g_sndcsec;
 #define	SNDCSEC_ENTER	pthread_mutex_lock(&g_sndcsec)
 #define	SNDCSEC_LEAVE	pthread_mutex_unlock(&g_sndcsec)
 
-#elif defined(_SDL_mutex_h)
+#elif defined(_SDL_mutex_h) || defined(SDL_mutex_h_)
 
 extern SDL_mutex* g_sndcsec;
 
