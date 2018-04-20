@@ -12,6 +12,9 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -41,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\bios;..\..\cbus;..\..\codecnv;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\fdd;..\..\font;..\..\generic;..\..\i286c;..\..\io;..\..\lio;..\..\mem;..\..\sound;..\..\sound\getsnd;..\..\sound\vermouth;..\..\trap;..\..\vram;..\..\zlib"
+				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -50,6 +53,7 @@
 				PrecompiledHeaderThrough="compiler.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -66,6 +70,81 @@
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="compiler.h"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -116,7 +195,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\bios;..\..\cbus;..\..\codecnv;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\fdd;..\..\font;..\..\generic;..\..\i286c;..\..\io;..\..\lio;..\..\mem;..\..\sound;..\..\sound\getsnd;..\..\sound\vermouth;..\..\trap;..\..\vram;..\..\zlib"
+				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -124,6 +203,7 @@
 				PrecompiledHeaderThrough="compiler.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,6 +222,84 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\;.\;..\..\;..\..\cbus;..\..\common;..\..\embed;..\..\embed\menu;..\..\embed\menubase;..\..\generic;..\..\i286c;..\..\io;..\..\mem;..\..\sound;..\..\vram"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="compiler.h"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -283,6 +441,10 @@
 				</File>
 				<File
 					RelativePath="..\..\cbus\boardpx.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\cbus\boardso.c"
 					>
 				</File>
 				<File
@@ -571,8 +733,56 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="generic"
+				>
+				<File
+					RelativePath="..\..\generic\cmjasts.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\cmndraw.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\cmver.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\dipswbmp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\hostdrv.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\hostdrvs.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\keydisp.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\np2info.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\softkbd.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\generic\unasm.c"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="i286c"
 				>
+				<File
+					RelativePath="..\..\i286c\cpumem.c"
+					>
+				</File>
 				<File
 					RelativePath="..\..\i286c\i286c.c"
 					>
@@ -607,10 +817,6 @@
 				</File>
 				<File
 					RelativePath="..\..\i286c\i286c_sf.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\i286c\memory.c"
 					>
 				</File>
 				<File
@@ -834,7 +1040,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\soundmng.c"
+					RelativePath="..\soundmng.cpp"
 					>
 				</File>
 				<File
@@ -858,6 +1064,74 @@
 					>
 				</File>
 				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath="..\ext\externalchipmanager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopl3.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopm.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopna.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalpsg.cpp"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlc86box.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlgimic.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlif.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="scci"
+						>
+						<File
+							RelativePath="..\ext\scci\scciif.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
 					Name="win32"
 					>
 					<File
@@ -872,7 +1146,23 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
+							Name="Debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
 							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="1"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -884,6 +1174,22 @@
 						RelativePath=".\main.c"
 						>
 					</File>
+					<Filter
+						Name="misc"
+						>
+						<File
+							RelativePath=".\misc\threadbase.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\tty.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\usbdev.cpp"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -918,7 +1224,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\sound\fmtimer.c"
+					RelativePath="..\ext\opl3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgenc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgeng.c"
+					>
+				</File>
+				<File
+					RelativePath="..\ext\opna.cpp"
 					>
 				</File>
 				<File
@@ -930,11 +1248,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\sound\opntimer.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\sound\pcm86c.c"
 					>
 				</File>
 				<File
 					RelativePath="..\..\sound\pcm86g.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\pcmmix.c"
 					>
 				</File>
 				<File
@@ -1054,10 +1380,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\vram\scrnbmp.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\vram\scrndraw.c"
 					>
 				</File>
@@ -1075,174 +1397,6 @@
 				</File>
 				<File
 					RelativePath="..\..\vram\vram.c"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="zlib"
-				>
-				<File
-					RelativePath="..\..\zlib\adler32.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\zlib\crc32.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inffast.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inflate.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inftrees.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\zlib\zutil.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="generic"
-				>
-				<File
-					RelativePath="..\..\generic\cmjasts.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\cmndraw.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\cmver.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\dipswbmp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\hostdrv.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\hostdrvs.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\keydisp.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\np2info.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\softkbd.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\generic\unasm.c"
 					>
 				</File>
 			</Filter>
@@ -1341,6 +1495,10 @@
 				</File>
 				<File
 					RelativePath="..\..\cbus\boardpx.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\cbus\boardso.h"
 					>
 				</File>
 				<File
@@ -1640,11 +1798,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\i286c\i286c.h"
+					RelativePath="..\..\i286c\cpumem.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\i286c\memory.h"
+					RelativePath="..\..\i286c\i286c.h"
 					>
 				</File>
 				<File
@@ -1769,6 +1927,14 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="lio"
+				>
+				<File
+					RelativePath="..\..\lio\lio.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="mem"
 				>
 				<File
@@ -1805,7 +1971,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="sdk2"
+				Name="sdl2"
 				>
 				<File
 					RelativePath="..\commng.h"
@@ -1876,12 +2042,116 @@
 					>
 				</File>
 				<Filter
+					Name="ext"
+					>
+					<File
+						RelativePath="..\ext\externalchip.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalchipmanager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopl3.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopm.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalopna.h"
+						>
+					</File>
+					<File
+						RelativePath="..\ext\externalpsg.h"
+						>
+					</File>
+					<Filter
+						Name="c86ctl"
+						>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctl.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlc86box.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlgimic.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlif.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\c86ctl\c86ctlrealchipbase.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="scci"
+						>
+						<File
+							RelativePath="..\ext\scci\scci.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\SCCIDefines.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\scciif.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundchip.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterface.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccisoundinterfacemanager.h"
+							>
+						</File>
+						<File
+							RelativePath="..\ext\scci\sccispfmlight.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+				<Filter
 					Name="win32"
 					>
 					<File
 						RelativePath=".\compiler.h"
 						>
 					</File>
+					<Filter
+						Name="misc"
+						>
+						<File
+							RelativePath=".\misc\guard.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\threadbase.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\tty.h"
+							>
+						</File>
+						<File
+							RelativePath=".\misc\usbdev.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -1904,7 +2174,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\sound\fmtimer.h"
+					RelativePath="..\..\sound\opl3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\oplgencfg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opna.h"
 					>
 				</File>
 				<File
@@ -1912,7 +2194,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\sound\opngencfg.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\opntimer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\sound\pcm86.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\pcmmix.h"
 					>
 				</File>
 				<File
@@ -2012,10 +2306,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\vram\scrnbmp.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\vram\scrndraw.h"
 					>
 				</File>
@@ -2029,50 +2319,6 @@
 				</File>
 				<File
 					RelativePath="..\..\vram\vram.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="zlib"
-				>
-				<File
-					RelativePath="..\..\zlib\crc32.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inffast.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inffixed.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inflate.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\inftrees.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\zconf.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\zlib.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\zlib\zutil.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="lio"
-				>
-				<File
-					RelativePath="..\..\lio\lio.h"
 					>
 				</File>
 			</Filter>

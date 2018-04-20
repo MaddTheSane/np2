@@ -479,7 +479,7 @@ static const PFTBL s_IniItems[] =
 	PFSTR("SCSIHDD3", PFTYPE_STR,		np2cfg.scsihdd[3]),
 #endif
 
-	PFVAL("SampleHz", PFTYPE_UINT16,	&np2cfg.samplingrate),
+	PFVAL("SampleHz", PFTYPE_UINT32,	&np2cfg.samplingrate),
 	PFVAL("Latencys", PFTYPE_UINT16,	&np2cfg.delayms),
 	PFVAL("SNDboard", PFTYPE_HEX8,		&np2cfg.SOUND_SW),
 	PFAND("BEEP_vol", PFTYPE_UINT8,		&np2cfg.BEEP_VOL,		3),
@@ -594,6 +594,14 @@ static const PFTBL s_IniItems[] =
 	PFVAL("fscrn_cy", PFRO_SINT32,		&np2oscfg.fscrn_cy),
 	PFVAL("fscrnbpp", PFRO_UINT8,		&np2oscfg.fscrnbpp),
 	PFVAL("fscrnmod", PFTYPE_HEX8,		&np2oscfg.fscrnmod),
+
+	PFVAL("snddev_t", PFTYPE_UINT8,		&np2oscfg.cSoundDeviceType),
+	PFSTR("snddev_n", PFTYPE_STR,		np2oscfg.szSoundDeviceName),
+
+#if defined(SUPPORT_VSTi)
+	PFSTR("VSTiFile", PFRO_STR,			np2oscfg.szVSTiFile),
+#endif	// defined(SUPPORT_VSTi)
+
 	PFVAL("I286SAVE", PFRO_BOOL,		&np2oscfg.I286SAVE)
 };
 
@@ -612,7 +620,7 @@ void initgetfile(LPTSTR lpPath, UINT cchPath)
 	{
 		file_cpyname(lpPath, lpIni, cchPath);
 		LPCTSTR lpExt = file_getext(lpPath);
-		if (lpExt[0] != '\0')
+		if (lpExt[0] == '\0')
 		{
 			file_catname(lpPath, s_szExt, cchPath);
 		}

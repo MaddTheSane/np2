@@ -1,7 +1,7 @@
 #include	"compiler.h"
 #include	<stdarg.h>
 #if defined(WIN32) && defined(OSLANG_EUC)
-#include	"codecnv.h"
+#include	"codecnv/codecnv.h"
 #endif
 
 #ifdef TRACE

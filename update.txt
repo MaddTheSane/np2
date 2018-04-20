@@ -82,6 +82,8 @@
 　　　--disable-sdl2 を指定する必要がある
 　　・SDL audio のバックエンドとして PulseAudio を使用している場合に音が正常に
 　　　鳴らない不具合を修正
+　　・USB 接続外部 FM 音源サポート追加。C86BOX を使用するには libusb 1.0 が必要
+　　　SPFM Light + RE:birth RE1-YM2608、C86BOX + PC-9801-86 で動作確認済み
 
 
 // ----

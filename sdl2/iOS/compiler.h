@@ -41,9 +41,6 @@ typedef	unsigned int		UINT32;
 #define	SIZE_QVGA
 #endif
 
-typedef	signed char		CHAR;
-typedef	unsigned char	BYTE;
-
 #if !defined(OBJC_BOOL_DEFINED)
 typedef signed char BOOL;
 #endif

@@ -91,7 +91,7 @@ static const SDLKCNV sdlcnv101[] =
 };
 
 /*! extend key */
-static const BYTE f12keys[] = {0x61, 0x60, 0x4d, 0x4f};
+static const UINT8 f12keys[] = {0x61, 0x60, 0x4d, 0x4f};
 
 /**
  * Initialize
@@ -105,7 +105,7 @@ void sdlkbd_initialize(void)
  * @param[in] key Key code
  * @return PC-98 data
  */
-static BYTE getKey(SDL_Keycode key)
+static UINT8 getKey(SDL_Keycode key)
 {
 	size_t i;
 
@@ -123,7 +123,7 @@ static BYTE getKey(SDL_Keycode key)
  * Get F12 settings
  * @return PC-98 data
  */
-static BYTE getf12key(void)
+static UINT8 getf12key(void)
 {
 	UINT	key;
 
@@ -144,7 +144,7 @@ static BYTE getf12key(void)
  */
 void sdlkbd_keydown(UINT key)
 {
-	BYTE	data;
+	UINT8	data;
 
 	if (key == SDLK_F12)
 	{
@@ -166,7 +166,7 @@ void sdlkbd_keydown(UINT key)
  */
 void sdlkbd_keyup(UINT key)
 {
-	BYTE	data;
+	UINT8	data;
 
 	if (key == SDLK_F12)
 	{
@@ -178,7 +178,7 @@ void sdlkbd_keyup(UINT key)
 	}
 	if (data != NC)
 	{
-		keystat_senddata((BYTE)(data | 0x80));
+		keystat_senddata((UINT8)(data | 0x80));
 	}
 }
 

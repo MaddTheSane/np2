@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include "ExtRom.h"
 #include "np2.h"
+#include "WndProc.h"
 
 //! ÉäÉ\Å[ÉXñº
 static const TCHAR s_szExtRom[] = TEXT("EXTROM");
@@ -39,8 +40,7 @@ bool CExtRom::Open(LPCTSTR lpFilename)
 {
 	Close();
 
-	HINSTANCE hInstance = g_hInstance;
-
+	HINSTANCE hInstance = CWndProc::FindResourceHandle(lpFilename, s_szExtRom);
 	HRSRC hRsrc = ::FindResource(hInstance, lpFilename, s_szExtRom);
 	if (hRsrc == NULL)
 	{

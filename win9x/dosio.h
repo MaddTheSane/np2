@@ -106,7 +106,9 @@ UINT DOSIOCALL file_getsize(FILEH hFile);
 short DOSIOCALL file_getdatetime(FILEH hFile, DOSDATE* dosdate, DOSTIME* dostime);
 short DOSIOCALL file_delete(const OEMCHAR* lpPathName);
 short DOSIOCALL file_attr(const OEMCHAR* lpPathName);
+short DOSIOCALL file_rename(const OEMCHAR* lpExistFile, const OEMCHAR* lpNewFile);
 short DOSIOCALL file_dircreate(const OEMCHAR* lpPathName);
+short DOSIOCALL file_dirdelete(const OEMCHAR* lpPathName);
 
 /* カレントファイル操作 */
 void DOSIOCALL file_setcd(const OEMCHAR* lpPathName);
