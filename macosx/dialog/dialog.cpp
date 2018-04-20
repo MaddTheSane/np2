@@ -8,7 +8,7 @@
 #include	"iocore.h"
 #include	"np2.h"
 #include	"macnewdisk.h"
-#include	"scrnbmp.h"
+//#include	"scrnbmp.h"
 #include	"dosio.h"
 #include	"menu.h"
 #include	"s98.h"

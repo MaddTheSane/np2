@@ -1,4 +1,6 @@
 
+#pragma once
+
 enum {
 	FTYPE_INI		= -1		// Tool Window iniファイル
 };

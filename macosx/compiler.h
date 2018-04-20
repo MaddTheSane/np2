@@ -4,9 +4,13 @@
 #include	<stddef.h>
 
 #define	MACOS
+#ifdef __BIG_ENDIAN__
 #define	BYTESEX_BIG
-#define	OSLANG_SJIS
-#define	OSLINEBREAK_CR
+#else
+#define	BYTESEX_LITTLE
+#endif
+#define	OSLANG_UTF8
+#define	OSLINEBREAK_LF
 
 
 typedef signed int		SINT;

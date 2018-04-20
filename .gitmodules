@@ -1,0 +1,3 @@
+[submodule "macosx/oldMacHeaders"]
+	path = macosx/oldMacHeaders
+	url = https://github.com/MaddTheSane/oldMacHeaders.git
