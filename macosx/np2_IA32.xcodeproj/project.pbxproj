@@ -29,6 +29,10 @@
 		55689911208AA2E20013A224 /* threadbase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5568990A208AA2E20013A224 /* threadbase.h */; };
 		55689913208AA6D30013A224 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55689912208AA6D30013A224 /* QuickTime.framework */; };
 		55689915208AA7DE0013A224 /* oemtext.h in Headers */ = {isa = PBXBuildFile; fileRef = 55689914208AA7DE0013A224 /* oemtext.h */; };
+		55689918208AAB1E0013A224 /* boardso.c in Sources */ = {isa = PBXBuildFile; fileRef = 55689916208AAB1E0013A224 /* boardso.c */; };
+		55689919208AAB1E0013A224 /* boardso.h in Headers */ = {isa = PBXBuildFile; fileRef = 55689917208AAB1E0013A224 /* boardso.h */; };
+		5568991C208AAB5B0013A224 /* cpumem.h in Headers */ = {isa = PBXBuildFile; fileRef = 5568991A208AAB5A0013A224 /* cpumem.h */; };
+		5568991D208AAB5B0013A224 /* cpumem.c in Sources */ = {isa = PBXBuildFile; fileRef = 5568991B208AAB5A0013A224 /* cpumem.c */; };
 		556F2A6D1D2098E900335DF9 /* HIDUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; };
 		556F2A6E1D2098E900335DF9 /* HIDUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		556F2A711D20999300335DF9 /* _memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2A701D20999300335DF9 /* _memory.h */; };
@@ -481,6 +485,10 @@
 		5568990A208AA2E20013A224 /* threadbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = threadbase.h; sourceTree = "<group>"; };
 		55689912208AA6D30013A224 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = oldMacHeaders/QuickTime.framework; sourceTree = "<group>"; };
 		55689914208AA7DE0013A224 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
+		55689916208AAB1E0013A224 /* boardso.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = boardso.c; sourceTree = "<group>"; };
+		55689917208AAB1E0013A224 /* boardso.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boardso.h; sourceTree = "<group>"; };
+		5568991A208AAB5A0013A224 /* cpumem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpumem.h; sourceTree = "<group>"; };
+		5568991B208AAB5A0013A224 /* cpumem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpumem.c; sourceTree = "<group>"; };
 		556F2A671D208E0800335DF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
 		556F2A701D20999300335DF9 /* _memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _memory.h; sourceTree = "<group>"; };
@@ -1112,6 +1120,8 @@
 				556F2A911D209A5700335DF9 /* board86.h */,
 				967C917A055778CB00000103 /* board118.c */,
 				556F2A921D209A5700335DF9 /* board118.h */,
+				55689916208AAB1E0013A224 /* boardso.c */,
+				55689917208AAB1E0013A224 /* boardso.h */,
 				967C9182055778CB00000103 /* boardspb.c */,
 				967C9184055778CB00000103 /* boardx2.c */,
 				556F2A931D209A5700335DF9 /* boardx2.h */,
@@ -1441,6 +1451,8 @@
 				96EBF1FE05DD686500DA3983 /* ia32 */,
 				96EBF1F805DD686400DA3983 /* cpucore.c */,
 				556F2AD61D209B4400335DF9 /* cpucore.h */,
+				5568991B208AAB5A0013A224 /* cpumem.c */,
+				5568991A208AAB5A0013A224 /* cpumem.h */,
 			);
 			path = i386c;
 			sourceTree = "<group>";
@@ -1621,6 +1633,7 @@
 				556F2AA81D209A5700335DF9 /* scsicmd.h in Headers */,
 				556F2B481D20A0DC00335DF9 /* soundrom.h in Headers */,
 				556F2ABD1D209A8100335DF9 /* sxsihdd.h in Headers */,
+				5568991C208AAB5B0013A224 /* cpumem.h in Headers */,
 				556F2B181D20A08500335DF9 /* dmac.h in Headers */,
 				556F2ACE1D209B1900335DF9 /* ctrlxfer.h in Headers */,
 				556F2A9E1D209A5700335DF9 /* board26k.h in Headers */,
@@ -1714,6 +1727,7 @@
 				556F2BC01D20A86200335DF9 /* vram.h in Headers */,
 				5595B6681D20F6C400DDA319 /* cmver.h in Headers */,
 				556F2B3C1D20A0DC00335DF9 /* adpcm.h in Headers */,
+				55689919208AAB1E0013A224 /* boardso.h in Headers */,
 				556F2B891D20A73900335DF9 /* np2opening.h in Headers */,
 				556F2B881D20A73900335DF9 /* np2.h in Headers */,
 				556F2AF61D209B9900335DF9 /* string_inst.h in Headers */,
@@ -1863,6 +1877,7 @@
 				55842DE61D2084C60017B417 /* bmpdata.c in Sources */,
 				55842DE71D2084C60017B417 /* lstarray.c in Sources */,
 				55842DE81D2084C60017B417 /* milstr.c in Sources */,
+				55689918208AAB1E0013A224 /* boardso.c in Sources */,
 				55842DE91D2084C60017B417 /* mimpidef.c in Sources */,
 				556898EC208AA2020013A224 /* pcmmix.c in Sources */,
 				55842DEA1D2084C60017B417 /* parts.c in Sources */,
@@ -1966,6 +1981,7 @@
 				55842E481D2084C60017B417 /* sysmng.cpp in Sources */,
 				55842E491D2084C60017B417 /* taskmng.cpp in Sources */,
 				55842E4A1D2084C60017B417 /* timemng.cpp in Sources */,
+				5568991D208AAB5B0013A224 /* cpumem.c in Sources */,
 				55842E4B1D2084C60017B417 /* toolwin.cpp in Sources */,
 				55842E4C1D2084C60017B417 /* trace.cpp in Sources */,
 				55842E4D1D2084C60017B417 /* adpcmc.c in Sources */,

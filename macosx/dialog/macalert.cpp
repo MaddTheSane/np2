@@ -48,7 +48,7 @@ int ResumeWarningDialogProc(const char *string) {
     ret = showCautionAlert(	CFCopyLocalizedString(CFSTR("The Save Data file is conflicting"), "bad data"), 
                             CFStringCreateWithCString(NULL, string, CFStringGetSystemEncoding()), 
                             CFCopyLocalizedString(CFSTR("Continue"), "OK"));
-    if (ret = kAlertStdAlertOKButton) {
+    if (ret == kAlertStdAlertOKButton) {
         return(IDOK);
     }
     return(IDCANCEL);
