@@ -232,6 +232,18 @@
 		551E8CB21D208992005105D3 /* np2.r in Rez */ = {isa = PBXBuildFile; fileRef = 9603DE7806CFEA9100012F11 /* np2.r */; };
 		555F696C208BDB080002E7FF /* HIDUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555F696B208BDB080002E7FF /* HIDUtilities.framework */; };
 		555F6978208BDB3D0002E7FF /* HIDUtilities.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 555F696B208BDB080002E7FF /* HIDUtilities.framework */; };
+		555F69C5208BE34B0002E7FF /* codecnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F69B9208BE34B0002E7FF /* codecnv.h */; };
+		555F69C6208BE34B0002E7FF /* eucsjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BA208BE34B0002E7FF /* eucsjis.c */; };
+		555F69C7208BE34B0002E7FF /* eucucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BB208BE34B0002E7FF /* eucucs2.c */; };
+		555F69C8208BE34B0002E7FF /* sjiseuc.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BC208BE34B0002E7FF /* sjiseuc.c */; };
+		555F69C9208BE34B0002E7FF /* sjisucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BD208BE34B0002E7FF /* sjisucs2.c */; };
+		555F69CA208BE34B0002E7FF /* tcswap16.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BE208BE34B0002E7FF /* tcswap16.c */; };
+		555F69CB208BE34B0002E7FF /* tcswap32.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69BF208BE34B0002E7FF /* tcswap32.c */; };
+		555F69CC208BE34B0002E7FF /* textcnv.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69C0208BE34B0002E7FF /* textcnv.c */; };
+		555F69CD208BE34B0002E7FF /* textcnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F69C1208BE34B0002E7FF /* textcnv.h */; };
+		555F69CE208BE34B0002E7FF /* ucs2sjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69C2208BE34B0002E7FF /* ucs2sjis.c */; };
+		555F69CF208BE34B0002E7FF /* ucs2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69C3208BE34B0002E7FF /* ucs2utf8.c */; };
+		555F69D0208BE34B0002E7FF /* utf8ucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F69C4208BE34B0002E7FF /* utf8ucs2.c */; };
 		55CE2AA8208BCDA60080EE48 /* Non-localized.r in Rez */ = {isa = PBXBuildFile; fileRef = 55CE2AA7208BCDA60080EE48 /* Non-localized.r */; };
 /* End PBXBuildFile section */
 
@@ -257,6 +269,18 @@
 		551E8CB81D208992005105D3 /* Neko Project IIx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Neko Project IIx.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		551E8CF91D208CC0005105D3 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		555F696B208BDB080002E7FF /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
+		555F69B9208BE34B0002E7FF /* codecnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecnv.h; sourceTree = "<group>"; };
+		555F69BA208BE34B0002E7FF /* eucsjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucsjis.c; sourceTree = "<group>"; };
+		555F69BB208BE34B0002E7FF /* eucucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucucs2.c; sourceTree = "<group>"; };
+		555F69BC208BE34B0002E7FF /* sjiseuc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjiseuc.c; sourceTree = "<group>"; };
+		555F69BD208BE34B0002E7FF /* sjisucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjisucs2.c; sourceTree = "<group>"; };
+		555F69BE208BE34B0002E7FF /* tcswap16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap16.c; sourceTree = "<group>"; };
+		555F69BF208BE34B0002E7FF /* tcswap32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap32.c; sourceTree = "<group>"; };
+		555F69C0208BE34B0002E7FF /* textcnv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = textcnv.c; sourceTree = "<group>"; };
+		555F69C1208BE34B0002E7FF /* textcnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = textcnv.h; sourceTree = "<group>"; };
+		555F69C2208BE34B0002E7FF /* ucs2sjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2sjis.c; sourceTree = "<group>"; };
+		555F69C3208BE34B0002E7FF /* ucs2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2utf8.c; sourceTree = "<group>"; };
+		555F69C4208BE34B0002E7FF /* utf8ucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf8ucs2.c; sourceTree = "<group>"; };
 		55CE2AA7208BCDA60080EE48 /* Non-localized.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; path = "Non-localized.r"; sourceTree = "<group>"; };
 		9603DE7A06CFEA9800012F11 /* ja */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.rez; name = ja; path = ja.lproj/np2.r; sourceTree = SOURCE_ROOT; };
 		9603DE7B06CFEAB500012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -523,6 +547,7 @@
 		20286C2AFDCF999611CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				555F69B8208BE34B0002E7FF /* codecnv */,
 				967C91310557786900000103 /* common */,
 				967C9164055778CB00000103 /* bios */,
 				967C9177055778CB00000103 /* cbus */,
@@ -578,6 +603,26 @@
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
+		};
+		555F69B8208BE34B0002E7FF /* codecnv */ = {
+			isa = PBXGroup;
+			children = (
+				555F69B9208BE34B0002E7FF /* codecnv.h */,
+				555F69BA208BE34B0002E7FF /* eucsjis.c */,
+				555F69BB208BE34B0002E7FF /* eucucs2.c */,
+				555F69BC208BE34B0002E7FF /* sjiseuc.c */,
+				555F69BD208BE34B0002E7FF /* sjisucs2.c */,
+				555F69BE208BE34B0002E7FF /* tcswap16.c */,
+				555F69BF208BE34B0002E7FF /* tcswap32.c */,
+				555F69C0208BE34B0002E7FF /* textcnv.c */,
+				555F69C1208BE34B0002E7FF /* textcnv.h */,
+				555F69C2208BE34B0002E7FF /* ucs2sjis.c */,
+				555F69C3208BE34B0002E7FF /* ucs2utf8.c */,
+				555F69C4208BE34B0002E7FF /* utf8ucs2.c */,
+			);
+			name = codecnv;
+			path = ../codecnv;
+			sourceTree = SOURCE_ROOT;
 		};
 		9645C2D005BFA3B90090B4FD /* getsnd */ = {
 			isa = PBXGroup;
@@ -933,6 +978,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				555F69C5208BE34B0002E7FF /* codecnv.h in Headers */,
+				555F69CD208BE34B0002E7FF /* textcnv.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1222,6 +1269,16 @@
 				551E8CA81D208992005105D3 /* steptrap.c in Sources */,
 				551E8CA91D208992005105D3 /* sxsicd.c in Sources */,
 				551E8CAA1D208992005105D3 /* sxsihdd.c in Sources */,
+				555F69C6208BE34B0002E7FF /* eucsjis.c in Sources */,
+				555F69C7208BE34B0002E7FF /* eucucs2.c in Sources */,
+				555F69C8208BE34B0002E7FF /* sjiseuc.c in Sources */,
+				555F69C9208BE34B0002E7FF /* sjisucs2.c in Sources */,
+				555F69CA208BE34B0002E7FF /* tcswap16.c in Sources */,
+				555F69CB208BE34B0002E7FF /* tcswap32.c in Sources */,
+				555F69CC208BE34B0002E7FF /* textcnv.c in Sources */,
+				555F69CE208BE34B0002E7FF /* ucs2sjis.c in Sources */,
+				555F69CF208BE34B0002E7FF /* ucs2utf8.c in Sources */,
+				555F69D0208BE34B0002E7FF /* utf8ucs2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
