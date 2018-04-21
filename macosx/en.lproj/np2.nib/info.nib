@@ -7,12 +7,9 @@
 	<key>IBLastKnownRelativeProjectPath</key>
 	<string>../np2_IA32.xcodeproj</string>
 	<key>IBOldestOS</key>
-	<integer>5</integer>
+	<integer>4</integer>
 	<key>IBOpenObjects</key>
-	<array>
-		<integer>999</integer>
-		<integer>744</integer>
-	</array>
+	<array/>
 	<key>IBSystem Version</key>
 	<string>9L31a</string>
 	<key>targetFramework</key>

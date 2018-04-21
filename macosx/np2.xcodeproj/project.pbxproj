@@ -1411,7 +1411,7 @@
 				GCC_VERSION = 4.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.4;
 				VALID_ARCHS = "ppc ppc7400 ppc970";
 			};
 			name = Debug;
@@ -1424,7 +1424,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = 4.2;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.4;
 				VALID_ARCHS = "ppc ppc7400 ppc970";
 			};
 			name = Release;
