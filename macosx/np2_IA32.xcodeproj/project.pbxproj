@@ -8,6 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		553F7505208B264A00CF8872 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553F7504208B264A00CF8872 /* QuickTime.framework */; };
+		553F7513208BE44C00CF8872 /* utf8ucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7507208BE44B00CF8872 /* utf8ucs2.c */; };
+		553F7514208BE44C00CF8872 /* sjisucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7508208BE44B00CF8872 /* sjisucs2.c */; };
+		553F7515208BE44C00CF8872 /* tcswap32.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7509208BE44B00CF8872 /* tcswap32.c */; };
+		553F7516208BE44C00CF8872 /* textcnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 553F750A208BE44B00CF8872 /* textcnv.h */; };
+		553F7517208BE44C00CF8872 /* ucs2sjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F750B208BE44B00CF8872 /* ucs2sjis.c */; };
+		553F7518208BE44C00CF8872 /* eucsjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F750C208BE44B00CF8872 /* eucsjis.c */; };
+		553F7519208BE44C00CF8872 /* ucs2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F750D208BE44B00CF8872 /* ucs2utf8.c */; };
+		553F751A208BE44C00CF8872 /* sjiseuc.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F750E208BE44B00CF8872 /* sjiseuc.c */; };
+		553F751B208BE44C00CF8872 /* eucucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F750F208BE44B00CF8872 /* eucucs2.c */; };
+		553F751C208BE44C00CF8872 /* textcnv.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7510208BE44B00CF8872 /* textcnv.c */; };
+		553F751D208BE44C00CF8872 /* tcswap16.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7511208BE44B00CF8872 /* tcswap16.c */; };
+		553F751E208BE44C00CF8872 /* codecnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 553F7512208BE44B00CF8872 /* codecnv.h */; };
+		553F7520208BE50C00CF8872 /* oemtext.h in Headers */ = {isa = PBXBuildFile; fileRef = 553F751F208BE50B00CF8872 /* oemtext.h */; };
 		556F2A6D1D2098E900335DF9 /* HIDUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; };
 		556F2A6E1D2098E900335DF9 /* HIDUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		556F2A711D20999300335DF9 /* _memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2A701D20999300335DF9 /* _memory.h */; };
@@ -445,6 +458,19 @@
 		0640BAA5FFF0323A11CA0E50 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		553F7504208B264A00CF8872 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = oldMacHeaders/QuickTime.framework; sourceTree = "<group>"; };
+		553F7507208BE44B00CF8872 /* utf8ucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf8ucs2.c; sourceTree = "<group>"; };
+		553F7508208BE44B00CF8872 /* sjisucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjisucs2.c; sourceTree = "<group>"; };
+		553F7509208BE44B00CF8872 /* tcswap32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap32.c; sourceTree = "<group>"; };
+		553F750A208BE44B00CF8872 /* textcnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = textcnv.h; sourceTree = "<group>"; };
+		553F750B208BE44B00CF8872 /* ucs2sjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2sjis.c; sourceTree = "<group>"; };
+		553F750C208BE44B00CF8872 /* eucsjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucsjis.c; sourceTree = "<group>"; };
+		553F750D208BE44B00CF8872 /* ucs2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2utf8.c; sourceTree = "<group>"; };
+		553F750E208BE44B00CF8872 /* sjiseuc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjiseuc.c; sourceTree = "<group>"; };
+		553F750F208BE44B00CF8872 /* eucucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucucs2.c; sourceTree = "<group>"; };
+		553F7510208BE44B00CF8872 /* textcnv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = textcnv.c; sourceTree = "<group>"; };
+		553F7511208BE44B00CF8872 /* tcswap16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap16.c; sourceTree = "<group>"; };
+		553F7512208BE44B00CF8872 /* codecnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecnv.h; sourceTree = "<group>"; };
+		553F751F208BE50B00CF8872 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
 		556F2A671D208E0800335DF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
 		556F2A701D20999300335DF9 /* _memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _memory.h; sourceTree = "<group>"; };
@@ -921,6 +947,7 @@
 		20286C2AFDCF999611CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				553F7506208BE44B00CF8872 /* codecnv */,
 				967C91310557786900000103 /* common */,
 				967C9164055778CB00000103 /* bios */,
 				967C9177055778CB00000103 /* cbus */,
@@ -986,6 +1013,25 @@
 				9608400C054ED1E900000103 /* IOKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		553F7506208BE44B00CF8872 /* codecnv */ = {
+			isa = PBXGroup;
+			children = (
+				553F7512208BE44B00CF8872 /* codecnv.h */,
+				553F750C208BE44B00CF8872 /* eucsjis.c */,
+				553F750F208BE44B00CF8872 /* eucucs2.c */,
+				553F750E208BE44B00CF8872 /* sjiseuc.c */,
+				553F7508208BE44B00CF8872 /* sjisucs2.c */,
+				553F7511208BE44B00CF8872 /* tcswap16.c */,
+				553F7509208BE44B00CF8872 /* tcswap32.c */,
+				553F7510208BE44B00CF8872 /* textcnv.c */,
+				553F750A208BE44B00CF8872 /* textcnv.h */,
+				553F750B208BE44B00CF8872 /* ucs2sjis.c */,
+				553F750D208BE44B00CF8872 /* ucs2utf8.c */,
+				553F7507208BE44B00CF8872 /* utf8ucs2.c */,
+			);
+			path = codecnv;
 			sourceTree = "<group>";
 		};
 		9645C2D005BFA3B90090B4FD /* getsnd */ = {
@@ -1211,6 +1257,7 @@
 			isa = PBXGroup;
 			children = (
 				967C9221055778CB00000103 /* dialog */,
+				553F751F208BE50B00CF8872 /* oemtext.h */,
 				968D8BC305F5229D00CFB890 /* cmmidi.cpp */,
 				556F2B631D20A73900335DF9 /* cmmidi.h */,
 				967C921E055778CB00000103 /* commng.cpp */,
@@ -1569,6 +1616,7 @@
 				556F2B181D20A08500335DF9 /* dmac.h in Headers */,
 				556F2ACE1D209B1900335DF9 /* ctrlxfer.h in Headers */,
 				556F2A9E1D209A5700335DF9 /* board26k.h in Headers */,
+				553F751E208BE44C00CF8872 /* codecnv.h in Headers */,
 				556F2ADD1D209B5B00335DF9 /* font.h in Headers */,
 				556F2A7B1D2099CF00335DF9 /* parts.h in Headers */,
 				556F2BBC1D20A86200335DF9 /* scrndraw.h in Headers */,
@@ -1630,6 +1678,7 @@
 				556F2B5E1D20A6E300335DF9 /* macclnd.h in Headers */,
 				556F2AB81D209A8100335DF9 /* fdd_xdf.h in Headers */,
 				5595B6701D20F6C400DDA319 /* np2info.h in Headers */,
+				553F7520208BE50C00CF8872 /* oemtext.h in Headers */,
 				556F2AF21D209B9900335DF9 /* logic_arith.h in Headers */,
 				556F2AF01D209B9900335DF9 /* dec_arith.h in Headers */,
 				556F2BA01D20A81600335DF9 /* keystat.h in Headers */,
@@ -1693,6 +1742,7 @@
 				556F2B211D20A08500335DF9 /* mouseif.h in Headers */,
 				5595B6531D20F67400DDA319 /* memtram.h in Headers */,
 				5595B6551D20F67400DDA319 /* memvram.h in Headers */,
+				553F7516208BE44C00CF8872 /* textcnv.h in Headers */,
 				556F2B2D1D20A09900335DF9 /* pcidev.h in Headers */,
 				556F2B8C1D20A73900335DF9 /* soundmng.h in Headers */,
 				556F2A891D209A0B00335DF9 /* bios.h in Headers */,
@@ -1809,6 +1859,7 @@
 				55842DEF1D2084C60017B417 /* wavefile.c in Sources */,
 				55842DF01D2084C60017B417 /* bios.c in Sources */,
 				55842DF11D2084C60017B417 /* bios09.c in Sources */,
+				553F751D208BE44C00CF8872 /* tcswap16.c in Sources */,
 				55842DF21D2084C60017B417 /* bios0c.c in Sources */,
 				55842DF31D2084C60017B417 /* bios12.c in Sources */,
 				55842DF41D2084C60017B417 /* bios13.c in Sources */,
@@ -1828,6 +1879,7 @@
 				55842E021D2084C60017B417 /* cs4231io.c in Sources */,
 				55842E031D2084C60017B417 /* mpu98ii.c in Sources */,
 				55842E041D2084C60017B417 /* pc9861k.c in Sources */,
+				553F751B208BE44C00CF8872 /* eucucs2.c in Sources */,
 				55842E051D2084C60017B417 /* pcm86io.c in Sources */,
 				55842E061D2084C60017B417 /* diskdrv.c in Sources */,
 				55842E071D2084C60017B417 /* fdd_d88.c in Sources */,
@@ -1845,7 +1897,9 @@
 				55842E121D2084C60017B417 /* fontpc98.c in Sources */,
 				55842E131D2084C60017B417 /* fontv98.c in Sources */,
 				55842E141D2084C60017B417 /* fontx1.c in Sources */,
+				553F7517208BE44C00CF8872 /* ucs2sjis.c in Sources */,
 				55842E151D2084C60017B417 /* fontx68k.c in Sources */,
+				553F751C208BE44C00CF8872 /* textcnv.c in Sources */,
 				55842E161D2084C60017B417 /* artic.c in Sources */,
 				55842E171D2084C60017B417 /* cgrom.c in Sources */,
 				55842E181D2084C60017B417 /* cpuio.c in Sources */,
@@ -1867,6 +1921,7 @@
 				55842E281D2084C60017B417 /* printif.c in Sources */,
 				55842E291D2084C60017B417 /* serial.c in Sources */,
 				55842E2A1D2084C60017B417 /* sysport.c in Sources */,
+				553F7519208BE44C00CF8872 /* ucs2utf8.c in Sources */,
 				55842E2B1D2084C60017B417 /* upd4990.c in Sources */,
 				55842E2C1D2084C60017B417 /* gline.c in Sources */,
 				55842E2D1D2084C60017B417 /* gpset.c in Sources */,
@@ -1882,10 +1937,12 @@
 				55842E371D2084C60017B417 /* screenopt.cpp in Sources */,
 				55842E381D2084C60017B417 /* soundopt.cpp in Sources */,
 				55842E391D2084C60017B417 /* dosio.cpp in Sources */,
+				553F7515208BE44C00CF8872 /* tcswap32.c in Sources */,
 				55842E3A1D2084C60017B417 /* fdefine.cpp in Sources */,
 				55842E3B1D2084C60017B417 /* fontmng.cpp in Sources */,
 				55842E3C1D2084C60017B417 /* hid.cpp in Sources */,
 				55842E3D1D2084C60017B417 /* ini.cpp in Sources */,
+				553F7514208BE44C00CF8872 /* sjisucs2.c in Sources */,
 				55842E3E1D2084C60017B417 /* joymng.cpp in Sources */,
 				55842E3F1D2084C60017B417 /* mackbd.cpp in Sources */,
 				55842E401D2084C60017B417 /* macossub.cpp in Sources */,
@@ -1945,6 +2002,7 @@
 				55842E761D2084C60017B417 /* aboutdlg.cpp in Sources */,
 				55842E771D2084C60017B417 /* cmndraw.c in Sources */,
 				55842E781D2084C60017B417 /* cmver.c in Sources */,
+				553F7518208BE44C00CF8872 /* eucsjis.c in Sources */,
 				55842E791D2084C60017B417 /* dipswbmp.c in Sources */,
 				55842E7A1D2084C60017B417 /* keydisp.c in Sources */,
 				55842E7B1D2084C60017B417 /* epsonio.c in Sources */,
@@ -1999,6 +2057,7 @@
 				55842EAC1D2084C60017B417 /* makegrex.c in Sources */,
 				55842EAD1D2084C60017B417 /* bios1f.c in Sources */,
 				55842EAE1D2084C60017B417 /* pcidev.c in Sources */,
+				553F751A208BE44C00CF8872 /* sjiseuc.c in Sources */,
 				55842EAF1D2084C60017B417 /* softkbd.c in Sources */,
 				55842EB01D2084C60017B417 /* subwind.cpp in Sources */,
 				55842EB11D2084C60017B417 /* gcircle.c in Sources */,
@@ -2011,6 +2070,7 @@
 				55842EB81D2084C60017B417 /* memtram.c in Sources */,
 				55842EB91D2084C60017B417 /* memvga.c in Sources */,
 				55842EBA1D2084C60017B417 /* memvram.c in Sources */,
+				553F7513208BE44C00CF8872 /* utf8ucs2.c in Sources */,
 				55842EBB1D2084C60017B417 /* sxsicd.c in Sources */,
 				55842EBC1D2084C60017B417 /* sxsihdd.c in Sources */,
 			);
