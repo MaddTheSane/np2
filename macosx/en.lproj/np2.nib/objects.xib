@@ -36,7 +36,7 @@
       <int name="featureBits">2</int>
       <array count="13" name="subviews">
         <object class="IBCarbonStaticText" id="895">
-          <string name="title">下</string>
+          <string name="title">Down</string>
           <string name="bounds">197 220 220 264 </string>
         </object>
         <object class="IBCarbonSeparator" id="896">
@@ -47,11 +47,11 @@
           <ostype name="command">jplf</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">130 81 152 181 </string>
         </object>
         <object class="IBCarbonStaticText" id="898">
-          <string name="title">左</string>
+          <string name="title">Left</string>
           <string name="bounds">160 117 176 151 </string>
         </object>
         <object class="IBCarbonBevelButton" id="899">
@@ -59,7 +59,7 @@
           <ostype name="command">jpbb</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">237 250 259 350 </string>
         </object>
         <object class="IBCarbonBevelButton" id="900">
@@ -67,11 +67,11 @@
           <ostype name="command">jprt</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">130 301 152 401 </string>
         </object>
         <object class="IBCarbonStaticText" id="901">
-          <string name="title">上</string>
+          <string name="title">Up</string>
           <string name="bounds">118 231 138 253 </string>
         </object>
         <object class="IBCarbonStaticText" id="902">
@@ -83,7 +83,7 @@
           <ostype name="command">jpab</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">237 132 259 232 </string>
         </object>
         <object class="IBCarbonStaticText" id="904">
@@ -95,11 +95,11 @@
           <ostype name="command">jpdn</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">167 189 189 289 </string>
         </object>
         <object class="IBCarbonStaticText" id="906">
-          <string name="title">右</string>
+          <string name="title">Right</string>
           <string name="bounds">160 333 176 382 </string>
         </object>
         <object class="IBCarbonBevelButton" id="907">
@@ -107,7 +107,7 @@
           <ostype name="command">jpup</ostype>
           <int name="contentType">0</int>
           <boolean name="rounded">TRUE</boolean>
-          <string name="title">使用不可</string>
+          <string name="title">Permission denied</string>
           <string name="bounds">88 189 110 289 </string>
         </object>
       </array>
@@ -117,7 +117,7 @@
       <ostype name="controlSignature">86it</ostype>
       <ostype name="command">86it</ostype>
       <int name="initialState">1</int>
-      <string name="title">割り込み</string>
+      <string name="title">interrupt</string>
       <string name="bounds">79 243 93 330 </string>
     </object>
     <object class="IBCarbonStaticText" id="752">
@@ -171,7 +171,7 @@
       <string name="bounds">115 101 134 272 </string>
     </object>
     <object class="IBCarbonStaticText" id="377">
-      <string name="title">クロック</string>
+      <string name="title">Clock</string>
       <string name="bounds">144 317 160 369 </string>
     </object>
     <object class="IBCarbonUserPane" id="746">
@@ -356,7 +356,7 @@
       <string name="bounds">150 144 169 363 </string>
     </object>
     <object class="IBCarbonStaticText" id="1127">
-      <string name="title">ジャンパ</string>
+      <string name="title">Jumper</string>
       <string name="bounds">196 40 216 116 </string>
     </object>
     <object class="IBCarbonMenuItem" id="863">
@@ -374,7 +374,7 @@
       <array count="10" name="subviews">
         <reference idRef="810"/>
         <object class="IBCarbonStaticText" id="815">
-          <string name="title">サウンドID</string>
+          <string name="title">Sound ID</string>
           <string name="bounds">117 40 133 116 </string>
         </object>
         <object class="IBCarbonPopupButton" id="816">
@@ -411,7 +411,7 @@
           <string name="bounds">116 124 136 218 </string>
         </object>
         <object class="IBCarbonStaticText" id="823">
-          <string name="title">I/Oポート</string>
+          <string name="title">I/O Port</string>
           <string name="bounds">77 40 93 116 </string>
         </object>
         <reference idRef="824"/>
@@ -424,7 +424,7 @@
         </object>
         <object class="IBCarbonButton" id="826">
           <ostype name="command">86DF</ostype>
-          <string name="title">初期値</string>
+          <string name="title">initial value</string>
           <string name="bounds">145 362 165 432 </string>
         </object>
         <object class="IBCarbonPopupButton" id="857">
@@ -552,7 +552,7 @@
         <int name="bindingLeftKind">1</int>
         <int name="bindingBottomKind">2</int>
       </object>
-      <string name="title">初期値</string>
+      <string name="title">initial value</string>
       <string name="bounds">361 20 381 90 </string>
     </object>
     <reference idRef="817"/>
@@ -594,7 +594,7 @@
     <reference idRef="901"/>
     <object class="IBCarbonCheckBox" id="342">
       <ostype name="controlSignature">rsum</ostype>
-      <string name="title">レジューム</string>
+      <string name="title">Resume</string>
       <string name="bounds">316 36 330 123 </string>
     </object>
     <object class="IBCarbonEditText" id="763">
@@ -648,17 +648,17 @@
         <object class="IBCarbonButton" id="890">
           <ostype name="command">notJ</ostype>
           <int name="buttonType">1</int>
-          <string name="title">キャンセル</string>
+          <string name="title">Cancel</string>
           <string name="bounds">77 207 97 300 </string>
         </object>
         <object class="IBCarbonStaticText" id="891">
-          <string name="title">ジョイパッドからの入力を待っています...</string>
+          <string name="title">Waiting for input from Joypad...</string>
           <string name="bounds">20 20 36 300 </string>
         </object>
         <object class="IBCarbonStaticText" id="894">
           <ostype name="controlSignature">disp</ostype>
           <int name="controlSize">1</int>
-          <string name="title">10秒間入力が無ければ自動的にキャンセルされます。</string>
+          <string name="title">If there is no input for 10 seconds it will be automatically canceled.</string>
           <string name="bounds">44 32 57 312 </string>
         </object>
       </array>
@@ -1430,7 +1430,7 @@
           <object class="IBCarbonButton" id="1138">
             <ostype name="command">not!</ostype>
             <int name="buttonType">2</int>
-            <string name="title">キャンセル</string>
+            <string name="title">Cancel</string>
             <string name="bounds">152 31 172 124 </string>
           </object>
           <reference idRef="1139"/>
@@ -1438,7 +1438,7 @@
             <ostype name="controlSignature">setn</ostype>
             <boolean name="enabled">FALSE</boolean>
             <ostype name="command">setn</ostype>
-            <string name="title">現在時刻</string>
+            <string name="title">Current time</string>
             <string name="bounds">110 159 130 229 </string>
           </object>
         </array>
@@ -1478,7 +1478,7 @@
     <reference idRef="362"/>
     <object class="IBCarbonButton" id="839">
       <ostype name="command">spDF</ostype>
-      <string name="title">初期値</string>
+      <string name="title">Initial value</string>
       <string name="bounds">196 362 216 432 </string>
     </object>
     <object class="IBCarbonMenuItem" id="919">
@@ -1508,7 +1508,7 @@
     </object>
     <reference idRef="1009"/>
     <object class="IBCarbonStaticText" id="796">
-      <string name="title">割り込み</string>
+      <string name="title">Interrupt</string>
       <string name="bounds">77 254 93 330 </string>
     </object>
     <reference idRef="1026"/>
@@ -1624,7 +1624,7 @@
                 </object>
                 <object class="IBCarbonButton" id="767">
                   <ostype name="command">vDEF</ostype>
-                  <string name="title">初期値</string>
+                  <string name="title">Initial value</string>
                   <string name="bounds">256 350 276 420 </string>
                 </object>
               </array>
@@ -1637,7 +1637,7 @@
               <int name="featureBits">2</int>
               <array count="9" name="subviews">
                 <object class="IBCarbonStaticText" id="787">
-                  <string name="title">I/Oポート</string>
+                  <string name="title">I/O port</string>
                   <string name="bounds">77 40 93 116 </string>
                 </object>
                 <object class="IBCarbonPopupButton" id="788">
@@ -1652,7 +1652,7 @@
                 <reference idRef="802"/>
                 <object class="IBCarbonButton" id="805">
                   <ostype name="command">26DF</ostype>
-                  <string name="title">初期値</string>
+                  <string name="title">Initial value</string>
                   <string name="bounds">157 362 177 432 </string>
                 </object>
                 <reference idRef="1127"/>
@@ -1667,11 +1667,11 @@
               <int name="featureBits">2</int>
               <array count="15" name="subviews">
                 <object class="IBCarbonStaticText" id="827">
-                  <string name="title">I/Oポート</string>
+                  <string name="title">I/O port</string>
                   <string name="bounds">77 40 93 116 </string>
                 </object>
                 <object class="IBCarbonStaticText" id="836">
-                  <string name="title">割り込み</string>
+                  <string name="title">Interrupt</string>
                   <string name="bounds">77 254 93 330 </string>
                 </object>
                 <reference idRef="839"/>
@@ -1744,7 +1744,7 @@
                   <string name="bounds">116 124 136 242 </string>
                 </object>
                 <object class="IBCarbonStaticText" id="1131">
-                  <string name="title">ジャンパ</string>
+                  <string name="title">Jumpers</string>
                   <string name="bounds">196 40 216 116 </string>
                 </object>
                 <object class="IBCarbonPicture" id="1132">
@@ -1766,7 +1766,7 @@
               <string>tabEnabled</string>
               <string>1</string>
               <string>tabName</string>
-              <string>ミキサー</string>
+              <string>Mixer</string>
               <string>userPane</string>
               <reference idRef="747"/>
             </dictionary>
@@ -1816,7 +1816,7 @@
               <string>tabEnabled</string>
               <string>1</string>
               <string>tabName</string>
-              <string>ジョイパッド</string>
+              <string>Joypad</string>
               <string>userPane</string>
               <reference idRef="751"/>
             </dictionary>
@@ -1840,7 +1840,7 @@
         <int name="bindingRightKind">2</int>
       </object>
       <int name="buttonType">2</int>
-      <string name="title">キャンセル</string>
+      <string name="title">Cancel</string>
       <string name="bounds">361 113 381 206 </string>
     </object>
     <object class="IBCarbonMenuItem" id="945">
@@ -1893,7 +1893,7 @@
       </array>
     </object>
     <object class="IBCarbonStaticText" id="922">
-      <string name="title">割り込み</string>
+      <string name="title">interrupt</string>
       <string name="bounds">60 20 76 96 </string>
     </object>
     <reference idRef="318"/>
@@ -1956,7 +1956,7 @@
       <ostype name="controlSignature">usem</ostype>
       <int name="controlSize">1</int>
       <ostype name="command">usem</ostype>
-      <string name="title">定義ファイル使用 (MIMPI DEFファイル)</string>
+      <string name="title">Using definition file (MIMPI DEF file)</string>
       <string name="bounds">282 37 296 282 </string>
     </object>
     <reference idRef="748"/>
@@ -1972,7 +1972,7 @@
     <object class="IBCarbonRootControl" id="914">
       <array count="10" name="subviews">
         <object class="IBCarbonStaticText" id="915">
-          <string name="title">I/Oポート</string>
+          <string name="title">I/O Port</string>
           <string name="bounds">20 20 36 96 </string>
         </object>
         <object class="IBCarbonPopupButton" id="917">
@@ -2089,7 +2089,7 @@
             <reference idRef="1109"/>
             <reference idRef="1112"/>
             <object class="IBCarbonStaticText" id="1113">
-              <string name="title">モジュール</string>
+              <string name="title">Module</string>
               <string name="bounds">247 36 267 113 </string>
             </object>
           </array>
@@ -2135,7 +2135,7 @@
       <int name="carbonWindowClass">11</int>
       <int name="themeBrush">53</int>
       <int name="windowPosition">4</int>
-      <string name="title">ジョイパッド設定</string>
+      <string name="title">Joypad settings</string>
       <reference name="rootControl" idRef="893"/>
       <string name="windowRect">320 182 437 502 </string>
       <string name="ScreenRectAtEncodeTime">0 0 768 1024 </string>
