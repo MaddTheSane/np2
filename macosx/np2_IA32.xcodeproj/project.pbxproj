@@ -437,6 +437,7 @@
 		5595B6701D20F6C400DDA319 /* np2info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6601D20F6C400DDA319 /* np2info.h */; };
 		5595B6711D20F6C400DDA319 /* softkbd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6611D20F6C400DDA319 /* softkbd.h */; };
 		5595B6771D20F7C400DDA319 /* mimpidef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6761D20F7C400DDA319 /* mimpidef.h */; };
+		55F77298208C013100191A0B /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 55F77297208C013000191A0B /* common.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -556,7 +557,7 @@
 		556F2B061D20A08500335DF9 /* gdc_pset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc_pset.h; sourceTree = "<group>"; };
 		556F2B071D20A08500335DF9 /* gdc_sub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc_sub.h; sourceTree = "<group>"; };
 		556F2B081D20A08500335DF9 /* gdc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gdc.h; sourceTree = "<group>"; };
-		556F2B091D20A08500335DF9 /* iocore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iocore.h; sourceTree = "<group>"; };
+		556F2B091D20A08500335DF9 /* iocore.h */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.h; path = iocore.h; sourceTree = "<group>"; };
 		556F2B0A1D20A08500335DF9 /* mouseif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mouseif.h; sourceTree = "<group>"; };
 		556F2B0B1D20A08500335DF9 /* necio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = necio.h; sourceTree = "<group>"; };
 		556F2B0C1D20A08500335DF9 /* nmiio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nmiio.h; sourceTree = "<group>"; };
@@ -676,6 +677,7 @@
 		5595B6651D20F6C400DDA319 /* softkbd3.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 2147483649; path = softkbd3.res; sourceTree = "<group>"; };
 		5595B6761D20F7C400DDA319 /* mimpidef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimpidef.h; sourceTree = "<group>"; };
 		55A8D1DB1D20860B00A85AC9 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/np2.nib; sourceTree = "<group>"; };
+		55F77297208C013000191A0B /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		9603DE2C06CFCD4800012F11 /* en */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3406CFCDE000012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = c; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3B06CFCE4500012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -963,6 +965,7 @@
 				967C9204055778CB00000103 /* macosx */,
 				967C93FE05577A1F00000103 /* calendar.c */,
 				556F2B951D20A81600335DF9 /* calendar.h */,
+				55F77297208C013000191A0B /* common.h */,
 				967C93FF05577A1F00000103 /* debugsub.c */,
 				556F2B961D20A81600335DF9 /* debugsub.h */,
 				965751AE05E66EE8002889CD /* keystat.c */,
@@ -1733,6 +1736,7 @@
 				556F2B471D20A0DC00335DF9 /* sound.h in Headers */,
 				556F2BBA1D20A86200335DF9 /* palettes.h in Headers */,
 				556F2B5B1D20A6E300335DF9 /* dialog.h in Headers */,
+				55F77298208C013100191A0B /* common.h in Headers */,
 				556F2B191D20A08500335DF9 /* egc.h in Headers */,
 				556F2B831D20A73900335DF9 /* joymng.h in Headers */,
 				5595B64F1D20F67400DDA319 /* dmax86.h in Headers */,
