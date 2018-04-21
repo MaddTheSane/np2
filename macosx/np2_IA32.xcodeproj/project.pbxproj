@@ -133,7 +133,6 @@
 		556F2B481D20A0DC00335DF9 /* soundrom.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B3A1D20A0DC00335DF9 /* soundrom.h */; };
 		556F2B491D20A0DC00335DF9 /* tms3631.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B3B1D20A0DC00335DF9 /* tms3631.h */; };
 		556F2B4B1D20A1C400335DF9 /* np2gcc_ia32.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4A1D20A1C400335DF9 /* np2gcc_ia32.h */; };
-		556F2B4E1D20A27800335DF9 /* OldCarbHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */; };
 		556F2B591D20A6E300335DF9 /* aboutdlg.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B4F1D20A6E300335DF9 /* aboutdlg.h */; };
 		556F2B5A1D20A6E300335DF9 /* configure.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B501D20A6E300335DF9 /* configure.h */; };
 		556F2B5B1D20A6E300335DF9 /* dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2B511D20A6E300335DF9 /* dialog.h */; };
@@ -595,7 +594,6 @@
 		556F2B3A1D20A0DC00335DF9 /* soundrom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundrom.h; sourceTree = "<group>"; };
 		556F2B3B1D20A0DC00335DF9 /* tms3631.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tms3631.h; sourceTree = "<group>"; };
 		556F2B4A1D20A1C400335DF9 /* np2gcc_ia32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2gcc_ia32.h; sourceTree = "<group>"; };
-		556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OldCarbHeaders.h; path = oldMacHeaders/OldCarbHeaders.h; sourceTree = "<group>"; };
 		556F2B4F1D20A6E300335DF9 /* aboutdlg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aboutdlg.h; sourceTree = "<group>"; };
 		556F2B501D20A6E300335DF9 /* configure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = configure.h; sourceTree = "<group>"; };
 		556F2B511D20A6E300335DF9 /* dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dialog.h; sourceTree = "<group>"; };
@@ -1351,7 +1349,6 @@
 				556F2B7A1D20A73900335DF9 /* toolwin.res */,
 				967C9272055778CC00000103 /* trace.cpp */,
 				556F2B7B1D20A73900335DF9 /* trace.h */,
-				556F2B4D1D20A27800335DF9 /* OldCarbHeaders.h */,
 			);
 			name = macosx;
 			sourceTree = SOURCE_ROOT;
@@ -1727,7 +1724,6 @@
 				556F2AD11D209B1900335DF9 /* inst_table.h in Headers */,
 				556F2B1C1D20A08500335DF9 /* fdd320.h in Headers */,
 				556F2B241D20A08500335DF9 /* pic.h in Headers */,
-				556F2B4E1D20A27800335DF9 /* OldCarbHeaders.h in Headers */,
 				556F2B1B1D20A08500335DF9 /* fdc.h in Headers */,
 				556F2B911D20A73900335DF9 /* timemng.h in Headers */,
 				556F2B5A1D20A6E300335DF9 /* configure.h in Headers */,
