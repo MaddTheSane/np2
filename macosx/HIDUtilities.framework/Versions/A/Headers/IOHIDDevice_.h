@@ -50,7 +50,6 @@
 #pragma mark - includes & imports
 
 #include <AvailabilityMacros.h>
-#include <ConditionalMacros.h>
 
 #include "IOHIDLib_.h"
 
@@ -124,7 +123,7 @@ extern "C" {
 	// Returns:	long - the vendor ID for this device
 	//
 	
-	extern int IOHIDDevice_GetVendorID(IOHIDDeviceRef inIOHIDDeviceRef);
+	extern long IOHIDDevice_GetVendorID(IOHIDDeviceRef inIOHIDDeviceRef);
 	
 	//*************************************************************************
 	//
@@ -150,7 +149,7 @@ extern "C" {
 	// Returns:	long - the product ID for this device
 	//
 	
-	extern int IOHIDDevice_GetProductID(IOHIDDeviceRef inIOHIDDeviceRef);
+	extern long IOHIDDevice_GetProductID(IOHIDDeviceRef inIOHIDDeviceRef);
 	
 	//*************************************************************************
 	//
@@ -228,7 +227,7 @@ extern "C" {
 	// Returns:	long - the location ID for this device
 	//
 	
-	extern int IOHIDDevice_GetLocationID(IOHIDDeviceRef inIOHIDDeviceRef);
+	extern long IOHIDDevice_GetLocationID(IOHIDDeviceRef inIOHIDDeviceRef);
 	
 	//*************************************************************************
 	//

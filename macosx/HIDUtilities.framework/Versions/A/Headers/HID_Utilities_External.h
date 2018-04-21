@@ -75,7 +75,7 @@ typedef void *IOHIDElementCookie;
 
 // Device and Element Interfaces
 
-typedef CF_ENUM(UInt32, HIDElementTypeMask) {
+enum HIDElementTypeMask {
 	kHIDElementTypeInput = 1 << 1,
 	kHIDElementTypeOutput = 1 << 2,
 	kHIDElementTypeFeature = 1 << 3,
@@ -83,6 +83,7 @@ typedef CF_ENUM(UInt32, HIDElementTypeMask) {
 	kHIDElementTypeIO = kHIDElementTypeInput | kHIDElementTypeOutput | kHIDElementTypeFeature,
 	kHIDElementTypeAll = kHIDElementTypeIO | kHIDElementTypeCollection
 };
+typedef enum HIDElementTypeMask HIDElementTypeMask;
 
 // ==================================
 
@@ -259,7 +260,7 @@ typedef struct HID_info_struct {
 	// elements
 	struct {
 		uint32_t usagePage, usage;
-		CFIndex minReport, maxReport;
+		int minReport, maxReport;
 		IOHIDElementCookie cookie; // always 32 bits
 	} element;
 }HID_info_rec, *HID_info_ptr;

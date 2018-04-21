@@ -10,7 +10,7 @@
 #include	"cmndraw.h"
 #include	"dosio.h"
 #include	"softkbd.h"
-#include	<CoreGraphics/CoreGraphics.h>
+#include	<ApplicationServices/ApplicationServices.h>
 
 #if !defined(SUPPORT_PC9821)
 static const char inifile[] = "np2.cfg";			// same file name..

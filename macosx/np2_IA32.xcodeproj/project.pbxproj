@@ -8,6 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		553F7505208B264A00CF8872 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553F7504208B264A00CF8872 /* QuickTime.framework */; };
+		555F6982208BDC610002E7FF /* oemtext.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F6981208BDC610002E7FF /* oemtext.h */; };
+		555F6993208BDCC10002E7FF /* codecnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F6987208BDCC10002E7FF /* codecnv.h */; };
+		555F6994208BDCC10002E7FF /* eucsjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F6988208BDCC10002E7FF /* eucsjis.c */; };
+		555F6995208BDCC10002E7FF /* eucucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F6989208BDCC10002E7FF /* eucucs2.c */; };
+		555F6996208BDCC10002E7FF /* sjiseuc.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F698A208BDCC10002E7FF /* sjiseuc.c */; };
+		555F6997208BDCC10002E7FF /* sjisucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F698B208BDCC10002E7FF /* sjisucs2.c */; };
+		555F6998208BDCC10002E7FF /* tcswap16.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F698C208BDCC10002E7FF /* tcswap16.c */; };
+		555F6999208BDCC10002E7FF /* tcswap32.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F698D208BDCC10002E7FF /* tcswap32.c */; };
+		555F699A208BDCC10002E7FF /* textcnv.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F698E208BDCC10002E7FF /* textcnv.c */; };
+		555F699B208BDCC10002E7FF /* textcnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 555F698F208BDCC10002E7FF /* textcnv.h */; };
+		555F699C208BDCC10002E7FF /* ucs2sjis.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F6990208BDCC10002E7FF /* ucs2sjis.c */; };
+		555F699D208BDCC10002E7FF /* ucs2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F6991208BDCC10002E7FF /* ucs2utf8.c */; };
+		555F699E208BDCC10002E7FF /* utf8ucs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 555F6992208BDCC10002E7FF /* utf8ucs2.c */; };
 		556F2A6D1D2098E900335DF9 /* HIDUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; };
 		556F2A6E1D2098E900335DF9 /* HIDUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		556F2A711D20999300335DF9 /* _memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2A701D20999300335DF9 /* _memory.h */; };
@@ -173,8 +186,6 @@
 		556F2BBD1D20A86200335DF9 /* scrnsave.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BB01D20A86200335DF9 /* scrnsave.h */; };
 		556F2BC01D20A86200335DF9 /* vram.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BB31D20A86200335DF9 /* vram.h */; };
 		556F2BC31D20A8CC00335DF9 /* lio.h in Headers */ = {isa = PBXBuildFile; fileRef = 556F2BC11D20A8CC00335DF9 /* lio.h */; };
-		556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 556F2BC51D20A9EC00335DF9 /* Media.xcassets */; };
-		556F2BC81D20AF4800335DF9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2BC71D20AF4800335DF9 /* CoreGraphics.framework */; };
 		556F2BCA1D20AF4F00335DF9 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */; };
 		556F2BCB1D20BABB00335DF9 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0640BAA5FFF0323A11CA0E50 /* CoreServices.framework */; };
 		556F2BCC1D20BABF00335DF9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0640BAA4FFF0323A11CA0E50 /* ApplicationServices.framework */; };
@@ -424,6 +435,20 @@
 		5595B6701D20F6C400DDA319 /* np2info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6601D20F6C400DDA319 /* np2info.h */; };
 		5595B6711D20F6C400DDA319 /* softkbd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6611D20F6C400DDA319 /* softkbd.h */; };
 		5595B6771D20F7C400DDA319 /* mimpidef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6761D20F7C400DDA319 /* mimpidef.h */; };
+		55CE2B66208BD3660080EE48 /* beta.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B55208BD3660080EE48 /* beta.icns */; };
+		55CE2B67208BD3660080EE48 /* d88.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B56208BD3660080EE48 /* d88.icns */; };
+		55CE2B68208BD3660080EE48 /* fddseek.wav in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B57208BD3660080EE48 /* fddseek.wav */; };
+		55CE2B69208BD3660080EE48 /* fddseek1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B58208BD3660080EE48 /* fddseek1.wav */; };
+		55CE2B6A208BD3660080EE48 /* fdi.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B59208BD3660080EE48 /* fdi.icns */; };
+		55CE2B6B208BD3660080EE48 /* hdd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B5A208BD3660080EE48 /* hdd.icns */; };
+		55CE2B6C208BD3660080EE48 /* hdi.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B5B208BD3660080EE48 /* hdi.icns */; };
+		55CE2B6D208BD3660080EE48 /* Neko Project IIx.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B5C208BD3660080EE48 /* Neko Project IIx.icns */; };
+		55CE2B6F208BD3660080EE48 /* nhd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B5E208BD3660080EE48 /* nhd.icns */; };
+		55CE2B72208BD3660080EE48 /* plug-in.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B61208BD3660080EE48 /* plug-in.icns */; };
+		55CE2B73208BD3660080EE48 /* preference.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B62208BD3660080EE48 /* preference.icns */; };
+		55CE2B74208BD3660080EE48 /* ROM.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B63208BD3660080EE48 /* ROM.icns */; };
+		55CE2B75208BD3660080EE48 /* thd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B64208BD3660080EE48 /* thd.icns */; };
+		55CE2B76208BD3660080EE48 /* xdf.icns in Resources */ = {isa = PBXBuildFile; fileRef = 55CE2B65208BD3660080EE48 /* xdf.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -444,7 +469,20 @@
 		0640BAA4FFF0323A11CA0E50 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		0640BAA5FFF0323A11CA0E50 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		20286C33FDCF999611CA2CEA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		553F7504208B264A00CF8872 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = oldMacHeaders/QuickTime.framework; sourceTree = "<group>"; };
+		553F7504208B264A00CF8872 /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = System/Library/Frameworks/QuickTime.framework; sourceTree = SDKROOT; };
+		555F6981208BDC610002E7FF /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
+		555F6987208BDCC10002E7FF /* codecnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codecnv.h; sourceTree = "<group>"; };
+		555F6988208BDCC10002E7FF /* eucsjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucsjis.c; sourceTree = "<group>"; };
+		555F6989208BDCC10002E7FF /* eucucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eucucs2.c; sourceTree = "<group>"; };
+		555F698A208BDCC10002E7FF /* sjiseuc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjiseuc.c; sourceTree = "<group>"; };
+		555F698B208BDCC10002E7FF /* sjisucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sjisucs2.c; sourceTree = "<group>"; };
+		555F698C208BDCC10002E7FF /* tcswap16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap16.c; sourceTree = "<group>"; };
+		555F698D208BDCC10002E7FF /* tcswap32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tcswap32.c; sourceTree = "<group>"; };
+		555F698E208BDCC10002E7FF /* textcnv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = textcnv.c; sourceTree = "<group>"; };
+		555F698F208BDCC10002E7FF /* textcnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = textcnv.h; sourceTree = "<group>"; };
+		555F6990208BDCC10002E7FF /* ucs2sjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2sjis.c; sourceTree = "<group>"; };
+		555F6991208BDCC10002E7FF /* ucs2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2utf8.c; sourceTree = "<group>"; };
+		555F6992208BDCC10002E7FF /* utf8ucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf8ucs2.c; sourceTree = "<group>"; };
 		556F2A671D208E0800335DF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
 		556F2A701D20999300335DF9 /* _memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _memory.h; sourceTree = "<group>"; };
@@ -617,8 +655,6 @@
 		556F2BB31D20A86200335DF9 /* vram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vram.h; sourceTree = "<group>"; };
 		556F2BC11D20A8CC00335DF9 /* lio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lio.h; sourceTree = "<group>"; };
 		556F2BC21D20A8CC00335DF9 /* lio.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = lio.res; sourceTree = "<group>"; };
-		556F2BC51D20A9EC00335DF9 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		556F2BC71D20AF4800335DF9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		556F2BCD1D20BB7500335DF9 /* fpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fpu.c; sourceTree = "<group>"; };
 		55793C1B1D2171A50043CD89 /* Non-localized.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; path = "Non-localized.r"; sourceTree = "<group>"; };
@@ -650,7 +686,21 @@
 		5595B6651D20F6C400DDA319 /* softkbd3.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 2147483649; path = softkbd3.res; sourceTree = "<group>"; };
 		5595B6761D20F7C400DDA319 /* mimpidef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimpidef.h; sourceTree = "<group>"; };
 		55A8D1DB1D20860B00A85AC9 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/np2.nib; sourceTree = "<group>"; };
-		9603DE2C06CFCD4800012F11 /* en */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		55CE2B55208BD3660080EE48 /* beta.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = beta.icns; sourceTree = "<group>"; };
+		55CE2B56208BD3660080EE48 /* d88.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = d88.icns; sourceTree = "<group>"; };
+		55CE2B57208BD3660080EE48 /* fddseek.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fddseek.wav; sourceTree = "<group>"; };
+		55CE2B58208BD3660080EE48 /* fddseek1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = fddseek1.wav; sourceTree = "<group>"; };
+		55CE2B59208BD3660080EE48 /* fdi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = fdi.icns; sourceTree = "<group>"; };
+		55CE2B5A208BD3660080EE48 /* hdd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = hdd.icns; sourceTree = "<group>"; };
+		55CE2B5B208BD3660080EE48 /* hdi.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = hdi.icns; sourceTree = "<group>"; };
+		55CE2B5C208BD3660080EE48 /* Neko Project IIx.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Neko Project IIx.icns"; sourceTree = "<group>"; };
+		55CE2B5E208BD3660080EE48 /* nhd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = nhd.icns; sourceTree = "<group>"; };
+		55CE2B61208BD3660080EE48 /* plug-in.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "plug-in.icns"; sourceTree = "<group>"; };
+		55CE2B62208BD3660080EE48 /* preference.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = preference.icns; sourceTree = "<group>"; };
+		55CE2B63208BD3660080EE48 /* ROM.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ROM.icns; sourceTree = "<group>"; };
+		55CE2B64208BD3660080EE48 /* thd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = thd.icns; sourceTree = "<group>"; };
+		55CE2B65208BD3660080EE48 /* xdf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xdf.icns; sourceTree = "<group>"; };
+		9603DE2C06CFCD4800012F11 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3406CFCDE000012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = c; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3B06CFCE4500012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9603DE6F06CFE8CC00012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.rez; name = ja; path = ja.lproj/np2.r; sourceTree = SOURCE_ROOT; };
@@ -658,9 +708,9 @@
 		96083FEF05A936740005CD33 /* necio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = necio.c; sourceTree = "<group>"; };
 		9608400C054ED1E900000103 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		961B7003056048F500000103 /* aboutdlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aboutdlg.cpp; sourceTree = "<group>"; };
-		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = nekop2.bmp; path = Icon/nekop2.bmp; sourceTree = "<group>"; };
-		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = np2logo.tiff; path = Icon/np2logo.tiff; sourceTree = "<group>"; };
-		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = np2tool.bmp; path = Icon/np2tool.bmp; sourceTree = "<group>"; };
+		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = nekop2.bmp; sourceTree = "<group>"; };
+		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = np2logo.tiff; sourceTree = "<group>"; };
+		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = np2tool.bmp; sourceTree = "<group>"; };
 		9621596705C3C2630070042E /* emsio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = emsio.c; sourceTree = "<group>"; };
 		962EA92B060C86B500BD925D /* bios1f.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = bios1f.c; sourceTree = "<group>"; };
 		962EA933060C86D500BD925D /* pcidev.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = pcidev.c; sourceTree = "<group>"; };
@@ -885,7 +935,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				556F2BCA1D20AF4F00335DF9 /* CoreFoundation.framework in Frameworks */,
-				556F2BC81D20AF4800335DF9 /* CoreGraphics.framework in Frameworks */,
 				55842EBE1D2084C60017B417 /* Carbon.framework in Frameworks */,
 				556F2BCC1D20BABF00335DF9 /* ApplicationServices.framework in Frameworks */,
 				553F7505208B264A00CF8872 /* QuickTime.framework in Frameworks */,
@@ -921,6 +970,7 @@
 		20286C2AFDCF999611CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				555F6986208BDCC10002E7FF /* codecnv */,
 				967C91310557786900000103 /* common */,
 				967C9164055778CB00000103 /* bios */,
 				967C9177055778CB00000103 /* cbus */,
@@ -958,12 +1008,9 @@
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				55CE2B54208BD3660080EE48 /* Icon */,
 				55842EC91D2084C60017B417 /* Info-np2__Upgraded_.plist */,
-				961B70230563FAF800000103 /* nekop2.bmp */,
-				961B70240563FAF800000103 /* np2logo.tiff */,
 				9603DE2B06CFCD4800012F11 /* Localizable.strings */,
-				961B70250563FAF800000103 /* np2tool.bmp */,
-				556F2BC51D20A9EC00335DF9 /* Media.xcassets */,
 				96EFFA58054716B900000102 /* np2.nib */,
 				55793C1B1D2171A50043CD89 /* Non-localized.r */,
 				9603DE6D06CFE8C300012F11 /* np2.r */,
@@ -977,7 +1024,6 @@
 			children = (
 				553F7504208B264A00CF8872 /* QuickTime.framework */,
 				556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */,
-				556F2BC71D20AF4800335DF9 /* CoreGraphics.framework */,
 				556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */,
 				968D8C7105F5274200CFB890 /* CoreMIDI.framework */,
 				20286C33FDCF999611CA2CEA /* Carbon.framework */,
@@ -986,6 +1032,49 @@
 				9608400C054ED1E900000103 /* IOKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		555F6986208BDCC10002E7FF /* codecnv */ = {
+			isa = PBXGroup;
+			children = (
+				555F6987208BDCC10002E7FF /* codecnv.h */,
+				555F6988208BDCC10002E7FF /* eucsjis.c */,
+				555F6989208BDCC10002E7FF /* eucucs2.c */,
+				555F698A208BDCC10002E7FF /* sjiseuc.c */,
+				555F698B208BDCC10002E7FF /* sjisucs2.c */,
+				555F698C208BDCC10002E7FF /* tcswap16.c */,
+				555F698D208BDCC10002E7FF /* tcswap32.c */,
+				555F698E208BDCC10002E7FF /* textcnv.c */,
+				555F698F208BDCC10002E7FF /* textcnv.h */,
+				555F6990208BDCC10002E7FF /* ucs2sjis.c */,
+				555F6991208BDCC10002E7FF /* ucs2utf8.c */,
+				555F6992208BDCC10002E7FF /* utf8ucs2.c */,
+			);
+			path = codecnv;
+			sourceTree = "<group>";
+		};
+		55CE2B54208BD3660080EE48 /* Icon */ = {
+			isa = PBXGroup;
+			children = (
+				961B70230563FAF800000103 /* nekop2.bmp */,
+				961B70240563FAF800000103 /* np2logo.tiff */,
+				961B70250563FAF800000103 /* np2tool.bmp */,
+				55CE2B55208BD3660080EE48 /* beta.icns */,
+				55CE2B56208BD3660080EE48 /* d88.icns */,
+				55CE2B57208BD3660080EE48 /* fddseek.wav */,
+				55CE2B58208BD3660080EE48 /* fddseek1.wav */,
+				55CE2B59208BD3660080EE48 /* fdi.icns */,
+				55CE2B5A208BD3660080EE48 /* hdd.icns */,
+				55CE2B5B208BD3660080EE48 /* hdi.icns */,
+				55CE2B5C208BD3660080EE48 /* Neko Project IIx.icns */,
+				55CE2B5E208BD3660080EE48 /* nhd.icns */,
+				55CE2B61208BD3660080EE48 /* plug-in.icns */,
+				55CE2B62208BD3660080EE48 /* preference.icns */,
+				55CE2B63208BD3660080EE48 /* ROM.icns */,
+				55CE2B64208BD3660080EE48 /* thd.icns */,
+				55CE2B65208BD3660080EE48 /* xdf.icns */,
+			);
+			path = Icon;
 			sourceTree = "<group>";
 		};
 		9645C2D005BFA3B90090B4FD /* getsnd */ = {
@@ -1211,6 +1300,7 @@
 			isa = PBXGroup;
 			children = (
 				967C9221055778CB00000103 /* dialog */,
+				555F6981208BDC610002E7FF /* oemtext.h */,
 				968D8BC305F5229D00CFB890 /* cmmidi.cpp */,
 				556F2B631D20A73900335DF9 /* cmmidi.h */,
 				967C921E055778CB00000103 /* commng.cpp */,
@@ -1711,6 +1801,9 @@
 				556F2AA11D209A5700335DF9 /* boardx2.h in Headers */,
 				556F2ADE1D209B5B00335DF9 /* fontdata.h in Headers */,
 				556F2B281D20A08500335DF9 /* sysport.h in Headers */,
+				555F6982208BDC610002E7FF /* oemtext.h in Headers */,
+				555F6993208BDCC10002E7FF /* codecnv.h in Headers */,
+				555F699B208BDCC10002E7FF /* textcnv.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1743,11 +1836,8 @@
 /* Begin PBXProject section */
 		20286C28FDCF999611CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = 55842DB51D20843E0017B417 /* Build configuration list for PBXProject "np2_IA32" */;
 			compatibilityVersion = "Xcode 3.1";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
@@ -1772,8 +1862,21 @@
 				55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */,
 				55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */,
 				55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */,
-				556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */,
 				55842DE31D2084C60017B417 /* Localizable.strings in Resources */,
+				55CE2B66208BD3660080EE48 /* beta.icns in Resources */,
+				55CE2B67208BD3660080EE48 /* d88.icns in Resources */,
+				55CE2B68208BD3660080EE48 /* fddseek.wav in Resources */,
+				55CE2B69208BD3660080EE48 /* fddseek1.wav in Resources */,
+				55CE2B6A208BD3660080EE48 /* fdi.icns in Resources */,
+				55CE2B6B208BD3660080EE48 /* hdd.icns in Resources */,
+				55CE2B6C208BD3660080EE48 /* hdi.icns in Resources */,
+				55CE2B6D208BD3660080EE48 /* Neko Project IIx.icns in Resources */,
+				55CE2B6F208BD3660080EE48 /* nhd.icns in Resources */,
+				55CE2B72208BD3660080EE48 /* plug-in.icns in Resources */,
+				55CE2B73208BD3660080EE48 /* preference.icns in Resources */,
+				55CE2B74208BD3660080EE48 /* ROM.icns in Resources */,
+				55CE2B75208BD3660080EE48 /* thd.icns in Resources */,
+				55CE2B76208BD3660080EE48 /* xdf.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2013,6 +2116,16 @@
 				55842EBA1D2084C60017B417 /* memvram.c in Sources */,
 				55842EBB1D2084C60017B417 /* sxsicd.c in Sources */,
 				55842EBC1D2084C60017B417 /* sxsihdd.c in Sources */,
+				555F6994208BDCC10002E7FF /* eucsjis.c in Sources */,
+				555F6995208BDCC10002E7FF /* eucucs2.c in Sources */,
+				555F6996208BDCC10002E7FF /* sjiseuc.c in Sources */,
+				555F6997208BDCC10002E7FF /* sjisucs2.c in Sources */,
+				555F6998208BDCC10002E7FF /* tcswap16.c in Sources */,
+				555F6999208BDCC10002E7FF /* tcswap32.c in Sources */,
+				555F699A208BDCC10002E7FF /* textcnv.c in Sources */,
+				555F699C208BDCC10002E7FF /* ucs2sjis.c in Sources */,
+				555F699D208BDCC10002E7FF /* ucs2utf8.c in Sources */,
+				555F699E208BDCC10002E7FF /* utf8ucs2.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2067,8 +2180,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				SDKROOT = macosx;
+				GCC_VERSION = 4.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};
@@ -2080,8 +2195,9 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				SDKROOT = macosx;
+				GCC_VERSION = 4.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx10.5;
 			};
 			name = Release;
 		};
@@ -2090,10 +2206,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Neko Project IIx";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/oldMacHeaders",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2111,6 +2224,21 @@
 					../cbus,
 					../io,
 					../i386c,
+					.,
+					..,
+					../common,
+				);
+				"HEADER_SEARCH_PATHS[arch=ppc]" = (
+					../mem,
+					../font,
+					../lio,
+					../fdd,
+					../sound,
+					../vram,
+					../bios,
+					../cbus,
+					../io,
+					../i286c,
 					.,
 					..,
 					../common,
@@ -2138,10 +2266,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "Neko Project IIx";
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/oldMacHeaders",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -2160,6 +2285,21 @@
 					../cbus,
 					../io,
 					../i386c,
+					.,
+					..,
+					../common,
+				);
+				"HEADER_SEARCH_PATHS[arch=ppc]" = (
+					../mem,
+					../font,
+					../lio,
+					../fdd,
+					../sound,
+					../vram,
+					../bios,
+					../cbus,
+					../io,
+					../i286c,
 					.,
 					..,
 					../common,
