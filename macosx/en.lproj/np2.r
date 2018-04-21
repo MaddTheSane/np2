@@ -1,22 +1,6 @@
 #include "resource.h"
 #include <Carbon/Carbon.r>
 
-resource 'MENU' (IDM_FDD1) {
-	IDM_FDD1,
-	textMenuProc,
-	0x5,
-	enabled,
-	"FDD1",
-	{	/* array: 3 elements */
-		/* [1] */
-		"Open...", noIcon, "D", noMark, plain,
-		/* [2] */
-		"-", noIcon, noKey, noMark, plain,
-		/* [3] */
-		"Eject", noIcon, "E", noMark, plain
-	}
-};
-
 resource 'MENU' (IDM_EDIT) {
 	IDM_EDIT,
 	textMenuProc,
@@ -95,7 +79,7 @@ resource 'MENU' (IDM_DEVICE) {
 	"Device",
 	{	/* array: 11 elements */
 		/* [1] */
-		"keyboard", noIcon, hierarchicalMenu, "‹", plain,
+		"Keyboard", noIcon, hierarchicalMenu, "‹", plain,
 		/* [2] */
 		"Sound", noIcon, hierarchicalMenu, "Œ", plain,
 		/* [3] */
@@ -105,17 +89,17 @@ resource 'MENU' (IDM_DEVICE) {
 		/* [5] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [6] */
-		"Serial option...", noIcon, noKey, noMark, plain,
+		"Serial options...", noIcon, noKey, noMark, plain,
 		/* [7] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [8] */
-		"MIDI option...", noIcon, noKey, noMark, plain,
+		"MIDI options...", noIcon, noKey, noMark, plain,
 		/* [9] */
 		"MIDI Panic", noIcon, noKey, noMark, plain,
 		/* [10] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [11] */
-		"Sound option...", noIcon, noKey, noMark, plain
+		"Sound options...", noIcon, noKey, noMark, plain
 	}
 };
 
@@ -127,19 +111,19 @@ resource 'MENU' (IDM_SCREEN) {
 	"Screen",
 	{	/* array: 16 elements */
 		/* [1] */
-		"FullScreen", noIcon, "F", noMark, plain,
+		"Fullscreen", noIcon, "F", noMark, plain,
 		/* [2] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [3] */
 		"Normal", noIcon, noKey, noMark, plain,
 		/* [4] */
-		"Left Rotated", noIcon, noKey, noMark, plain,
+		"Rotate Left", noIcon, noKey, noMark, plain,
 		/* [5] */
-		"Right Rotated", noIcon, noKey, noMark, plain,
+		"Rotate Right", noIcon, noKey, noMark, plain,
 		/* [6] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [7] */
-		"Disp VSync", noIcon, noKey, noMark, plain,
+		"Display VSync", noIcon, noKey, noMark, plain,
 		/* [8] */
 		"Real Palettes", noIcon, noKey, noMark, plain,
 		/* [9] */
@@ -157,7 +141,7 @@ resource 'MENU' (IDM_SCREEN) {
 		/* [15] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [16] */
-		"Screen option...", noIcon, noKey, noMark, plain
+		"Screen options...", noIcon, noKey, noMark, plain
 	}
 };
 
@@ -216,22 +200,6 @@ resource 'MENU' (IDM_SOUND) {
 		"-", noIcon, noKey, noMark, plain,
 		/* [18] */
 		"Seek Sound", noIcon, noKey, noMark, plain
-	}
-};
-
-resource 'MENU' (IDM_SASI1) {
-	IDM_SASI1,
-	textMenuProc,
-	0x5,
-	enabled,
-	"SASI1",
-	{	/* array: 3 elements */
-		/* [1] */
-		"Open...", noIcon, "O", noMark, plain,
-		/* [2] */
-		"-", noIcon, noKey, noMark, plain,
-		/* [3] */
-		"Remove", noIcon, noKey, noMark, plain
 	}
 };
 
@@ -299,6 +267,22 @@ resource 'MENU' (IDM_SCSI3) {
 	}
 };
 
+resource 'MENU' (IDM_SASI1) {
+	IDM_SASI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
+};
+
 resource 'MENU' (IDM_SASI2) {
 	IDM_SASI2,
 	textMenuProc,
@@ -312,6 +296,22 @@ resource 'MENU' (IDM_SASI2) {
 		"-", noIcon, noKey, noMark, plain,
 		/* [3] */
 		"Remove", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_FDD1) {
+	IDM_FDD1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Eject", noIcon, "E", noMark, plain
 	}
 };
 
@@ -447,21 +447,21 @@ resource 'MENU' (IDM_OTHER) {
 	"Other",
 	{	/* array: 12 elements */
 		/* [1] */
-		"BMP Save...", noIcon, noKey, noMark, plain,
+		"Save BMP...", noIcon, noKey, noMark, plain,
 		/* [2] */
 		"S98 logging...", noIcon, noKey, noMark, plain,
 		/* [3] */
 		"Calendar...", noIcon, noKey, noMark, plain,
 		/* [4] */
-		"Clock Disp", noIcon, noKey, noMark, plain,
+		"Clock Display", noIcon, noKey, noMark, plain,
 		/* [5] */
-		"Frame Disp", noIcon, noKey, noMark, plain,
+		"Frame Display", noIcon, noKey, noMark, plain,
 		/* [6] */
-		"Joy Reverse", noIcon, noKey, noMark, plain,
+		"Reverse Joystick", noIcon, noKey, noMark, plain,
 		/* [7] */
-		"Joy Rapid", noIcon, noKey, noMark, plain,
+		"Rapid Joystick", noIcon, noKey, noMark, plain,
 		/* [8] */
-		"Mouse Rapid", noIcon, noKey, noMark, plain,
+		"Rapid Mouse button", noIcon, noKey, noMark, plain,
 		/* [9] */
 		"-", noIcon, noKey, noMark, plain,
 		/* [10] */
