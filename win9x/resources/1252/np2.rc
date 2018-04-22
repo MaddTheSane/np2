@@ -1149,10 +1149,10 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_FONTFACE            "‚l‚r ƒSƒVƒbƒN"
-    IDS_PFONTFACE           "‚l‚r ‚oƒSƒVƒbƒN"
-    IDS_FONTFACE_PRIMARY    "‚l‚r ƒSƒVƒbƒN"
-    IDS_PFONTFACE_PRIMARY   "‚l‚r ‚oƒSƒVƒbƒN"
+    IDS_FONTFACE            "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯"
+    IDS_PFONTFACE           "ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯"
+    IDS_FONTFACE_PRIMARY    "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯"
+    IDS_PFONTFACE_PRIMARY   "ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯"
     IDS_FONTFACE_SECONDARY  "MS Gothic"
     IDS_PFONTFACE_SECONDARY "MS PGothic"
 END

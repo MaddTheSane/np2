@@ -43,7 +43,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "\0"
             VALUE "FileVersion", "0, 8, 6, 0\0"
-            VALUE "LegalCopyright", "ÇÀÇ±Ç≥ÇÒäJî≠ÇøÅ[Çﬁ\0"
+            VALUE "LegalCopyright", "„Å≠„Åì„Åï„ÇìÈñãÁô∫„Å°„Éº„ÇÄ\0"
 
             VALUE "ProductVersion", "0, 8, 6, 0\0"
 #ifdef _USRDLL
