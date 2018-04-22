@@ -84,7 +84,7 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
 				SetWindowTitleWithCFString(aboutWin, CFCopyLocalizedString(CFSTR("AboutTitle"), "about 21x"));
 #endif
                 image = getControlRefByID('logo', 0, aboutWin);
-                pict = getBMPfromResource("np2logo.tiff", &bounds);
+                pict = getBMPfromResource("np2logo.png", &bounds);
                 SetControlData(image, kControlNoPart, kControlPictureHandleTag, sizeof(PicHandle), &pict);
 				version = getControlRefByID('vers', 0, aboutWin);
                 SetControlData(version, kControlNoPart, kControlStaticTextTextTag, sizeof(NP2VER_CORE), NP2VER_CORE);

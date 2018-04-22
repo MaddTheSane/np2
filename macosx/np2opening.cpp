@@ -18,7 +18,7 @@ static PicHandle getbmp(FSSpec fsc, Rect* srt) {
     
     if (!GetGraphicsImporterForFile(&fsc, &gi)) {
         if (!GraphicsImportGetNaturalBounds(gi, srt)) {
-            OffsetRect( srt, -(*srt).left, -(*srt).top);
+            OffsetRect( srt, -srt->left, -srt->top);
             GraphicsImportSetBoundsRect(gi, srt);
             GraphicsImportGetAsPicture(gi, &pict);
         }
@@ -73,7 +73,7 @@ void openingNP2(void) {
     GrafPtr		port;
     PicHandle	pict = NULL;
 
-    pict = getBMPfromResource("nekop2.bmp", &srt);
+    pict = getBMPfromResource("nekop2.png", &srt);
     if (pict) {
         GetPort(&port);
         SetPortWindowPort(hWndMain);

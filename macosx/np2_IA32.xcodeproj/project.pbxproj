@@ -216,9 +216,6 @@
 		55793C1D1D2171B40043CD89 /* Non-localized.r in Rez */ = {isa = PBXBuildFile; fileRef = 55793C1B1D2171A50043CD89 /* Non-localized.r */; };
 		55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
 		55842DD31D2084C60017B417 /* np2.nib in Resources */ = {isa = PBXBuildFile; fileRef = 96EFFA58054716B900000102 /* np2.nib */; };
-		55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70230563FAF800000103 /* nekop2.bmp */; };
-		55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 961B70240563FAF800000103 /* np2logo.tiff */; };
-		55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70250563FAF800000103 /* np2tool.bmp */; };
 		55842DE31D2084C60017B417 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9603DE2B06CFCD4800012F11 /* Localizable.strings */; };
 		55842DE51D2084C60017B417 /* _memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 967C91330557786900000103 /* _memory.c */; };
 		55842DE61D2084C60017B417 /* bmpdata.c in Sources */ = {isa = PBXBuildFile; fileRef = 967C91350557786900000103 /* bmpdata.c */; };
@@ -455,6 +452,9 @@
 		5595B6701D20F6C400DDA319 /* np2info.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6601D20F6C400DDA319 /* np2info.h */; };
 		5595B6711D20F6C400DDA319 /* softkbd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6611D20F6C400DDA319 /* softkbd.h */; };
 		5595B6771D20F7C400DDA319 /* mimpidef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5595B6761D20F7C400DDA319 /* mimpidef.h */; };
+		55F74CEC208D3E7D00643F36 /* np2tool.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F74CE9208D3E7D00643F36 /* np2tool.png */; };
+		55F74CED208D3E7D00643F36 /* nekop2.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F74CEA208D3E7D00643F36 /* nekop2.png */; };
+		55F74CEE208D3E7D00643F36 /* np2logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 55F74CEB208D3E7D00643F36 /* np2logo.png */; };
 		55F77298208C013100191A0B /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 55F77297208C013000191A0B /* common.h */; };
 /* End PBXBuildFile section */
 
@@ -716,6 +716,9 @@
 		5595B6651D20F6C400DDA319 /* softkbd3.res */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 2147483649; path = softkbd3.res; sourceTree = "<group>"; };
 		5595B6761D20F7C400DDA319 /* mimpidef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimpidef.h; sourceTree = "<group>"; };
 		55A8D1DB1D20860B00A85AC9 /* ja */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = ja; path = ja.lproj/np2.nib; sourceTree = "<group>"; };
+		55F74CE9208D3E7D00643F36 /* np2tool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = np2tool.png; path = Icon/np2tool.png; sourceTree = "<group>"; };
+		55F74CEA208D3E7D00643F36 /* nekop2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nekop2.png; path = Icon/nekop2.png; sourceTree = "<group>"; };
+		55F74CEB208D3E7D00643F36 /* np2logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = np2logo.png; path = Icon/np2logo.png; sourceTree = "<group>"; };
 		55F77297208C013000191A0B /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		9603DE2C06CFCD4800012F11 /* en */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3406CFCDE000012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = c; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -725,9 +728,6 @@
 		96083FEF05A936740005CD33 /* necio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = necio.c; sourceTree = "<group>"; };
 		9608400C054ED1E900000103 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		961B7003056048F500000103 /* aboutdlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aboutdlg.cpp; sourceTree = "<group>"; };
-		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = nekop2.bmp; path = Icon/nekop2.bmp; sourceTree = "<group>"; };
-		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = np2logo.tiff; path = Icon/np2logo.tiff; sourceTree = "<group>"; };
-		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = np2tool.bmp; path = Icon/np2tool.bmp; sourceTree = "<group>"; };
 		9621596705C3C2630070042E /* emsio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = emsio.c; sourceTree = "<group>"; };
 		962EA92B060C86B500BD925D /* bios1f.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = bios1f.c; sourceTree = "<group>"; };
 		962EA933060C86D500BD925D /* pcidev.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = pcidev.c; sourceTree = "<group>"; };
@@ -1025,11 +1025,11 @@
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				55F74CEA208D3E7D00643F36 /* nekop2.png */,
+				55F74CEB208D3E7D00643F36 /* np2logo.png */,
+				55F74CE9208D3E7D00643F36 /* np2tool.png */,
 				55842EC91D2084C60017B417 /* Info-np2__Upgraded_.plist */,
-				961B70230563FAF800000103 /* nekop2.bmp */,
-				961B70240563FAF800000103 /* np2logo.tiff */,
 				9603DE2B06CFCD4800012F11 /* Localizable.strings */,
-				961B70250563FAF800000103 /* np2tool.bmp */,
 				556F2BC51D20A9EC00335DF9 /* Media.xcassets */,
 				96EFFA58054716B900000102 /* np2.nib */,
 				55793C1B1D2171A50043CD89 /* Non-localized.r */,
@@ -1894,11 +1894,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55F74CED208D3E7D00643F36 /* nekop2.png in Resources */,
+				55F74CEE208D3E7D00643F36 /* np2logo.png in Resources */,
 				55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */,
 				55842DD31D2084C60017B417 /* np2.nib in Resources */,
-				55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */,
-				55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */,
-				55842DDE1D2084C60017B417 /* np2tool.bmp in Resources */,
+				55F74CEC208D3E7D00643F36 /* np2tool.png in Resources */,
 				556F2BC61D20A9EC00335DF9 /* Media.xcassets in Resources */,
 				55842DE31D2084C60017B417 /* Localizable.strings in Resources */,
 			);
