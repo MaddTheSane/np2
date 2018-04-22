@@ -21,7 +21,6 @@
 		553F751D208BE44C00CF8872 /* tcswap16.c in Sources */ = {isa = PBXBuildFile; fileRef = 553F7511208BE44B00CF8872 /* tcswap16.c */; };
 		553F751E208BE44C00CF8872 /* codecnv.h in Headers */ = {isa = PBXBuildFile; fileRef = 553F7512208BE44B00CF8872 /* codecnv.h */; };
 		553F7520208BE50C00CF8872 /* oemtext.h in Headers */ = {isa = PBXBuildFile; fileRef = 553F751F208BE50B00CF8872 /* oemtext.h */; };
-		55538404208D0E3C00946A8F /* dosio.c in Sources */ = {isa = PBXBuildFile; fileRef = 55538403208D0E3C00946A8F /* dosio.c */; };
 		556898EB208AA2020013A224 /* pcmmix.h in Headers */ = {isa = PBXBuildFile; fileRef = 556898E9208AA2020013A224 /* pcmmix.h */; };
 		556898EC208AA2020013A224 /* pcmmix.c in Sources */ = {isa = PBXBuildFile; fileRef = 556898EA208AA2020013A224 /* pcmmix.c */; };
 		556898F8208AA2610013A224 /* oplgeng.c in Sources */ = {isa = PBXBuildFile; fileRef = 556898ED208AA2600013A224 /* oplgeng.c */; };
@@ -305,6 +304,7 @@
 		55842E361D2084C60017B417 /* midiopt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C922D055778CB00000103 /* midiopt.cpp */; };
 		55842E371D2084C60017B417 /* screenopt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C922F055778CB00000103 /* screenopt.cpp */; };
 		55842E381D2084C60017B417 /* soundopt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C9231055778CB00000103 /* soundopt.cpp */; };
+		55842E391D2084C60017B417 /* dosio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C9233055778CB00000103 /* dosio.cpp */; };
 		55842E3A1D2084C60017B417 /* fdefine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C923D055778CB00000103 /* fdefine.cpp */; };
 		55842E3B1D2084C60017B417 /* fontmng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C923F055778CB00000103 /* fontmng.cpp */; };
 		55842E3C1D2084C60017B417 /* hid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 967C9241055778CB00000103 /* hid.cpp */; };
@@ -490,7 +490,6 @@
 		553F7511208BE44B00CF8872 /* tcswap16.c */ = {isa = PBXFileReference; fileEncoding = 8; lastKnownFileType = sourcecode.c.c; path = tcswap16.c; sourceTree = "<group>"; };
 		553F7512208BE44B00CF8872 /* codecnv.h */ = {isa = PBXFileReference; fileEncoding = 8; lastKnownFileType = sourcecode.c.h; path = codecnv.h; sourceTree = "<group>"; };
 		553F751F208BE50B00CF8872 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
-		55538403208D0E3C00946A8F /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dosio.c; sourceTree = "<group>"; };
 		556898E9208AA2020013A224 /* pcmmix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcmmix.h; sourceTree = "<group>"; };
 		556898EA208AA2020013A224 /* pcmmix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcmmix.c; sourceTree = "<group>"; };
 		556898ED208AA2600013A224 /* oplgeng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = oplgeng.c; sourceTree = "<group>"; };
@@ -830,6 +829,7 @@
 		967C922D055778CB00000103 /* midiopt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = midiopt.cpp; sourceTree = "<group>"; };
 		967C922F055778CB00000103 /* screenopt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screenopt.cpp; sourceTree = "<group>"; };
 		967C9231055778CB00000103 /* soundopt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = soundopt.cpp; sourceTree = "<group>"; };
+		967C9233055778CB00000103 /* dosio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dosio.cpp; sourceTree = "<group>"; };
 		967C923D055778CB00000103 /* fdefine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fdefine.cpp; sourceTree = "<group>"; };
 		967C923F055778CB00000103 /* fontmng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontmng.cpp; sourceTree = "<group>"; };
 		967C9241055778CB00000103 /* hid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hid.cpp; sourceTree = "<group>"; };
@@ -1320,7 +1320,7 @@
 				967C921E055778CB00000103 /* commng.cpp */,
 				556F2B641D20A73900335DF9 /* commng.h */,
 				556F2B651D20A73900335DF9 /* compiler.h */,
-				55538403208D0E3C00946A8F /* dosio.c */,
+				967C9233055778CB00000103 /* dosio.cpp */,
 				556F2B661D20A73900335DF9 /* dosio.h */,
 				967C923D055778CB00000103 /* fdefine.cpp */,
 				556F2B671D20A73900335DF9 /* fdefine.h */,
@@ -2018,6 +2018,7 @@
 				55842E361D2084C60017B417 /* midiopt.cpp in Sources */,
 				55842E371D2084C60017B417 /* screenopt.cpp in Sources */,
 				55842E381D2084C60017B417 /* soundopt.cpp in Sources */,
+				55842E391D2084C60017B417 /* dosio.cpp in Sources */,
 				553F7515208BE44C00CF8872 /* tcswap32.c in Sources */,
 				55842E3A1D2084C60017B417 /* fdefine.cpp in Sources */,
 				55842E3B1D2084C60017B417 /* fontmng.cpp in Sources */,
@@ -2144,7 +2145,6 @@
 				553F751A208BE44C00CF8872 /* sjiseuc.c in Sources */,
 				55842EAF1D2084C60017B417 /* softkbd.c in Sources */,
 				55842EB01D2084C60017B417 /* subwind.cpp in Sources */,
-				55538404208D0E3C00946A8F /* dosio.c in Sources */,
 				55842EB11D2084C60017B417 /* gcircle.c in Sources */,
 				55842EB21D2084C60017B417 /* macclnd.cpp in Sources */,
 				55842EB31D2084C60017B417 /* dmav30.c in Sources */,

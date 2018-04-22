@@ -413,13 +413,13 @@ resource 'MENU' (IDM_MEMORY) {
 	"Memory",
 	{	/* array: 5 elements */
 		/* [1] */
-		"640KB", noIcon, noKey, noMark, plain,
+		"640 kB", noIcon, noKey, noMark, plain,
 		/* [2] */
-		"1.6MB", noIcon, noKey, noMark, plain,
+		"1.6 MB", noIcon, noKey, noMark, plain,
 		/* [3] */
-		"3.6MB", noIcon, noKey, noMark, plain,
+		"3.6 MB", noIcon, noKey, noMark, plain,
 		/* [4] */
-		"7.6MB", noIcon, noKey, noMark, plain,
+		"7.6 MB", noIcon, noKey, noMark, plain,
 		/* [5] */
 		"", noIcon, noKey, noMark, plain
 	}
