@@ -300,7 +300,7 @@ void dialog_changehdd(BYTE drv) {
 			if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_SASI)) {
 				if (file_getftype(fname)==FTYPE_HDI || file_getftype(fname)==FTYPE_THD || file_getftype(fname)==FTYPE_NHD) {
 					sysmng_update(SYS_UPDATEOSCFG);
-					diskdrv_sethdd(drv, fname);
+					diskdrv_setsxsi(drv, fname);
 				}
 			}
 		}
@@ -310,7 +310,7 @@ void dialog_changehdd(BYTE drv) {
 			if (dialog_fileselect(fname, sizeof(fname), hWndMain, OPEN_SCSI)) {
 				if (file_getftype(fname)==FTYPE_HDD) {
 					sysmng_update(SYS_UPDATEOSCFG);
-					diskdrv_sethdd(drv, fname);
+					diskdrv_setsxsi(drv, fname);
 				}
 			}
 		}
@@ -332,7 +332,7 @@ void dialog_font(void) {
 }
 
 void dialog_writebmp(void) {
-
+#if 0
 	SCRNBMP	bmp;
 	char	path[MAX_PATH];
 	FILEH	fh;
@@ -350,6 +350,9 @@ void dialog_writebmp(void) {
 		}
 		_MFREE(bmp);
 	}
+#else
+	SysBeep(2);
+#endif
 }
 
 void dialog_s98(void) {

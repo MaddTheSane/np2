@@ -41,6 +41,7 @@
 #include	"keystat.h"
 #include	"subwind.h"
 #include	"macclnd.h"
+#include 	"statsave.h"
 
 #define	NP2OPENING
 // #define	OPENING_WAIT	1500
@@ -312,7 +313,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SASI1REMOVE:
-			diskdrv_sethdd(0, NULL);
+			diskdrv_setsxsi(0, NULL);
 			break;
 
 		case IDM_SASI2OPEN:
@@ -320,7 +321,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SASI2REMOVE:
-			diskdrv_sethdd(1, NULL);
+			diskdrv_setsxsi(1, NULL);
 			break;
 
 #if defined(SUPPORT_SCSI)
@@ -329,7 +330,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SCSI0REMOVE:
-			diskdrv_sethdd(0x20, NULL);
+			diskdrv_setsxsi(0x20, NULL);
 			break;
 
 		case IDM_SCSI1OPEN:
@@ -337,7 +338,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SCSI1REMOVE:
-			diskdrv_sethdd(0x21, NULL);
+			diskdrv_setsxsi(0x21, NULL);
 			break;
 
 		case IDM_SCSI2OPEN:
@@ -345,7 +346,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SCSI2REMOVE:
-			diskdrv_sethdd(0x22, NULL);
+			diskdrv_setsxsi(0x22, NULL);
 			break;
 
 		case IDM_SCSI3OPEN:
@@ -353,7 +354,7 @@ void HandleMenuChoice(long wParam) {
 			break;
 
 		case IDM_SCSI3REMOVE:
-			diskdrv_sethdd(0x23, NULL);
+			diskdrv_setsxsi(0x23, NULL);
 			break;
 #endif
 
@@ -843,7 +844,6 @@ int main(int argc, char *argv[]) {
 	UINT32		tick;
 #endif
   
-	dosio_init();
 	file_setcd(target);
 
 	InitToolBox();
@@ -899,7 +899,6 @@ int main(int argc, char *argv[]) {
 	if (scrnmng_create(scrnmode) != SUCCESS) {
 		TRACETERM();
 		macossub_term();
-		dosio_term();
 		DisposeWindow(hWndMain);
 		return(0);
 	}
@@ -1062,7 +1061,6 @@ int main(int argc, char *argv[]) {
 	skbdwin_deinitialize();
 	TRACETERM();
 	macossub_term();
-	dosio_term();
 
     toolwin_close();
 	DisposeWindow(hWndMain);

@@ -18,6 +18,8 @@
 #include	"hid.h"
 #include	"soundopt.h"
 #include	"dipswbmp.h"
+#include	"tms3631.h"
+#include	"fmboard.h"
 
 #define	getControlValue(a,b)		GetControl32BitValue(getControlRefByID(a,b,soundWin))
 #define	setControlValue(a,b,c)		SetControl32BitValue(getControlRefByID(a,b,soundWin),c)
@@ -190,9 +192,16 @@ static void changeSoundOpt(void) {
     opngen_setvol(np2cfg.vol_fm);
     psggen_setvol(np2cfg.vol_ssg);
     rhythm_setvol(np2cfg.vol_rhythm);
-    rhythm_update(&rhythm);
+	for (int i = 0; i < OPNA_MAX; i++)
+	{
+		rhythm_update(&g_opna[i].rhythm);
+	}
+
     adpcm_setvol(np2cfg.vol_adpcm);
-    adpcm_update(&adpcm);
+	for (int i = 0; i < OPNA_MAX; i++)
+	{
+		adpcm_update(&g_opna[i].adpcm);
+	}
     pcm86gen_setvol(np2cfg.vol_pcm);
     pcm86gen_update();
 

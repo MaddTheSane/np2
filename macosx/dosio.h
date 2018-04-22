@@ -5,17 +5,15 @@ enum {
 	FTYPE_INI		= -1		// Tool Window iniファイル
 };
 
-#define	FILEH			FSIORefNum
-#define	FILEH_INVALID	((FILEH)-1)
+typedef FILE *				FILEH;
+#define	FILEH_INVALID		NULL
 
-#define	FLISTH				void *
-#define	FLISTH_INVALID		((FLISTH)0)
+#define	FLISTH				long
+#define	FLISTH_INVALID		0
 
-enum {
-	FSEEK_SET	= 0,
-	FSEEK_CUR	= 1,
-	FSEEK_END	= 2
-};
+#define	FSEEK_SET	SEEK_SET
+#define	FSEEK_CUR	SEEK_CUR
+#define	FSEEK_END	SEEK_END
 
 enum {
 	FILEATTR_READONLY	= 0x01,
@@ -34,15 +32,15 @@ enum {
 };
 
 typedef struct {
-	UINT16	year;		// cx
-	BYTE	month;		// dh
-	BYTE	day;		// dl
+	UINT16	year;		/* cx */
+	UINT8	month;		/* dh */
+	UINT8	day;		/* dl */
 } DOSDATE;
 
 typedef struct {
-	BYTE	hour;		// ch
-	BYTE	minute;		// cl
-	BYTE	second;		// dh
+	UINT8	hour;		/* ch */
+	UINT8	minute;		/* cl */
+	UINT8	second;		/* dh */
 } DOSTIME;
 
 typedef struct {
@@ -59,10 +57,7 @@ typedef struct {
 extern "C" {
 #endif
 
-											// DOSIO:関数の準備
-void dosio_init(void);
-void dosio_term(void);
-											// ファイル操作
+/* ファイル操作 */
 FILEH file_open(const char *path);
 FILEH file_open_rb(const char *path);
 FILEH file_create(const char *path);
@@ -74,9 +69,11 @@ UINT file_getsize(FILEH handle);
 short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime);
 short file_delete(const char *path);
 short file_attr(const char *path);
+short file_rename(const char *existpath, const char *newpath);
 short file_dircreate(const char *path);
+short file_dirdelete(const char *path);
 
-											// カレントファイル操作
+/* カレントファイル操作 */
 void file_setcd(const char *exepath);
 char *file_getcd(const char *path);
 FILEH file_open_c(const char *path);
@@ -86,13 +83,14 @@ short file_delete_c(const char *path);
 short file_attr_c(const char *path);
 
 FLISTH file_list1st(const char *dir, FLINFO *fli);
-BOOL file_listnext(FLISTH hdl, FLINFO *fli);
+BRESULT file_listnext(FLISTH hdl, FLINFO *fli);
 void file_listclose(FLISTH hdl);
 BOOL getLongFileName(char *dst, const char *path);
+BOOL getLongFileNameCFStr(CFStringRef *CF_RETURNS_RETAINED dst, const char *path);
 
-#define	file_cpyname(a, b, c)	milsjis_ncpy(a, b, c)
-#define	file_cmpname(a, b)		milsjis_cmp(a, b)
-void file_catname(char *path, const char *sjis, int maxlen);
+#define file_cpyname(p, n, m)	milstr_ncpy(p, n, m)
+#define file_cmpname(p, n)		milstr_cmp(p, n)
+void file_catname(char *path, const char *name, int maxlen);
 char *file_getname(const char *path);
 void file_cutname(char *path);
 char *file_getext(const char *path);

@@ -216,8 +216,7 @@ const char		*p;
 	for (i=0; i<fdd->cnt; i++) {
         SInt32		attr = kMenuItemAttrIconDisabled;
 		p = fdd->name[fdd->pos[i]];
-        success = getLongFileName(cfname, p);
-        str = CFStringCreateWithCString(NULL, cfname, CFStringGetSystemEncoding());
+        success = getLongFileNameCFStr(&str, p);
         if (str) {
 			if (success) {
 				if (file_attr(p) != FILEATTR_ARCHIVE) {
@@ -665,7 +664,7 @@ OSErr setDropFile(FSSpec spec, int drv) {
         
         case FTYPE_THD:
         case FTYPE_HDI:
-            diskdrv_sethdd(0, fname);
+            diskdrv_setsxsi(0, fname);
             break;
             
         default:
