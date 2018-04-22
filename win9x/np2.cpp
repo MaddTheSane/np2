@@ -147,9 +147,9 @@ static int messagebox(HWND hWnd, LPCTSTR lpcszText, UINT uType)
 // ----
 
 /**
- * ƒŠƒ\[ƒX DLL ‚ğƒ[ƒh
- * @param[in] hInstance Œ³‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
- * @return ƒCƒ“ƒXƒ^ƒ“ƒX
+ * ãƒªã‚½ãƒ¼ã‚¹ DLL ã‚’ãƒ­ãƒ¼ãƒ‰
+ * @param[in] hInstance å…ƒã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+ * @return ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
  */
 static HINSTANCE LoadExternalResource(HINSTANCE hInstance)
 {
@@ -171,7 +171,7 @@ static HINSTANCE LoadExternalResource(HINSTANCE hInstance)
 }
 
 /**
- * ƒŠƒ\[ƒX‚ÌƒAƒ“ƒ[ƒh
+ * ãƒªã‚½ãƒ¼ã‚¹ã®ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰
  */
 static void UnloadExternalResource()
 {
@@ -217,7 +217,7 @@ WINLOCEX np2_winlocexallwin(HWND base) {
 			list[i] = NULL;
 		}
 	}
-	if (base != g_hWndMain) {		// hWndMain‚Ì‚İ‘S‘ÌˆÚ“®
+	if (base != g_hWndMain) {		// hWndMainã®ã¿å…¨ä½“ç§»å‹•
 		base = NULL;
 	}
 	return(winlocex_create(base, list, cnt));
@@ -404,8 +404,8 @@ static int flagload(HWND hWnd, const OEMCHAR *ext, LPCTSTR title, BOOL force)
 #endif
 
 /**
- * ƒTƒEƒ“ƒhƒfƒoƒCƒX‚ÌÄƒI[ƒvƒ“
- * @param[in] hWnd ƒEƒBƒ“ƒhƒE ƒnƒ“ƒhƒ‹
+ * ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã®å†ã‚ªãƒ¼ãƒ—ãƒ³
+ * @param[in] hWnd ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ãƒãƒ³ãƒ‰ãƒ«
  */
 static void OpenSoundDevice(HWND hWnd)
 {
@@ -1473,8 +1473,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 /**
- * 1ƒtƒŒ[ƒ€Às
- * @param[in] bDraw •`‰æƒtƒ‰ƒO
+ * 1ãƒ•ãƒ¬ãƒ¼ãƒ å®Ÿè¡Œ
+ * @param[in] bDraw æç”»ãƒ•ãƒ©ã‚°
  */
 static void ExecuteOneFrame(BOOL bDraw)
 {
@@ -1692,7 +1692,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 
 	np2opening = 0;
 
-	// ‚ê‚¶‚¤‚Ş
+	// ã‚Œã˜ã†ã‚€
 #if defined(SUPPORT_RESUME)
 	if (np2oscfg.resume) {
 		int		id;
@@ -1718,7 +1718,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 	}
 #endif
 
-//	ƒŠƒZƒbƒg‚µ‚Ä‚©‚çc ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚ÌƒfƒBƒXƒN‘}“üB
+//	ãƒªã‚»ãƒƒãƒˆã—ã¦ã‹ã‚‰â€¦ ã‚³ãƒãƒ³ãƒ‰ãƒ©ã‚¤ãƒ³ã®ãƒ‡ã‚£ã‚¹ã‚¯æŒ¿å…¥ã€‚
 	for (i = 0; i < 4; i++)
 	{
 		LPCTSTR lpDisk = Np2Arg::GetInstance()->disk(i);

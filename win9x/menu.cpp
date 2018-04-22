@@ -1,6 +1,6 @@
 /**
  * @file	menu.cpp
- * @brief	ƒƒjƒ…[‚ÌéŒ¾‚¨‚æ‚ÑƒCƒ“ƒ^[ƒtƒFƒCƒX‚Ì’è‹`‚ğ‚µ‚Ü‚·
+ * @brief	ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®å®£è¨€ãŠã‚ˆã³ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å®šç¾©ã‚’ã—ã¾ã™
  */
 
 #include "compiler.h"
@@ -20,12 +20,12 @@
 #endif
 
 /**
- * ƒƒjƒ…[“à‚Ìw’è‚³‚ê‚½ˆÊ’u‚ÉAV‚µ‚¢ƒƒjƒ…[€–Ú‚ğ‘}“ü‚µ‚Ü‚·
- * @param[in] hMenu ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
- * @param[in] uItem ¯•Êq‚Ü‚½‚ÍˆÊ’u
- * @param[in] fByPosition uItem ƒpƒ‰ƒ[ƒ^‚ÌˆÓ–¡
- * @param[in] hPopup ’Ç‰Á‚·‚éƒƒjƒ…[
- * @return ’Ç‰Á‚µ‚½€–Ú”
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼å†…ã®æŒ‡å®šã•ã‚ŒãŸä½ç½®ã«ã€æ–°ã—ã„ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã‚’æŒ¿å…¥ã—ã¾ã™
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] uItem è­˜åˆ¥å­ã¾ãŸã¯ä½ç½®
+ * @param[in] fByPosition uItem ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æ„å‘³
+ * @param[in] hPopup è¿½åŠ ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+ * @return è¿½åŠ ã—ãŸé …ç›®æ•°
  */
 UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup)
 {
@@ -64,10 +64,10 @@ UINT InsertMenuPopup(HMENU hMenu, UINT uItem, BOOL fByPosition, HMENU hPopup)
 }
 
 /**
- * V‚µ‚¢ƒƒjƒ…[€–Ú‚ğ’Ç‰Á‚µ‚Ü‚·
- * @param[in] hMenu ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
- * @param[in] nMenuID ’Ç‰Á‚·‚éƒƒjƒ…[ ID
- * @return ’Ç‰Á‚µ‚½€–Ú”
+ * æ–°ã—ã„ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã‚’è¿½åŠ ã—ã¾ã™
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] nMenuID è¿½åŠ ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ID
+ * @return è¿½åŠ ã—ãŸé …ç›®æ•°
  */
 UINT AppendMenuResource(HMENU hMenu, UINT nMenuID)
 {
@@ -75,12 +75,12 @@ UINT AppendMenuResource(HMENU hMenu, UINT nMenuID)
 }
 
 /**
- * ƒƒjƒ…[“à‚Ìw’è‚³‚ê‚½ˆÊ’u‚ÉAV‚µ‚¢ƒƒjƒ…[€–Ú‚ğ‘}“ü‚µ‚Ü‚·
- * @param[in] hMenu ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
- * @param[in] uItem ¯•Êq‚Ü‚½‚ÍˆÊ’u
- * @param[in] fByPosition uItem ƒpƒ‰ƒ[ƒ^‚ÌˆÓ–¡
- * @param[in] nMenuID ’Ç‰Á‚·‚éƒƒjƒ…[ ID
- * @return ’Ç‰Á‚µ‚½€–Ú”
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼å†…ã®æŒ‡å®šã•ã‚ŒãŸä½ç½®ã«ã€æ–°ã—ã„ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã‚’æŒ¿å…¥ã—ã¾ã™
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] uItem è­˜åˆ¥å­ã¾ãŸã¯ä½ç½®
+ * @param[in] fByPosition uItem ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®æ„å‘³
+ * @param[in] nMenuID è¿½åŠ ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ID
+ * @return è¿½åŠ ã—ãŸé …ç›®æ•°
  */
 UINT InsertMenuResource(HMENU hMenu, UINT uItem, BOOL fByPosition, UINT nMenuID)
 {
@@ -91,11 +91,11 @@ UINT InsertMenuResource(HMENU hMenu, UINT uItem, BOOL fByPosition, UINT nMenuID)
 }
 
 /**
- * ƒƒjƒ…[‚ğ’Ç‰Á‚·‚é
- * @param[in] hMenu ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
- * @param[in] uFlags ƒIƒvƒVƒ‡ƒ“
- * @param[in] uIDNewItem ¯•ÊqAƒƒjƒ…[AƒTƒuƒƒjƒ…[‚Ì‚¢‚¸‚ê‚©
- * @retval ŠÖ”‚ª¬Œ÷‚·‚é‚ÆA0 ˆÈŠO‚Ì’l‚ª•Ô‚è‚Ü‚·
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’è¿½åŠ ã™ã‚‹
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] uFlags ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+ * @param[in] uIDNewItem è­˜åˆ¥å­ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã€ã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã„ãšã‚Œã‹
+ * @retval é–¢æ•°ãŒæˆåŠŸã™ã‚‹ã¨ã€0 ä»¥å¤–ã®å€¤ãŒè¿”ã‚Šã¾ã™
  */
 static BOOL AppendMenuString(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem)
 {
@@ -118,12 +118,12 @@ static BOOL AppendMenuString(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem)
 }
 
 /**
- * ƒƒjƒ…[‚ğ‘}“ü‚·‚é
- * @param[in] hMenu ƒƒjƒ…[‚Ìƒnƒ“ƒhƒ‹
- * @param[in] uItem ‘}“ü‚·‚é‚×‚«ƒƒjƒ…[€–Ú‚Ì’¼Œã‚ÉˆÊ’u‚·‚éƒƒjƒ…[€–Ú‚Ì¯•Êq‚Ü‚½‚ÍˆÊ’u‚ğw’è‚µ‚Ü‚·
- * @param[in] uFlags ƒIƒvƒVƒ‡ƒ“
- * @param[in] uIDNewItem ¯•ÊqAƒƒjƒ…[AƒTƒuƒƒjƒ…[‚Ì‚¢‚¸‚ê‚©
- * @retval ŠÖ”‚ª¬Œ÷‚·‚é‚ÆA0 ˆÈŠO‚Ì’l‚ª•Ô‚è‚Ü‚·
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’æŒ¿å…¥ã™ã‚‹
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] uItem æŒ¿å…¥ã™ã‚‹ã¹ããƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã®ç›´å¾Œã«ä½ç½®ã™ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ã®è­˜åˆ¥å­ã¾ãŸã¯ä½ç½®ã‚’æŒ‡å®šã—ã¾ã™
+ * @param[in] uFlags ã‚ªãƒ—ã‚·ãƒ§ãƒ³
+ * @param[in] uIDNewItem è­˜åˆ¥å­ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã€ã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã„ãšã‚Œã‹
+ * @retval é–¢æ•°ãŒæˆåŠŸã™ã‚‹ã¨ã€0 ä»¥å¤–ã®å€¤ãŒè¿”ã‚Šã¾ã™
  */
 static BOOL InsertMenuString(HMENU hMenu, UINT uItem, UINT uFlags, UINT_PTR uIDNewItem)
 {
@@ -146,11 +146,11 @@ static BOOL InsertMenuString(HMENU hMenu, UINT uItem, UINT uFlags, UINT_PTR uIDN
 }
 
 /**
- * ƒƒjƒ…[ ƒI[ƒi[‚ğŒŸõ
- * @param[in] hMenu ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
- * @param[in] uItem ƒƒjƒ…[ ƒAƒCƒeƒ€
- * @param[out] pnPos Œ©‚Â‚©‚Á‚½ˆÊ’u
- * @return ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ã‚ªãƒ¼ãƒŠãƒ¼ã‚’æ¤œç´¢
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
+ * @param[in] uItem ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ã‚¢ã‚¤ãƒ†ãƒ 
+ * @param[out] pnPos è¦‹ã¤ã‹ã£ãŸä½ç½®
+ * @return ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
  */
 HMENU GetMenuOwner(HMENU hMenu, UINT uItem, int* pnPos)
 {
@@ -189,8 +189,8 @@ HMENU GetMenuOwner(HMENU hMenu, UINT uItem, int* pnPos)
 // ----
 
 /**
- * ƒVƒXƒeƒ€ ƒƒjƒ…[‰Šú‰»
- * @param[in] hMenu ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
+ * ã‚·ã‚¹ãƒ†ãƒ  ãƒ¡ãƒ‹ãƒ¥ãƒ¼åˆæœŸåŒ–
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
  */
 void sysmenu_initialize(HMENU hMenu)
 {
@@ -216,8 +216,8 @@ void sysmenu_initialize(HMENU hMenu)
 }
 
 /**
- * ƒVƒXƒeƒ€ ƒƒjƒ…[XV
- * @param[in] hMenu ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
+ * ã‚·ã‚¹ãƒ†ãƒ  ãƒ¡ãƒ‹ãƒ¥ãƒ¼æ›´æ–°
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
  */
 void sysmenu_update(HMENU hMenu)
 {
@@ -244,8 +244,8 @@ void sysmenu_update(HMENU hMenu)
 // ----
 
 /**
- * ƒƒjƒ…[‰Šú‰»
- * @param[in] ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼åˆæœŸåŒ–
+ * @param[in] ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
  */
 void xmenu_initialize(HMENU hMenu)
 {
@@ -303,8 +303,8 @@ void xmenu_initialize(HMENU hMenu)
 }
 
 /**
- * ƒƒjƒ…[ó‘Ô‚ğXV‚·‚é
- * @param[in] hMenu ƒƒjƒ…[ ƒnƒ“ƒhƒ‹
+ * ãƒ¡ãƒ‹ãƒ¥ãƒ¼çŠ¶æ…‹ã‚’æ›´æ–°ã™ã‚‹
+ * @param[in] hMenu ãƒ¡ãƒ‹ãƒ¥ãƒ¼ ãƒãƒ³ãƒ‰ãƒ«
  */
 void xmenu_update(HMENU hMenu)
 {

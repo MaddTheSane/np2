@@ -53,7 +53,7 @@ typedef struct {
 extern "C" {
 #endif
 
-extern	SCRNMNG		scrnmng;			// É}ÉNÉçóp
+extern	SCRNMNG		scrnmng;			// „Éû„ÇØ„É≠Áî®
 
 void scrnmng_initialize(void);
 BRESULT scrnmng_create(UINT8 scrnmode);

@@ -21,7 +21,7 @@ static const KEYBIND keybind[] = {
 					{SDLK_RIGHT,	KEY_RIGHT},
 					{SDLK_RETURN,	KEY_ENTER},
 					{SDLK_ESCAPE,	KEY_MENU},
-					{SDLK_TAB,		KEY_SKIP}};		/* Ç∆ÇËÇ†Ç¶Ç∏ÇÀÅc */
+					{SDLK_TAB,		KEY_SKIP}};		/* „Å®„Çä„ÅÇ„Åà„Åö„Å≠‚Ä¶ */
 
 
 // ----

@@ -240,7 +240,7 @@ WINLOCEX winlocex_create(HWND base, const HWND *child, UINT count) {
 	wnd = (WLEXWND *)(ret + 1);
 
 	if (base) {
-		// e‚ÆÚ‘±‚³‚ê‚Ä‚éH
+		// è¦ªã¨æŽ¥ç¶šã•ã‚Œã¦ã‚‹ï¼Ÿ
 		ret->base = base;
 		GetWindowRect(base, &ret->rect);
 		for (i=0; i<inlist; i++) {
@@ -259,7 +259,7 @@ WINLOCEX winlocex_create(HWND base, const HWND *child, UINT count) {
 				}
 			}
 		}
-		// Žq‚ÆÚ‘±‚³‚ê‚Ä‚éH
+		// å­ã¨æŽ¥ç¶šã•ã‚Œã¦ã‚‹ï¼Ÿ
 		p = (WLEXWND *)(ret + 1);
 		for (i=0; i<ret->count; i++, p++) {
 			for (j=0; j<inlist; j++) {
@@ -514,7 +514,7 @@ void winlocex_moving(WINLOCEX wle, RECT *rect) {
 		return;
 	}
 
-	// ‚Ð‚Á‚Â‚¢‚Ä‚½Žž
+	// ã²ã£ã¤ã„ã¦ãŸæ™‚
 	if (wle->flagx) {
 		d = rect->left - wle->tx;
 		wle->gx += d;
@@ -540,7 +540,7 @@ void winlocex_moving(WINLOCEX wle, RECT *rect) {
 		}
 	}
 
-	// ƒŠƒŠ[ƒXˆ—
+	// ãƒªãƒªãƒ¼ã‚¹å‡¦ç†
 	num = wle->flagx - 1;
 	if (num < wle->count) {
 		rc = &(((WLEXWND *)(wle + 1))[num].rect);
@@ -564,7 +564,7 @@ void winlocex_moving(WINLOCEX wle, RECT *rect) {
 		}
 	}
 
-	// d—Í
+	// é‡åŠ›
 	do {
 		changes = FALSE;
 		if (!wle->flagx) {

@@ -1,5 +1,5 @@
 //
-// FDC ��PD765A
+// FDC μPD765A
 //
 
 
@@ -117,7 +117,7 @@ void fdcsend_success7(void) {
 }
 
 #if 0
-// FDC�̃^�C���A�E�g			�܂��{���͂���Ȃ񂶂�_�������ǁc	ver0.29
+// FDCのタイムアウト			まぁ本当はこんなんじゃダメだけど…	ver0.29
 void fdctimeoutproc(NEVENTITEM item) {
 
 	fdc.stat[fdc.us] = FDCRLT_IC0 | FDCRLT_EN | (fdc.hd << 2) | fdc.us;
@@ -774,16 +774,16 @@ static REG8 IOINPCALL fdc_i94(UINT port) {
 	if (!(port & 0x10))		/* CC */
 	{
 		ret |= 0x20;		/* DMA */
-		ret |= 0x10;		/* ready�𗧂Ă��� */
+		ret |= 0x10;		/* readyを立てるるる */
 	}
 
 	if (pccore.dipsw[0] & 8)
 	{
-		ret |= 0x04;		/* �����D�� */
+		ret |= 0x04;		/* 内蔵優先 */
 	}
 	else
 	{
-		ret |= 0x08;		/* �O�t���D�� */
+		ret |= 0x08;		/* 外付け優先 */
 	}
 
 	return ret;

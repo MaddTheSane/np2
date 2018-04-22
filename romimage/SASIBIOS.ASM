@@ -109,7 +109,7 @@ boot:			cmp		al, 0x0a
 .exit:			retf
 
 
-; MS-DOS‚ª‚±‚ÌŠ„‚è‚İ‚ğg—p‚·‚é...
+; MS-DOSãŒã“ã®å‰²ã‚Šè¾¼ã¿ã‚’ä½¿ç”¨ã™ã‚‹...
 
 sasiint:		push	ax
 				in		al, 0x82

@@ -1,6 +1,6 @@
 /**
  * @file	d_screen.cpp
- * @brief	ƒXƒNƒŠ[ƒ“İ’èƒ_ƒCƒAƒƒO
+ * @brief	ã‚¹ã‚¯ãƒªãƒ¼ãƒ³è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
  */
 
 #include "compiler.h"
@@ -20,7 +20,7 @@
 #include "vram\palettes.h"
 
 /**
- * @brief Video ƒy[ƒW
+ * @brief Video ãƒšãƒ¼ã‚¸
  */
 class ScrOptVideoPage : public CPropPageProc
 {
@@ -35,11 +35,11 @@ protected:
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
 
 private:
-	CSliderValue m_skiplight;		//!< ƒXƒLƒbƒvƒ‰ƒCƒ“
+	CSliderValue m_skiplight;		//!< ã‚¹ã‚­ãƒƒãƒ—ãƒ©ã‚¤ãƒ³
 };
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptVideoPage::ScrOptVideoPage()
 	: CPropPageProc(IDD_SCROPT1)
@@ -47,16 +47,16 @@ ScrOptVideoPage::ScrOptVideoPage()
 }
 
 /**
- * ƒfƒXƒgƒ‰ƒNƒ^
+ * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptVideoPage::~ScrOptVideoPage()
 {
 }
 
 /**
- * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
- * @retval FALSE Šù‚Éİ’èÏ
+ * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+ * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
  */
 BOOL ScrOptVideoPage::OnInitDialog()
 {
@@ -74,7 +74,7 @@ BOOL ScrOptVideoPage::OnInitDialog()
 }
 
 /**
- * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
  */
 void ScrOptVideoPage::OnOK()
 {
@@ -120,10 +120,10 @@ void ScrOptVideoPage::OnOK()
 }
 
 /**
- * ƒ†[ƒU[‚ªƒƒjƒ…[‚Ì€–Ú‚ğ‘I‘ğ‚µ‚½‚Æ‚«‚ÉAƒtƒŒ[ƒ€ƒ[ƒN‚É‚æ‚Á‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @param[in] wParam ƒpƒ‰ƒƒ^
- * @param[in] lParam ƒpƒ‰ƒƒ^
- * @retval TRUE ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ª‚±‚ÌƒƒbƒZ[ƒW‚ğˆ—‚µ‚½
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é …ç›®ã‚’é¸æŠã—ãŸã¨ãã«ã€ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¯ãƒ¼ã‚¯ã«ã‚ˆã£ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @param[in] wParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @param[in] lParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @retval TRUE ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãŒã“ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ã—ãŸ
  */
 BOOL ScrOptVideoPage::OnCommand(WPARAM wParam, LPARAM lParam)
 {
@@ -137,11 +137,11 @@ BOOL ScrOptVideoPage::OnCommand(WPARAM wParam, LPARAM lParam)
 }
 
 /**
- * CWndProc ƒIƒuƒWƒFƒNƒg‚Ì Windows ƒvƒƒV[ƒWƒƒ (WindowProc) ‚ª—pˆÓ‚³‚ê‚Ä‚¢‚Ü‚·
- * @param[in] nMsg ˆ—‚³‚ê‚é Windows ƒƒbƒZ[ƒW‚ğw’è‚µ‚Ü‚·
- * @param[in] wParam ƒƒbƒZ[ƒW‚Ìˆ—‚Åg‚¤•t‰Áî•ñ‚ğ’ñ‹Ÿ‚µ‚Ü‚·B‚±‚Ìƒpƒ‰ƒ[ƒ^‚Ì’l‚ÍƒƒbƒZ[ƒW‚ÉˆË‘¶‚µ‚Ü‚·
- * @param[in] lParam ƒƒbƒZ[ƒW‚Ìˆ—‚Åg‚¤•t‰Áî•ñ‚ğ’ñ‹Ÿ‚µ‚Ü‚·B‚±‚Ìƒpƒ‰ƒ[ƒ^‚Ì’l‚ÍƒƒbƒZ[ƒW‚ÉˆË‘¶‚µ‚Ü‚·
- * @return ƒƒbƒZ[ƒW‚ÉˆË‘¶‚·‚é’l‚ğ•Ô‚µ‚Ü‚·
+ * CWndProc ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã® Windows ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ (WindowProc) ãŒç”¨æ„ã•ã‚Œã¦ã„ã¾ã™
+ * @param[in] nMsg å‡¦ç†ã•ã‚Œã‚‹ Windows ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æŒ‡å®šã—ã¾ã™
+ * @param[in] wParam ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†ã§ä½¿ã†ä»˜åŠ æƒ…å ±ã‚’æä¾›ã—ã¾ã™ã€‚ã“ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã—ã¾ã™
+ * @param[in] lParam ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†ã§ä½¿ã†ä»˜åŠ æƒ…å ±ã‚’æä¾›ã—ã¾ã™ã€‚ã“ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã—ã¾ã™
+ * @return ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã™ã‚‹å€¤ã‚’è¿”ã—ã¾ã™
  */
 LRESULT ScrOptVideoPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -164,7 +164,7 @@ LRESULT ScrOptVideoPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 
 // ----
 /**
- * @brief Chip ƒy[ƒW
+ * @brief Chip ãƒšãƒ¼ã‚¸
  */
 class ScrOptChipPage : public CPropPageProc
 {
@@ -177,20 +177,20 @@ protected:
 };
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptChipPage::ScrOptChipPage()
 	: CPropPageProc(IDD_SCROPT2)
 {
 }
 
-//! GDC ƒ`ƒbƒv
+//! GDC ãƒãƒƒãƒ—
 static const UINT s_gdcchip[4] = {IDC_GRCGNON, IDC_GRCG, IDC_GRCG2, IDC_EGC};
 
 /**
- * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
- * @retval FALSE Šù‚Éİ’èÏ
+ * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+ * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
  */
 BOOL ScrOptChipPage::OnInitDialog()
 {
@@ -215,7 +215,7 @@ BOOL ScrOptChipPage::OnInitDialog()
 }
 
 /**
- * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
  */
 void ScrOptChipPage::OnOK()
 {
@@ -263,7 +263,7 @@ void ScrOptChipPage::OnOK()
 // ----
 
 /**
- * @brief Timing ƒy[ƒW
+ * @brief Timing ãƒšãƒ¼ã‚¸
  */
 class ScrOptTimingPage : public CPropPageProc
 {
@@ -280,11 +280,11 @@ private:
 	CSliderValue m_tram;	//!< TRAM
 	CSliderValue m_vram;	//!< VRAM
 	CSliderValue m_grcg;	//!< GRCG
-	CSliderValue m_raster;	//!< ƒ‰ƒXƒ^
+	CSliderValue m_raster;	//!< ãƒ©ã‚¹ã‚¿
 };
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptTimingPage::ScrOptTimingPage()
 	: CPropPageProc(IDD_SCROPT3)
@@ -292,16 +292,16 @@ ScrOptTimingPage::ScrOptTimingPage()
 }
 
 /**
- * ƒfƒXƒgƒ‰ƒNƒ^
+ * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptTimingPage::~ScrOptTimingPage()
 {
 }
 
 /**
- * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
- * @retval FALSE Šù‚Éİ’èÏ
+ * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+ * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
  */
 BOOL ScrOptTimingPage::OnInitDialog()
 {
@@ -329,7 +329,7 @@ BOOL ScrOptTimingPage::OnInitDialog()
 }
 
 /**
- * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
  */
 void ScrOptTimingPage::OnOK()
 {
@@ -368,11 +368,11 @@ void ScrOptTimingPage::OnOK()
 }
 
 /**
- * CWndProc ƒIƒuƒWƒFƒNƒg‚Ì Windows ƒvƒƒV[ƒWƒƒ (WindowProc) ‚ª—pˆÓ‚³‚ê‚Ä‚¢‚Ü‚·
- * @param[in] nMsg ˆ—‚³‚ê‚é Windows ƒƒbƒZ[ƒW‚ğw’è‚µ‚Ü‚·
- * @param[in] wParam ƒƒbƒZ[ƒW‚Ìˆ—‚Åg‚¤•t‰Áî•ñ‚ğ’ñ‹Ÿ‚µ‚Ü‚·B‚±‚Ìƒpƒ‰ƒ[ƒ^‚Ì’l‚ÍƒƒbƒZ[ƒW‚ÉˆË‘¶‚µ‚Ü‚·
- * @param[in] lParam ƒƒbƒZ[ƒW‚Ìˆ—‚Åg‚¤•t‰Áî•ñ‚ğ’ñ‹Ÿ‚µ‚Ü‚·B‚±‚Ìƒpƒ‰ƒ[ƒ^‚Ì’l‚ÍƒƒbƒZ[ƒW‚ÉˆË‘¶‚µ‚Ü‚·
- * @return ƒƒbƒZ[ƒW‚ÉˆË‘¶‚·‚é’l‚ğ•Ô‚µ‚Ü‚·
+ * CWndProc ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã® Windows ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ (WindowProc) ãŒç”¨æ„ã•ã‚Œã¦ã„ã¾ã™
+ * @param[in] nMsg å‡¦ç†ã•ã‚Œã‚‹ Windows ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æŒ‡å®šã—ã¾ã™
+ * @param[in] wParam ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†ã§ä½¿ã†ä»˜åŠ æƒ…å ±ã‚’æä¾›ã—ã¾ã™ã€‚ã“ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã—ã¾ã™
+ * @param[in] lParam ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å‡¦ç†ã§ä½¿ã†ä»˜åŠ æƒ…å ±ã‚’æä¾›ã—ã¾ã™ã€‚ã“ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å€¤ã¯ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã—ã¾ã™
+ * @return ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«ä¾å­˜ã™ã‚‹å€¤ã‚’è¿”ã—ã¾ã™
  */
 LRESULT ScrOptTimingPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -408,7 +408,7 @@ LRESULT ScrOptTimingPage::WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam)
 // ----
 
 /**
- * @brief Fullscreen ƒy[ƒW
+ * @brief Fullscreen ãƒšãƒ¼ã‚¸
  */
 class ScrOptFullscreenPage : public CPropPageProc
 {
@@ -422,10 +422,10 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 private:
-	CComboData m_zoom;				//!< ƒY[ƒ€
+	CComboData m_zoom;				//!< ã‚ºãƒ¼ãƒ 
 };
 
-//! ƒY[ƒ€ ƒŠƒXƒg
+//! ã‚ºãƒ¼ãƒ  ãƒªã‚¹ãƒˆ
 static const CComboData::Entry s_zoom[] =
 {
 	{MAKEINTRESOURCE(IDS_ZOOM_NONE),			0},
@@ -435,7 +435,7 @@ static const CComboData::Entry s_zoom[] =
 };
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptFullscreenPage::ScrOptFullscreenPage()
 	: CPropPageProc(IDD_SCROPT_FULLSCREEN)
@@ -443,16 +443,16 @@ ScrOptFullscreenPage::ScrOptFullscreenPage()
 }
 
 /**
- * ƒfƒXƒgƒ‰ƒNƒ^
+ * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 ScrOptFullscreenPage::~ScrOptFullscreenPage()
 {
 }
 
 /**
- * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
- * @retval FALSE Šù‚Éİ’èÏ
+ * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+ * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
  */
 BOOL ScrOptFullscreenPage::OnInitDialog()
 {
@@ -469,7 +469,7 @@ BOOL ScrOptFullscreenPage::OnInitDialog()
 }
 
 /**
- * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
  */
 void ScrOptFullscreenPage::OnOK()
 {
@@ -491,10 +491,10 @@ void ScrOptFullscreenPage::OnOK()
 }
 
 /**
- * ƒ†[ƒU[‚ªƒƒjƒ…[‚Ì€–Ú‚ğ‘I‘ğ‚µ‚½‚Æ‚«‚ÉAƒtƒŒ[ƒ€ƒ[ƒN‚É‚æ‚Á‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @param[in] wParam ƒpƒ‰ƒƒ^
- * @param[in] lParam ƒpƒ‰ƒƒ^
- * @retval TRUE ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ª‚±‚ÌƒƒbƒZ[ƒW‚ğˆ—‚µ‚½
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é …ç›®ã‚’é¸æŠã—ãŸã¨ãã«ã€ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¯ãƒ¼ã‚¯ã«ã‚ˆã£ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @param[in] wParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @param[in] lParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @retval TRUE ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãŒã“ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ã—ãŸ
  */
 BOOL ScrOptFullscreenPage::OnCommand(WPARAM wParam, LPARAM lParam)
 {
@@ -511,8 +511,8 @@ BOOL ScrOptFullscreenPage::OnCommand(WPARAM wParam, LPARAM lParam)
 // ----
 
 /**
- * ƒXƒNƒŠ[ƒ“İ’è
- * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+ * ã‚¹ã‚¯ãƒªãƒ¼ãƒ³è¨­å®š
+ * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  */
 void dialog_scropt(HWND hwndParent)
 {

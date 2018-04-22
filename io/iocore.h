@@ -82,7 +82,7 @@ void iocore_attachcmnoutex(UINT port, UINT mask,
 void iocore_attachcmninpex(UINT port, UINT mask,
 											const IOINP *func, UINT funcs);
 
-// システムI/O - 10bit decode
+// 繧ｷ繧ｹ繝�繝I/O - 10bit decode
 void iocore_attachsysout(UINT port, IOOUT func);
 void iocore_attachsysinp(UINT port, IOINP func);
 void iocore_attachsysoutex(UINT port, UINT mask,
@@ -90,11 +90,11 @@ void iocore_attachsysoutex(UINT port, UINT mask,
 void iocore_attachsysinpex(UINT port, UINT mask,
 											const IOINP *func, UINT funcs);
 
-// サウンドI/O - 12bit decode
+// 繧ｵ繧ｦ繝ｳ繝迂/O - 12bit decode
 BRESULT iocore_attachsndout(UINT port, IOOUT func);
 BRESULT iocore_attachsndinp(UINT port, IOINP func);
 
-// 拡張I/O - 16bit decode
+// 諡｡蠑ｵI/O - 16bit decode
 BRESULT iocore_attachout(UINT port, IOOUT func);
 BRESULT iocore_attachinp(UINT port, IOINP func);
 

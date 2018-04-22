@@ -5,7 +5,7 @@
 #define	TRACEOUT(s)	trace_fmt s
 #endif	/* 0 */
 
-// ‚±‚êAscsicmd‚Æ‚Ç‚¤“‡‚·‚é‚Ì‚æH
+// ã“ã‚Œã€scsicmdã¨ã©ã†çµ±åˆã™ã‚‹ã®ã‚ˆï¼Ÿ
 
 #if defined(SUPPORT_IDEIO)
 
@@ -23,7 +23,7 @@
 // INQUIRY
 static const UINT8 cdrom_inquiry[] = {
 #ifdef YUIDEBUG
-	// ‚¤‚¿‚Ìƒhƒ‰ƒCƒu‚Ì“z NECCD‚Í Product Level 3.00ˆÈã‚Å modesense10‚ÌƒR[ƒh‚ª‚¿‚°[
+	// ã†ã¡ã®ãƒ‰ãƒ©ã‚¤ãƒ–ã®å¥´ NECCDã¯ Product Level 3.00ä»¥ä¸Šã§ modesense10ã®ã‚³ãƒ¼ãƒ‰ãŒã¡ã’ãƒ¼
 	0x05,	// CD-ROM
 	0x80,	// bit7: Removable Medium Bit, other: Reserved
 	0x00,	// version [7-6: ISO, ECMA: 5-3, 2-0: ANSI(00)]
@@ -278,7 +278,7 @@ static void atapi_cmd_read_capacity(IDEDRV drv) {
 // 0x28: READ(10)
 void atapi_dataread(IDEDRV drv) {
 
-	// ƒGƒ‰[ˆ—–Ú’ƒ‹ê’ƒ`
+	// ã‚¨ãƒ©ãƒ¼å‡¦ç†ç›®èŒ¶è‹¦èŒ¶ã€œ
 	if (drv->nsectors == 0) {
 		sendabort(drv);
 		return;

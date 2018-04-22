@@ -1,6 +1,6 @@
 /**
  *	@file	joymng.cpp
- *	@brief	ƒWƒ‡ƒCƒpƒbƒh“ü—Í‚Ì“®ì‚Ì’è‹`‚ğs‚¢‚Ü‚·
+ *	@brief	ã‚¸ãƒ§ã‚¤ãƒ‘ãƒƒãƒ‰å…¥åŠ›ã®å‹•ä½œã®å®šç¾©ã‚’è¡Œã„ã¾ã™
  */
 
 #include "compiler.h"
@@ -10,24 +10,24 @@
 #pragma comment(lib, "winmm.lib")
 
 /**
- * ƒrƒbƒg’è‹`
+ * ãƒ“ãƒƒãƒˆå®šç¾©
  */
 enum
 {
-	JOY_LEFT_BIT	= 0x04,		//!< ¶
-	JOY_RIGHT_BIT	= 0x08,		//!< ‰E
-	JOY_UP_BIT		= 0x01,		//!< ã
-	JOY_DOWN_BIT	= 0x02,		//!< ‰º
-	JOY_BTN1_BIT	= 0x10,		//!< ƒ{ƒ^ƒ“1
-	JOY_BTN2_BIT	= 0x20		//!< ƒ{ƒ^ƒ“2
+	JOY_LEFT_BIT	= 0x04,		//!< å·¦
+	JOY_RIGHT_BIT	= 0x08,		//!< å³
+	JOY_UP_BIT		= 0x01,		//!< ä¸Š
+	JOY_DOWN_BIT	= 0x02,		//!< ä¸‹
+	JOY_BTN1_BIT	= 0x10,		//!< ãƒœã‚¿ãƒ³1
+	JOY_BTN2_BIT	= 0x20		//!< ãƒœã‚¿ãƒ³2
 };
 
-static bool s_bEnabled = false;				//!< —LŒøƒtƒ‰ƒO
-static UINT8 s_cJoyFlag = 0;				//!< ƒXƒe[ƒ^ƒX
-static UINT8 s_sJoyPad1ButtonBit[4];		//!< ƒpƒbƒh‚ÉŠ„‚è“–‚Ä‚½ƒ{ƒ^ƒ“ ƒrƒbƒg
+static bool s_bEnabled = false;				//!< æœ‰åŠ¹ãƒ•ãƒ©ã‚°
+static UINT8 s_cJoyFlag = 0;				//!< ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
+static UINT8 s_sJoyPad1ButtonBit[4];		//!< ãƒ‘ãƒƒãƒ‰ã«å‰²ã‚Šå½“ã¦ãŸãƒœã‚¿ãƒ³ ãƒ“ãƒƒãƒˆ
 
 /**
- * ‰Šú‰»
+ * åˆæœŸåŒ–
  */
 void joymng_initialize()
 {
@@ -40,8 +40,8 @@ void joymng_initialize()
 }
 
 /**
- * —LŒø?
- * @return —LŒøƒtƒ‰ƒO
+ * æœ‰åŠ¹?
+ * @return æœ‰åŠ¹ãƒ•ãƒ©ã‚°
  */
 bool joymng_isEnabled()
 {
@@ -49,7 +49,7 @@ bool joymng_isEnabled()
 }
 
 /**
- * “¯Šú
+ * åŒæœŸ
  */
 void joymng_sync()
 {
@@ -57,8 +57,8 @@ void joymng_sync()
 }
 
 /**
- * ƒXƒe[ƒ^ƒX‚ğ“¾‚é
- * @return ƒXƒe[ƒ^ƒX
+ * ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’å¾—ã‚‹
+ * @return ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
  */
 REG8 joymng_getstat(void)
 {

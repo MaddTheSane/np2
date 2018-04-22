@@ -1,6 +1,6 @@
 /**
  *	@file	joymng.h
- *	@brief	�W���C�p�b�h���͂̐錾����уC���^�[�t�F�C�X�̒�`�����܂�
+ *	@brief	ジョイパッド入力の宣言およびインターフェイスの定義をします
  */
 
 #pragma once

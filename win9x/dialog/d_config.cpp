@@ -1,6 +1,6 @@
 /**
  * @file	d_config.cpp
- * @brief	İ’èƒ_ƒCƒAƒƒO
+ * @brief	è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
  */
 
 #include "compiler.h"
@@ -22,8 +22,8 @@
 #include "common/strres.h"
 
 /**
- * @brief İ’èƒ_ƒCƒAƒƒO
- * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+ * @brief è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+ * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  */
 class CConfigureDlg : public CDlgProc
 {
@@ -36,11 +36,11 @@ protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 private:
-	CComboData m_baseClock;			//!< ƒx[ƒX ƒNƒƒbƒN
-	CComboData m_multiple;			//!< ”{—¦
-	CComboData m_type;				//!< ƒ^ƒCƒv
-	CComboData m_name;				//!< ƒfƒoƒCƒX–¼
-	CComboData m_rate;				//!< ƒŒ[ƒg
+	CComboData m_baseClock;			//!< ãƒ™ãƒ¼ã‚¹ ã‚¯ãƒ­ãƒƒã‚¯
+	CComboData m_multiple;			//!< å€ç‡
+	CComboData m_type;				//!< ã‚¿ã‚¤ãƒ—
+	CComboData m_name;				//!< ãƒ‡ãƒã‚¤ã‚¹å
+	CComboData m_rate;				//!< ãƒ¬ãƒ¼ãƒˆ
 	std::vector<LPCTSTR> m_dsound3;	//!< DSound3
 	std::vector<LPCTSTR> m_wasapi;	//!< WASAPI
 	std::vector<LPCTSTR> m_asio;	//!< ASIO
@@ -48,25 +48,25 @@ private:
 	void UpdateDeviceList();
 };
 
-//! ƒRƒ“ƒ{ ƒ{ƒbƒNƒX ƒAƒCƒeƒ€
+//! ã‚³ãƒ³ãƒœ ãƒœãƒƒã‚¯ã‚¹ ã‚¢ã‚¤ãƒ†ãƒ 
 static const CComboData::Entry s_baseclock[] =
 {
 	{MAKEINTRESOURCE(IDS_2_0MHZ),	PCBASECLOCK20},
 	{MAKEINTRESOURCE(IDS_2_5MHZ),	PCBASECLOCK25},
 };
 
-//! ”{—¦ƒŠƒXƒg
+//! å€ç‡ãƒªã‚¹ãƒˆ
 static const UINT32 s_mulval[10] = {1, 2, 4, 5, 6, 8, 10, 12, 16, 20};
 
-//! ƒNƒƒbƒN ƒtƒH[ƒ}ƒbƒg
+//! ã‚¯ãƒ­ãƒƒã‚¯ ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 static const TCHAR str_clockfmt[] = _T("%2u.%.4u");
 
-//! ƒTƒ“ƒvƒŠƒ“ƒO ƒŒ[ƒg
+//! ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚° ãƒ¬ãƒ¼ãƒˆ
 static const UINT32 s_nSamplingRate[] = {11025, 22050, 44100, 48000, 88200, 96000};
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
- * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+ * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  */
 CConfigureDlg::CConfigureDlg(HWND hwndParent)
 	: CDlgProc(IDD_CONFIG, hwndParent)
@@ -74,9 +74,9 @@ CConfigureDlg::CConfigureDlg(HWND hwndParent)
 }
 
 /**
- * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
- * @retval FALSE Šù‚Éİ’èÏ
+ * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+ * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
  */
 BOOL CConfigureDlg::OnInitDialog()
 {
@@ -104,7 +104,7 @@ BOOL CConfigureDlg::OnInitDialog()
 	}
 	CheckDlgButton(nModel, BST_CHECKED);
 
-	// ƒTƒEƒ“ƒhŠÖŒW
+	// ã‚µã‚¦ãƒ³ãƒ‰é–¢ä¿‚
 	m_type.SubclassDlgItem(IDC_SOUND_DEVICE_TYPE, this);
 
 	CSoundDeviceDSound3::EnumerateDevices(m_dsound3);
@@ -200,7 +200,7 @@ BOOL CConfigureDlg::OnInitDialog()
 }
 
 /**
- * ƒŠƒXƒgXV
+ * ãƒªã‚¹ãƒˆæ›´æ–°
  */
 void CConfigureDlg::UpdateDeviceList()
 {
@@ -244,7 +244,7 @@ void CConfigureDlg::UpdateDeviceList()
 }
 
 /**
- * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
  */
 void CConfigureDlg::OnOK()
 {
@@ -358,10 +358,10 @@ void CConfigureDlg::OnOK()
 }
 
 /**
- * ƒ†[ƒU[‚ªƒƒjƒ…[‚Ì€–Ú‚ğ‘I‘ğ‚µ‚½‚Æ‚«‚ÉAƒtƒŒ[ƒ€ƒ[ƒN‚É‚æ‚Á‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
- * @param[in] wParam ƒpƒ‰ƒƒ^
- * @param[in] lParam ƒpƒ‰ƒƒ^
- * @retval TRUE ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ª‚±‚ÌƒƒbƒZ[ƒW‚ğˆ—‚µ‚½
+ * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®é …ç›®ã‚’é¸æŠã—ãŸã¨ãã«ã€ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¯ãƒ¼ã‚¯ã«ã‚ˆã£ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+ * @param[in] wParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @param[in] lParam ãƒ‘ãƒ©ãƒ¡ã‚¿
+ * @retval TRUE ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãŒã“ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ã—ãŸ
  */
 BOOL CConfigureDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
@@ -394,8 +394,8 @@ BOOL CConfigureDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 }
 
 /**
- * ƒNƒƒbƒN‚ğİ’è‚·‚é
- * @param[in] nMultiple ”{—¦
+ * ã‚¯ãƒ­ãƒƒã‚¯ã‚’è¨­å®šã™ã‚‹
+ * @param[in] nMultiple å€ç‡
  */
 void CConfigureDlg::SetClock(UINT nMultiple)
 {
@@ -415,8 +415,8 @@ void CConfigureDlg::SetClock(UINT nMultiple)
 }
 
 /**
- * İ’èƒ_ƒCƒAƒƒO
- * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+ * è¨­å®šãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+ * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  */
 void dialog_configure(HWND hwndParent)
 {

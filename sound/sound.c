@@ -174,7 +174,7 @@ static void streamfilewrite(PSNDSTREAM sndstream, UINT nSamples)
 			{
 				nSample = -32768;
 			}
-			/* little endian�Ȃ̂� satuation_s16�͎g���Ȃ� */
+			/* little endianなので satuation_s16は使えない */
 			buf[i][0] = (UINT8)nSample;
 			buf[i][1] = (UINT8)(nSample >> 8);
 		}
@@ -317,11 +317,11 @@ void sound_changeclock(void)
 		return;
 	}
 
-	/* �Ƃ肠���� 25�Ŋ���؂��B */
+	/* とりあえず 25で割り切れる。 */
 	clk = pccore.realclock / 25;
 	hz = soundcfg.rate / 25;
 
-	/* �ŁA�N���b�N���ɍ����Ē����B(64bit���Z�����ȓI) */
+	/* で、クロック数に合せて調整。(64bit演算しろよな的) */
 	hzmax = (1 << (32 - 8)) / (clk >> 8);
 	while (hzmax < hz)
 	{
@@ -394,8 +394,8 @@ void sound_sync(void)
 static volatile int locks = 0;
 
 /**
- * PCM �o�b�t�@�𓾂� (�t���[�����[�N����Ă΂��)
- * @return �o�b�t�@
+ * PCM バッファを得る (フレームワークから呼ばれる)
+ * @return バッファ
  */
 const SINT32 *sound_pcmlock(void)
 {
@@ -435,8 +435,8 @@ const SINT32 *sound_pcmlock(void)
 }
 
 /**
- * PCM �o�b�t�@���������
- * @param[in] hdl �o�b�t�@
+ * PCM バッファを解放する
+ * @param[in] hdl バッファ
  */
 void sound_pcmunlock(const SINT32 *hdl)
 {

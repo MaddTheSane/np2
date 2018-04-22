@@ -1,6 +1,6 @@
 /**
  * @file	sddsound3.cpp
- * @brief	DSound3 ƒI[ƒfƒBƒI ƒNƒ‰ƒX‚Ì“®ì‚Ì’è‹`‚ğs‚¢‚Ü‚·
+ * @brief	DSound3 ã‚ªãƒ¼ãƒ‡ã‚£ã‚ª ã‚¯ãƒ©ã‚¹ã®å‹•ä½œã®å®šç¾©ã‚’è¡Œã„ã¾ã™
  */
 
 #include "compiler.h"
@@ -14,13 +14,13 @@
 #endif	// !defined(__GNUC__)
 
 #ifndef DSBVOLUME_MAX
-#define DSBVOLUME_MAX		0							/*!< ƒ”ƒHƒŠƒ…[ƒ€Å‘å’l */
+#define DSBVOLUME_MAX		0							/*!< ãƒ´ã‚©ãƒªãƒ¥ãƒ¼ãƒ æœ€å¤§å€¤ */
 #endif
 #ifndef DSBVOLUME_MIN
-#define DSBVOLUME_MIN		(-10000)					/*!< ƒ”ƒHƒŠƒ…[ƒ€Å¬’l */
+#define DSBVOLUME_MIN		(-10000)					/*!< ãƒ´ã‚©ãƒªãƒ¥ãƒ¼ãƒ æœ€å°å€¤ */
 #endif
 
-//! ƒfƒoƒCƒX ƒŠƒXƒg
+//! ãƒ‡ãƒã‚¤ã‚¹ ãƒªã‚¹ãƒˆ
 std::vector<DSound3Device> CSoundDeviceDSound3::sm_devices;
 
 /**
@@ -43,7 +43,7 @@ struct Chunk
 };
 
 /**
- * ‰Šú‰»
+ * åˆæœŸåŒ–
  */
 void CSoundDeviceDSound3::Initialize()
 {
@@ -51,12 +51,12 @@ void CSoundDeviceDSound3::Initialize()
 }
 
 /**
- * ƒfƒoƒCƒX—ñ‹“ƒR[ƒ‹ƒoƒbƒN
+ * ãƒ‡ãƒã‚¤ã‚¹åˆ—æŒ™ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
  * @param[in] lpGuid GUID
- * @param[in] lpcstrDescription ƒfƒoƒCƒX–¼
- * @param[in] lpcstrModule ƒ‚ƒWƒ…[ƒ‹–¼
- * @param[in] lpContext ƒRƒ“ƒeƒLƒXƒg
- * @retval TRUE Œp‘±
+ * @param[in] lpcstrDescription ãƒ‡ãƒã‚¤ã‚¹å
+ * @param[in] lpcstrModule ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«å
+ * @param[in] lpContext ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+ * @retval TRUE ç¶™ç¶š
  */
 BOOL CALLBACK CSoundDeviceDSound3::EnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDescription, LPCTSTR lpcstrModule, LPVOID lpContext)
 {
@@ -72,8 +72,8 @@ BOOL CALLBACK CSoundDeviceDSound3::EnumCallback(LPGUID lpGuid, LPCTSTR lpcstrDes
 }
 
 /**
- * —ñ‹“
- * @param[out] devices ƒfƒoƒCƒX ƒŠƒXƒg
+ * åˆ—æŒ™
+ * @param[out] devices ãƒ‡ãƒã‚¤ã‚¹ ãƒªã‚¹ãƒˆ
  */
 void CSoundDeviceDSound3::EnumerateDevices(std::vector<LPCTSTR>& devices)
 {
@@ -84,7 +84,7 @@ void CSoundDeviceDSound3::EnumerateDevices(std::vector<LPCTSTR>& devices)
 }
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 CSoundDeviceDSound3::CSoundDeviceDSound3()
 	: m_lpDSound(NULL)
@@ -97,7 +97,7 @@ CSoundDeviceDSound3::CSoundDeviceDSound3()
 }
 
 /**
- * ƒfƒXƒgƒ‰ƒNƒ^
+ * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 CSoundDeviceDSound3::~CSoundDeviceDSound3()
 {
@@ -105,11 +105,11 @@ CSoundDeviceDSound3::~CSoundDeviceDSound3()
 }
 
 /**
- * ƒI[ƒvƒ“
- * @param[in] lpDevice ƒfƒoƒCƒX–¼
- * @param[in] hWnd ƒEƒBƒ“ƒhƒE ƒnƒ“ƒhƒ‹
- * @retval true ¬Œ÷
- * @retval false ¸”s
+ * ã‚ªãƒ¼ãƒ—ãƒ³
+ * @param[in] lpDevice ãƒ‡ãƒã‚¤ã‚¹å
+ * @param[in] hWnd ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ ãƒãƒ³ãƒ‰ãƒ«
+ * @retval true æˆåŠŸ
+ * @retval false å¤±æ•—
  */
 bool CSoundDeviceDSound3::Open(LPCTSTR lpDevice, HWND hWnd)
 {
@@ -133,7 +133,7 @@ bool CSoundDeviceDSound3::Open(LPCTSTR lpDevice, HWND hWnd)
 		lpGuid = const_cast<LPGUID>(&it->guid);
 	}
 
-	// DirectSound‚Ì‰Šú‰»
+	// DirectSoundã®åˆæœŸåŒ–
 	LPDIRECTSOUND lpDSound;
 	if (FAILED(DirectSoundCreate(lpGuid, &lpDSound, 0)))
 	{
@@ -153,7 +153,7 @@ bool CSoundDeviceDSound3::Open(LPCTSTR lpDevice, HWND hWnd)
 }
 
 /**
- * ƒNƒ[ƒY
+ * ã‚¯ãƒ­ãƒ¼ã‚º
  */
 void CSoundDeviceDSound3::Close()
 {
@@ -168,11 +168,11 @@ void CSoundDeviceDSound3::Close()
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚Ìì¬
- * @param[in] nSamplingRate ƒTƒ“ƒvƒŠƒ“ƒO ƒŒ[ƒg
- * @param[in] nChannels ƒ`ƒƒƒlƒ‹”
- * @param[in] nBufferSize ƒoƒbƒtƒ@ ƒTƒCƒY
- * @return ƒoƒbƒtƒ@ ƒTƒCƒY
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®ä½œæˆ
+ * @param[in] nSamplingRate ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚° ãƒ¬ãƒ¼ãƒˆ
+ * @param[in] nChannels ãƒãƒ£ãƒãƒ«æ•°
+ * @param[in] nBufferSize ãƒãƒƒãƒ•ã‚¡ ã‚µã‚¤ã‚º
+ * @return ãƒãƒƒãƒ•ã‚¡ ã‚µã‚¤ã‚º
  */
 UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT nBufferSize)
 {
@@ -247,7 +247,7 @@ UINT CSoundDeviceDSound3::CreateStream(UINT nSamplingRate, UINT nChannels, UINT 
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚ğ”jŠü
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ç ´æ£„
  */
 void CSoundDeviceDSound3::DestroyStream()
 {
@@ -278,7 +278,7 @@ void CSoundDeviceDSound3::DestroyStream()
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚ğƒŠƒZƒbƒg
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ãƒªã‚»ãƒƒãƒˆ
  */
 void CSoundDeviceDSound3::ResetStream()
 {
@@ -302,9 +302,9 @@ void CSoundDeviceDSound3::ResetStream()
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚ÌÄ¶
- * @retval true ¬Œ÷
- * @retval false ¸”s
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®å†ç”Ÿ
+ * @retval true æˆåŠŸ
+ * @retval false å¤±æ•—
  */
 bool CSoundDeviceDSound3::PlayStream()
 {
@@ -320,7 +320,7 @@ bool CSoundDeviceDSound3::PlayStream()
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚Ì’â~
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®åœæ­¢
  */
 void CSoundDeviceDSound3::StopStream()
 {
@@ -331,9 +331,9 @@ void CSoundDeviceDSound3::StopStream()
 }
 
 /**
- * “¯Šú
- * @retval true Œp‘±
- * @retval false I—¹
+ * åŒæœŸ
+ * @retval true ç¶™ç¶š
+ * @retval false çµ‚äº†
  */
 bool CSoundDeviceDSound3::Task()
 {
@@ -362,8 +362,8 @@ bool CSoundDeviceDSound3::Task()
 }
 
 /**
- * ƒXƒgƒŠ[ƒ€‚ğXV‚·‚é
- * @param[in] dwPosition XVˆÊ’u
+ * ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’æ›´æ–°ã™ã‚‹
+ * @param[in] dwPosition æ›´æ–°ä½ç½®
  */
 void CSoundDeviceDSound3::FillStream(DWORD dwPosition)
 {
@@ -393,7 +393,7 @@ void CSoundDeviceDSound3::FillStream(DWORD dwPosition)
 }
 
 /**
- * PCM ƒoƒbƒtƒ@‚ğ”jŠü‚·‚é
+ * PCM ãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„ã™ã‚‹
  */
 void CSoundDeviceDSound3::DestroyAllPCM()
 {
@@ -407,7 +407,7 @@ void CSoundDeviceDSound3::DestroyAllPCM()
 }
 
 /**
- * PCM ‚ğƒXƒgƒbƒv
+ * PCM ã‚’ã‚¹ãƒˆãƒƒãƒ—
  */
 void CSoundDeviceDSound3::StopAllPCM()
 {
@@ -419,11 +419,11 @@ void CSoundDeviceDSound3::StopAllPCM()
 }
 
 /**
- * PCM ƒf[ƒ^“Ç‚İ‚İ
- * @param[in] nNum PCM ”Ô†
- * @param[in] lpFilename ƒtƒ@ƒCƒ‹–¼
- * @retval true ¬Œ÷
- * @retval false ¸”s
+ * PCM ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
+ * @param[in] nNum PCM ç•ªå·
+ * @param[in] lpFilename ãƒ•ã‚¡ã‚¤ãƒ«å
+ * @retval true æˆåŠŸ
+ * @retval false å¤±æ•—
  */
 bool CSoundDeviceDSound3::LoadPCM(UINT nNum, LPCTSTR lpFilename)
 {
@@ -442,9 +442,9 @@ bool CSoundDeviceDSound3::LoadPCM(UINT nNum, LPCTSTR lpFilename)
 }
 
 /**
- * PCM ƒf[ƒ^“Ç‚İ‚İ
- * @param[in] lpFilename ƒtƒ@ƒCƒ‹–¼
- * @return ƒoƒbƒtƒ@
+ * PCM ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
+ * @param[in] lpFilename ãƒ•ã‚¡ã‚¤ãƒ«å
+ * @return ãƒãƒƒãƒ•ã‚¡
  */
 LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 {
@@ -557,8 +557,8 @@ LPDIRECTSOUNDBUFFER CSoundDeviceDSound3::CreateWaveBuffer(LPCTSTR lpFilename)
 }
 
 /**
- * PCM ‚ğƒAƒ“ƒ[ƒh
- * @param[in] nNum PCM ”Ô†
+ * PCM ã‚’ã‚¢ãƒ³ãƒ­ãƒ¼ãƒ‰
+ * @param[in] nNum PCM ç•ªå·
  */
 void CSoundDeviceDSound3::UnloadPCM(UINT nNum)
 {
@@ -574,9 +574,9 @@ void CSoundDeviceDSound3::UnloadPCM(UINT nNum)
 }
 
 /**
- * PCM ƒ”ƒHƒŠƒ…[ƒ€İ’è
- * @param[in] nNum PCM ”Ô†
- * @param[in] nVolume ƒ”ƒHƒŠƒ…[ƒ€
+ * PCM ãƒ´ã‚©ãƒªãƒ¥ãƒ¼ãƒ è¨­å®š
+ * @param[in] nNum PCM ç•ªå·
+ * @param[in] nVolume ãƒ´ã‚©ãƒªãƒ¥ãƒ¼ãƒ 
  */
 void CSoundDeviceDSound3::SetPCMVolume(UINT nNum, int nVolume)
 {
@@ -589,11 +589,11 @@ void CSoundDeviceDSound3::SetPCMVolume(UINT nNum, int nVolume)
 }
 
 /**
- * PCM Ä¶
- * @param[in] nNum PCM ”Ô†
- * @param[in] bLoop ƒ‹[ƒv ƒtƒ‰ƒO
- * @retval true ¬Œ÷
- * @retval false ¸”s
+ * PCM å†ç”Ÿ
+ * @param[in] nNum PCM ç•ªå·
+ * @param[in] bLoop ãƒ«ãƒ¼ãƒ— ãƒ•ãƒ©ã‚°
+ * @retval true æˆåŠŸ
+ * @retval false å¤±æ•—
  */
 bool CSoundDeviceDSound3::PlayPCM(UINT nNum, BOOL bLoop)
 {
@@ -609,8 +609,8 @@ bool CSoundDeviceDSound3::PlayPCM(UINT nNum, BOOL bLoop)
 }
 
 /**
- * PCM ’â~
- * @param[in] nNum PCM ”Ô†
+ * PCM åœæ­¢
+ * @param[in] nNum PCM ç•ªå·
  */
 void CSoundDeviceDSound3::StopPCM(UINT nNum)
 {

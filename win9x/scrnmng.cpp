@@ -32,7 +32,7 @@
 #pragma comment(lib, "dxguid.lib")
 #endif	// !defined(__GNUC__)
 
-//! 8BPP ƒpƒŒƒbƒg”
+//! 8BPP ãƒ‘ãƒ¬ãƒƒãƒˆæ•°
 #define PALLETES_8BPP	NP2PAL_TEXT3
 
 extern WINLOCEX np2_winlocexallwin(HWND base);
@@ -154,7 +154,7 @@ static void renewalclientsize(BOOL winloc) {
 	height = min(scrnstat.height, ddraw.height);
 	extend = 0;
 
-	// •`‰æ”ÍˆÍ`
+	// æç”»ç¯„å›²ã€œ
 	if (ddraw.scrnmode & SCRNMODE_FULLSCREEN) {
 		ddraw.rect.right = width;
 		ddraw.rect.bottom = height;
@@ -193,7 +193,7 @@ static void renewalclientsize(BOOL winloc) {
 		ddraw.scrn.right = ddraw.scrn.left + scrnwidth;
 		ddraw.scrn.bottom = ddraw.scrn.top + scrnheight;
 
-		// ƒƒjƒ…[•\¦‚Ì•`‰æ—Ìˆæ
+		// ãƒ¡ãƒ‹ãƒ¥ãƒ¼è¡¨ç¤ºæ™‚ã®æç”»é ˜åŸŸ
 		ddraw.rectclip = ddraw.rect;
 		ddraw.scrnclip = ddraw.scrn;
 		if (ddraw.scrnclip.top < ddraw.menusize) {

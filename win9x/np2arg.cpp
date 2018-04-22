@@ -1,20 +1,20 @@
 /**
  *	@file	np2arg.cpp
- *	@brief	ˆø”î•ñƒNƒ‰ƒX‚Ì“®ì‚Ì’è‹`‚ğs‚¢‚Ü‚·
+ *	@brief	å¼•æ•°æƒ…å ±ã‚¯ãƒ©ã‚¹ã®å‹•ä½œã®å®šç¾©ã‚’è¡Œã„ã¾ã™
  */
 
 #include "compiler.h"
 #include "np2arg.h"
 #include "dosio.h"
 
-#define	MAXARG		32				//!< Å‘åˆø”ƒGƒ“ƒgƒŠ”
-#define	ARG_BASE	1				//!< win32 ‚Ì lpszCmdLine ‚Ìê‡‚ÌŠJnƒGƒ“ƒgƒŠ
+#define	MAXARG		32				//!< æœ€å¤§å¼•æ•°ã‚¨ãƒ³ãƒˆãƒªæ•°
+#define	ARG_BASE	1				//!< win32 ã® lpszCmdLine ã®å ´åˆã®é–‹å§‹ã‚¨ãƒ³ãƒˆãƒª
 
-//! —Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Å‚·
+//! å”¯ä¸€ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã§ã™
 Np2Arg Np2Arg::sm_instance;
 
 /**
- * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+ * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 Np2Arg::Np2Arg()
 {
@@ -22,7 +22,7 @@ Np2Arg::Np2Arg()
 }
 
 /**
- * ƒfƒXƒgƒ‰ƒNƒ^
+ * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
  */
 Np2Arg::~Np2Arg()
 {
@@ -30,11 +30,11 @@ Np2Arg::~Np2Arg()
 }
 
 /**
- * ƒp[ƒX
+ * ãƒ‘ãƒ¼ã‚¹
  */
 void Np2Arg::Parse()
 {
-	// ˆø”“Ç‚İo‚µ
+	// å¼•æ•°èª­ã¿å‡ºã—
 	free(m_lpArg);
 	m_lpArg = _tcsdup(::GetCommandLine());
 
@@ -75,7 +75,7 @@ void Np2Arg::Parse()
 }
 
 /**
- * ƒfƒBƒXƒNî•ñ‚ğƒNƒŠƒA
+ * ãƒ‡ã‚£ã‚¹ã‚¯æƒ…å ±ã‚’ã‚¯ãƒªã‚¢
  */
 void Np2Arg::ClearDisk()
 {

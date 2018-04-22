@@ -3,7 +3,7 @@
 #include	"common.h"
 #include	"dosio.h"
 
-// ----------------------------------------- ÉÅÉCÉì
+// ----------------------------------------- „É°„Ç§„É≥
 
 int main(int argc, BYTE *argv[], BYTE *envp[]) {
 
@@ -14,11 +14,11 @@ int main(int argc, BYTE *argv[], BYTE *envp[]) {
 	WORD	j;
 
 	if (argc < 2) {
-		printf("ÉtÉ@ÉCÉãÇéwíËÇµÇƒâ∫Ç≥Ç¢.\n");
+		printf("„Éï„Ç°„Ç§„É´„ÇíÊåáÂÆö„Åó„Å¶‰∏ã„Åï„ÅÑ.\n");
 		return(1);
 	}
 	if ((fh = file_open(argv[1])) == -1) {
-		printf("ÉtÉ@ÉCÉãÇ™å©Ç¬Ç©ÇËÇ‹ÇπÇÒ.\n");
+		printf("„Éï„Ç°„Ç§„É´„ÅåË¶ã„Å§„Åã„Çä„Åæ„Åõ„Çì.\n");
 		return(2);
 	}
 

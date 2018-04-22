@@ -7,7 +7,7 @@
 #include	"iocore.h"
 
 
-// ‚Æ‚è‚ ‚¦‚¸ config #1 type0ŒÅ’è‚Åc
+// ã¨ã‚Šã‚ãˆãš config #1 type0å›ºå®šã§â€¦
 
 static void pcidevset10(UINT32 addr, REG8 dat) {
 

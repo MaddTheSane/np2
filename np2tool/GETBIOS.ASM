@@ -133,14 +133,14 @@ makehddrom:		test	byte [getbios_cfg], GETBIOS_HDD
 				cli
 				mov		ah, 0x30
 				call	scsirecv
-				push	ax					; ï\
+				push	ax					; Ë°®
 				and		al, 0xbf
 				call	scsirecv
 				mov		ax, 0xa800
 				mov		cx, 0x1000
 				call	memorycopy
 				pop		ax
-				push	ax					; ó†
+				push	ax					; Ë£è
 				or		al, 0x40
 				call	scsirecv
 				mov		ax, 0xaa00

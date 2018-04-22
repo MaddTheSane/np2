@@ -192,7 +192,7 @@ nonhlt:			mov		edi, SS_BASE
 }
 
 
-// I286xÉãÅ[É`ÉìÇÃÉçÅ[ÉJÉãÇ©ÇÁÇÃäÑÇËçûÇ›
+// I286x„É´„Éº„ÉÅ„É≥„ÅÆ„É≠„Éº„Ç´„É´„Åã„Çâ„ÅÆÂâ≤„ÇäËæº„Åø
 LABEL void __fastcall i286x_localint(void) {
 
 	__asm {
@@ -231,7 +231,7 @@ LABEL void __fastcall i286x_localint(void) {
 }
 
 
-// ÉvÉçÉeÉNÉgÉÇÅ[ÉhÇÃÉZÉåÉNÉ^(in ax / ret eax)
+// „Éó„É≠„ÉÜ„ÇØ„Éà„É¢„Éº„Éâ„ÅÆ„Çª„É¨„ÇØ„Çø(in ax / ret eax)
 LABEL void __fastcall i286x_selector(void) {
 
 	__asm {
@@ -384,7 +384,7 @@ I286 add_ea_r8(void) {							// 00: add EA, REG8
 				PREPART_EA_REG8(2)
 					add		byte ptr I286_REG[eax], dl
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					add		byte ptr I286_MEM[ecx], dl
@@ -404,7 +404,7 @@ I286 add_ea_r16(void) {							// 01: add EA, REG16
 				PREPART_EA_REG16(2)
 					add		word ptr I286_REG[eax*2], dx
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					add		word ptr I286_MEM[ecx], dx
@@ -494,7 +494,7 @@ I286 or_ea_r8(void) {							// 08: or EA, REG8
 				PREPART_EA_REG8(2)
 					or		byte ptr I286_REG[eax], dl
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					or		byte ptr I286_MEM[ecx], dl
@@ -514,7 +514,7 @@ I286 or_ea_r16(void) {							// 09: or EA, REG16
 				PREPART_EA_REG16(2)
 					or		word ptr I286_REG[eax*2], dx
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					or		word ptr I286_MEM[ecx], dx
@@ -588,7 +588,7 @@ I286 adc_ea_r8(void) {							// 10: adc EA, REG8
 					CFLAG_LOAD
 					adc		byte ptr I286_REG[eax], dl
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					CFLAG_LOAD
@@ -611,7 +611,7 @@ I286 adc_ea_r16(void) {							// 11: adc EA, REG16
 					CFLAG_LOAD
 					adc		word ptr I286_REG[eax*2], dx
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					CFLAG_LOAD
@@ -717,7 +717,7 @@ I286 sbb_ea_r8(void) {							// 18: sbb EA, REG8
 					CFLAG_LOAD
 					sbb		byte ptr I286_REG[eax], dl
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					CFLAG_LOAD
@@ -740,7 +740,7 @@ I286 sbb_ea_r16(void) {							// 19: sbb EA, REG16
 					CFLAG_LOAD
 					sbb		word ptr I286_REG[eax*2], dx
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					CFLAG_LOAD
@@ -837,7 +837,7 @@ I286 and_ea_r8(void) {							// 20: and EA, REG8
 				PREPART_EA_REG8(2)
 					and		byte ptr I286_REG[eax], dl
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					and		byte ptr I286_MEM[ecx], dl
@@ -857,7 +857,7 @@ I286 and_ea_r16(void) {							// 21: and EA, REG16
 				PREPART_EA_REG16(2)
 					and		word ptr I286_REG[eax*2], dx
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					and		word ptr I286_MEM[ecx], dx
@@ -944,7 +944,7 @@ I286 sub_ea_r8(void) {							// 28: sub EA, REG8
 				PREPART_EA_REG8(2)
 					sub		byte ptr I286_REG[eax], dl
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					sub		byte ptr I286_MEM[ecx], dl
@@ -964,7 +964,7 @@ I286 sub_ea_r16(void) {							// 29: sub EA, REG16
 				PREPART_EA_REG16(2)
 					sub		word ptr I286_REG[eax*2], dx
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					sub		word ptr I286_MEM[ecx], dx
@@ -1052,7 +1052,7 @@ I286 xor_ea_r8(void) {							// 30: xor EA, REG8
 				PREPART_EA_REG8(2)
 					xor		byte ptr I286_REG[eax], dl
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					xor		byte ptr I286_MEM[ecx], dl
@@ -1072,7 +1072,7 @@ I286 xor_ea_r16(void) {							// 31: xor EA, REG16
 				PREPART_EA_REG16(2)
 					xor		word ptr I286_REG[eax*2], dx
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(7)
 					xor		word ptr I286_MEM[ecx], dx
@@ -1159,7 +1159,7 @@ I286 cmp_ea_r8(void) {							// 38: cmp EA, REG8
 				PREPART_EA_REG8(2)
 					cmp		byte ptr I286_REG[eax], dl
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(6)
 					cmp		byte ptr I286_MEM[ecx], dl
@@ -1178,7 +1178,7 @@ I286 cmp_ea_r16(void) {							// 39: cmp EA, REG16
 				PREPART_EA_REG16(2)
 					cmp		I286_REG[eax*2], dx
 					FLAG_STORE_OF
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(6)
 					cmp		word ptr I286_MEM[ecx], dx
@@ -1969,7 +1969,7 @@ I286 jnz_short(void) {							// 75: jne/jnz short
 				test	I286_FLAG, Z_FLAG
 				jne		flagnonjump
 
-				I286CLOCK(7)					// ÉWÉÉÉìÉvÇ∑ÇÈéñÇ™ëΩÇ¢Ç∆évÇ§
+				I286CLOCK(7)					// „Ç∏„É£„É≥„Éó„Åô„Çã‰∫ã„ÅåÂ§ö„ÅÑ„Å®ÊÄù„ÅÜ
 				movsx	eax, bh
 				add		si, ax
 				add		si, 2
@@ -2302,7 +2302,7 @@ I286 test_ea_r8(void) {								// 84: test EA, REG8
 				PREPART_EA_REG8(2)
 					test	I286_REG[eax], dl
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG8(7)
 					test	I286_MEM[ecx], dl
@@ -2321,7 +2321,7 @@ I286 test_ea_r16(void) {							// 85: test EA, REG16
 				PREPART_EA_REG16(2)
 					test	I286_REG[eax*2], dx
 					FLAG_STORE0
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 				MEMORY_EA_REG16(6)
 					test	word ptr I286_MEM[ecx], dx
@@ -2413,7 +2413,7 @@ I286 mov_ea_r8(void) {							// 88: mov EA, REG8
 		__asm {
 				PREPART_EA_REG8(2)
 					mov		I286_REG[eax], dl
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 					align	16
 			memory_eareg8:
@@ -2429,7 +2429,7 @@ I286 mov_ea_r16(void) {							// 89: mov EA, REG16
 		__asm {
 				PREPART_EA_REG16(2)
 					mov		I286_REG[eax*2], dx
-					GET_NEXTPRE2					// ea_regÇÃ regregÇæÇØ
+					GET_NEXTPRE2					// ea_reg„ÅÆ regreg„Å†„Åë
 					ret
 			memory_eareg16:
 					I286CLOCK(3)
@@ -4312,7 +4312,7 @@ I286 _sti(void) {								// FB: sti
 				GET_NEXTPRE1
 				I286CLOCK(2)
 				cmp		i286core.s.prefix, 0	// ver0.26 00/10/08
-				jne		prefix_exist			// ëOï˚ï™äÚÉWÉÉÉìÉvÇ»ÇÃÇ≈ÅB
+				jne		prefix_exist			// ÂâçÊñπÂàÜÂ≤ê„Ç∏„É£„É≥„Éó„Å™„ÅÆ„Åß„ÄÇ
 		noprefix:
 				movzx	ebp, bl
 				bts		I286_FLAG, 9

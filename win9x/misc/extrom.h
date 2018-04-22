@@ -1,12 +1,12 @@
 /**
  * @file	extrom.h
- * @brief	EXTROM ƒŠƒ\[ƒX ƒNƒ‰ƒX‚ÌéŒ¾‚¨‚æ‚ÑƒCƒ“ƒ^[ƒtƒFƒCƒX‚Ì’è‹`‚ð‚µ‚Ü‚·
+ * @brief	EXTROM ãƒªã‚½ãƒ¼ã‚¹ ã‚¯ãƒ©ã‚¹ã®å®£è¨€ãŠã‚ˆã³ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®å®šç¾©ã‚’ã—ã¾ã™
  */
 
 #pragma once
 
 /**
- * @brief EXTROM ƒŠƒ\[ƒX ƒNƒ‰ƒX
+ * @brief EXTROM ãƒªã‚½ãƒ¼ã‚¹ ã‚¯ãƒ©ã‚¹
  */
 class CExtRom
 {
@@ -19,8 +19,8 @@ public:
 	LONG Seek(LONG lDistanceToMove, DWORD dwMoveMethod);
 
 private:
-	HGLOBAL m_hGlobal;	//!< ƒnƒ“ƒhƒ‹
-	LPVOID m_lpRes;		//!< ƒŠƒ\[ƒX
-	UINT m_nSize;		//!< ƒTƒCƒY
-	UINT m_nPointer;	//!< ƒ|ƒCƒ“ƒ^
+	HGLOBAL m_hGlobal;	//!< ãƒãƒ³ãƒ‰ãƒ«
+	LPVOID m_lpRes;		//!< ãƒªã‚½ãƒ¼ã‚¹
+	UINT m_nSize;		//!< ã‚µã‚¤ã‚º
+	UINT m_nPointer;	//!< ãƒã‚¤ãƒ³ã‚¿
 };

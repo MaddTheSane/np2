@@ -10,11 +10,11 @@
 #include "iocore.h"
 #include "fmboard.h"
 
-/* ƒTƒ“ƒvƒŠƒ“ƒOƒŒ[ƒg‚É8Š|‚¯‚½•¨ */
+/* ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒ¬ãƒ¼ãƒˆã«8æŽ›ã‘ãŸç‰© */
 const UINT pcm86rate8[] = {352800, 264600, 176400, 132300,
 							88200,  66150,  44010,  33075};
 
-/* 32,24,16,12, 8, 6, 4, 3 - Å­Œö”{”: 96 */
+/* 32,24,16,12, 8, 6, 4, 3 - æœ€å°‘å…¬å€æ•°: 96 */
 /*  3, 4, 6, 8,12,16,24,32 */
 
 static const UINT clk25_128[] = {
@@ -104,7 +104,7 @@ void pcm86_cb(NEVENTITEM item)
 }
 
 /**
- * ŽŸ‚ÌŠ„‚èž‚Ýƒ^ƒCƒ~ƒ“ƒO‚ðŒvŽZ‚·‚é
+ * æ¬¡ã®å‰²ã‚Šè¾¼ã¿ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‚’è¨ˆç®—ã™ã‚‹
  */
 void pcm86_setnextintr(void)
 {
@@ -156,7 +156,7 @@ void SOUNDCALL pcm86gen_checkbuf(PCM86 pcm86)
 	}
 
 	nDiff = pcm86->nBufferCount - pcm86->nFifoRemain;
-	if (nDiff < 0)									/* ˆ——Ž‚¿‚Ä‚éc */
+	if (nDiff < 0)									/* å‡¦ç†è½ã¡ã¦ã‚‹â€¦ */
 	{
 		nDiff &= ~3;
 		pcm86->nFifoRemain += nDiff;

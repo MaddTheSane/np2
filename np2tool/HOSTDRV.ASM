@@ -93,7 +93,7 @@ main:			cld
 				mov		dx, title_msg
 				int		21h
 
-				; 機種チェック
+				; 讖溽ｨｮ繝√ぉ繝�繧ｯ
 				cli
 				call	np2_check
 				mov		dx, macerr_msg

@@ -196,7 +196,7 @@ static void IOOUTCALL dmac_o21(UINT port, REG8 dat) {
 #if defined(CPUCORE_IA32)
 	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat;
 #else
-	// IA16‚Å‚Í ver0.75‚Å–³ŒøAver0.76‚ÅC³
+	// IA16ã§ã¯ ver0.75ã§ç„¡åŠ¹ã€ver0.76ã§ä¿®æ­£
 	dmach->adrs.b[DMA32_HIGH + DMA16_LOW] = dat & 0x0f;
 #endif
 }

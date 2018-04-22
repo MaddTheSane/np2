@@ -19,7 +19,7 @@ typedef struct {
 } _CDINFO, *CDINFO;
 
 
-// ---- セクタ2048
+// ---- 繧ｻ繧ｯ繧ｿ2048
 
 static int issec2048(FILEH fh) {
 
@@ -81,7 +81,7 @@ static REG8 sec2048_read(SXSIDEV sxsi, long pos, UINT8 *buf, UINT size) {
 }
 
 
-// ---- セクタ2352
+// ---- 繧ｻ繧ｯ繧ｿ2352
 
 static int issec2352(FILEH fh) {
 

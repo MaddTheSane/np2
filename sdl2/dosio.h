@@ -58,7 +58,7 @@ typedef struct {
 extern "C" {
 #endif
 
-/* ƒtƒ@ƒCƒ‹‘€ì */
+/* ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
 FILEH file_open(const char *path);
 FILEH file_open_rb(const char *path);
 FILEH file_create(const char *path);
@@ -74,7 +74,7 @@ short file_rename(const char *existpath, const char *newpath);
 short file_dircreate(const char *path);
 short file_dirdelete(const char *path);
 
-/* ƒJƒŒƒ“ƒgƒtƒ@ƒCƒ‹‘€ì */
+/* ã‚«ãƒ¬ãƒ³ãƒˆãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œ */
 void file_setcd(const char *exepath);
 char *file_getcd(const char *path);
 FILEH file_open_c(const char *path);

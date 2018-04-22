@@ -1,6 +1,6 @@
 /**
  * @file	dialog.h
- * @breif	Г_ГCГAГНГOВ╠РщМ╛
+ * @breif	уГАуВдуВвуГнуВ░уБохогшиА
  */
 
 #pragma once

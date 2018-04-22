@@ -42,13 +42,13 @@ dispend:		mov		ax, 0x0a04
 				jmp		short .end
 
 
-				; ƒVƒXƒeƒ€ƒfƒBƒXƒN‚ðƒZƒbƒg‚µ‚Ä‚­‚¾‚³‚¢
+				; ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚£ã‚¹ã‚¯ã‚’ã‚»ãƒƒãƒˆã—ã¦ãã ã•ã„
 nosysmsg	dw	12*160+44
 			dw	3705h,3905h,4605h,6005h,4705h,2305h,3905h,2f05h
 			dw	7204h,3b05h,4305h,4805h,3704h,4604h,2f04h,4004h
 			dw	3504h,2404h,0
 
-				; BASIC‚Ì‹N“®‚É‚Í BIOS.ROM‚ª•K—v‚Å‚·
+				; BASICã®èµ·å‹•ã«ã¯ BIOS.ROMãŒå¿…è¦ã§ã™
 nobiosmsg	dw	12*160+46
 			dw	0042h,0041h,0053h,0049h,0043h,4e04h,2f15h,3026h
 			dw	4b04h,4f04h,0020h,0042h,0049h,004fh,0053h,002eh

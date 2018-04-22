@@ -70,7 +70,7 @@ const _XDFINFO	*xdf;
 	return(FAILURE);
 }
 
-// ‚±‚Á‚»‚è‘Î‰‚µ‚½‚è‚µ‚Ä
+// ã“ã£ãã‚Šå¯¾å¿œã—ãŸã‚Šã—ã¦
 BRESULT fddxdf_setfdi(FDDFILE fdd, const OEMCHAR *fname, int ro) {
 
 	short	attr;

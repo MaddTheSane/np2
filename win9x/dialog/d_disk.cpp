@@ -19,9 +19,9 @@
 #include "fdd/newdisk.h"
 
 /**
- * FDD ‘I‘ğƒ_ƒCƒAƒƒO
- * @param[in] hWnd eƒEƒBƒ“ƒhƒE
- * @param[in] drv ƒhƒ‰ƒCƒu
+ * FDD é¸æŠãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+ * @param[in] hWnd è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+ * @param[in] drv ãƒ‰ãƒ©ã‚¤ãƒ–
  */
 void dialog_changefdd(HWND hWnd, REG8 drv)
 {
@@ -54,9 +54,9 @@ void dialog_changefdd(HWND hWnd, REG8 drv)
 }
 
 /**
- * HDD ‘I‘ğƒ_ƒCƒAƒƒO
- * @param[in] hWnd eƒEƒBƒ“ƒhƒE
- * @param[in] drv ƒhƒ‰ƒCƒu
+ * HDD é¸æŠãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+ * @param[in] hWnd è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+ * @param[in] drv ãƒ‰ãƒ©ã‚¤ãƒ–
  */
 void dialog_changehdd(HWND hWnd, REG8 drv)
 {
@@ -132,10 +132,10 @@ void dialog_changehdd(HWND hWnd, REG8 drv)
 
 // ---- newdisk
 
-/** ƒfƒtƒHƒ‹ƒg–¼ */
+/** ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå */
 static const TCHAR str_newdisk[] = TEXT("newdisk");
 
-/** HDD ƒTƒCƒY */
+/** HDD ã‚µã‚¤ã‚º */
 static const UINT32 s_hddsizetbl[5] = {20, 41, 65, 80, 128};
 
 /** SASI HDD */
@@ -147,16 +147,16 @@ static const UINT16 s_sasires[6] =
 };
 
 /**
- * @brief V‚µ‚¢HDD
+ * @brief æ–°ã—ã„HDD
  */
 class CNewHddDlg : public CDlgProc
 {
 public:
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
-	 * @param[in] nHddMinSize Å¬ƒTƒCƒY
-	 * @param[in] nHddMaxSize Å‘åƒTƒCƒY
+	 * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	 * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
+	 * @param[in] nHddMinSize æœ€å°ã‚µã‚¤ã‚º
+	 * @param[in] nHddMaxSize æœ€å¤§ã‚µã‚¤ã‚º
 	 */
 	CNewHddDlg(HWND hwndParent, UINT nHddMinSize, UINT nHddMaxSize)
 		: CDlgProc(IDD_NEWHDDDISK, hwndParent)
@@ -167,15 +167,15 @@ public:
 	}
 
 	/**
-	 * ƒfƒXƒgƒ‰ƒNƒ^
+	 * ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	 */
 	virtual ~CNewHddDlg()
 	{
 	}
 
 	/**
-	 * ƒTƒCƒY‚ğ•Ô‚·
-	 * @return ƒTƒCƒY
+	 * ã‚µã‚¤ã‚ºã‚’è¿”ã™
+	 * @return ã‚µã‚¤ã‚º
 	 */
 	UINT GetSize() const
 	{
@@ -184,9 +184,9 @@ public:
 
 protected:
 	/**
-	 * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
-	 * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
-	 * @retval FALSE Šù‚Éİ’èÏ
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+	 * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+	 * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
 	 */
 	virtual BOOL OnInitDialog()
 	{
@@ -202,7 +202,7 @@ protected:
 	}
 
 	/**
-	 * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+	 * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
 	 */
 	virtual void OnOK()
 	{
@@ -214,23 +214,23 @@ protected:
 	}
 
 private:
-	CComboData m_hddsize;			/*!< HDD ƒTƒCƒY ƒRƒ“ƒgƒ[ƒ‹ */
-	UINT m_nHddSize;				/*!< HDD ƒTƒCƒY */
-	UINT m_nHddMinSize;				/*!< Å¬ƒTƒCƒY */
-	UINT m_nHddMaxSize;				/*!< Å‘åƒTƒCƒY */
+	CComboData m_hddsize;			/*!< HDD ã‚µã‚¤ã‚º ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ« */
+	UINT m_nHddSize;				/*!< HDD ã‚µã‚¤ã‚º */
+	UINT m_nHddMinSize;				/*!< æœ€å°ã‚µã‚¤ã‚º */
+	UINT m_nHddMaxSize;				/*!< æœ€å¤§ã‚µã‚¤ã‚º */
 };
 
 
 
 /**
- * @brief V‚µ‚¢HDD
+ * @brief æ–°ã—ã„HDD
  */
 class CNewSasiDlg : public CDlgProc
 {
 public:
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+	 * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	 * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	 */
 	CNewSasiDlg(HWND hwndParent)
 		: CDlgProc(IDD_NEWSASI, hwndParent)
@@ -239,8 +239,8 @@ public:
 	}
 
 	/**
-	 * HDD ƒ^ƒCƒv‚ğ“¾‚é
-	 * @return HDD ƒ^ƒCƒv
+	 * HDD ã‚¿ã‚¤ãƒ—ã‚’å¾—ã‚‹
+	 * @return HDD ã‚¿ã‚¤ãƒ—
 	 */
 	UINT GetType() const
 	{
@@ -249,9 +249,9 @@ public:
 
 protected:
 	/**
-	 * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
-	 * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
-	 * @retval FALSE Šù‚Éİ’èÏ
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+	 * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+	 * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
 	 */
 	virtual BOOL OnInitDialog()
 	{
@@ -260,7 +260,7 @@ protected:
 	}
 
 	/**
-	 * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+	 * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
 	 */
 	virtual void OnOK()
 	{
@@ -276,18 +276,18 @@ protected:
 	}
 
 private:
-	UINT m_nType;			/*!< HDD ƒ^ƒCƒv */
+	UINT m_nType;			/*!< HDD ã‚¿ã‚¤ãƒ— */
 };
 
 /**
- * @brief V‚µ‚¢FDD
+ * @brief æ–°ã—ã„FDD
  */
 class CNewFddDlg : public CDlgProc
 {
 public:
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-	 * @param[in] hwndParent eƒEƒBƒ“ƒhƒE
+	 * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	 * @param[in] hwndParent è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	 */
 	CNewFddDlg(HWND hwndParent)
 		: CDlgProc((np2cfg.usefd144) ? IDD_NEWDISK2 : IDD_NEWDISK, hwndParent)
@@ -296,8 +296,8 @@ public:
 	}
 
 	/**
-	 * ƒ^ƒCƒv‚ğ“¾‚é
-	 * @return ƒ^ƒCƒv
+	 * ã‚¿ã‚¤ãƒ—ã‚’å¾—ã‚‹
+	 * @return ã‚¿ã‚¤ãƒ—
 	 */
 	UINT8 GetType() const
 	{
@@ -305,8 +305,8 @@ public:
 	}
 
 	/**
-	 * ƒ‰ƒxƒ‹‚ğ“¾‚é
-	 * @return ƒ‰ƒxƒ‹
+	 * ãƒ©ãƒ™ãƒ«ã‚’å¾—ã‚‹
+	 * @return ãƒ©ãƒ™ãƒ«
 	 */
 	LPCTSTR GetLabel() const
 	{
@@ -315,9 +315,9 @@ public:
 
 protected:
 	/**
-	 * ‚±‚Ìƒƒ\ƒbƒh‚Í WM_INITDIALOG ‚ÌƒƒbƒZ[ƒW‚É‰“š‚µ‚ÄŒÄ‚Ño‚³‚ê‚Ü‚·
-	 * @retval TRUE Å‰‚ÌƒRƒ“ƒgƒ[ƒ‹‚É“ü—ÍƒtƒH[ƒJƒX‚ğİ’è
-	 * @retval FALSE Šù‚Éİ’èÏ
+	 * ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ã¯ WM_INITDIALOG ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã«å¿œç­”ã—ã¦å‘¼ã³å‡ºã•ã‚Œã¾ã™
+	 * @retval TRUE æœ€åˆã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã«å…¥åŠ›ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’è¨­å®š
+	 * @retval FALSE æ—¢ã«è¨­å®šæ¸ˆ
 	 */
 	virtual BOOL OnInitDialog()
 	{
@@ -342,7 +342,7 @@ protected:
 	}
 
 	/**
-	 * ƒ†[ƒU[‚ª OK ‚Ìƒ{ƒ^ƒ“ (IDOK ID ‚ª‚Ìƒ{ƒ^ƒ“) ‚ğƒNƒŠƒbƒN‚·‚é‚ÆŒÄ‚Ño‚³‚ê‚Ü‚·
+	 * ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒ OK ã®ãƒœã‚¿ãƒ³ (IDOK ID ãŒã®ãƒœã‚¿ãƒ³) ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨å‘¼ã³å‡ºã•ã‚Œã¾ã™
 	 */
 	virtual void OnOK()
 	{
@@ -367,13 +367,13 @@ protected:
 	}
 
 private:
-	UINT m_nFdType;					/*!< ƒ^ƒCƒv */
-	TCHAR m_szDiskLabel[16 + 1];	/*!< ƒ‰ƒxƒ‹ */
+	UINT m_nFdType;					/*!< ã‚¿ã‚¤ãƒ— */
+	TCHAR m_szDiskLabel[16 + 1];	/*!< ãƒ©ãƒ™ãƒ« */
 };
 
 /**
- * V‹KƒfƒBƒXƒNì¬ ƒ_ƒCƒAƒƒO
- * @param[in] hWnd eƒEƒBƒ“ƒhƒE
+ * æ–°è¦ãƒ‡ã‚£ã‚¹ã‚¯ä½œæˆ ãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+ * @param[in] hWnd è¦ªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
  */
 void dialog_newdisk(HWND hWnd)
 {

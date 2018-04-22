@@ -14,22 +14,22 @@
 
 
 #define		NP2SYSP_VER			"C"
-// #define	NP2SYSP_CREDIT		""					// —v‚é‚È‚çEEE
+// #define	NP2SYSP_CREDIT		""					// è¦ã‚‹ãªã‚‰ãƒ»ãƒ»ãƒ»
 
-// NP2ˆË‘¶ƒ|[ƒg
+// NP2ä¾å­˜ãƒãƒ¼ãƒˆ
 // port:07edh	np2 value comm
 // port:07efh	np2 string comm
 
-// Šî–{“I‚É STRING‚Å‚â‚èæ‚è‚·‚é
-// ƒ|[ƒg 7efh ‚É 'NP2' ‚Æo—Í‚Å "NP2"‚ª•Ô‚Á‚Ä‚«‚½‚ç NP2‚Å‚ ‚é
+// åŸºæœ¬çš„ã« STRINGã§ã‚„ã‚Šå–ã‚Šã™ã‚‹
+// ãƒãƒ¼ãƒˆ 7efh ã« 'NP2' ã¨å‡ºåŠ›ã§ "NP2"ãŒè¿”ã£ã¦ããŸã‚‰ NP2ã§ã‚ã‚‹
 
 // verA
-//		out->str: 'ver'				in->str:	ver”Ô† A`
-//		out->str: 'poweroff'		NP2‚ğI—¹
+//		out->str: 'ver'				in->str:	verç•ªå· Aã€œ
+//		out->str: 'poweroff'		NP2ã‚’çµ‚äº†
 
 // verB
-//		out->str: 'cpu'				in->str:	CPUŒ^”Ô
-//		out->str: 'clock'			in->str:	“®ìƒNƒƒbƒN”
+//		out->str: 'cpu'				in->str:	CPUå‹ç•ª
+//		out->str: 'clock'			in->str:	å‹•ä½œã‚¯ãƒ­ãƒƒã‚¯æ•°
 
 
 // ----
@@ -74,7 +74,7 @@ static void np2sysp_poweroff(const void *arg1, long arg2) {
 
 static void np2sysp_cpu(const void *arg1, long arg2) {
 
-	// CPU‚ğ•Ô‚·
+	// CPUã‚’è¿”ã™
 #if 1											// 80286 or V30
 	if (!(CPU_TYPE & CPUTYPE_V30)) {
 		setoutstr(str_80286);
@@ -83,7 +83,7 @@ static void np2sysp_cpu(const void *arg1, long arg2) {
 		setoutstr(str_v30);
 	}
 #else
-	// 386‹@ˆÈ~‚Ìê‡ V30ƒ‚[ƒh‚ÍƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“‚¾‚©‚çŒÅ’è(?)
+	// 386æ©Ÿä»¥é™ã®å ´åˆ V30ãƒ¢ãƒ¼ãƒ‰ã¯ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã ã‹ã‚‰å›ºå®š(?)
 	setoutstr(str_pentium);
 #endif
 	(void)arg1;

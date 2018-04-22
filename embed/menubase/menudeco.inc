@@ -1,6 +1,6 @@
 
-// �߂ɂ�[�ł���[�����B
-// VGA�p�B
+// めにゅーでこれーしょん。
+// VGA用。
 
 #ifndef SIZE_QVGA
 

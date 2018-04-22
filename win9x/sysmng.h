@@ -1,5 +1,5 @@
 
-// ‚Ç[‚Å‚à‚¢‚¢’Ê’mŒn
+// ã©ãƒ¼ã§ã‚‚ã„ã„é€šçŸ¥ç³»
 
 enum {
 	SYS_UPDATECFG		= 0x0001,
@@ -32,7 +32,7 @@ void sysmng_fddaccess(UINT8 drv);
 void sysmng_hddaccess(UINT8 drv);
 #else
 
-// ƒ}ƒNƒ(’P‚ÉŠÖ”ƒR[ƒ‹‚µ‚½‚­‚È‚¢‚¾‚¯)
+// ãƒã‚¯ãƒ­(å˜ã«é–¢æ•°ã‚³ãƒ¼ãƒ«ã—ãŸããªã„ã ã‘)
 #define	sysmng_initialize()												\
 			sys_updates = 0
 
@@ -53,7 +53,7 @@ void sysmng_hddaccess(UINT8 drv);
 #endif
 
 
-// ---- ‚ ‚Æ‚ÍOSˆË‘¶•”
+// ---- ã‚ã¨ã¯OSä¾å­˜éƒ¨
 
 void sysmng_workclockreset(void);
 BOOL sysmng_workclockrenewal(void);

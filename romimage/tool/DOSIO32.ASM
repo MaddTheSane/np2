@@ -371,7 +371,7 @@ error24h		dw		0
 
 new_24h:		mov		cs:error24h, di
 				add		cs:error24h, 2
-				mov		al, 3					; ƒVƒXƒeƒ€ƒR[ƒ‹‚Ì¸”s
+				mov		al, 3					; ã‚·ã‚¹ãƒ†ãƒ ã‚³ãƒ¼ãƒ«ã®å¤±æ•—
 				iret
 endfunc
 
@@ -451,7 +451,7 @@ func	_file_find1st
 				push	si
 				mov		ax, ds
 				mov		es, ax				; es:di = DTA
-				mov		si, 1				;    si = dos ƒRƒ“ƒpƒ`
+				mov		si, 1				;    si = dos ã‚³ãƒ³ãƒ‘ãƒ
 				mov		ax, 714eh			;    ax = findfirst
 				int		21h
 				jc		short ff1st_chicago_r
@@ -495,7 +495,7 @@ func	_file_findnext
 				mov		ax, ds
 				mov		es, ax					; es:di = dta
 				mov		ax, 714fh				;    ax = find next
-				mov		si, 1					;    si = dos ƒRƒ“ƒpƒ`
+				mov		si, 1					;    si = dos ã‚³ãƒ³ãƒ‘ãƒ
 				mov		bx, [di].ff32_handle	;    bx = handle
 				int		21h
 				jc		short ffnxt_cend

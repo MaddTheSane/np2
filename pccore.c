@@ -153,7 +153,7 @@ static void pccore_set(const NP2CFG *pConfig)
 	pccore.multiple = multiple;
 	pccore.realclock = pccore.baseclock * multiple;
 
-	// HDD‚ÌÚ‘± (I/O‚Ìg—pó‘Ô‚ª•Ï‚í‚é‚Ì‚Å..
+	// HDDã®æ¥ç¶š (I/Oã®ä½¿ç”¨çŠ¶æ…‹ãŒå¤‰ã‚ã‚‹ã®ã§..
 	if (pConfig->dipsw[1] & 0x20)
 	{
 		pccore.hddif |= PCHDD_IDE;
@@ -166,7 +166,7 @@ static void pccore_set(const NP2CFG *pConfig)
 		sxsi_setdevtype(0x02, SXSIDEV_NC);
 	}
 
-	// Šg’£ƒƒ‚ƒŠ
+	// æ‹¡å¼µãƒ¡ãƒ¢ãƒª
 	extsize = 0;
 	if (!(pConfig->dipsw[2] & 0x80))
 	{
@@ -180,10 +180,10 @@ static void pccore_set(const NP2CFG *pConfig)
 	pccore.extmem = extsize;
 	CopyMemory(pccore.dipsw, pConfig->dipsw, 3);
 
-	// ƒTƒEƒ“ƒhƒ{[ƒh‚ÌÚ‘±
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒœãƒ¼ãƒ‰ã®æ¥ç¶š
 	pccore.sound = (SOUNDID)pConfig->SOUND_SW;
 
-	// ‚»‚Ì‘¼CBUS‚ÌÚ‘±
+	// ãã®ä»–CBUSã®æ¥ç¶š
 	pccore.device = 0;
 	if (pConfig->pc9861enable)
 	{
@@ -367,7 +367,7 @@ void pccore_reset(void) {
 	ZeroMemory(mem + VRAM1_E, 0x08000);
 	ZeroMemory(mem + FONT_ADRS, 0x08000);
 
-	//ƒƒ‚ƒŠƒXƒCƒbƒ`
+	//ãƒ¡ãƒ¢ãƒªã‚¹ã‚¤ãƒƒãƒ
 	for (i=0; i<8; i++)
 	{
 		mem[0xa3fe2 + i*4] = np2cfg.memsw[i];
@@ -391,9 +391,9 @@ void pccore_reset(void) {
 	}
 	font_setchargraph(epson);
 
-	// HDDƒZƒbƒg
+	// HDDã‚»ãƒƒãƒˆ
 	diskdrv_hddbind();
-	// SASI/IDE‚Ç‚Á‚¿H
+	// SASI/IDEã©ã£ã¡ï¼Ÿ
 #if defined(SUPPORT_SASI)
 	if (sxsi_issasi()) {
 		pccore.hddif &= ~PCHDD_IDE;
@@ -416,7 +416,7 @@ void pccore_reset(void) {
 	fddfile_reset2dmode();
 	bios0x18_16(0x20, 0xe1);
 
-	iocore_reset(&np2cfg);								// ƒTƒEƒ“ƒh‚Åpic‚ğŒÄ‚Ô‚Ì‚Åc
+	iocore_reset(&np2cfg);								// ã‚µã‚¦ãƒ³ãƒ‰ã§picã‚’å‘¼ã¶ã®ã§â€¦
 	cbuscore_reset(&np2cfg);
 	fmboard_reset(&np2cfg, pccore.sound);
 
@@ -613,7 +613,7 @@ void screenvsync(NEVENTITEM item) {
 	}
 	nevent_set(NEVENT_FLAMES, gdc.vsyncclock, screendisp, NEVENT_RELATIVE);
 
-	// drawscreen‚Å pccore.vsyncclock‚ª•ÏX‚³‚ê‚é‰Â”\«‚ª‚ ‚è‚Ü‚·
+	// drawscreenã§ pccore.vsyncclockãŒå¤‰æ›´ã•ã‚Œã‚‹å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™
 	if (np2cfg.DISPSYNC) {
 		drawscreen();
 	}

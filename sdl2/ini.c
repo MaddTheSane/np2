@@ -355,7 +355,7 @@ static const INITBL iniitem[] = {
 	{"calendar", INITYPE_BOOL,		&np2cfg.calendar,		0},
 	{"USE144FD", INITYPE_BOOL,		&np2cfg.usefd144,		0},
 
-	// OSàÀë∂Å`
+	// OS‰æùÂ≠ò„Äú
 	{"s_NOWAIT", INITYPE_BOOL,		&np2oscfg.NOWAIT,		0},
 	{"SkpFrame", INITYPE_UINT8,		&np2oscfg.DRAW_SKIP,	0},
 	{"F12_bind", INITYPE_UINT8,		&np2oscfg.F12KEY,		0},
