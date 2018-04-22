@@ -5,7 +5,7 @@ enum {
 	FTYPE_INI		= -1		// Tool Window iniファイル
 };
 
-#define	FILEH			SInt16
+#define	FILEH			FSIORefNum
 #define	FILEH_INVALID	((FILEH)-1)
 
 #define	FLISTH				void *

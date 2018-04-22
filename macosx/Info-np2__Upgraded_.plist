@@ -13,7 +13,7 @@
 				<string>D98</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>d88.icns</string>
+			<string>d88</string>
 			<key>CFBundleTypeName</key>
 			<string>D88 フロッピーディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -22,6 +22,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -29,7 +31,7 @@
 				<string>ROM</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>ROM.icns</string>
+			<string>ROM</string>
 			<key>CFBundleTypeName</key>
 			<string>ROMファイル</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -38,6 +40,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -46,7 +50,7 @@
 				<string>DUP</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>beta.icns</string>
+			<string>beta</string>
 			<key>CFBundleTypeName</key>
 			<string>ベタフロッピーディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -55,6 +59,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -62,7 +68,7 @@
 				<string>XDF</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>xdf.icns</string>
+			<string>xdf</string>
 			<key>CFBundleTypeName</key>
 			<string>XDF ディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -71,6 +77,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -78,7 +86,7 @@
 				<string>HDI</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>hdi.icns</string>
+			<string>hdi</string>
 			<key>CFBundleTypeName</key>
 			<string>ANEX86 ハードディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -87,6 +95,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -94,7 +104,7 @@
 				<string>THD</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>thd.icns</string>
+			<string>thd</string>
 			<key>CFBundleTypeName</key>
 			<string>T98 ハードディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -103,6 +113,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -110,7 +122,7 @@
 				<string>NHD</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>nhd.icns</string>
+			<string>nhd</string>
 			<key>CFBundleTypeName</key>
 			<string>T98-Next ハードディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -119,6 +131,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -135,6 +149,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -142,11 +158,13 @@
 				<string>CFG</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>preference.icns</string>
+			<string>preference</string>
 			<key>CFBundleTypeName</key>
 			<string>Neko Project II 初期設定</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -154,7 +172,7 @@
 				<string>FDI</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>fdi.icns</string>
+			<string>fdi</string>
 			<key>CFBundleTypeName</key>
 			<string>FDI フロッピーディスクイメージ</string>
 			<key>CFBundleTypeOSTypes</key>
@@ -163,6 +181,8 @@
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -170,11 +190,13 @@
 				<string>INI</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>preference.icns</string>
+			<string>preference</string>
 			<key>CFBundleTypeName</key>
 			<string>Neko Project II ツールウィンドウ スキンファイル</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -182,11 +204,13 @@
 				<string>A</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>plug-in.icns</string>
+			<string>plug-in</string>
 			<key>CFBundleTypeName</key>
 			<string>共有ライブラリ</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -194,11 +218,13 @@
 				<string>SAV</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>preference.icns</string>
+			<string>preference</string>
 			<key>CFBundleTypeName</key>
 			<string>Neko Project II レジュームファイル</string>
 			<key>CFBundleTypeRole</key>
 			<string>None</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>

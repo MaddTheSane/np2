@@ -10,6 +10,7 @@
 #define	BYTESEX_LITTLE
 #endif
 #define	OSLANG_UTF8
+#define SUPPORT_SJIS
 #define	OSLINEBREAK_LF
 
 

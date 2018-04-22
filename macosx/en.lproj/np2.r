@@ -1,207 +1,474 @@
 #include "resource.h"
+#include <Carbon/Carbon.r>
 
-data 'MENU' (IDM_FDD1) {
-	$"0084 0000 0000 0000 0000 0000 000B 0446"            /* .Ñ.............F */
-	$"4444 3107 4F70 656E 2E2E 2E00 4400 0001"            /* DD1.Open....D... */
-	$"2D00 0000 0005 456A 6563 7400 4500 0000"            /* -.....Eject.E... */
+resource 'MENU' (IDM_EDIT) {
+	IDM_EDIT,
+	textMenuProc,
+	0xBD,
+	disabled,
+	"Edit",
+	{	/* array: 8 elements */
+		/* [1] */
+		"Undo", noIcon, "Z", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Cut", noIcon, "X", noMark, plain,
+		/* [4] */
+		"Copy", noIcon, "C", noMark, plain,
+		/* [5] */
+		"Paste", noIcon, "V", noMark, plain,
+		/* [6] */
+		"Clear", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Select All", noIcon, "A", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_EDIT) {
-	$"0083 0000 0000 0000 0000 0000 017A 0445"            /* .É...........z.E */
-	$"6469 7404 556E 646F 005A 0000 012D 0000"            /* dit.Undo.Z...-.. */
-	$"0000 0343 7574 0058 0000 0443 6F70 7900"            /* ...Cut.X...Copy. */
-	$"4300 0005 5061 7374 6500 5600 0005 436C"            /* C...Paste.V...Cl */
-	$"6561 7200 0000 0001 2D00 0000 000A 5365"            /* ear.....-....¬Se */
-	$"6C65 6374 2041 6C6C 0041 0000 00"                   /* lect All.A... */
+resource 'MENU' (IDM_EMULATE) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x1D,
+	enabled,
+	"Emulate",
+	{	/* array: 5 elements */
+		/* [1] */
+		"Reset", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Configure...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"New Disk...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"Font...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_EMULATE) {
-	$"0081 0000 0000 0000 0000 0000 003B 0745"            /* .Å...........;.E */
-	$"6D75 6C61 7465 0552 6573 6574 0052 0000"            /* mulate.Reset.R.. */
-	$"012D 0000 0000 0C43 6F6E 6669 6775 7265"            /* .-.....Configure */
-	$"2E2E 2E00 3B00 000B 4E65 7720 4469 736B"            /* ....;...New Disk */
-	$"2E2E 2E00 4E00 0007 466F 6E74 2E2E 2E00"            /* ....N...Font.... */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (130) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x5D,
+	enabled,
+	"Emulate",
+	{	/* array: 7 elements */
+		/* [1] */
+		"Reset", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Configure...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"New Disk...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"Font...", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Quit", noIcon, "Q", noMark, plain
+	}
 };
 
-data 'MENU' (130) {
-	$"0081 0000 0000 0000 0000 0000 00BB 0745"            /* .Å...........ª.E */
-	$"6D75 6C61 7465 0552 6573 6574 0052 0000"            /* mulate.Reset.R.. */
-	$"012D 0000 0000 0C43 6F6E 6669 6775 7265"            /* .-.....Configure */
-	$"2E2E 2E00 3B00 000B 4E65 7720 4469 736B"            /* ....;...New Disk */
-	$"2E2E 2E00 4E00 0007 466F 6E74 2E2E 2E00"            /* ....N...Font.... */
-	$"0000 0001 2D00 0000 0004 5175 6974 0051"            /* ....-.....Quit.Q */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (IDM_DEVICE) {
+	IDM_DEVICE,
+	textMenuProc,
+	0x58F,
+	enabled,
+	"Device",
+	{	/* array: 11 elements */
+		/* [1] */
+		"Keyboard", noIcon, hierarchicalMenu, "ã", plain,
+		/* [2] */
+		"Sound", noIcon, hierarchicalMenu, "å", plain,
+		/* [3] */
+		"Memory", noIcon, hierarchicalMenu, "ç", plain,
+		/* [4] */
+		"Mouse", noIcon, "M", noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Serial options...", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"MIDI options...", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"MIDI Panic", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"Sound options...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_DEVICE) {
-	$"008A 0000 0000 0000 0000 0000 0B1F 0644"            /* .ä.............D */
-	$"6576 6963 6508 6B65 7962 6F61 7264 001B"            /* evice.keyboard.. */
-	$"8B00 0553 6F75 6E64 001B 8C00 064D 656D"            /* ã..Sound..å..Mem */
-	$"6F72 7900 1B8D 0005 4D6F 7573 6500 4D00"            /* ory..ç..Mouse.M. */
-	$"0001 2D00 0000 0010 5365 7269 616C 206F"            /* ..-.....Serial o */
-	$"7074 696F 6E2E 2E2E 0000 0000 012D 0000"            /* ption........-.. */
-	$"0000 0E4D 4944 4920 6F70 7469 6F6E 2E2E"            /* ...MIDI option.. */
-	$"2E00 0000 000A 4D49 4449 2050 616E 6963"            /* .....¬MIDI Panic */
-	$"0000 0000 012D 0000 0000 0F53 6F75 6E64"            /* .....-.....Sound */
-	$"206F 7074 696F 6E2E 2E2E 0000 0000 0000"            /*  option......... */
+resource 'MENU' (IDM_SCREEN) {
+	IDM_SCREEN,
+	textMenuProc,
+	0xBFDD,
+	enabled,
+	"Screen",
+	{	/* array: 16 elements */
+		/* [1] */
+		"Fullscreen", noIcon, "F", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Normal", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"Rotate Left", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"Rotate Right", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Display VSync", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Real Palettes", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"No Wait", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"Auto frame", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"Full frame", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"1/2 frame", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"1/3 frame", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"1/4 frame", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"Screen options...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCREEN) {
-	$"0089 0000 0000 0000 0000 0001 7FBB 0653"            /* .â...........ª.S */
-	$"6372 6565 6E0A 4675 6C6C 5363 7265 656E"            /* creen¬FullScreen */
-	$"0046 0000 012D 0000 0000 064E 6F72 6D61"            /* .F...-.....Norma */
-	$"6C00 0000 000C 4C65 6674 2052 6F74 6174"            /* l.....Left Rotat */
-	$"6564 0000 0000 0D52 6967 6874 2052 6F74"            /* ed.....Right Rot */
-	$"6174 6564 0000 0000 012D 0000 0000 0A44"            /* ated.....-....¬D */
-	$"6973 7020 5653 796E 6300 0000 000D 5265"            /* isp VSync.....Re */
-	$"616C 2050 616C 6574 7465 7300 0000 0007"            /* al Palettes..... */
-	$"4E6F 2057 6169 7400 0000 000A 4175 746F"            /* No Wait....¬Auto */
-	$"2066 7261 6D65 0000 0000 0A46 756C 6C20"            /*  frame....¬Full  */
-	$"6672 616D 6500 0000 0009 312F 3220 6672"            /* frame....∆1/2 fr */
-	$"616D 6500 0000 0009 312F 3320 6672 616D"            /* ame....∆1/3 fram */
-	$"6500 0000 0009 312F 3420 6672 616D 6500"            /* e....∆1/4 frame. */
-	$"0000 0001 2D00 0000 0010 5363 7265 656E"            /* ....-.....Screen */
-	$"206F 7074 696F 6E2E 2E2E 0000 0000 0000"            /*  option......... */
+resource 'MENU' (IDM_HELP) {
+	IDM_HELP,
+	textMenuProc,
+	0x1,
+	enabled,
+	"Help",
+	{	/* array: 1 elements */
+		/* [1] */
+		"Neko Project IIx Help", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_HELP) {
-	$"008F 0000 0000 0000 0000 0000 0003 0448"            /* .è.............H */
-	$"656C 7015 4E65 6B6F 2050 726F 6A65 6374"            /* elp.Neko Project */
-	$"2049 4978 2048 656C 7000 0000 0000 00"              /*  IIx Help...... */
+resource 'MENU' (IDM_SOUND) {
+	IDM_SOUND,
+	textMenuProc,
+	0x2FFEF,
+	enabled,
+	"Sound",
+	{	/* array: 18 elements */
+		/* [1] */
+		"Beep off", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"Beep low", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Beep mid", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"Beep high", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Disable boards", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"PC-9801-14", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"PC-9801-26K", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"PC-9801-86", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"PC-9801-26 + 86", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"PC-9801-86 + chibi-oto", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"PC-9801-118", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"Speak board", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"Spark board", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"AMD98", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"JastSound", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"Seek Sound", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SOUND) {
-	$"008C 0000 0000 0000 0000 0005 FFDF 0553"            /* .å..........ˇﬂ.S */
-	$"6F75 6E64 0842 6565 7020 6F66 6600 0000"            /* ound.Beep off... */
-	$"0008 4265 6570 206C 6F77 0000 0000 0842"            /* ..Beep low.....B */
-	$"6565 7020 6D69 6400 0000 0009 4265 6570"            /* eep mid....∆Beep */
-	$"2068 6967 6800 0000 0001 2D00 0000 000E"            /*  high.....-..... */
-	$"4469 7361 626C 6520 626F 6172 6473 0000"            /* Disable boards.. */
-	$"0000 0A50 432D 3938 3031 2D31 3400 0000"            /* ..¬PC-9801-14... */
-	$"000B 5043 2D39 3830 312D 3236 4B00 0000"            /* ..PC-9801-26K... */
-	$"000A 5043 2D39 3830 312D 3836 0000 0000"            /* .¬PC-9801-86.... */
-	$"0F50 432D 3938 3031 2D32 3620 2B20 3836"            /* .PC-9801-26 + 86 */
-	$"0000 0000 1650 432D 3938 3031 2D38 3620"            /* .....PC-9801-86  */
-	$"2B20 6368 6962 692D 6F74 6F00 0000 000B"            /* + chibi-oto..... */
-	$"5043 2D39 3830 312D 3131 3800 0000 000B"            /* PC-9801-118..... */
-	$"5370 6561 6B20 626F 6172 6400 0000 000B"            /* Speak board..... */
-	$"5370 6172 6B20 626F 6172 6400 0000 0005"            /* Spark board..... */
-	$"414D 4439 3800 0000 0009 4A61 7374 536F"            /* AMD98....∆JastSo */
-	$"756E 6400 0000 0001 2D00 0000 000A 5365"            /* und.....-....¬Se */
-	$"656B 2053 6F75 6E64 0000 0000 0000"                 /* ek Sound...... */
+resource 'MENU' (IDM_SCSI0) {
+	IDM_SCSI0,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI0",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SASI1) {
-	$"0087 0000 0000 0000 0000 0000 000B 0553"            /* .á.............S */
-	$"4153 4931 074F 7065 6E2E 2E2E 004F 0000"            /* ASI1.Open....O.. */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000"                                               /* .. */
+resource 'MENU' (IDM_SCSI1) {
+	IDM_SCSI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI0) {
-	$"0091 0000 0000 0000 0000 0000 000B 0553"            /* .ë.............S */
-	$"4353 4930 074F 7065 6E2E 2E2E 0000 0000"            /* CSI0.Open....... */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000"                                               /* .. */
+resource 'MENU' (IDM_SCSI2) {
+	IDM_SCSI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI1) {
-	$"0092 0000 0000 0000 0000 0000 000B 0553"            /* .í.............S */
-	$"4353 4931 074F 7065 6E2E 2E2E 0000 0000"            /* CSI1.Open....... */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000"                                               /* .. */
+resource 'MENU' (IDM_SCSI3) {
+	IDM_SCSI3,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI3",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI2) {
-	$"0093 0000 0000 0000 0000 0000 000B 0553"            /* .ì.............S */
-	$"4353 4932 074F 7065 6E2E 2E2E 0000 0000"            /* CSI2.Open....... */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000"                                               /* .. */
+resource 'MENU' (IDM_SASI1) {
+	IDM_SASI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI3) {
-	$"0094 0000 0000 0000 0000 0000 000B 0553"            /* .î.............S */
-	$"4353 4933 074F 7065 6E2E 2E2E 0000 0000"            /* CSI3.Open....... */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (IDM_SASI2) {
+	IDM_SASI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Remove", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SASI2) {
-	$"0088 0000 0000 0000 0000 0000 000B 0553"            /* .à.............S */
-	$"4153 4932 074F 7065 6E2E 2E2E 004F 0000"            /* ASI2.Open....O.. */
-	$"012D 0000 0000 0652 656D 6F76 6500 0000"            /* .-.....Remove... */
-	$"0000"                                               /* .. */
+resource 'MENU' (IDM_FDD1) {
+	IDM_FDD1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Eject", noIcon, "E", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_FDD2) {
-	$"0085 0000 0000 0000 0000 0000 000B 0446"            /* .Ö.............F */
-	$"4444 3207 4F70 656E 2E2E 2E00 4400 0001"            /* DD2.Open....D... */
-	$"2D00 0000 0005 456A 6563 7400 4500 0000"            /* -.....Eject.E... */
-	$"00"                                                 /* . */
+resource 'MENU' (IDM_FDD2) {
+	IDM_FDD2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"Open...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Eject", noIcon, "E", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_HDD) {
-	$"0086 0000 0000 0000 0000 0000 00F7 0348"            /* .Ü...........˜.H */
-	$"4444 0653 4153 492D 3100 1B87 0006 5341"            /* DD.SASI-1..á..SA */
-	$"5349 2D32 001B 8800 012D 0000 0000 0753"            /* SI-2..à..-.....S */
-	$"4353 4920 2330 001B 9100 0753 4353 4920"            /* CSI #0..ë..SCSI  */
-	$"2331 001B 9200 0753 4353 4920 2332 001B"            /* #1..í..SCSI #2.. */
-	$"9300 0753 4353 4920 2333 001B 9400 0000"            /* ì..SCSI #3..î... */
-	$"00"                                                 /* . */
+resource 'MENU' (IDM_HDD) {
+	IDM_HDD,
+	textMenuProc,
+	0x7B,
+	enabled,
+	"HDD",
+	{	/* array: 7 elements */
+		/* [1] */
+		"SASI-1", noIcon, hierarchicalMenu, "á", plain,
+		/* [2] */
+		"SASI-2", noIcon, hierarchicalMenu, "à", plain,
+		/* [3] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"SCSI #0", noIcon, hierarchicalMenu, "ë", plain,
+		/* [5] */
+		"SCSI #1", noIcon, hierarchicalMenu, "í", plain,
+		/* [6] */
+		"SCSI #2", noIcon, hierarchicalMenu, "ì", plain,
+		/* [7] */
+		"SCSI #3", noIcon, hierarchicalMenu, "î", plain
+	}
 };
 
-data 'MENU' (IDM_KEYBOARD) {
-	$"008B 0000 0000 0000 0000 001F 7DDF 084B"            /* .ã..........}ﬂ.K */
-	$"6579 626F 6172 6408 4B65 7962 6F61 7264"            /* eyboard.Keyboard */
-	$"004B 0000 084A 6F79 4B65 792D 3100 4A00"            /* .K...JoyKey-1.J. */
-	$"0008 4A6F 794B 6579 2D32 0000 0000 084D"            /* ..JoyKey-2.....M */
-	$"6F75 7365 4B65 7900 0000 0001 2D00 0000"            /* ouseKey.....-... */
-	$"0010 4D65 6368 616E 6963 616C 2053 4849"            /* ..Mechanical SHI */
-	$"4654 0000 0000 0F4D 6563 6861 6E69 6361"            /* FT.....Mechanica */
-	$"6C20 4354 524C 0000 0000 0F4D 6563 6861"            /* l CTRL.....Mecha */
-	$"6E69 6361 6C20 4752 5048 0000 0000 012D"            /* nical GRPH.....- */
-	$"0000 0000 0A46 3131 203D 204B 414E 4100"            /* ....¬F11 = KANA. */
-	$"0000 000A 4631 3120 3D20 5374 6F70 0000"            /* ...¬F11 = Stop.. */
-	$"0000 0F46 3131 203D 2031 304B 6579 205B"            /* ...F11 = 10Key [ */
-	$"3D5D 0000 0000 0A46 3131 203D 204E 4645"            /* =]....¬F11 = NFE */
-	$"5200 0000 000B 4631 3120 3D20 5573 6572"            /* R.....F11 = User */
-	$"3100 0000 0001 2D00 0000 000B 4631 3220"            /* 1.....-.....F12  */
-	$"3D20 4D6F 7573 6500 0000 000A 4631 3220"            /* = Mouse....¬F12  */
-	$"3D20 436F 7079 0000 0000 0F46 3132 203D"            /* = Copy.....F12 = */
-	$"2031 304B 6579 205B 2C5D 0000 0000 0A46"            /*  10Key [,]....¬F */
-	$"3132 203D 2058 4645 5200 0000 000B 4631"            /* 12 = XFER.....F1 */
-	$"3220 3D20 5573 6572 3200 0000 0000 00"              /* 2 = User2...... */
+resource 'MENU' (IDM_KEYBOARD) {
+	IDM_KEYBOARD,
+	textMenuProc,
+	0xFBEEF,
+	enabled,
+	"Keyboard",
+	{	/* array: 20 elements */
+		/* [1] */
+		"Keyboard", noIcon, "K", noMark, plain,
+		/* [2] */
+		"JoyKey-1", noIcon, "J", noMark, plain,
+		/* [3] */
+		"JoyKey-2", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"MouseKey", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Mechanical SHIFT", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Mechanical CTRL", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Mechanical GRPH", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"F11 = KANA", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"F11 = Stop", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"F11 = 10Key [=]", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"F11 = NFER", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"F11 = User1", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"F12 = Mouse", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"F12 = Copy", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"F12 = 10Key [,]", noIcon, noKey, noMark, plain,
+		/* [19] */
+		"F12 = XFER", noIcon, noKey, noMark, plain,
+		/* [20] */
+		"F12 = User2", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_MEMORY) {
-	$"008D 0000 0000 0000 0000 0000 001F 064D"            /* .ç.............M */
-	$"656D 6F72 7905 3634 304B 4200 0000 0005"            /* emory.640KB..... */
-	$"312E 364D 4200 0000 0005 332E 364D 4200"            /* 1.6MB.....3.6MB. */
-	$"0000 0005 372E 364D 4200 0000 0000 0000"            /* ....7.6MB....... */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_MEMORY) {
+	IDM_MEMORY,
+	textMenuProc,
+	0xF,
+	enabled,
+	"Memory",
+	{	/* array: 5 elements */
+		/* [1] */
+		"640KB", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"1.6MB", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"3.6MB", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"7.6MB", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_APPLE) {
-	$"0080 0000 0000 0000 0000 0000 0003 0114"            /* .Ä.............. */
-	$"1941 626F 7574 204E 656B 6F20 5072 6F6A"            /* .About Neko Proj */
-	$"6563 7420 4949 782E 2E2E 0000 0000 012D"            /* ect IIx........- */
-	$"0000 0000 0000"                                     /* ...... */
+resource 'MENU' (IDM_APPLE) {
+	IDM_APPLE,
+	textMenuProc,
+	0x1,
+	enabled,
+	apple,
+	{	/* array: 2 elements */
+		/* [1] */
+		"About Neko Project IIx...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_OTHER) {
-	$"008E 0000 0000 0000 0000 0000 1DFF 054F"            /* .é...........ˇ.O */
-	$"7468 6572 0B42 4D50 2053 6176 652E 2E2E"            /* ther.BMP Save... */
-	$"0000 0000 0E53 3938 206C 6F67 6769 6E67"            /* .....S98 logging */
-	$"2E2E 2E00 0000 000B 4361 6C65 6E64 6172"            /* ........Calendar */
-	$"2E2E 2E00 0000 000A 436C 6F63 6B20 4469"            /* .......¬Clock Di */
-	$"7370 0000 0000 0A46 7261 6D65 2044 6973"            /* sp....¬Frame Dis */
-	$"7000 0000 000B 4A6F 7920 5265 7665 7273"            /* p.....Joy Revers */
-	$"6500 0000 0009 4A6F 7920 5261 7069 6400"            /* e....∆Joy Rapid. */
-	$"0000 000B 4D6F 7573 6520 5261 7069 6400"            /* ....Mouse Rapid. */
-	$"0000 0001 2D00 0000 0012 536F 756E 6420"            /* ....-.....Sound  */
-	$"5265 636F 7264 696E 672E 2E2E 0053 0000"            /* Recording....S.. */
-	$"0B4B 6579 2044 6973 706C 6179 0000 0000"            /* .Key Display.... */
-	$"0D53 6F66 7420 4B65 7962 6F61 7264 0000"            /* .Soft Keyboard.. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_OTHER) {
+	IDM_OTHER,
+	textMenuProc,
+	0xEFF,
+	enabled,
+	"Other",
+	{	/* array: 12 elements */
+		/* [1] */
+		"Save BMP...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"S98 logging...", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Calendar...", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"Clock Display", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"Frame Display", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Reverse Joystick", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Rapid Joystick", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Rapid Mouse button", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"Sound Recording...", noIcon, "S", noMark, plain,
+		/* [11] */
+		"Key Display", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"Soft Keyboard", noIcon, noKey, noMark, plain
+	}
 };

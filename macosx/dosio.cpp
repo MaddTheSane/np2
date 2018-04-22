@@ -120,7 +120,7 @@ UINT file_write(FILEH handle, const void *data, UINT length) {
 	else {
 		SInt32 pos;
 		if (GetFPos(handle, &pos) == noErr) {
-			SetEOF(handle, pos);
+			FSSetForkSize(handle, fsFromStart, pos);
 		}
 	}
 	return(0);
@@ -128,7 +128,7 @@ UINT file_write(FILEH handle, const void *data, UINT length) {
 
 short file_close(FILEH handle) {
 
-	FSClose(handle);
+	FSCloseFork(handle);
 	return(0);
 }
 

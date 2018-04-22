@@ -8,12 +8,13 @@
     {
       "size" : "16x16",
       "idiom" : "mac",
-      "filename" : "icon_16x16@2x.png",
+      "filename" : "icon_16x16@2x-1.png",
       "scale" : "2x"
     },
     {
-      "idiom" : "mac",
       "size" : "32x32",
+      "idiom" : "mac",
+      "filename" : "icon_16x16@2x.png",
       "scale" : "1x"
     },
     {

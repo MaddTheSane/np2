@@ -1,219 +1,472 @@
 #include "resource.h"
+#include <Carbon/Carbon.r>
 
-data 'MENU' (IDM_FDD1) {
-	$"0084 0000 0000 0000 0000 0000 000B 0446"            /* .Ñ.............F */
-	$"4444 3107 8A4A 82AD 2E2E 2E00 4400 0001"            /* DD1.äJÇ≠....D... */
-	$"2D00 0000 0008 8EE6 82E8 8F6F 82B5 0045"            /* -.....éÊÇËèoÇµ.E */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (IDM_FDD1) {
+	IDM_FDD1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËèoÇµ", noIcon, "E", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_EDIT) {
-	$"0083 0000 0000 0000 0000 0000 035E 0495"            /* .É...........^.ï */
-	$"D28F 5706 834A 8362 8367 0058 0000 0683"            /* “èW.ÉJÉbÉg.X...É */
-	$"5283 7381 5B00 4300 0008 8379 815B 8358"            /* RÉsÅ[.C...ÉyÅ[ÉX */
-	$"8367 0056 0000 048F C18B 8E00 0000 0001"            /* Ég.V...è¡ãé..... */
-	$"2D00 0000 000C 82B7 82D7 82C4 82F0 9149"            /* -.....Ç∑Ç◊ÇƒÇëI */
-	$"91F0 0041 0000 00"                                  /* ë.A... */
+resource 'MENU' (IDM_EDIT) {
+	IDM_EDIT,
+	textMenuProc,
+	0x1AF,
+	disabled,
+	"ï“èW",
+	{	/* array: 6 elements */
+		/* [1] */
+		"ÉJÉbÉg", noIcon, "X", noMark, plain,
+		/* [2] */
+		"ÉRÉsÅ[", noIcon, "C", noMark, plain,
+		/* [3] */
+		"ÉyÅ[ÉXÉg", noIcon, "V", noMark, plain,
+		/* [4] */
+		"è¡ãé", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Ç∑Ç◊ÇƒÇëIë", noIcon, "A", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_EMULATE) {
-	$"0081 0000 0000 0000 0000 0000 003B 0C83"            /* .Å...........;.É */
-	$"4783 7E83 8583 8C81 5B83 6708 838A 835A"            /* GÉ~ÉÖÉåÅ[Ég.ÉäÉZ */
-	$"8362 8367 0052 0000 012D 0000 0000 0790"            /* ÉbÉg.R...-.....ê */
-	$"DD92 E82E 2E2E 003B 0000 0F90 568B 4B83"            /* ›íË....;...êVãKÉ */
-	$"6683 4283 5883 4E2E 2E2E 004E 0000 0F83"            /* fÉBÉXÉN....N...É */
-	$"7483 4883 9383 6791 4991 F02E 2E2E 0000"            /* tÉHÉìÉgëIë..... */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (IDM_EMULATE) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x1D,
+	enabled,
+	"ÉGÉ~ÉÖÉåÅ[Ég",
+	{	/* array: 5 elements */
+		/* [1] */
+		"ÉäÉZÉbÉg", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ê›íË...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"êVãKÉfÉBÉXÉN...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"ÉtÉHÉìÉgëIë...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (130) {
-	$"0081 0000 0000 0000 0000 0000 00BB 0745"            /* .Å...........ª.E */
-	$"6D75 6C61 7465 0552 6573 6574 0052 0000"            /* mulate.Reset.R.. */
-	$"012D 0000 0000 0C43 6F6E 6669 6775 7265"            /* .-.....Configure */
-	$"2E2E 2E00 3B00 000B 4E65 7720 4469 736B"            /* ....;...New Disk */
-	$"2E2E 2E00 4E00 0007 466F 6E74 2E2E 2E00"            /* ....N...Font.... */
-	$"0000 0001 2D00 0000 0004 5175 6974 0051"            /* ....-.....Quit.Q */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (130) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x5D,
+	enabled,
+	"Emulate",
+	{	/* array: 7 elements */
+		/* [1] */
+		"Reset", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Configure...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"New Disk...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"Font...", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Quit", noIcon, "Q", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_DEVICE) {
-	$"008A 0000 0000 0000 0000 0000 0B1F 0883"            /* .ä.............É */
-	$"6683 6F83 4383 580A 834C 815B 837B 815B"            /* fÉoÉCÉX¬ÉLÅ[É{Å[ */
-	$"8368 001B 8B00 0883 5483 4583 9383 6800"            /* Éh..ã..ÉTÉEÉìÉh. */
-	$"1B8C 0006 8381 8382 838A 001B 8D00 0683"            /* .å..ÉÅÉÇÉä..ç..É */
-	$"7D83 4583 5800 4D00 0001 2D00 0000 0015"            /* }ÉEÉX.M...-..... */
-	$"8356 838A 8341 838B 8349 8376 8356 8387"            /* ÉVÉäÉAÉãÉIÉvÉVÉá */
-	$"8393 2E2E 2E00 0000 0001 2D00 0000 000C"            /* Éì........-..... */
-	$"4D49 4449 2090 DD92 E82E 2E2E 0000 0000"            /* MIDI ê›íË....... */
-	$"094D 4944 4920 8FC1 89B9 0000 0000 012D"            /* ∆MIDI è¡âπ.....- */
-	$"0000 0000 0F83 5483 4583 9383 6890 DD92"            /* .....ÉTÉEÉìÉhê›í */
-	$"E82E 2E2E 0000 0000 00"                             /* Ë........ */
+resource 'MENU' (IDM_DEVICE) {
+	IDM_DEVICE,
+	textMenuProc,
+	0x58F,
+	enabled,
+	"ÉfÉoÉCÉX",
+	{	/* array: 11 elements */
+		/* [1] */
+		"ÉLÅ[É{Å[Éh", noIcon, hierarchicalMenu, "ã", plain,
+		/* [2] */
+		"ÉTÉEÉìÉh", noIcon, hierarchicalMenu, "å", plain,
+		/* [3] */
+		"ÉÅÉÇÉä", noIcon, hierarchicalMenu, "ç", plain,
+		/* [4] */
+		"É}ÉEÉX", noIcon, "M", noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉVÉäÉAÉãÉIÉvÉVÉáÉì...", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"MIDI ê›íË...", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"MIDI è¡âπ", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"ÉTÉEÉìÉhê›íË...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCREEN) {
-	$"0089 0000 0000 0000 0000 0001 7FBB 0A83"            /* .â...........ª¬É */
-	$"5883 4E83 8A81 5B83 930E 8374 838B 8358"            /* XÉNÉäÅ[Éì.ÉtÉãÉX */
-	$"834E 838A 815B 8393 0046 0000 012D 0000"            /* ÉNÉäÅ[Éì.F...-.. */
-	$"0000 0492 CA8F ED00 0000 000A 8DB6 3930"            /* ...í èÌ....¬ç∂90 */
-	$"9378 89F1 935D 0000 0000 0A89 4539 3093"            /* ìxâÒì]....¬âE90ì */
-	$"7889 F193 5D00 0000 0001 2D00 0000 0009"            /* xâÒì].....-....∆ */
-	$"5653 796E 6395 5C8E A600 0000 000D 5265"            /* VSyncï\é¶.....Re */
-	$"616C 2050 616C 6574 7465 7300 0000 000C"            /* al Palettes..... */
-	$"8345 8346 8343 8367 96B3 82B5 0000 0000"            /* ÉEÉFÉCÉgñ≥Çµ.... */
-	$"0E83 4981 5B83 6783 7483 8C81 5B83 8000"            /* .ÉIÅ[ÉgÉtÉåÅ[ÉÄ. */
-	$"0000 000C 8374 838B 8374 838C 815B 8380"            /* ....ÉtÉãÉtÉåÅ[ÉÄ */
-	$"0000 0000 0C31 2F32 2083 7483 8C81 5B83"            /* .....1/2 ÉtÉåÅ[É */
-	$"8000 0000 000C 312F 3320 8374 838C 815B"            /* Ä.....1/3 ÉtÉåÅ[ */
-	$"8380 0000 0000 0C31 2F34 2083 7483 8C81"            /* ÉÄ.....1/4 ÉtÉåÅ */
-	$"5B83 8000 0000 0001 2D00 0000 0011 8358"            /* [ÉÄ.....-.....ÉX */
-	$"834E 838A 815B 8393 90DD 92E8 2E2E 2E00"            /* ÉNÉäÅ[Éìê›íË.... */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SCREEN) {
+	IDM_SCREEN,
+	textMenuProc,
+	0xBFDD,
+	enabled,
+	"ÉXÉNÉäÅ[Éì",
+	{	/* array: 16 elements */
+		/* [1] */
+		"ÉtÉãÉXÉNÉäÅ[Éì", noIcon, "F", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"í èÌ", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ç∂90ìxâÒì]", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"âE90ìxâÒì]", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"VSyncï\\é¶", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Real Palettes", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"ÉEÉFÉCÉgñ≥Çµ", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"ÉIÅ[ÉgÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"ÉtÉãÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"1/2 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"1/3 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"1/4 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"ÉXÉNÉäÅ[Éìê›íË...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_HELP) {
-	$"008F 0000 0000 0000 0000 0000 000B 0683"            /* .è.............É */
-	$"7783 8B83 761F 82CB 82B1 815B 8376 838D"            /* wÉãÉv.ÇÀÇ±Å[ÉvÉç */
-	$"8357 8346 834E 8367 4949 7820 8377 838B"            /* ÉWÉFÉNÉgIIx ÉwÉã */
-	$"8376 2E2E 2E00 0000 0000"                           /* Év........ */
+resource 'MENU' (IDM_HELP) {
+	IDM_HELP,
+	textMenuProc,
+	0x5,
+	enabled,
+	"ÉwÉãÉv",
+	{	/* array: 1 elements */
+		/* [1] */
+		"ÇÀÇ±Å[ÉvÉçÉWÉFÉNÉgIIx ÉwÉãÉv...", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SOUND) {
-	$"008C 0000 0000 0000 0000 0005 FFDF 0883"            /* .å..........ˇﬂ.É */
-	$"5483 4583 9383 680A 8372 815B 8376 8349"            /* TÉEÉìÉh¬ÉrÅ[ÉvÉI */
-	$"8374 0000 0000 0C83 7281 5B83 7689 B997"            /* Ét.....ÉrÅ[Évâπó */
-	$"CA8F AC00 0000 000C 8372 815B 8376 89B9"            /*  è¨.....ÉrÅ[Évâπ */
-	$"97CA 9286 0000 0000 0C83 7281 5B83 7689"            /* ó íÜ.....ÉrÅ[Évâ */
-	$"B997 CA91 E500 0000 0001 2D00 0000 0014"            /* πó ëÂ.....-..... */
-	$"8354 8345 8393 8368 837B 815B 8368 9573"            /* ÉTÉEÉìÉhÉ{Å[Éhïs */
-	$"8E67 9770 0000 0000 0A50 432D 3938 3031"            /* égóp....¬PC-9801 */
-	$"2D31 3400 0000 000B 5043 2D39 3830 312D"            /* -14.....PC-9801- */
-	$"3236 4B00 0000 000A 5043 2D39 3830 312D"            /* 26K....¬PC-9801- */
-	$"3836 0000 0000 0F50 432D 3938 3031 2D32"            /* 86.....PC-9801-2 */
-	$"3620 2B20 3836 0000 0000 1550 432D 3938"            /* 6 + 86.....PC-98 */
-	$"3031 2D38 3620 2B20 82BF 82D1 82A8 82C6"            /* 01-86 + ÇøÇ—Ç®Ç∆ */
-	$"0000 0000 0B50 432D 3938 3031 2D31 3138"            /* .....PC-9801-118 */
-	$"0000 0000 0E83 5883 7381 5B83 4E83 7B81"            /* .....ÉXÉsÅ[ÉNÉ{Å */
-	$"5B83 6800 0000 000E 8358 8370 815B 834E"            /* [Éh.....ÉXÉpÅ[ÉN */
-	$"837B 815B 8368 0000 0000 0541 4D44 3938"            /* É{Å[Éh.....AMD98 */
-	$"0000 0000 0A4A 4153 5420 534F 554E 4400"            /* ....¬JAST SOUND. */
-	$"0000 0001 2D00 0000 0008 8356 815B 834E"            /* ....-.....ÉVÅ[ÉN */
-	$"89B9 0000 0000 00"                                  /* âπ..... */
+resource 'MENU' (IDM_SOUND) {
+	IDM_SOUND,
+	textMenuProc,
+	0x2FFEF,
+	enabled,
+	"ÉTÉEÉìÉh",
+	{	/* array: 18 elements */
+		/* [1] */
+		"ÉrÅ[ÉvÉIÉt", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"ÉrÅ[Évâπó è¨", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ÉrÅ[Évâπó íÜ", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ÉrÅ[Évâπó ëÂ", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉTÉEÉìÉhÉ{Å[Éhïségóp", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"PC-9801-14", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"PC-9801-26K", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"PC-9801-86", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"PC-9801-26 + 86", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"PC-9801-86 + ÇøÇ—Ç®Ç∆", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"PC-9801-118", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"ÉXÉsÅ[ÉNÉ{Å[Éh", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"ÉXÉpÅ[ÉNÉ{Å[Éh", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"AMD98", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"JAST SOUND", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"ÉVÅ[ÉNâπ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SASI1) {
-	$"0087 0000 0000 0000 0000 0000 000B 0553"            /* .á.............S */
-	$"4153 4931 078A 4A82 AD2E 2E2E 004F 0000"            /* ASI1.äJÇ≠....O.. */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SASI1) {
+	IDM_SASI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI0) {
-	$"0091 0000 0000 0000 0000 0000 000B 0553"            /* .ë.............S */
-	$"4353 4930 078A 4A82 AD2E 2E2E 0000 0000"            /* CSI0.äJÇ≠....... */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SCSI0) {
+	IDM_SCSI0,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI0",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI1) {
-	$"0092 0000 0000 0000 0000 0000 000B 0553"            /* .í.............S */
-	$"4353 4931 078A 4A82 AD2E 2E2E 0000 0000"            /* CSI1.äJÇ≠....... */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SCSI1) {
+	IDM_SCSI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI2) {
-	$"0093 0000 0000 0000 0000 0000 000B 0553"            /* .ì.............S */
-	$"4353 4932 078A 4A82 AD2E 2E2E 0000 0000"            /* CSI2.äJÇ≠....... */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SCSI2) {
+	IDM_SCSI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SCSI3) {
-	$"0094 0000 0000 0000 0000 0000 000B 0553"            /* .î.............S */
-	$"4353 4933 078A 4A82 AD2E 2E2E 0000 0000"            /* CSI3.äJÇ≠....... */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SCSI3) {
+	IDM_SCSI3,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI3",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_SASI2) {
-	$"0088 0000 0000 0000 0000 0000 000B 0553"            /* .à.............S */
-	$"4153 4932 078A 4A82 AD2E 2E2E 004F 0000"            /* ASI2.äJÇ≠....O.. */
-	$"012D 0000 0000 088E E682 E88A 4F82 B500"            /* .-.....éÊÇËäOÇµ. */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_SASI2) {
+	IDM_SASI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_FDD2) {
-	$"0085 0000 0000 0000 0000 0000 000B 0446"            /* .Ö.............F */
-	$"4444 3207 8A4A 82AD 2E2E 2E00 4400 0001"            /* DD2.äJÇ≠....D... */
-	$"2D00 0000 0008 8EE6 82E8 8F6F 82B5 0045"            /* -.....éÊÇËèoÇµ.E */
-	$"0000 00"                                            /* ... */
+resource 'MENU' (IDM_FDD2) {
+	IDM_FDD2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËèoÇµ", noIcon, "E", noMark, plain
+	}
 };
 
-data 'MENU' (IDM_HDD) {
-	$"0086 0000 0000 0000 0000 0000 00F7 0348"            /* .Ü...........˜.H */
-	$"4444 0653 4153 492D 3100 1B87 0006 5341"            /* DD.SASI-1..á..SA */
-	$"5349 2D32 001B 8800 012D 0000 0000 0753"            /* SI-2..à..-.....S */
-	$"4353 4920 2330 001B 9100 0753 4353 4920"            /* CSI #0..ë..SCSI  */
-	$"2331 001B 9200 0753 4353 4920 2332 001B"            /* #1..í..SCSI #2.. */
-	$"9300 0753 4353 4920 2333 001B 9400 0000"            /* ì..SCSI #3..î... */
-	$"00"                                                 /* . */
+resource 'MENU' (IDM_HDD) {
+	IDM_HDD,
+	textMenuProc,
+	0x7B,
+	enabled,
+	"HDD",
+	{	/* array: 7 elements */
+		/* [1] */
+		"SASI-1", noIcon, hierarchicalMenu, "á", plain,
+		/* [2] */
+		"SASI-2", noIcon, hierarchicalMenu, "à", plain,
+		/* [3] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"SCSI #0", noIcon, hierarchicalMenu, "ë", plain,
+		/* [5] */
+		"SCSI #1", noIcon, hierarchicalMenu, "í", plain,
+		/* [6] */
+		"SCSI #2", noIcon, hierarchicalMenu, "ì", plain,
+		/* [7] */
+		"SCSI #3", noIcon, hierarchicalMenu, "î", plain
+	}
+	/****** Extra bytes follow... ******/
+	/* $"0000"                                               /* .. */
 };
 
-data 'MENU' (IDM_KEYBOARD) {
-	$"008B 0000 0000 0000 0000 001F 7DDF 0A83"            /* .ã..........}ﬂ¬É */
-	$"4C81 5B83 7B81 5B83 680A 834C 815B 837B"            /* LÅ[É{Å[Éh¬ÉLÅ[É{ */
-	$"815B 8368 004B 0000 084A 6F79 4B65 792D"            /* Å[Éh.K...JoyKey- */
-	$"3100 4A00 0008 4A6F 794B 6579 2D32 0000"            /* 1.J...JoyKey-2.. */
-	$"0000 084D 6F75 7365 4B65 7900 0000 0001"            /* ...MouseKey..... */
-	$"2D00 0000 0010 8381 834A 836A 834A 838B"            /* -.....ÉÅÉJÉjÉJÉã */
-	$"2053 4849 4654 0000 0000 0F83 8183 4A83"            /*  SHIFT.....ÉÅÉJÉ */
-	$"6A83 4A83 8B20 4354 524C 0000 0000 0F83"            /* jÉJÉã CTRL.....É */
-	$"8183 4A83 6A83 4A83 8B20 4752 5048 0000"            /* ÅÉJÉjÉJÉã GRPH.. */
-	$"0000 012D 0000 0000 0A46 3131 203D 2083"            /* ...-....¬F11 = É */
-	$"4A83 6900 0000 000A 4631 3120 3D20 5374"            /* JÉi....¬F11 = St */
-	$"6F70 0000 0000 1246 3131 203D 2083 6583"            /* op.....F11 = ÉeÉ */
-	$"9383 4C81 5B20 5B3D 5D00 0000 000A 4631"            /* ìÉLÅ[ [=]....¬F1 */
-	$"3120 3D20 4E46 4552 0000 0000 0F46 3131"            /* 1 = NFER.....F11 */
-	$"203D 2083 8681 5B83 5581 5B31 0000 0000"            /*  = ÉÜÅ[ÉUÅ[1.... */
-	$"012D 0000 0000 0C46 3132 203D 2083 7D83"            /* .-.....F12 = É}É */
-	$"4583 5800 0000 000A 4631 3220 3D20 436F"            /* EÉX....¬F12 = Co */
-	$"7079 0000 0000 1246 3132 203D 2083 6583"            /* py.....F12 = ÉeÉ */
-	$"9383 4C81 5B20 5B2C 5D00 0000 000A 4631"            /* ìÉLÅ[ [,]....¬F1 */
-	$"3220 3D20 5846 4552 0000 0000 0F46 3132"            /* 2 = XFER.....F12 */
-	$"203D 2083 8681 5B83 5581 5B32 0000 0000"            /*  = ÉÜÅ[ÉUÅ[2.... */
-	$"00"                                                 /* . */
+resource 'MENU' (IDM_KEYBOARD) {
+	IDM_KEYBOARD,
+	textMenuProc,
+	0xFBEEF,
+	enabled,
+	"ÉLÅ[É{Å[Éh",
+	{	/* array: 20 elements */
+		/* [1] */
+		"ÉLÅ[É{Å[Éh", noIcon, "K", noMark, plain,
+		/* [2] */
+		"JoyKey-1", noIcon, "J", noMark, plain,
+		/* [3] */
+		"JoyKey-2", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"MouseKey", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉÅÉJÉjÉJÉã SHIFT", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"ÉÅÉJÉjÉJÉã CTRL", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"ÉÅÉJÉjÉJÉã GRPH", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"F11 = ÉJÉi", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"F11 = Stop", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"F11 = ÉeÉìÉLÅ[ [=]", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"F11 = NFER", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"F11 = ÉÜÅ[ÉUÅ[1", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"F12 = É}ÉEÉX", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"F12 = Copy", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"F12 = ÉeÉìÉLÅ[ [,]", noIcon, noKey, noMark, plain,
+		/* [19] */
+		"F12 = XFER", noIcon, noKey, noMark, plain,
+		/* [20] */
+		"F12 = ÉÜÅ[ÉUÅ[2", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_MEMORY) {
-	$"008D 0000 0000 0000 0000 0000 001F 064D"            /* .ç.............M */
-	$"656D 6F72 7905 3634 304B 4200 0000 0005"            /* emory.640KB..... */
-	$"312E 364D 4200 0000 0005 332E 364D 4200"            /* 1.6MB.....3.6MB. */
-	$"0000 0005 372E 364D 4200 0000 0000 0000"            /* ....7.6MB....... */
-	$"0000 0000"                                          /* .... */
+resource 'MENU' (IDM_MEMORY) {
+	IDM_MEMORY,
+	textMenuProc,
+	0xF,
+	enabled,
+	"Memory",
+	{	/* array: 5 elements */
+		/* [1] */
+		"640KB", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"1.6MB", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"3.6MB", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"7.6MB", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_APPLE) {
-	$"0080 0000 0000 0000 0000 0000 0003 0114"            /* .Ä.............. */
-	$"2082 CB82 B181 5B83 7683 8D83 5783 4683"            /*  ÇÀÇ±Å[ÉvÉçÉWÉFÉ */
-	$"4E83 6749 4978 82C9 82C2 82A2 82C4 2E2E"            /* NÉgIIxÇ…Ç¬Ç¢Çƒ.. */
-	$"2E00 0000 0001 2D00 0000 0000"                      /* ......-..... */
+resource 'MENU' (IDM_APPLE) {
+	IDM_APPLE,
+	textMenuProc,
+	0x1,
+	enabled,
+	apple,
+	{	/* array: 2 elements */
+		/* [1] */
+		"ÇÀÇ±Å[ÉvÉçÉWÉFÉNÉgIIxÇ…Ç¬Ç¢Çƒ...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain
+	}
 };
 
-data 'MENU' (IDM_OTHER) {
-	$"008E 0000 0000 0000 0000 0000 1DFF 0682"            /* .é...........ˇ.Ç */
-	$"BB82 CC91 BC0D 424D 5020 835A 815B 8375"            /* ªÇÃëº.BMP ÉZÅ[Éu */
-	$"2E2E 2E00 0000 000B 5339 3820 838D 834F"            /* ........S98 ÉçÉO */
-	$"2E2E 2E00 0000 0011 834A 838C 8393 835F"            /* ........ÉJÉåÉìÉ_ */
-	$"815B 90DD 92E8 2E2E 2E00 0000 000C 834E"            /* Å[ê›íË........ÉN */
-	$"838D 8362 834E 955C 8EA6 0000 0000 0746"            /* ÉçÉbÉNï\é¶.....F */
-	$"5053 955C 8EA6 0000 0000 1683 5783 8783"            /* PSï\é¶.....ÉWÉáÉ */
-	$"4383 7083 6283 6883 7B83 5E83 9394 BD93"            /* CÉpÉbÉhÉ{É^ÉìîΩì */
-	$"5D00 0000 0016 8357 8387 8343 8370 8362"            /* ].....ÉWÉáÉCÉpÉb */
-	$"8368 837B 835E 8393 9841 8ECB 0000 0000"            /* ÉhÉ{É^ÉìòAéÀ.... */
-	$"1083 7D83 4583 5883 7B83 5E83 9398 418E"            /* .É}ÉEÉXÉ{É^ÉìòAé */
-	$"CB00 0000 0001 2D00 0000 000F 8354 8345"            /* À.....-.....ÉTÉE */
-	$"8393 8368 985E 89B9 2E2E 2E00 5300 0010"            /* ÉìÉhò^âπ....S... */
-	$"834C 815B 8366 8342 8358 8376 838C 8343"            /* ÉLÅ[ÉfÉBÉXÉvÉåÉC */
-	$"0000 0000 1683 5C83 7483 6783 4583 4683"            /* .....É\ÉtÉgÉEÉFÉ */
-	$"4183 4C81 5B83 7B81 5B83 6800 0000 0000"            /* AÉLÅ[É{Å[Éh..... */
+resource 'MENU' (IDM_OTHER) {
+	IDM_OTHER,
+	textMenuProc,
+	0xEFF,
+	enabled,
+	"ÇªÇÃëº",
+	{	/* array: 12 elements */
+		/* [1] */
+		"BMP ÉZÅ[Éu...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"S98 ÉçÉO...", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ÉJÉåÉìÉ_Å[ê›íË...", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ÉNÉçÉbÉNï\\é¶", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"FPSï\\é¶", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉWÉáÉCÉpÉbÉhÉ{É^ÉìîΩì]", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"ÉWÉáÉCÉpÉbÉhÉ{É^ÉìòAéÀ", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"É}ÉEÉXÉ{É^ÉìòAéÀ", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"ÉTÉEÉìÉhò^âπ...", noIcon, "S", noMark, plain,
+		/* [11] */
+		"ÉLÅ[ÉfÉBÉXÉvÉåÉC", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"É\\ÉtÉgÉEÉFÉAÉLÅ[É{Å[Éh", noIcon, noKey, noMark, plain
+	}
 };
