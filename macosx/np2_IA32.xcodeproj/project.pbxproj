@@ -1021,6 +1021,7 @@
 			name = Sources;
 			path = ..;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
@@ -1369,6 +1370,7 @@
 			);
 			name = macosx;
 			sourceTree = SOURCE_ROOT;
+			usesTabs = 0;
 		};
 		967C9221055778CB00000103 /* dialog */ = {
 			isa = PBXGroup;

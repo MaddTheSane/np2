@@ -59,10 +59,12 @@ static pascal OSStatus cfWinproc(EventHandlerCallRef myHandler, EventRef event, 
                 }
                 else {
                     np2info(infostr, np2infostr, sizeof(infostr), NULL);
-                    SetControlData(more,kControlNoPart,kControlEditTextTextTag,sizeof(infostr), infostr);
+                    CFStringRef aStr = CFStringCreateWithCString(kCFAllocatorDefault, infostr, kCFStringEncodingUTF8);
+                    SetControlData(more,kControlNoPart,kControlEditTextCFStringTag,sizeof(aStr), &aStr);
                     SetControl32BitValue(getControlRefByID('detl',0,aboutWin),3);
                     SizeWindow(aboutWin, 292, 441, true);
                     ShowControl(more);
+                    CFRelease(aStr);
                 }
                 err=noErr;
                 break;
