@@ -115,4 +115,4 @@ typedef	unsigned char	BOOL;
 #define SUPPORT_ARC
 #define SUPPORT_ZLIB
 
-#define	SCREEN_BPP		32
+#define	SCREEN_BPP		16
