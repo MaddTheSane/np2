@@ -429,12 +429,12 @@ const MENURES2	*res;
 
 	res = menures_sys;
 	if (menu->flag & MENU_CHECKED) {
-		pt.x = menu->rct.left + MENUSYS_SXITEM + pos,
+		pt.x = menu->rct.left + MENUSYS_SXITEM + pos;
 		pt.y = menu->rct.top + pos;
 		menuvram_res3put(vram, res, &pt, mvc);
 	}
 	if (menu->child) {
-		pt.x = menu->rct.right - MENUSYS_SXITEM - res[1].width + pos,
+		pt.x = menu->rct.right - MENUSYS_SXITEM - res[1].width + pos;
 		pt.y = menu->rct.top + pos;
 		menuvram_res3put(vram, res+1, &pt, mvc);
 	}
