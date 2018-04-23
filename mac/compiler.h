@@ -20,12 +20,14 @@
 #include <string.h>
 #include <setjmp.h>
 #include <pthread.h>
+#include <stdarg.h>
 
 #define	BYTESEX_LITTLE
 #define	OSLANG_UTF8
 #define	OSLINEBREAK_LF
 #define RESOURCE_US
-#define NP2VER_MACOSX
+#define SUPPORT_SJIS
+#define NP2VER_MACOSX " by Madd the Sane"
 
 typedef	signed int		SINT;
 typedef	unsigned int	UINT;
