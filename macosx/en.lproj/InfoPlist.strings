@@ -1,0 +1,20 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleShortVersionString = "Version 0.81";
+CFBundleGetInfoString = "Neko Project IIx version 0.81 by the Neko Project development team, 1999-2001, 2003-2005";
+CFBundleName = "Neko Project IIx";
+
+
+"D88 フロッピーディスクイメージ" = "D88 Floppy Disk Image";
+"ROMファイル" = "ROM File";
+"ベタフロッピーディスクイメージ" = "Solid Floppy disk image";
+"XDF ディスクイメージ" = "XDF Disk Image";
+"ANEX86 ハードディスクイメージ" = "ANEX86 Hard Disk Image";
+"T98 ハードディスクイメージ" = "T98 Hard Disk Image";
+"T98-Next ハードディスクイメージ" = "T98-Next Hard Disk Image";
+"Virtual98 ハードディスクイメージ" = "Virtual98 Hard Disk Image";
+"Neko Project II 初期設定" = "Neko Project II Initial Settings";
+"FDI フロッピーディスクイメージ" = "FDI Floppy disk image";
+"Neko Project II ツールウィンドウ スキンファイル" = "Neko Project II Tool window skin file";
+"共有ライブラリ" = "NP2 Plug-in";
+"Neko Project II レジュームファイル" = "Neko Project II Resume File";

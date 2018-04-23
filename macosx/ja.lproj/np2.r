@@ -1,0 +1,472 @@
+#include "resource.h"
+#include <Carbon/Carbon.r>
+
+resource 'MENU' (IDM_FDD1) {
+	IDM_FDD1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËèoÇµ", noIcon, "E", noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_EDIT) {
+	IDM_EDIT,
+	textMenuProc,
+	0x1AF,
+	disabled,
+	"ï“èW",
+	{	/* array: 6 elements */
+		/* [1] */
+		"ÉJÉbÉg", noIcon, "X", noMark, plain,
+		/* [2] */
+		"ÉRÉsÅ[", noIcon, "C", noMark, plain,
+		/* [3] */
+		"ÉyÅ[ÉXÉg", noIcon, "V", noMark, plain,
+		/* [4] */
+		"è¡ãé", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"Ç∑Ç◊ÇƒÇëIë", noIcon, "A", noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_EMULATE) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x1D,
+	enabled,
+	"ÉGÉ~ÉÖÉåÅ[Ég",
+	{	/* array: 5 elements */
+		/* [1] */
+		"ÉäÉZÉbÉg", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ê›íË...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"êVãKÉfÉBÉXÉN...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"ÉtÉHÉìÉgëIë...", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (130) {
+	IDM_EMULATE,
+	textMenuProc,
+	0x5D,
+	enabled,
+	"Emulate",
+	{	/* array: 7 elements */
+		/* [1] */
+		"Reset", noIcon, "R", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"Configure...", noIcon, ";", noMark, plain,
+		/* [4] */
+		"New Disk...", noIcon, "N", noMark, plain,
+		/* [5] */
+		"Font...", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"Quit", noIcon, "Q", noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_DEVICE) {
+	IDM_DEVICE,
+	textMenuProc,
+	0x58F,
+	enabled,
+	"ÉfÉoÉCÉX",
+	{	/* array: 11 elements */
+		/* [1] */
+		"ÉLÅ[É{Å[Éh", noIcon, hierarchicalMenu, "ã", plain,
+		/* [2] */
+		"ÉTÉEÉìÉh", noIcon, hierarchicalMenu, "å", plain,
+		/* [3] */
+		"ÉÅÉÇÉä", noIcon, hierarchicalMenu, "ç", plain,
+		/* [4] */
+		"É}ÉEÉX", noIcon, "M", noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉVÉäÉAÉãÉIÉvÉVÉáÉì...", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"MIDI ê›íË...", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"MIDI è¡âπ", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"ÉTÉEÉìÉhê›íË...", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SCREEN) {
+	IDM_SCREEN,
+	textMenuProc,
+	0xBFDD,
+	enabled,
+	"ÉXÉNÉäÅ[Éì",
+	{	/* array: 16 elements */
+		/* [1] */
+		"ÉtÉãÉXÉNÉäÅ[Éì", noIcon, "F", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"í èÌ", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ç∂90ìxâÒì]", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"âE90ìxâÒì]", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"VSyncï\\é¶", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"Real Palettes", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"ÉEÉFÉCÉgñ≥Çµ", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"ÉIÅ[ÉgÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"ÉtÉãÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"1/2 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"1/3 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"1/4 ÉtÉåÅ[ÉÄ", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"ÉXÉNÉäÅ[Éìê›íË...", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_HELP) {
+	IDM_HELP,
+	textMenuProc,
+	0x5,
+	enabled,
+	"ÉwÉãÉv",
+	{	/* array: 1 elements */
+		/* [1] */
+		"ÇÀÇ±Å[ÉvÉçÉWÉFÉNÉgIIx ÉwÉãÉv...", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SOUND) {
+	IDM_SOUND,
+	textMenuProc,
+	0x2FFEF,
+	enabled,
+	"ÉTÉEÉìÉh",
+	{	/* array: 18 elements */
+		/* [1] */
+		"ÉrÅ[ÉvÉIÉt", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"ÉrÅ[Évâπó è¨", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ÉrÅ[Évâπó íÜ", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ÉrÅ[Évâπó ëÂ", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉTÉEÉìÉhÉ{Å[Éhïségóp", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"PC-9801-14", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"PC-9801-26K", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"PC-9801-86", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"PC-9801-26 + 86", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"PC-9801-86 + ÇøÇ—Ç®Ç∆", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"PC-9801-118", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"ÉXÉsÅ[ÉNÉ{Å[Éh", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"ÉXÉpÅ[ÉNÉ{Å[Éh", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"AMD98", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"JAST SOUND", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"ÉVÅ[ÉNâπ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SASI1) {
+	IDM_SASI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SCSI0) {
+	IDM_SCSI0,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI0",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SCSI1) {
+	IDM_SCSI1,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI1",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SCSI2) {
+	IDM_SCSI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SCSI3) {
+	IDM_SCSI3,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SCSI3",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_SASI2) {
+	IDM_SASI2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"SASI2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "O", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËäOÇµ", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_FDD2) {
+	IDM_FDD2,
+	textMenuProc,
+	0x5,
+	enabled,
+	"FDD2",
+	{	/* array: 3 elements */
+		/* [1] */
+		"äJÇ≠...", noIcon, "D", noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"éÊÇËèoÇµ", noIcon, "E", noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_HDD) {
+	IDM_HDD,
+	textMenuProc,
+	0x7B,
+	enabled,
+	"HDD",
+	{	/* array: 7 elements */
+		/* [1] */
+		"SASI-1", noIcon, hierarchicalMenu, "á", plain,
+		/* [2] */
+		"SASI-2", noIcon, hierarchicalMenu, "à", plain,
+		/* [3] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"SCSI #0", noIcon, hierarchicalMenu, "ë", plain,
+		/* [5] */
+		"SCSI #1", noIcon, hierarchicalMenu, "í", plain,
+		/* [6] */
+		"SCSI #2", noIcon, hierarchicalMenu, "ì", plain,
+		/* [7] */
+		"SCSI #3", noIcon, hierarchicalMenu, "î", plain
+	}
+	/****** Extra bytes follow... ******/
+	/* $"0000"                                               /* .. */
+};
+
+resource 'MENU' (IDM_KEYBOARD) {
+	IDM_KEYBOARD,
+	textMenuProc,
+	0xFBEEF,
+	enabled,
+	"ÉLÅ[É{Å[Éh",
+	{	/* array: 20 elements */
+		/* [1] */
+		"ÉLÅ[É{Å[Éh", noIcon, "K", noMark, plain,
+		/* [2] */
+		"JoyKey-1", noIcon, "J", noMark, plain,
+		/* [3] */
+		"JoyKey-2", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"MouseKey", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉÅÉJÉjÉJÉã SHIFT", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"ÉÅÉJÉjÉJÉã CTRL", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"ÉÅÉJÉjÉJÉã GRPH", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"F11 = ÉJÉi", noIcon, noKey, noMark, plain,
+		/* [11] */
+		"F11 = Stop", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"F11 = ÉeÉìÉLÅ[ [=]", noIcon, noKey, noMark, plain,
+		/* [13] */
+		"F11 = NFER", noIcon, noKey, noMark, plain,
+		/* [14] */
+		"F11 = ÉÜÅ[ÉUÅ[1", noIcon, noKey, noMark, plain,
+		/* [15] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [16] */
+		"F12 = É}ÉEÉX", noIcon, noKey, noMark, plain,
+		/* [17] */
+		"F12 = Copy", noIcon, noKey, noMark, plain,
+		/* [18] */
+		"F12 = ÉeÉìÉLÅ[ [,]", noIcon, noKey, noMark, plain,
+		/* [19] */
+		"F12 = XFER", noIcon, noKey, noMark, plain,
+		/* [20] */
+		"F12 = ÉÜÅ[ÉUÅ[2", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_MEMORY) {
+	IDM_MEMORY,
+	textMenuProc,
+	0xF,
+	enabled,
+	"Memory",
+	{	/* array: 5 elements */
+		/* [1] */
+		"640KB", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"1.6MB", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"3.6MB", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"7.6MB", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_APPLE) {
+	IDM_APPLE,
+	textMenuProc,
+	0x1,
+	enabled,
+	apple,
+	{	/* array: 2 elements */
+		/* [1] */
+		"ÇÀÇ±Å[ÉvÉçÉWÉFÉNÉgIIxÇ…Ç¬Ç¢Çƒ...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain
+	}
+};
+
+resource 'MENU' (IDM_OTHER) {
+	IDM_OTHER,
+	textMenuProc,
+	0xEFF,
+	enabled,
+	"ÇªÇÃëº",
+	{	/* array: 12 elements */
+		/* [1] */
+		"BMP ÉZÅ[Éu...", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"S98 ÉçÉO...", noIcon, noKey, noMark, plain,
+		/* [3] */
+		"ÉJÉåÉìÉ_Å[ê›íË...", noIcon, noKey, noMark, plain,
+		/* [4] */
+		"ÉNÉçÉbÉNï\\é¶", noIcon, noKey, noMark, plain,
+		/* [5] */
+		"FPSï\\é¶", noIcon, noKey, noMark, plain,
+		/* [6] */
+		"ÉWÉáÉCÉpÉbÉhÉ{É^ÉìîΩì]", noIcon, noKey, noMark, plain,
+		/* [7] */
+		"ÉWÉáÉCÉpÉbÉhÉ{É^ÉìòAéÀ", noIcon, noKey, noMark, plain,
+		/* [8] */
+		"É}ÉEÉXÉ{É^ÉìòAéÀ", noIcon, noKey, noMark, plain,
+		/* [9] */
+		"-", noIcon, noKey, noMark, plain,
+		/* [10] */
+		"ÉTÉEÉìÉhò^âπ...", noIcon, "S", noMark, plain,
+		/* [11] */
+		"ÉLÅ[ÉfÉBÉXÉvÉåÉC", noIcon, noKey, noMark, plain,
+		/* [12] */
+		"É\\ÉtÉgÉEÉFÉAÉLÅ[É{Å[Éh", noIcon, noKey, noMark, plain
+	}
+};

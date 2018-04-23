@@ -1,0 +1,19 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleShortVersionString = "バージョン 0.81";
+CFBundleGetInfoString = "ねこープロジェクトIIx バージョン 0.81 by ねこさん開発チーム, 1999-2001,2003-2005";
+CFBundleName = "ねこープロジェクトIIx";
+
+"D88 フロッピーディスクイメージ" = "D88 フロッピーディスクイメージ";
+"ROMファイル" = "ROMファイル";
+"ベタフロッピーディスクイメージ" = "ベタフロッピーディスクイメージ";
+"XDF ディスクイメージ" = "XDF ディスクイメージ";
+"ANEX86 ハードディスクイメージ" = "ANEX86 ハードディスクイメージ";
+"T98 ハードディスクイメージ" = "T98 ハードディスクイメージ";
+"T98-Next ハードディスクイメージ" = "T98-Next ハードディスクイメージ";
+"Virtual98 ハードディスクイメージ" = "Virtual98 ハードディスクイメージ";
+"Neko Project II 初期設定" = "Neko Project II 初期設定";
+"FDI フロッピーディスクイメージ" = "FDI フロッピーディスクイメージ";
+"Neko Project II ツールウィンドウ スキンファイル" = "Neko Project II ツールウィンドウ スキンファイル";
+"共有ライブラリ" = "共有ライブラリ";
+"Neko Project II レジュームファイル" = "Neko Project II レジュームファイル";

@@ -32,6 +32,9 @@
 extern "C" {
 #endif
 
+#define IOINPCALL
+#define IOOUTCALL
+	
 UINT8 IOINPCALL cpu_in(UINT port);
 UINT16 IOINPCALL cpu_in_w(UINT port);
 UINT32 IOINPCALL cpu_in_d(UINT port);
