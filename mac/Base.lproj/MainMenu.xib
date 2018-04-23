@@ -1610,6 +1610,9 @@ Gw
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Pbj-61-If7">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                         </buttonCell>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="x3H-67-ceS">
@@ -1663,6 +1666,89 @@ Gw
                 </constraints>
             </view>
             <point key="canvasLocation" x="-485" y="315.5"/>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="kBn-kh-mUW">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="158" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="qKi-2n-92s">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <tabView translatesAutoresizingMaskIntoConstraints="NO" id="959-tn-RwW">
+                        <rect key="frame" x="13" y="51" width="454" height="213"/>
+                        <font key="font" metaFont="system"/>
+                        <tabViewItems>
+                            <tabViewItem label="Mixer" identifier="" id="LLF-eY-Ml9">
+                                <view key="view" id="Np8-V6-77Y">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="PC-0801014" identifier="" id="HO9-4D-mOf">
+                                <view key="view" id="V7V-B6-7LO">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="26" identifier="" id="Uhb-BG-g5v">
+                                <view key="view" id="cMV-gz-M45">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="86" identifier="" id="z2k-5j-EBI">
+                                <view key="view" id="toX-uh-gdT">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="SPB" identifier="" id="RUc-e4-gd9">
+                                <view key="view" id="3h7-9V-GET">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="JoyPad" identifier="" id="lFg-mN-xhY">
+                                <view key="view" id="dit-Q9-YSZ">
+                                    <rect key="frame" x="10" y="33" width="434" height="167"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                </view>
+                            </tabViewItem>
+                        </tabViewItems>
+                    </tabView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SDQ-vR-la0">
+                        <rect key="frame" x="384" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LF7-Tn-nCT">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bln-pt-DJf">
+                        <rect key="frame" x="302" y="13" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FnY-ue-8DW">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="SDQ-vR-la0" firstAttribute="top" secondItem="959-tn-RwW" secondAttribute="bottom" constant="20" symbolic="YES" id="6Ty-un-MQw"/>
+                    <constraint firstItem="bln-pt-DJf" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="qKi-2n-92s" secondAttribute="leading" constant="20" symbolic="YES" id="BJ2-le-1wc"/>
+                    <constraint firstAttribute="trailing" secondItem="SDQ-vR-la0" secondAttribute="trailing" constant="20" symbolic="YES" id="KSg-bG-WIa"/>
+                    <constraint firstItem="SDQ-vR-la0" firstAttribute="leading" secondItem="bln-pt-DJf" secondAttribute="trailing" constant="12" symbolic="YES" id="bud-9I-Ld1"/>
+                    <constraint firstItem="959-tn-RwW" firstAttribute="leading" secondItem="qKi-2n-92s" secondAttribute="leading" constant="20" symbolic="YES" id="e8p-6K-ht7"/>
+                    <constraint firstItem="959-tn-RwW" firstAttribute="top" secondItem="qKi-2n-92s" secondAttribute="top" constant="12" symbolic="YES" id="l05-Yh-ynr"/>
+                    <constraint firstItem="SDQ-vR-la0" firstAttribute="baseline" secondItem="bln-pt-DJf" secondAttribute="baseline" id="m8l-1e-tsL"/>
+                    <constraint firstItem="959-tn-RwW" firstAttribute="centerX" secondItem="qKi-2n-92s" secondAttribute="centerX" id="pYO-58-Jn6"/>
+                    <constraint firstAttribute="bottom" secondItem="SDQ-vR-la0" secondAttribute="bottom" constant="20" symbolic="YES" id="tSf-cX-CdC"/>
+                    <constraint firstItem="SDQ-vR-la0" firstAttribute="width" secondItem="bln-pt-DJf" secondAttribute="width" id="wMT-JN-cnt"/>
+                </constraints>
+            </view>
         </window>
     </objects>
 </document>
