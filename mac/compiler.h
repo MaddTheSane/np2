@@ -126,6 +126,14 @@ typedef	unsigned char	BOOL;
 #define	USE_RESUME
 #define	SOUNDRESERVE	80
 
+#if defined(OSLANG_SJIS)
+#define	SUPPORT_SJIS
+#elif defined(OSLANG_UTF8)
+#define	SUPPORT_UTF8
+#else
+#define	SUPPORT_ANK
+#endif
+
 #if defined(CPUCORE_IA32)
 #define FASTCALL
 #define CPUCALL

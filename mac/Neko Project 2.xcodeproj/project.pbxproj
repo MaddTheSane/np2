@@ -197,6 +197,14 @@
 		55851B6E1D1DE08900FDAD85 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 55851B6D1D1DE08900FDAD85 /* libz.tbd */; };
 		55851B821D1DF09D00FDAD85 /* soundmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55851B801D1DF09D00FDAD85 /* soundmng.c */; };
 		55851B921D1DF60900FDAD85 /* ticks.c in Sources */ = {isa = PBXBuildFile; fileRef = 55851B901D1DF60900FDAD85 /* ticks.c */; };
+		55B7AA94208D8CCF0013E0EC /* commng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AA92208D8CCF0013E0EC /* commng.c */; };
+		55B7AA98208D8E440013E0EC /* timemng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AA97208D8E430013E0EC /* timemng.c */; };
+		55B7AA9B208D8E9E0013E0EC /* sysmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AA9A208D8E9E0013E0EC /* sysmng.c */; };
+		55B7AA9E208D8F0A0013E0EC /* ini.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AA9C208D8F0A0013E0EC /* ini.c */; };
+		55B7AAA1208D8F7E0013E0EC /* mousemng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA0208D8F7E0013E0EC /* mousemng.c */; };
+		55B7AAA4208D8FA20013E0EC /* joymng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA3208D8FA20013E0EC /* joymng.c */; };
+		55B7AAA7208D8FB90013E0EC /* scrnmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA6208D8FB90013E0EC /* scrnmng.c */; };
+		55B7AAAA208D8FF10013E0EC /* taskmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA9208D8FF10013E0EC /* taskmng.c */; };
 		55F74CF1208D67BD00643F36 /* fontmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF0208D67BD00643F36 /* fontmng.c */; };
 		55F74CF4208D6CE300643F36 /* dosio.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF2208D6CE300643F36 /* dosio.c */; };
 		55F74D41208D6DFF00643F36 /* cpumem.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF6208D6DFF00643F36 /* cpumem.c */; };
@@ -640,6 +648,23 @@
 		55851B811D1DF09D00FDAD85 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundmng.h; sourceTree = "<group>"; };
 		55851B901D1DF60900FDAD85 /* ticks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ticks.c; sourceTree = "<group>"; };
 		55851B911D1DF60900FDAD85 /* ticks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticks.h; sourceTree = "<group>"; };
+		55B7AA92208D8CCF0013E0EC /* commng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commng.c; sourceTree = "<group>"; };
+		55B7AA93208D8CCF0013E0EC /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commng.h; sourceTree = "<group>"; };
+		55B7AA95208D8D390013E0EC /* np2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = np2.h; sourceTree = "<group>"; };
+		55B7AA96208D8E430013E0EC /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timemng.h; sourceTree = "<group>"; };
+		55B7AA97208D8E430013E0EC /* timemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timemng.c; sourceTree = "<group>"; };
+		55B7AA99208D8E9E0013E0EC /* sysmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmng.h; sourceTree = "<group>"; };
+		55B7AA9A208D8E9E0013E0EC /* sysmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysmng.c; sourceTree = "<group>"; };
+		55B7AA9C208D8F0A0013E0EC /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ini.c; sourceTree = "<group>"; };
+		55B7AA9D208D8F0A0013E0EC /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ini.h; sourceTree = "<group>"; };
+		55B7AA9F208D8F7E0013E0EC /* mousemng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mousemng.h; sourceTree = "<group>"; };
+		55B7AAA0208D8F7E0013E0EC /* mousemng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mousemng.c; sourceTree = "<group>"; };
+		55B7AAA2208D8FA20013E0EC /* joymng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = joymng.h; sourceTree = "<group>"; };
+		55B7AAA3208D8FA20013E0EC /* joymng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = joymng.c; sourceTree = "<group>"; };
+		55B7AAA5208D8FB90013E0EC /* scrnmng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
+		55B7AAA6208D8FB90013E0EC /* scrnmng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scrnmng.c; sourceTree = "<group>"; };
+		55B7AAA8208D8FF10013E0EC /* taskmng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = taskmng.h; sourceTree = "<group>"; };
+		55B7AAA9208D8FF10013E0EC /* taskmng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = taskmng.c; sourceTree = "<group>"; };
 		55F74CEF208D67BD00643F36 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmng.h; sourceTree = "<group>"; };
 		55F74CF0208D67BD00643F36 /* fontmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fontmng.c; sourceTree = "<group>"; };
 		55F74CF2208D6CE300643F36 /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dosio.c; sourceTree = "<group>"; };
@@ -1464,17 +1489,34 @@
 		55F74D7F208D893600643F36 /* Neko Bridging */ = {
 			isa = PBXGroup;
 			children = (
+				55B7AA92208D8CCF0013E0EC /* commng.c */,
+				55B7AA93208D8CCF0013E0EC /* commng.h */,
 				55851B711D1DE24800FDAD85 /* compiler.h */,
 				55851B721D1DE61B00FDAD85 /* compiler.pch */,
 				55F74CF2208D6CE300643F36 /* dosio.c */,
 				55F74CF3208D6CE300643F36 /* dosio.h */,
 				55F74CF0208D67BD00643F36 /* fontmng.c */,
 				55F74CEF208D67BD00643F36 /* fontmng.h */,
+				55B7AA9C208D8F0A0013E0EC /* ini.c */,
+				55B7AA9D208D8F0A0013E0EC /* ini.h */,
+				55B7AAA3208D8FA20013E0EC /* joymng.c */,
+				55B7AAA2208D8FA20013E0EC /* joymng.h */,
+				55B7AAA0208D8F7E0013E0EC /* mousemng.c */,
+				55B7AA9F208D8F7E0013E0EC /* mousemng.h */,
+				55B7AA95208D8D390013E0EC /* np2.h */,
 				55F74D6F208D6F2900643F36 /* oemtext.h */,
+				55B7AAA6208D8FB90013E0EC /* scrnmng.c */,
+				55B7AAA5208D8FB90013E0EC /* scrnmng.h */,
 				55851B801D1DF09D00FDAD85 /* soundmng.c */,
 				55851B811D1DF09D00FDAD85 /* soundmng.h */,
+				55B7AA9A208D8E9E0013E0EC /* sysmng.c */,
+				55B7AA99208D8E9E0013E0EC /* sysmng.h */,
+				55B7AAA9208D8FF10013E0EC /* taskmng.c */,
+				55B7AAA8208D8FF10013E0EC /* taskmng.h */,
 				55851B901D1DF60900FDAD85 /* ticks.c */,
 				55851B911D1DF60900FDAD85 /* ticks.h */,
+				55B7AA97208D8E430013E0EC /* timemng.c */,
+				55B7AA96208D8E430013E0EC /* timemng.h */,
 				55F74D6D208D6EDF00643F36 /* trace.c */,
 				55F74D6C208D6EDF00643F36 /* trace.h */,
 			);
@@ -1507,7 +1549,7 @@
 		558516BB1D1DDD7200FDAD85 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "C.W. Betts";
 				TargetAttributes = {
 					558516C21D1DDD7200FDAD85 = {
@@ -1564,6 +1606,7 @@
 				558519D71D1DDE4500FDAD85 /* boardso.c in Sources */,
 				55F74D42208D6DFF00643F36 /* cpucore.c in Sources */,
 				55F74D4A208D6DFF00643F36 /* misc_inst.c in Sources */,
+				55B7AAA4208D8FA20013E0EC /* joymng.c in Sources */,
 				55851B3D1D1DDE4500FDAD85 /* opna.c in Sources */,
 				55851A9B1D1DDE4500FDAD85 /* pic.c in Sources */,
 				55851B481D1DDE4500FDAD85 /* sndcsec.c in Sources */,
@@ -1580,8 +1623,10 @@
 				558519D41D1DDE4500FDAD85 /* board26k.c in Sources */,
 				55851B511D1DDE4500FDAD85 /* midvoice.c in Sources */,
 				55851B3A1D1DDE4500FDAD85 /* opl3.c in Sources */,
+				55B7AA9B208D8E9E0013E0EC /* sysmng.c in Sources */,
 				55851A9F1D1DDE4500FDAD85 /* sysport.c in Sources */,
 				55851A8E1D1DDE4500FDAD85 /* fdc.c in Sources */,
+				55B7AA98208D8E440013E0EC /* timemng.c in Sources */,
 				55F74D52208D6DFF00643F36 /* shift_rotate.c in Sources */,
 				55851A221D1DDE4500FDAD85 /* fontpc98.c in Sources */,
 				55851A8A1D1DDE4500FDAD85 /* dmac.c in Sources */,
@@ -1633,6 +1678,7 @@
 				55851B921D1DF60900FDAD85 /* ticks.c in Sources */,
 				55851A211D1DDE4500FDAD85 /* fontpc88.c in Sources */,
 				55851B4F1D1DDE4500FDAD85 /* midiout.c in Sources */,
+				55B7AAA7208D8FB90013E0EC /* scrnmng.c in Sources */,
 				55F74D5D208D6DFF00643F36 /* cpu.c in Sources */,
 				55851B4B1D1DDE4500FDAD85 /* tms3631c.c in Sources */,
 				55851AAF1D1DDE4500FDAD85 /* memems.c in Sources */,
@@ -1640,6 +1686,7 @@
 				55851AB31D1DDE4500FDAD85 /* memvram.c in Sources */,
 				558519F41D1DDE4500FDAD85 /* bmpdata.c in Sources */,
 				55851A231D1DDE4500FDAD85 /* fontv98.c in Sources */,
+				55B7AAA1208D8F7E0013E0EC /* mousemng.c in Sources */,
 				55851A871D1DDE4500FDAD85 /* cpuio.c in Sources */,
 				55F74D65208D6DFF00643F36 /* cpu_mem.c in Sources */,
 				55851A1C1D1DDE4500FDAD85 /* font.c in Sources */,
@@ -1660,6 +1707,7 @@
 				55851B4C1D1DDE4500FDAD85 /* tms3631g.c in Sources */,
 				55851A1F1D1DDE4500FDAD85 /* fontfm7.c in Sources */,
 				55F74CF1208D67BD00643F36 /* fontmng.c in Sources */,
+				55B7AA9E208D8F0A0013E0EC /* ini.c in Sources */,
 				55851B321D1DDE4500FDAD85 /* fmboard.c in Sources */,
 				55851A351D1DDE4500FDAD85 /* softkbd.c in Sources */,
 				558519DD1D1DDE4500FDAD85 /* ideio.c in Sources */,
@@ -1686,6 +1734,7 @@
 				55851A111D1DDE4500FDAD85 /* diskdrv.c in Sources */,
 				558519BF1D1DDE4500FDAD85 /* bios.c in Sources */,
 				55F74D6E208D6EDF00643F36 /* trace.c in Sources */,
+				55B7AA94208D8CCF0013E0EC /* commng.c in Sources */,
 				55851A8C1D1DDE4500FDAD85 /* emsio.c in Sources */,
 				55851A2E1D1DDE4500FDAD85 /* hostdrvs.c in Sources */,
 				558519D21D1DDE4500FDAD85 /* board118.c in Sources */,
@@ -1768,6 +1817,7 @@
 				55851B361D1DDE4500FDAD85 /* getsnd.c in Sources */,
 				55851B4E1D1DDE4500FDAD85 /* midinst.c in Sources */,
 				558519D91D1DDE4500FDAD85 /* boardx2.c in Sources */,
+				55B7AAAA208D8FF10013E0EC /* taskmng.c in Sources */,
 				558519C91D1DDE4500FDAD85 /* bios1f.c in Sources */,
 				55851B551D1DDE4500FDAD85 /* inttrap.c in Sources */,
 				55F74D50208D6DFF00643F36 /* logic_arith.c in Sources */,
@@ -1828,13 +1878,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1873,13 +1933,23 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
