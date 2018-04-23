@@ -771,7 +771,7 @@
             <rect key="contentRect" x="196" y="332" width="230" height="181"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="gP2-rP-OQB">
-                <rect key="frame" x="0.0" y="0.0" width="230" height="181"/>
+                <rect key="frame" x="0.0" y="0.0" width="230" height="183"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gQc-Tt-GQ4">
@@ -796,28 +796,6 @@
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         </datePickerCell>
                     </datePicker>
-                    <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qV3-9F-S8P">
-                        <rect key="frame" x="20" y="123" width="161" height="38"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        <size key="cellSize" width="161" height="18"/>
-                        <size key="intercellSpacing" width="4" height="2"/>
-                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="Hwg-Gl-Jor">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <cells>
-                            <column>
-                                <buttonCell type="radio" title="Real time (local time)" imagePosition="left" alignment="left" state="on" tag="1" imageScaling="proportionallyDown" inset="2" id="mwK-98-eRj">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <buttonCell type="radio" title="Virtual Calendar" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="NDa-OL-3Y2">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </column>
-                        </cells>
-                    </matrix>
                     <button verticalHuggingPriority="750" imageHugsTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hg5-S2-ti7">
                         <rect key="frame" x="130" y="54" width="86" height="32"/>
                         <buttonCell key="cell" type="push" title="Current" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Oma-O7-wdd">
@@ -842,17 +820,45 @@ DQ
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                     </button>
+                    <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cWC-PY-Mzv">
+                        <rect key="frame" x="20" y="123" width="147" height="40"/>
+                        <subviews>
+                            <button tag="-1" translatesAutoresizingMaskIntoConstraints="NO" id="e4X-Sd-qb2">
+                                <rect key="frame" x="-1" y="23" width="150" height="18"/>
+                                <buttonCell key="cell" type="radio" title="Real time (local time)" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="mwK-98-eRj">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <button tag="-1" translatesAutoresizingMaskIntoConstraints="NO" id="k1r-HE-Ih9">
+                                <rect key="frame" x="-1" y="-1" width="120" height="18"/>
+                                <buttonCell key="cell" type="radio" title="Virtual Calendar" imagePosition="left" alignment="left" inset="2" id="NDa-OL-3Y2">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                        <visibilityPriorities>
+                            <integer value="1000"/>
+                            <integer value="1000"/>
+                        </visibilityPriorities>
+                        <customSpacing>
+                            <real value="3.4028234663852886e+38"/>
+                            <real value="3.4028234663852886e+38"/>
+                        </customSpacing>
+                    </stackView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="hg5-S2-ti7" firstAttribute="baseline" secondItem="gQc-Tt-GQ4" secondAttribute="baseline" id="2db-zS-gBh"/>
+                    <constraint firstItem="cWC-PY-Mzv" firstAttribute="leading" secondItem="gP2-rP-OQB" secondAttribute="leading" constant="20" symbolic="YES" id="K9g-Ch-Azl"/>
                     <constraint firstItem="eJf-Tz-mwK" firstAttribute="baseline" secondItem="i12-qD-ggM" secondAttribute="baseline" id="Lut-UQ-KRc"/>
-                    <constraint firstItem="ZHI-dP-r1a" firstAttribute="top" secondItem="qV3-9F-S8P" secondAttribute="bottom" constant="8" symbolic="YES" id="U3A-kZ-1nT"/>
                     <constraint firstItem="i12-qD-ggM" firstAttribute="top" secondItem="gQc-Tt-GQ4" secondAttribute="bottom" constant="20" symbolic="YES" id="Uz2-AM-jUR"/>
+                    <constraint firstItem="ZHI-dP-r1a" firstAttribute="top" secondItem="cWC-PY-Mzv" secondAttribute="bottom" constant="8" symbolic="YES" id="ay9-YM-WOs"/>
                     <constraint firstItem="gQc-Tt-GQ4" firstAttribute="trailing" secondItem="ZHI-dP-r1a" secondAttribute="trailing" id="eiO-zm-0bH"/>
                     <constraint firstAttribute="bottom" secondItem="eJf-Tz-mwK" secondAttribute="bottom" constant="20" symbolic="YES" id="ejM-ot-uJ7"/>
                     <constraint firstItem="hg5-S2-ti7" firstAttribute="leading" secondItem="gQc-Tt-GQ4" secondAttribute="trailing" constant="8" symbolic="YES" id="gFf-rw-sfk"/>
                     <constraint firstItem="eJf-Tz-mwK" firstAttribute="leading" secondItem="i12-qD-ggM" secondAttribute="trailing" constant="12" symbolic="YES" id="hwd-xl-IkE"/>
-                    <constraint firstItem="qV3-9F-S8P" firstAttribute="leading" secondItem="gP2-rP-OQB" secondAttribute="leading" constant="20" symbolic="YES" id="ipi-MQ-lCg"/>
+                    <constraint firstItem="cWC-PY-Mzv" firstAttribute="top" secondItem="gP2-rP-OQB" secondAttribute="top" constant="20" symbolic="YES" id="nVm-fN-s2d"/>
                     <constraint firstItem="ZHI-dP-r1a" firstAttribute="leading" secondItem="gP2-rP-OQB" secondAttribute="leading" constant="35" id="qPw-YD-dlp"/>
                     <constraint firstItem="i12-qD-ggM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="gP2-rP-OQB" secondAttribute="leading" constant="20" symbolic="YES" id="tdY-XX-RHl"/>
                     <constraint firstAttribute="trailing" secondItem="eJf-Tz-mwK" secondAttribute="trailing" constant="20" symbolic="YES" id="wC1-5X-B0S"/>
@@ -860,22 +866,21 @@ DQ
                     <constraint firstItem="eJf-Tz-mwK" firstAttribute="trailing" secondItem="hg5-S2-ti7" secondAttribute="trailing" id="x7S-SU-m13"/>
                     <constraint firstItem="eJf-Tz-mwK" firstAttribute="width" secondItem="i12-qD-ggM" secondAttribute="width" id="y43-yX-nHo"/>
                     <constraint firstItem="gQc-Tt-GQ4" firstAttribute="top" secondItem="ZHI-dP-r1a" secondAttribute="bottom" constant="8" symbolic="YES" id="yt5-RN-li4"/>
-                    <constraint firstItem="qV3-9F-S8P" firstAttribute="top" secondItem="gP2-rP-OQB" secondAttribute="top" constant="20" symbolic="YES" id="zfb-bk-PEk"/>
                 </constraints>
             </view>
             <point key="canvasLocation" x="130" y="-215.5"/>
         </window>
-        <window title="Screen Settings" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="4Qm-le-aSJ">
+        <window title="Screen Settings" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="4Qm-le-aSJ">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="480" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
-            <view key="contentView" id="398-ZS-D3t">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+            <view key="contentView" misplaced="YES" id="398-ZS-D3t">
+                <rect key="frame" x="0.0" y="0.0" width="506" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView translatesAutoresizingMaskIntoConstraints="NO" id="3nn-Jg-4B3">
-                        <rect key="frame" x="13" y="51" width="454" height="213"/>
+                        <rect key="frame" x="13" y="51" width="480" height="213"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Video" identifier="1" id="JHo-pB-TYk">
@@ -975,19 +980,19 @@ DQ
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="94" height="18"/>
                                                         <size key="intercellSpacing" width="4" height="2"/>
-                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="87Z-xG-ll1">
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="87Z-xG-ll1">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <cells>
                                                             <column>
-                                                                <buttonCell type="radio" title="uPD7220" imagePosition="left" alignment="left" state="on" tag="1" imageScaling="proportionallyDown" inset="2" id="1Ya-Yb-ECJ">
+                                                                <buttonCell type="radio" title="uPD7220" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="1Ya-Yb-ECJ">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
                                                             </column>
                                                             <column>
-                                                                <buttonCell type="radio" title="uPD72020" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="TI1-G2-EHl">
+                                                                <buttonCell type="radio" title="uPD72020" imagePosition="left" alignment="left" inset="2" id="TI1-G2-EHl">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
@@ -1012,31 +1017,31 @@ DQ
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="cellSize" width="69" height="18"/>
                                                         <size key="intercellSpacing" width="4" height="2"/>
-                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="Sdt-JY-ZwW">
+                                                        <buttonCell key="prototype" type="radio" title="Radio" imagePosition="left" alignment="left" inset="2" id="Sdt-JY-ZwW">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <cells>
                                                             <column>
-                                                                <buttonCell type="radio" title="None" imagePosition="left" alignment="left" state="on" tag="1" imageScaling="proportionallyDown" inset="2" id="raL-KY-iyr">
+                                                                <buttonCell type="radio" title="None" imagePosition="left" alignment="left" state="on" tag="1" inset="2" id="raL-KY-iyr">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
                                                             </column>
                                                             <column>
-                                                                <buttonCell type="radio" title="GRCG" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="axz-bJ-Wfh">
+                                                                <buttonCell type="radio" title="GRCG" imagePosition="left" alignment="left" inset="2" id="axz-bJ-Wfh">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
                                                             </column>
                                                             <column>
-                                                                <buttonCell type="radio" title="GRCG+" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="4FO-K3-q6x">
+                                                                <buttonCell type="radio" title="GRCG+" imagePosition="left" alignment="left" inset="2" id="4FO-K3-q6x">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
                                                             </column>
                                                             <column>
-                                                                <buttonCell type="radio" title="EGC" imagePosition="left" alignment="left" imageScaling="proportionallyDown" inset="2" id="PdB-7M-jyS">
+                                                                <buttonCell type="radio" title="EGC" imagePosition="left" alignment="left" inset="2" id="PdB-7M-jyS">
                                                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
@@ -1304,7 +1309,7 @@ DQ
                         </tabViewItems>
                     </tabView>
                     <button verticalHuggingPriority="750" imageHugsTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qkw-NZ-r7R">
-                        <rect key="frame" x="384" y="13" width="82" height="32"/>
+                        <rect key="frame" x="410" y="13" width="82" height="32"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rpa-sj-BSx">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -1314,7 +1319,7 @@ DQ
                         </buttonCell>
                     </button>
                     <button verticalHuggingPriority="750" imageHugsTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r0R-U7-Yzk">
-                        <rect key="frame" x="302" y="13" width="82" height="32"/>
+                        <rect key="frame" x="328" y="13" width="82" height="32"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PDd-eg-dRJ">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>

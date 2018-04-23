@@ -104,19 +104,41 @@ typedef	unsigned char	BOOL;
 #define	VERMOUTH_LIB
 // #define	SOUND_CRITICAL
 
-#define	SUPPORT_UTF8
-
 #define	SUPPORT_16BPP
-#define	MEMOPTIMIZE		2
+#define	MEMOPTIMIZE		0
 
-#define SOUND_CRITICAL
-#define	SOUNDRESERVE	100
+#define CPUCORE_IA32
 
+#if defined(CPUCORE_IA32)
+#define	SUPPORT_CRT31KHZ
+#define	SUPPORT_PC9821
+#define	IA32_PAGING_EACHSIZE
+#endif
 #define	SUPPORT_CRT15KHZ
-#define	SUPPORT_HOSTDRV
+#define	SUPPORT_S98
 #define	SUPPORT_SWSEEKSND
+#define	SUPPORT_HOSTDRV
 #define	SUPPORT_SASI
 #define	SUPPORT_SCSI
+#define SUPPORT_KEYDISP
+#define SUPPORT_SOFTKBD	0
+
+#define	USE_RESUME
+#define	SOUNDRESERVE	80
+
+#if defined(CPUCORE_IA32)
+#define FASTCALL
+#define CPUCALL
+#define MEMCALL
+#define	SUPPORT_PC9821
+#define	SUPPORT_CRT31KHZ
+#define IA32_PAGING_EACHSIZE
+#define	sigjmp_buf				jmp_buf
+#define	sigsetjmp(env, mask)	setjmp(env)
+#define	siglongjmp(env, val)	longjmp(env, val)
+#define	msgbox(title, msg)		TRACEOUT(("%s", title)); \
+								TRACEOUT(("%s", msg))
+#endif
 
 #define SUPPORT_EXTERNALCHIP
 

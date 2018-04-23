@@ -227,7 +227,6 @@
 		55F74D50208D6DFF00643F36 /* logic_arith.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D13208D6DFF00643F36 /* logic_arith.c */; };
 		55F74D51208D6DFF00643F36 /* system_inst.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D16208D6DFF00643F36 /* system_inst.c */; };
 		55F74D52208D6DFF00643F36 /* shift_rotate.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D17208D6DFF00643F36 /* shift_rotate.c */; };
-		55F74D53208D6DFF00643F36 /* fpemul.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D19208D6DFF00643F36 /* fpemul.c */; };
 		55F74D54208D6DFF00643F36 /* fpdummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D1A208D6DFF00643F36 /* fpdummy.c */; };
 		55F74D56208D6DFF00643F36 /* flag_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D1D208D6DFF00643F36 /* flag_ctrl.c */; };
 		55F74D57208D6DFF00643F36 /* segments.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74D1F208D6DFF00643F36 /* segments.c */; };
@@ -680,7 +679,7 @@
 		558519B61D1DDE4500FDAD85 /* vram.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vram.c; sourceTree = "<group>"; };
 		558519B71D1DDE4500FDAD85 /* vram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vram.h; sourceTree = "<group>"; };
 		55851B6D1D1DE08900FDAD85 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		55851B711D1DE24800FDAD85 /* compiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		55851B711D1DE24800FDAD85 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		55851B721D1DE61B00FDAD85 /* compiler.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compiler.pch; sourceTree = "<group>"; };
 		55851B801D1DF09D00FDAD85 /* soundmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = soundmng.c; sourceTree = "<group>"; };
 		55851B811D1DF09D00FDAD85 /* soundmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = soundmng.h; sourceTree = "<group>"; };
@@ -1858,7 +1857,6 @@
 				55F74D49208D6DFF00643F36 /* ctrl_trans.c in Sources */,
 				55851A0C1D1DDE4500FDAD85 /* menusys.c in Sources */,
 				55851A1D1D1DDE4500FDAD85 /* fontdata.c in Sources */,
-				55F74D53208D6DFF00643F36 /* fpemul.c in Sources */,
 				55851AA01D1DDE4500FDAD85 /* upd4990.c in Sources */,
 				55851B601D1DDE4500FDAD85 /* scrnsave.c in Sources */,
 				55F74D5A208D6DFF00643F36 /* paging.c in Sources */,
