@@ -12,8 +12,32 @@
 
 static CFStringRef osakaFont = CFSTR("Osaka−等幅");
 
+struct TagFontManager {
+	int				fontsize;
+	UINT			fonttype;
+	int				fontwidth;
+	int				fontheight;
+
+	int			ptsize;
+	int			fontalign;
+	CTFontRef	font;
+};
+
+typedef struct TagFontManager		*FNTMNG;	/*!< Defines handle */
+
+
 void *fontmng_create(int size, FDAT_FLAGS type, const char *fontface)
 {
+	if (size < 0) {
+		size *= -1;
+	}
+	if (size < 6) {
+		size = 6;
+	}
+	else if (size > 128) {
+		size = 128;
+	}
+
 	return NULL;
 }
 
@@ -24,12 +48,12 @@ void fontmng_destroy(void *hdl)
 
 BRESULT fontmng_getsize(void *hdl, const char *string, POINT_T *pt)
 {
-	return false;
+	return FAILURE;
 }
 
 BRESULT fontmng_getdrawsize(void *hdl, const char *string, POINT_T *pt)
 {
-	return false;
+	return FAILURE;
 }
 
 FNTDAT fontmng_get(void *hdl, const char *string)

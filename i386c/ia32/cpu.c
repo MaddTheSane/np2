@@ -64,7 +64,7 @@ void
 exec_1step(void)
 {
 	int prefix;
-	UINT32 op;
+	UINT32 op=0;
 
 	CPU_PREV_EIP = CPU_EIP;
 	CPU_STATSAVE.cpu_inst = CPU_STATSAVE.cpu_inst_default;

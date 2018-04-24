@@ -430,7 +430,7 @@ REG80 MEMCALL
 cpu_linear_memory_read_f(UINT32 laddr, int ucrw)
 {
 	UINT32 paddr[2];
-	REG80 value;
+	REG80 value ={0};
 	UINT remain;
 	UINT i, j;
 

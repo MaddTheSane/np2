@@ -21,25 +21,19 @@ enum {
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
-	UINT soundmng_create(UINT rate, UINT ms);
-	void soundmng_destroy(void);
+
+UINT soundmng_create(UINT rate, UINT ms);
+void soundmng_destroy(void);
 #define soundmng_reset()
-	void soundmng_play(void);
-	void soundmng_stop(void);
+void soundmng_play(void);
+void soundmng_stop(void);
 #define soundmng_sync()
 #define soundmng_setreverse(r)
 	
 #define	soundmng_pcmplay(a, b)
 #define	soundmng_pcmstop(a)
-	
-	
-	
-	// ---- for SDL
-	
-	void soundmng_initialize(void);
-	void soundmng_deinitialize(void);
-	
+
+
 #ifdef __cplusplus
 }
 #endif

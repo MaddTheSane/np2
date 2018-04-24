@@ -450,7 +450,7 @@ cpu_memorywrite_q(UINT32 paddr, UINT64 value)
 REG80 MEMCALL
 cpu_memoryread_f(UINT32 paddr)
 {
-	REG80 value;
+	REG80 value = {0};
 	int i;
 
 	for (i = 0; i < (int)sizeof(REG80); ++i) {

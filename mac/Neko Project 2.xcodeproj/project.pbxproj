@@ -204,7 +204,8 @@
 		55B7AAA1208D8F7E0013E0EC /* mousemng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA0208D8F7E0013E0EC /* mousemng.c */; };
 		55B7AAA4208D8FA20013E0EC /* joymng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA3208D8FA20013E0EC /* joymng.c */; };
 		55B7AAA7208D8FB90013E0EC /* scrnmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA6208D8FB90013E0EC /* scrnmng.c */; };
-		55B7AAAA208D8FF10013E0EC /* taskmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA9208D8FF10013E0EC /* taskmng.c */; };
+		55B7AAAA208D8FF10013E0EC /* taskmng.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B7AAA9208D8FF10013E0EC /* taskmng.m */; };
+		55C9AECC208E3B3B0005BEA0 /* np2.m in Sources */ = {isa = PBXBuildFile; fileRef = 55C9AECB208E3B3B0005BEA0 /* np2.m */; };
 		55F74CF1208D67BD00643F36 /* fontmng.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF0208D67BD00643F36 /* fontmng.c */; };
 		55F74CF4208D6CE300643F36 /* dosio.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF2208D6CE300643F36 /* dosio.c */; };
 		55F74D41208D6DFF00643F36 /* cpumem.c in Sources */ = {isa = PBXBuildFile; fileRef = 55F74CF6208D6DFF00643F36 /* cpumem.c */; };
@@ -650,21 +651,22 @@
 		55851B911D1DF60900FDAD85 /* ticks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ticks.h; sourceTree = "<group>"; };
 		55B7AA92208D8CCF0013E0EC /* commng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commng.c; sourceTree = "<group>"; };
 		55B7AA93208D8CCF0013E0EC /* commng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commng.h; sourceTree = "<group>"; };
-		55B7AA95208D8D390013E0EC /* np2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = np2.h; sourceTree = "<group>"; };
+		55B7AA95208D8D390013E0EC /* np2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = np2.h; sourceTree = "<group>"; };
 		55B7AA96208D8E430013E0EC /* timemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timemng.h; sourceTree = "<group>"; };
 		55B7AA97208D8E430013E0EC /* timemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timemng.c; sourceTree = "<group>"; };
 		55B7AA99208D8E9E0013E0EC /* sysmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysmng.h; sourceTree = "<group>"; };
 		55B7AA9A208D8E9E0013E0EC /* sysmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sysmng.c; sourceTree = "<group>"; };
 		55B7AA9C208D8F0A0013E0EC /* ini.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ini.c; sourceTree = "<group>"; };
 		55B7AA9D208D8F0A0013E0EC /* ini.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ini.h; sourceTree = "<group>"; };
-		55B7AA9F208D8F7E0013E0EC /* mousemng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mousemng.h; sourceTree = "<group>"; };
-		55B7AAA0208D8F7E0013E0EC /* mousemng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mousemng.c; sourceTree = "<group>"; };
-		55B7AAA2208D8FA20013E0EC /* joymng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = joymng.h; sourceTree = "<group>"; };
-		55B7AAA3208D8FA20013E0EC /* joymng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = joymng.c; sourceTree = "<group>"; };
-		55B7AAA5208D8FB90013E0EC /* scrnmng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
-		55B7AAA6208D8FB90013E0EC /* scrnmng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scrnmng.c; sourceTree = "<group>"; };
-		55B7AAA8208D8FF10013E0EC /* taskmng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = taskmng.h; sourceTree = "<group>"; };
-		55B7AAA9208D8FF10013E0EC /* taskmng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = taskmng.c; sourceTree = "<group>"; };
+		55B7AA9F208D8F7E0013E0EC /* mousemng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mousemng.h; sourceTree = "<group>"; };
+		55B7AAA0208D8F7E0013E0EC /* mousemng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mousemng.c; sourceTree = "<group>"; };
+		55B7AAA2208D8FA20013E0EC /* joymng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = joymng.h; sourceTree = "<group>"; };
+		55B7AAA3208D8FA20013E0EC /* joymng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = joymng.c; sourceTree = "<group>"; };
+		55B7AAA5208D8FB90013E0EC /* scrnmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrnmng.h; sourceTree = "<group>"; };
+		55B7AAA6208D8FB90013E0EC /* scrnmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrnmng.c; sourceTree = "<group>"; };
+		55B7AAA8208D8FF10013E0EC /* taskmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = taskmng.h; sourceTree = "<group>"; };
+		55B7AAA9208D8FF10013E0EC /* taskmng.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = taskmng.m; sourceTree = "<group>"; };
+		55C9AECB208E3B3B0005BEA0 /* np2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = np2.m; sourceTree = "<group>"; };
 		55F74CEF208D67BD00643F36 /* fontmng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontmng.h; sourceTree = "<group>"; };
 		55F74CF0208D67BD00643F36 /* fontmng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fontmng.c; sourceTree = "<group>"; };
 		55F74CF2208D6CE300643F36 /* dosio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dosio.c; sourceTree = "<group>"; };
@@ -1504,6 +1506,7 @@
 				55B7AAA0208D8F7E0013E0EC /* mousemng.c */,
 				55B7AA9F208D8F7E0013E0EC /* mousemng.h */,
 				55B7AA95208D8D390013E0EC /* np2.h */,
+				55C9AECB208E3B3B0005BEA0 /* np2.m */,
 				55F74D6F208D6F2900643F36 /* oemtext.h */,
 				55B7AAA6208D8FB90013E0EC /* scrnmng.c */,
 				55B7AAA5208D8FB90013E0EC /* scrnmng.h */,
@@ -1511,8 +1514,8 @@
 				55851B811D1DF09D00FDAD85 /* soundmng.h */,
 				55B7AA9A208D8E9E0013E0EC /* sysmng.c */,
 				55B7AA99208D8E9E0013E0EC /* sysmng.h */,
-				55B7AAA9208D8FF10013E0EC /* taskmng.c */,
 				55B7AAA8208D8FF10013E0EC /* taskmng.h */,
+				55B7AAA9208D8FF10013E0EC /* taskmng.m */,
 				55851B901D1DF60900FDAD85 /* ticks.c */,
 				55851B911D1DF60900FDAD85 /* ticks.h */,
 				55B7AA97208D8E430013E0EC /* timemng.c */,
@@ -1802,6 +1805,7 @@
 				55F74D49208D6DFF00643F36 /* ctrl_trans.c in Sources */,
 				55851A1D1D1DDE4500FDAD85 /* fontdata.c in Sources */,
 				55851AA01D1DDE4500FDAD85 /* upd4990.c in Sources */,
+				55C9AECC208E3B3B0005BEA0 /* np2.m in Sources */,
 				55851B601D1DDE4500FDAD85 /* scrnsave.c in Sources */,
 				55F74D5A208D6DFF00643F36 /* paging.c in Sources */,
 				55851B471D1DDE4500FDAD85 /* s98.c in Sources */,
@@ -1817,7 +1821,7 @@
 				55851B361D1DDE4500FDAD85 /* getsnd.c in Sources */,
 				55851B4E1D1DDE4500FDAD85 /* midinst.c in Sources */,
 				558519D91D1DDE4500FDAD85 /* boardx2.c in Sources */,
-				55B7AAAA208D8FF10013E0EC /* taskmng.c in Sources */,
+				55B7AAAA208D8FF10013E0EC /* taskmng.m in Sources */,
 				558519C91D1DDE4500FDAD85 /* bios1f.c in Sources */,
 				55851B551D1DDE4500FDAD85 /* inttrap.c in Sources */,
 				55F74D50208D6DFF00643F36 /* logic_arith.c in Sources */,
