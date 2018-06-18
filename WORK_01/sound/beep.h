@@ -47,7 +47,6 @@ void beep_setvol(UINT vol);
 void beep_changeclock(void);
 
 void beep_reset(void);
-void beep_bind(void);
 void beep_hzset(UINT16 cnt);
 void beep_modeset(void);
 void beep_eventinit(void);

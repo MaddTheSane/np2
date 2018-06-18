@@ -131,10 +131,6 @@ IExternalChip* CScciIf::GetInterface(IExternalChip::ChipType nChipType, UINT nCl
 		SC_CHIP_TYPE iSoundChipType = SC_TYPE_NONE;
 		switch (nChipType)
 		{
-			case IExternalChip::kBeep:
-				iSoundChipType = SC_TYPE_8253;
-				break;
-
 			case IExternalChip::kAY8910:
 				iSoundChipType = SC_TYPE_AY8910;
 				break;

@@ -74,11 +74,6 @@ void beep_reset(void) {
 	g_beep.mode = 1;
 }
 
-void beep_bind(void) {
-
-	sound_streamregist(&g_beep, (SOUNDCB)beep_getpcm);
-}
-
 void beep_hzset(UINT16 cnt) {
 
 	double	hz;
