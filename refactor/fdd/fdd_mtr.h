@@ -1,3 +1,11 @@
+/**
+ * @file	fdd_mtr.h
+ * @brief	Interface of the motor
+ */
+
+#pragma once
+
+#include "nevent.h"
 
 typedef struct {
 	int		busy;
