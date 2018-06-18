@@ -178,6 +178,50 @@ const UINT8	*ptr2;
 	cs->pos12 = pos12 & ((1 << 12) - 1);
 }
 
+static void SOUNDCALL pcm16ls(CS4231 cs, SINT32 *pcm, UINT count) {
+
+	UINT	leng;
+	UINT32	pos12;
+	SINT32	fract;
+	UINT	samppos;
+const UINT8	*ptr1;
+const UINT8	*ptr2;
+	SINT32	samp1;
+	SINT32	samp2;
+
+	leng = cs->bufdatas >> 2;
+	if (!leng) {
+		return;
+	}
+	pos12 = cs->pos12;
+	do {
+		samppos = pos12 >> 12;
+		if (leng <= samppos) {
+			break;
+		}
+		fract = pos12 & ((1 << 12) - 1);
+		ptr1 = cs->buffer +
+						((cs->bufpos + (samppos << 2) + 0) & CS4231_BUFMASK);
+		ptr2 = cs->buffer +
+						((cs->bufpos + (samppos << 2) + 4) & CS4231_BUFMASK);
+		samp1 = (((SINT8)ptr1[1]) << 8) + ptr1[0];
+		samp2 = (((SINT8)ptr2[1]) << 8) + ptr2[0];
+		samp1 += ((samp2 - samp1) * fract) >> 12;
+		pcm[0] += samp1;
+		samp1 = (((SINT8)ptr1[3]) << 8) + ptr1[2];
+		samp2 = (((SINT8)ptr2[3]) << 8) + ptr2[2];
+		samp1 += ((samp2 - samp1) * fract) >> 12;
+		pcm[1] += samp1;
+		pcm += 2;
+		pos12 += cs->step12;
+	} while(--count);
+
+	leng = min(leng, (pos12 >> 12));
+	cs->bufdatas -= (leng << 2);
+	cs->bufpos += (leng << 2);
+	cs->pos12 = pos12 & ((1 << 12) - 1);
+}
+
 static void SOUNDCALL nomake(CS4231 cs, SINT32 *pcm, UINT count) {
 
 	(void)cs;
@@ -194,7 +238,7 @@ static const CS4231FN cs4231fn[16] = {
 			nomake,		// 1: u-Law
 			nomake,
 			nomake,		// 2:
-			nomake,
+			pcm16ls,
 			nomake,		// 3: A-Law
 			nomake,
 			nomake,		// 4:
