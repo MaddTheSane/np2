@@ -17,6 +17,7 @@ public:
 	enum ChipType
 	{
 		kNone		= 0,	/*!< None */
+		kBeep,
 		kAY8910,			/*!< AY-3-8910 */
 
 		kYM2203,			/*!< OPN */

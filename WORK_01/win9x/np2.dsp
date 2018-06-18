@@ -1070,7 +1070,7 @@ SOURCE=..\SOUND\ADPCMG.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\SOUND\BEEPC.C
+SOURCE=.\ext\beepc.cpp
 # End Source File
 # Begin Source File
 
