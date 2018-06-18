@@ -11,8 +11,6 @@
 #include "sound/fmboard.h"
 #include "sound/sound.h"
 
-		DSP73		g_dsp73;
-
 extern	PCM86CFG	pcm86cfg;
 
 static const UINT8 pcm86bits[] = {1, 1, 1, 2, 0, 0, 0, 1};
@@ -29,79 +27,6 @@ static void IOOUTCALL pcm86_oa460(UINT port, REG8 val)
 	g_pcm86.cSoundFlags = (g_pcm86.cSoundFlags & 0xfe) | (val & 1);
 	fmboard_extenable((REG8)(val & 1));
 	(void)port;
-}
-
-/**
- * DSP ctrl
- */
-static void IOOUTCALL pcm86_oa462(UINT port, REG8 val)
-{
-	TRACEOUT(("%04x:%04x DSP CTR %02x", CPU_CS, CPU_IP, val));
-
-	g_dsp73.ctrl = val;
-}
-
-/**
- * DSP cmd/data
- */
-static void IOOUTCALL pcm86_oa464(UINT port, REG8 val)
-{
-	if ((g_dsp73.ctrl & 0x80) == 0)
-	{
-		TRACEOUT(("%04x:%04x DSP CMD %02x", CPU_CS, CPU_IP, val));
-
-		/* AVSDRV.SYS のチェック: 一回前のデータをパースする */
-		if (g_dsp73.cmd == 1)
-		{
-			if ((g_dsp73.nIndex == 13) && (g_dsp73.iwram[0] == 0x38) && (g_dsp73.iwram[1] == 0x08))
-			{
-				g_dsp73.data = g_dsp73.iwram[2];
-				TRACEOUT(("set dat: %02x", g_dsp73.data));
-			}
-			else if ((g_dsp73.nIndex == 10) && (g_dsp73.iwram[0] == 0x38) && (g_dsp73.iwram[1] == 0x08))
-			{
-				g_dsp73.data = g_dsp73.iwram[2];
-				TRACEOUT(("set dat: %02x", g_dsp73.data));
-			}
-			else if ((g_dsp73.nIndex == 4) && (g_dsp73.addr == 3) && (g_dsp73.iwram[9] == 0x38) && (g_dsp73.iwram[10] == 0x08))
-			{
-				g_dsp73.data = g_dsp73.iwram[11];
-				TRACEOUT(("set dat: %02x", g_dsp73.data));
-			}
-			else if (g_dsp73.nIndex == 361)
-			{
-				g_dsp73.data = 1;
-				TRACEOUT(("set dat: %02x", g_dsp73.data));
-			}
-		}
-
-		g_dsp73.cmd = val;
-		g_dsp73.nIndex = 0;
-	}
-	else
-	{
-		TRACEOUT(("%04x:%04x DSP DAT %02x", CPU_CS, CPU_IP, val));
-
-		if (g_dsp73.cmd == 1)
-		{
-			if (g_dsp73.nIndex == 0)
-			{
-				g_dsp73.addr = val;
-			}
-			else
-			{
-				const UINT nAddr = (g_dsp73.addr * 3) + (g_dsp73.nIndex - 1);
-				if (nAddr < sizeof(g_dsp73.iwram))
-				{
-					g_dsp73.iwram[nAddr] = val;
-				}
-			}
-		}
-		else
-		{
-		}
-		g_dsp73.nIndex++;
-	}
 }
 
 static void IOOUTCALL pcm86_oa466(UINT port, REG8 val)
@@ -211,29 +136,6 @@ static REG8 IOINPCALL pcm86_ia460(UINT port)
 	return g_pcm86.cSoundFlags;
 }
 
-static REG8 IOOUTCALL pcm86_ia462(UINT port)
-{
-	return 8;
-}
-
-static REG8 IOOUTCALL pcm86_ia464(UINT port)
-{
-	TRACEOUT(("%04x:%04x DSP READ %d", CPU_CS, CPU_IP, g_dsp73.cmd));
-
-	if (g_dsp73.cmd == 5)
-	{
-		return g_dsp73.data;
-	}
-	else if (g_dsp73.cmd == 6)
-	{
-		return 2;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 static REG8 IOINPCALL pcm86_ia466(UINT port)
 {
 	UINT32	nPast;
@@ -339,22 +241,11 @@ void pcm86io_bind(void)
 	iocore_attachout(0xa46c, pcm86_oa46c);
 
 	iocore_attachinp(0xa460, pcm86_ia460);
+	iocore_attachinp(0xa462, pcm86_inpdummy);
+	iocore_attachinp(0xa464, pcm86_inpdummy);
 	iocore_attachinp(0xa466, pcm86_ia466);
 	iocore_attachinp(0xa468, pcm86_ia468);
 	iocore_attachinp(0xa46a, pcm86_ia46a);
 	iocore_attachinp(0xa46c, pcm86_ia46c);
 	iocore_attachinp(0xa46e, pcm86_inpdummy);
-
-	if ((g_pcm86.cSoundFlags & 0xe0) == 0x20)
-	{
-		iocore_attachout(0xa462, pcm86_oa462);
-		iocore_attachout(0xa464, pcm86_oa464);
-		iocore_attachinp(0xa462, pcm86_ia462);
-		iocore_attachinp(0xa464, pcm86_ia464);
-	}
-	else
-	{
-		iocore_attachinp(0xa462, pcm86_inpdummy);
-		iocore_attachinp(0xa464, pcm86_inpdummy);
-	}
 }
