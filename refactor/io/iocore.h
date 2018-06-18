@@ -1,49 +1,56 @@
+/**
+ * @file	iocore.h
+ * @brief	I/O コア
+ */
+
+#pragma once
 
 #ifndef IOOUTCALL
-#define	IOOUTCALL
+#define IOOUTCALL
 #endif
 #ifndef IOINPCALL
-#define	IOINPCALL
+#define IOINPCALL
 #endif
 
 typedef void (*FNIORESET)(const NP2CFG *pConfig);
 typedef void (*FNIOBIND)(void);
-typedef	void (IOOUTCALL *IOOUT)(UINT port, REG8 val);
-typedef	REG8 (IOINPCALL *IOINP)(UINT port);
+typedef void (IOOUTCALL *IOOUT)(UINT port, REG8 val);
+typedef REG8 (IOINPCALL *IOINP)(UINT port);
 
-#include	"lsidef.h"
+#include "lsidef.h"
 
-#include	"artic.h"
-#include	"cgrom.h"
-#include	"cpuio.h"
-#include	"crtc.h"
-#include	"dipsw.h"
-#include	"dmac.h"
-#include	"egc.h"
-#include	"epsonio.h"
-#include	"emsio.h"
-#include	"fdc.h"
-#include	"fdd320.h"
-#include	"gdc.h"
-#include	"gdc_cmd.h"
-#include	"mouseif.h"
-#include	"necio.h"
-#include	"nmiio.h"
-#include	"np2sysp.h"
-#include	"pic.h"
-#include	"pit.h"
-#include	"printif.h"
-#include	"serial.h"
-#include	"sysport.h"
-#include	"upd4990.h"
+#include "artic.h"
+#include "cgrom.h"
+#include "cpuio.h"
+#include "crtc.h"
+#include "dipsw.h"
+#include "dmac.h"
+#include "egc.h"
+#include "epsonio.h"
+#include "emsio.h"
+#include "fdc.h"
+#include "fdd320.h"
+#include "gdc.h"
+#include "gdc_cmd.h"
+#include "mouseif.h"
+#include "necio.h"
+#include "nmiio.h"
+#include "np2sysp.h"
+#include "pic.h"
+#include "pit.h"
+#include "printif.h"
+#include "serial.h"
+#include "sysport.h"
+#include "upd4990.h"
 
 #if defined(SUPPORT_PC9821)
-#include	"pcidev.h"
+#include "pcidev.h"
 #endif
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 extern	_ARTIC		artic;
@@ -74,27 +81,23 @@ extern	_PCIDEV		pcidev;
 #endif
 
 
-// I/O - 8bit decode
+/* I/O - 8bit decode */
 void iocore_attachcmnout(UINT port, IOOUT func);
 void iocore_attachcmninp(UINT port, IOINP func);
-void iocore_attachcmnoutex(UINT port, UINT mask,
-											const IOOUT *func, UINT funcs);
-void iocore_attachcmninpex(UINT port, UINT mask,
-											const IOINP *func, UINT funcs);
+void iocore_attachcmnoutex(UINT port, UINT mask, const IOOUT *func, UINT funcs);
+void iocore_attachcmninpex(UINT port, UINT mask, const IOINP *func, UINT funcs);
 
-// システムI/O - 10bit decode
+/* システムI/O - 10bit decode */
 void iocore_attachsysout(UINT port, IOOUT func);
 void iocore_attachsysinp(UINT port, IOINP func);
-void iocore_attachsysoutex(UINT port, UINT mask,
-											const IOOUT *func, UINT funcs);
-void iocore_attachsysinpex(UINT port, UINT mask,
-											const IOINP *func, UINT funcs);
+void iocore_attachsysoutex(UINT port, UINT mask, const IOOUT *func, UINT funcs);
+void iocore_attachsysinpex(UINT port, UINT mask, const IOINP *func, UINT funcs);
 
-// サウンドI/O - 12bit decode
+/* サウンドI/O - 12bit decode */
 BRESULT iocore_attachsndout(UINT port, IOOUT func);
 BRESULT iocore_attachsndinp(UINT port, IOINP func);
 
-// 拡張I/O - 16bit decode
+/* 拡張I/O - 16bit decode */
 BRESULT iocore_attachout(UINT port, IOOUT func);
 BRESULT iocore_attachinp(UINT port, IOINP func);
 

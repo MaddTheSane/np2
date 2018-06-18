@@ -1,13 +1,18 @@
-#include	"compiler.h"
-#include	"cpucore.h"
-#include	"pccore.h"
-#include	"iocore.h"
-#include	"cbuscore.h"
-#include	"sound.h"
-#include	"fmboard.h"
-#include	"ideio.h"
-#include	"cs4231io.h"
-#include	"iocore16.tbl"
+/**
+ * @file	iocore.c
+ * @brief	I/O ÉRÉA
+ */
+
+#include "compiler.h"
+#include "cpucore.h"
+#include "pccore.h"
+#include "iocore.h"
+#include "cbuscore.h"
+#include "sound.h"
+#include "fmboard.h"
+#include "ideio.h"
+#include "cs4231io.h"
+#include "iocore16.tbl"
 
 
 	_ARTIC		artic;
@@ -38,22 +43,25 @@
 #endif
 
 
-// ----
+/* ---- */
 
-enum {
+enum
+{
 	IOFUNC_SYS	= 0x01,
 	IOFUNC_SND	= 0x02,
 	IOFUNC_EXT	= 0x04
 };
 
-typedef struct {
+typedef struct
+{
 	IOOUT	ioout[256];
 	IOINP	ioinp[256];
 	UINT	type;
 	UINT	port;
 } _IOFUNC, *IOFUNC;
 
-typedef struct {
+typedef struct
+{
 	IOFUNC		base[256];
 	UINT		busclock;
 	LISTARRAY	iotbl;
@@ -63,79 +71,87 @@ static	_IOCORE		iocore;
 static	UINT8		ioterminate[0x100];
 
 
-// ----
+/* ---- */
 
-static void IOOUTCALL defout8(UINT port, REG8 dat) {
-
+static void IOOUTCALL defout8(UINT port, REG8 dat)
+{
 #if !defined(DISABLE_SOUND)
 	UINT	tmp;
 
 	tmp = port - cs4231.port[0];
-	if (tmp < 8) {
+	if (tmp < 8)
+	{
 		cs4231io0_w8(port, dat);
 		return;
 	}
 	tmp = port - cs4231.port[5];
-	if (tmp < 2) {
+	if (tmp < 2)
+	{
 		cs4231io5_w8(port, dat);
 		return;
 	}
 #endif
-	if ((port & 0xf0ff) == 0x801e) {
+	if ((port & 0xf0ff) == 0x801e)
+	{
 		dipsw_w8(port, dat);
 		return;
 	}
 //	TRACEOUT(("defout8 - %x %x %.4x %.4x", port, dat, CPU_CS, CPU_IP));
 }
 
-static REG8 IOINPCALL definp8(UINT port) {
-
+static REG8 IOINPCALL definp8(UINT port)
+{
 #if !defined(DISABLE_SOUND)
 	UINT	tmp;
 
 	tmp = port - cs4231.port[0];
-	if (tmp < 8) {
-		return(cs4231io0_r8(port));
+	if (tmp < 8)
+	{
+		return cs4231io0_r8(port);
 	}
 	tmp = port - cs4231.port[5];
-	if (tmp < 2) {
-		return(cs4231io5_r8(port));
+	if (tmp < 2)
+	{
+		return cs4231io5_r8(port);
 	}
 #endif
-	if ((port & 0xf0ff) == 0x801e) {
-		return(dipsw_r8(port));
+	if ((port & 0xf0ff) == 0x801e)
+	{
+		return dipsw_r8(port);
 	}
 //	TRACEOUT(("definp8 - %x %.4x %.4x", port, CPU_CS, CPU_IP));
-	return(0xff);
+	return 0xff;
 }
 
-
-static void attachout(IOFUNC iof, UINT port, IOOUT func) {
-
-	if (func) {
+static void attachout(IOFUNC iof, UINT port, IOOUT func)
+{
+	if (func)
+	{
 		iof->ioout[port] = func;
 	}
 }
 
-static void attachinp(IOFUNC iof, UINT port, IOINP func) {
-
-	if (func) {
+static void attachinp(IOFUNC iof, UINT port, IOINP func)
+{
+	if (func)
+	{
 		iof->ioinp[port] = func;
 	}
 }
 
 
-// ---- out
+/* ---- out */
 
-typedef struct {
+typedef struct
+{
 	UINT	port;
 	UINT	mask;
 const IOOUT	*func;
 	UINT	funcs;
 } _ATTOUT, *ATTOUT;
 
-static void attachoutex(IOFUNC iof, ATTOUT attout) {
-
+static void attachoutex(IOFUNC iof, ATTOUT attout)
+{
 	UINT	port;
 	UINT	mask;
 	UINT	num;
@@ -144,23 +160,24 @@ static void attachoutex(IOFUNC iof, ATTOUT attout) {
 	port = attout->port & 0xff;
 	mask = attout->mask & 0xff;
 	num = 0;
-	for (i=0; i<0x100; i++) {
-		if ((i & mask) == port) {
+	for (i = 0; i < 0x100; i++)
+	{
+		if ((i & mask) == port)
+		{
 			attachout(iof, i, attout->func[num]);
 			num = (num + 1) & (attout->funcs - 1);
 		}
 	}
 }
 
-static BOOL attachcmnout(void *iotbl, void *attout) {
-
+static BOOL attachcmnout(void *iotbl, void *attout)
+{
 	attachoutex((IOFUNC)iotbl, (ATTOUT)attout);
-	return(FALSE);
+	return FALSE;
 }
 
-void iocore_attachcmnoutex(UINT port, UINT mask,
-										const IOOUT *func, UINT funcs) {
-
+void iocore_attachcmnoutex(UINT port, UINT mask, const IOOUT *func, UINT funcs)
+{
 	_ATTOUT	ao;
 
 	ao.port = port;
@@ -172,15 +189,15 @@ void iocore_attachcmnoutex(UINT port, UINT mask,
 
 static BOOL attachsysout(void *iotbl, void *attout) {
 
-	if ((((IOFUNC)iotbl)->type) & IOFUNC_SYS) {
+	if ((((IOFUNC)iotbl)->type) & IOFUNC_SYS)
+	{
 		attachoutex((IOFUNC)iotbl, (ATTOUT)attout);
 	}
-	return(FALSE);
+	return FALSE;
 }
 
-void iocore_attachsysoutex(UINT port, UINT mask,
-										const IOOUT *func, UINT funcs) {
-
+void iocore_attachsysoutex(UINT port, UINT mask, const IOOUT *func, UINT funcs)
+{
 	_ATTOUT	ao;
 
 	ao.port = port;
@@ -191,17 +208,18 @@ void iocore_attachsysoutex(UINT port, UINT mask,
 }
 
 
-// ---- inp
+/* ---- inp */
 
-typedef struct {
+typedef struct
+{
 	UINT	port;
 	UINT	mask;
 const IOINP	*func;
 	UINT	funcs;
 } _ATTINP, *ATTINP;
 
-static void attachinpex(IOFUNC iof, ATTINP attinp) {
-
+static void attachinpex(IOFUNC iof, ATTINP attinp)
+{
 	UINT	port;
 	UINT	mask;
 	UINT	num;
@@ -210,23 +228,24 @@ static void attachinpex(IOFUNC iof, ATTINP attinp) {
 	port = attinp->port & 0xff;
 	mask = attinp->mask & 0xff;
 	num = 0;
-	for (i=0; i<0x100; i++) {
-		if ((i & mask) == port) {
+	for (i = 0; i < 0x100; i++)
+	{
+		if ((i & mask) == port)
+		{
 			attachinp(iof, i, attinp->func[num]);
 			num = (num + 1) & (attinp->funcs - 1);
 		}
 	}
 }
 
-static BOOL attachcmninp(void *iotbl, void *attinp) {
-
+static BOOL attachcmninp(void *iotbl, void *attinp)
+{
 	attachinpex((IOFUNC)iotbl, (ATTINP)attinp);
-	return(FALSE);
+	return FALSE;
 }
 
-void iocore_attachcmninpex(UINT port, UINT mask,
-										const IOINP *func, UINT funcs) {
-
+void iocore_attachcmninpex(UINT port, UINT mask, const IOINP *func, UINT funcs)
+{
 	_ATTINP	ai;
 
 	ai.port = port;
@@ -236,17 +255,17 @@ void iocore_attachcmninpex(UINT port, UINT mask,
 	listarray_enum(iocore.iotbl, attachcmninp, &ai);
 }
 
-static BOOL attachsysinp(void *iotbl, void *attinp) {
-
-	if ((((IOFUNC)iotbl)->type) & IOFUNC_SYS) {
+static BOOL attachsysinp(void *iotbl, void *attinp)
+{
+	if ((((IOFUNC)iotbl)->type) & IOFUNC_SYS)
+	{
 		attachinpex((IOFUNC)iotbl, (ATTINP)attinp);
 	}
-	return(FALSE);
+	return FALSE;
 }
 
-void iocore_attachsysinpex(UINT port, UINT mask,
-										const IOINP *func, UINT funcs) {
-
+void iocore_attachsysinpex(UINT port, UINT mask, const IOINP *func, UINT funcs)
+{
 	_ATTINP	ai;
 
 	ai.port = port;
@@ -256,10 +275,10 @@ void iocore_attachsysinpex(UINT port, UINT mask,
 	listarray_enum(iocore.iotbl, attachsysinp, &ai);
 }
 
-// ----
+/* ---- */
 
-static BRESULT makesndiofunc(UINT port) {
-
+static BRESULT makesndiofunc(UINT port)
+{
 	IOFUNC	tbl[2];
 	UINT	num;
 	IOFUNC	iof;
@@ -268,15 +287,19 @@ static BRESULT makesndiofunc(UINT port) {
 
 	ZeroMemory(tbl, sizeof(tbl));
 	num = (port >> 8) & 15;
-	do {
+	do
+	{
 		iof = iocore.base[num];
 		type = iof->type;
-		if (!(type & (IOFUNC_SND | IOFUNC_EXT))) {
+		if (!(type & (IOFUNC_SND | IOFUNC_EXT)))
+		{
 			set = tbl[type & IOFUNC_SYS];
-			if (set == NULL) {
+			if (set == NULL)
+			{
 				set = (IOFUNC)listarray_append(iocore.iotbl, iof);
-				if (set == NULL) {
-					return(FAILURE);
+				if (set == NULL)
+				{
+					return FAILURE;
 				}
 				set->type |= IOFUNC_SND;
 				set->port = port & 0x0f00;
@@ -285,110 +308,122 @@ static BRESULT makesndiofunc(UINT port) {
 		}
 		num += 0x10;
 	} while(num < 0x100);
-	return(SUCCESS);
+	return SUCCESS;
 }
 
-BRESULT iocore_attachsndout(UINT port, IOOUT func) {
-
+BRESULT iocore_attachsndout(UINT port, IOOUT func)
+{
 	BRESULT	r;
 	UINT	num;
 
 	r = makesndiofunc(port);
-	if (r == SUCCESS) {
+	if (r == SUCCESS)
+	{
 		num = (port >> 8) & 15;
-		do {
+		do
+		{
 			attachout(iocore.base[num], port & 0xff, func);
 			num += 0x10;
 		} while(num < 0x100);
 	}
-	return(r);
+	return r;
 }
 
-BRESULT iocore_attachsndinp(UINT port, IOINP func) {
-
+BRESULT iocore_attachsndinp(UINT port, IOINP func)
+{
 	BRESULT	r;
 	UINT	num;
 
 	r = makesndiofunc(port);
-	if (r == SUCCESS) {
+	if (r == SUCCESS)
+	{
 		num = (port >> 8) & 15;
-		do {
+		do
+		{
 			attachinp(iocore.base[num], port & 0xff, func);
 			num += 0x10;
 		} while(num < 0x100);
 	}
-	return(r);
+	return r;
 }
 
 
 // ----
 
-static IOFUNC getextiofunc(UINT port) {
-
+static IOFUNC getextiofunc(UINT port)
+{
 	IOFUNC	iof;
 
 	iof = iocore.base[(port >> 8) & 0xff];
-	if (!(iof->type & IOFUNC_EXT)) {
+	if (!(iof->type & IOFUNC_EXT))
+	{
 		iof = (IOFUNC)listarray_append(iocore.iotbl, iof);
-		if (iof != NULL) {
+		if (iof != NULL)
+		{
 			iocore.base[(port >> 8) & 0xff] = iof;
 			iof->type |= IOFUNC_EXT;
 			iof->port = port & 0xff00;
 		}
 	}
-	return(iof);
+	return iof;
 }
 
-BRESULT iocore_attachout(UINT port, IOOUT func) {
-
+BRESULT iocore_attachout(UINT port, IOOUT func)
+{
 	IOFUNC	iof;
 
 	iof = getextiofunc(port);
-	if (iof) {
+	if (iof)
+	{
 		attachout(iof, port & 0xff, func);
-		return(SUCCESS);
+		return SUCCESS;
 	}
-	else {
-		return(FAILURE);
+	else
+	{
+		return FAILURE;
 	}
 }
 
-BRESULT iocore_attachinp(UINT port, IOINP func) {
-
+BRESULT iocore_attachinp(UINT port, IOINP func)
+{
 	IOFUNC	iof;
 
 	iof = getextiofunc(port);
-	if (iof) {
+	if (iof)
+	{
 		attachinp(iof, port & 0xff, func);
-		return(SUCCESS);
+		return SUCCESS;
 	}
-	else {
-		return(FAILURE);
+	else
+	{
+		return FAILURE;
 	}
 }
 
 
 // ----
 
-void iocore_create(void) {
-
+void iocore_create(void)
+{
 	UINT	i;
 const UINT8	*p;
 	UINT	r;
 
 	ZeroMemory(&iocore, sizeof(iocore));
 	ZeroMemory(ioterminate, sizeof(ioterminate));
-	for (i=0; i<NELEMENTS(termtbl); i++) {
+	for (i = 0; i < NELEMENTS(termtbl); i++)
+	{
 		p = termtbl[i].item;
 		r = termtbl[i].items;
-		do {
+		do
+		{
 			ioterminate[*p++] = (UINT8)(i + 1);
 		} while(--r);
 	}
 }
 
-void iocore_destroy(void) {
-
+void iocore_destroy(void)
+{
 	IOCORE		ioc;
 
 	ioc = &iocore;
@@ -396,8 +431,8 @@ void iocore_destroy(void) {
 	ioc->iotbl = NULL;
 }
 
-BRESULT iocore_build(void) {
-
+BRESULT iocore_build(void)
+{
 	IOCORE		ioc;
 	IOFUNC		cmn;
 	IOFUNC		sys;
@@ -408,34 +443,41 @@ BRESULT iocore_build(void) {
 	listarray_destroy(ioc->iotbl);
 	iotbl = listarray_new(sizeof(_IOFUNC), 32);
 	ioc->iotbl = iotbl;
-	if (iotbl == NULL) {
+	if (iotbl == NULL)
+	{
 		goto icbld_err;
 	}
 	cmn = (IOFUNC)listarray_append(iotbl, NULL);
-	if (cmn == NULL) {
+	if (cmn == NULL)
+	{
 		goto icbld_err;
 	}
-	for (i=0; i<256; i++) {
+	for (i=0; i<256; i++)
+	{
 		cmn->ioout[i] = defout8;
 		cmn->ioinp[i] = definp8;
 	}
 	sys = (IOFUNC)listarray_append(iotbl, cmn);
-	if (sys == NULL) {
+	if (sys == NULL)
+	{
 		goto icbld_err;
 	}
 	sys->type = IOFUNC_SYS;
-	for (i=0; i<256; i++) {
-		if (!(i & 0x0c)) {
+	for (i = 0; i < 256; i++)
+	{
+		if (!(i & 0x0c))
+		{
 			ioc->base[i] = sys;
 		}
-		else {
+		else
+		{
 			ioc->base[i] = cmn;
 		}
 	}
-	return(SUCCESS);
+	return SUCCESS;
 
 icbld_err:
-	return(FAILURE);
+	return FAILURE;
 }
 
 
@@ -484,7 +526,7 @@ static const FNIOBIND bindfn[] =
 
 void iocore_cbreset(const FNIORESET *pfn, UINT uCount, const NP2CFG *pConfig)
 {
-	while(uCount--)
+	while (uCount--)
 	{
 		(*pfn)(pConfig);
 		pfn++;
@@ -493,26 +535,38 @@ void iocore_cbreset(const FNIORESET *pfn, UINT uCount, const NP2CFG *pConfig)
 
 void iocore_cbbind(const FNIOBIND *pfn, UINT uCount)
 {
-	while(uCount--)
+	while (uCount--)
 	{
 		(*pfn)();
 		pfn++;
 	}
 }
 
+/**
+ * Reset
+ * @param[in] pConfig The configure
+ */
 void iocore_reset(const NP2CFG *pConfig)
 {
 	iocore_cbreset(resetfn, NELEMENTS(resetfn), pConfig);
 }
 
+/**
+ * Bind
+ */
 void iocore_bind(void)
 {
 	iocore.busclock = pccore.multiple;
 	iocore_cbbind(bindfn, NELEMENTS(bindfn));
 }
 
-void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
-
+/**
+ * Output
+ * @param[in] port port
+ * @param[in] dat The value
+ */
+void IOOUTCALL iocore_out8(UINT port, REG8 dat)
+{
 	IOFUNC	iof;
 
 //	TRACEOUT(("iocore_out8(%.2x, %.2x)", port, dat));
@@ -521,8 +575,8 @@ void IOOUTCALL iocore_out8(UINT port, REG8 dat) {
 	iof->ioout[port & 0xff](port, dat);
 }
 
-REG8 IOINPCALL iocore_inp8(UINT port) {
-
+REG8 IOINPCALL iocore_inp8(UINT port)
+{
 	IOFUNC	iof;
 	REG8	ret;
 
@@ -530,27 +584,31 @@ REG8 IOINPCALL iocore_inp8(UINT port) {
 	iof = iocore.base[(port >> 8) & 0xff];
 	ret = iof->ioinp[port & 0xff](port);
 //	TRACEOUT(("iocore_inp8(%.2x) -> %.2x", port, ret));
-	return(ret);
+	return ret;
 }
 
-void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
-
+void IOOUTCALL iocore_out16(UINT port, REG16 dat)
+{
 	IOFUNC	iof;
 
 //	TRACEOUT(("iocore_out16(%.4x, %.4x)", port, dat));
 	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_IDEIO)
-	if (port == 0x0640) {
+	if (port == 0x0640)
+	{
 		ideio_w16(port, dat);
 		return;
 	}
 #endif
-	if ((port & 0xfff1) == 0x04a0) {
+	if ((port & 0xfff1) == 0x04a0)
+	{
 		egc_w16(port, dat);
 		return;
 	}
-	if (!(port & 0x0c00)) {
-		switch(ioterminate[port & 0xff]) {
+	if (!(port & 0x0c00))
+	{
+		switch(ioterminate[port & 0xff])
+		{
 			case TERM_WORD:
 				return;
 
@@ -570,53 +628,58 @@ void IOOUTCALL iocore_out16(UINT port, REG16 dat) {
 	iof->ioout[port & 0xff](port, (UINT8)(dat >> 8));
 }
 
-REG16 IOINPCALL iocore_inp16(UINT port) {
-
+REG16 IOINPCALL iocore_inp16(UINT port)
+{
 	IOFUNC	iof;
 	REG8	ret;
 
 	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_IDEIO)
-	if (port == 0x0640) {
-		return(ideio_r16(port));
+	if (port == 0x0640)
+	{
+		return ideio_r16(port);
 	}
 #endif
-	if ((port & 0xfffc) == 0x005c) {
-		return(artic_r16(port));
+	if ((port & 0xfffc) == 0x005c)
+	{
+		return artic_r16(port);
 	}
 	iof = iocore.base[(port >> 8) & 0xff];
-	if (!(port & 0x0c00)) {
-		switch(ioterminate[port & 0xff]) {
+	if (!(port & 0x0c00))
+	{
+		switch(ioterminate[port & 0xff])
+		{
 			case TERM_WORD:
-				return(WORD_TERMINATE);
+				return WORD_TERMINATE;
 
 			case TERM_ACTIVE:
 				ret = iof->ioinp[port & 0xff](port);
-				return((CPU_AX & 0xff00) + ret);
+				return ((CPU_AX & 0xff00) + ret);
 
 			case TERM_PLUS:
 				ret = iof->ioinp[port & 0xff](port);
-				return(0xff00 + ret);
+				return (0xff00 + ret);
 
 			case TERM_MINUS:
-				return(iof->ioinp[port & 0xff](port));
+				return (iof->ioinp[port & 0xff](port));
 
 			case TERM_EXT08:
 				ret = iof->ioinp[port & 0xff](port);
-				return(0x0800 + ret);
+				return (0x0800 + ret);
 		}
 	}
 	ret = iof->ioinp[port & 0xff](port);
 	port++;
 	iof = iocore.base[(port >> 8) & 0xff];
-	return((UINT16)((iof->ioinp[port & 0xff](port) << 8) + ret));
+	return (UINT16)((iof->ioinp[port & 0xff](port) << 8) + ret);
 }
 
-void IOOUTCALL iocore_out32(UINT port, UINT32 dat) {
-
+void IOOUTCALL iocore_out32(UINT port, UINT32 dat)
+{
 	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_PC9821)
-	if ((port & 0xfffb) == 0x0cf8) {
+	if ((port & 0xfffb) == 0x0cf8)
+	{
 		pcidev_w32(port, dat);
 		return;
 	}
@@ -625,17 +688,17 @@ void IOOUTCALL iocore_out32(UINT port, UINT32 dat) {
 	iocore_out16(port+2, (UINT16)(dat >> 16));
 }
 
-UINT32 IOINPCALL iocore_inp32(UINT port) {
-
+UINT32 IOINPCALL iocore_inp32(UINT port)
+{
 	UINT32	ret;
 
 	CPU_REMCLOCK -= iocore.busclock;
 #if defined(SUPPORT_PC9821)
-	if ((port & 0xfffb) == 0x0cf8) {
-		return(pcidev_r32(port));
+	if ((port & 0xfffb) == 0x0cf8)
+	{
+		return pcidev_r32(port);
 	}
 #endif
 	ret = iocore_inp16(port);
-	return(ret + (iocore_inp16(port+2) << 16));
+	return (ret + (iocore_inp16(port+2) << 16));
 }
-
