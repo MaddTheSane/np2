@@ -4,6 +4,9 @@
  */
 
 #include "compiler.h"
+
+#if defined(SUPPORT_VSTi)
+
 #include "vstmidievent.h"
 
 /**
@@ -113,3 +116,5 @@ const VstEvents* CVstMidiEvent::GetEvents()
 	}
 	return pEvents;
 }
+
+#endif	// defined(SUPPORT_VSTi)

@@ -4,6 +4,9 @@
  */
 
 #include "compiler.h"
+
+#if defined(SUPPORT_VSTi)
+
 #include "vstbuffer.h"
 
 /**
@@ -118,3 +121,5 @@ void CVstBuffer::GetShort(short* lpBuffer) const
 		}
 	}
 }
+
+#endif	// defined(SUPPORT_VSTi)

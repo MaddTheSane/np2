@@ -5,6 +5,9 @@
 
 #pragma once
 
+// VST 2.x 配布終了に伴い、本機能は一旦無効にします。
+// https://japan.steinberg.net/jp/news_events/news_list/detail/article/vst-2-4747.html
+
 #include <map>
 #include <pluginterfaces/vst2.x/aeffectx.h>
 
