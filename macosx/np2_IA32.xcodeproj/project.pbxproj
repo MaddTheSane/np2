@@ -190,7 +190,9 @@
 		556F2BCC1D20BABF00335DF9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0640BAA4FFF0323A11CA0E50 /* ApplicationServices.framework */; };
 		556F2BCE1D20BB7500335DF9 /* fpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 556F2BCD1D20BB7500335DF9 /* fpu.c */; };
 		55793C1D1D2171B40043CD89 /* Non-localized.r in Rez */ = {isa = PBXBuildFile; fileRef = 55793C1B1D2171A50043CD89 /* Non-localized.r */; };
-		55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */; };
+		557E16E326242B4600536838 /* np2tool.png in Resources */ = {isa = PBXBuildFile; fileRef = 557E16E226242B4600536838 /* np2tool.png */; };
+		557E171026242D3200536838 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557E170F26242D3200536838 /* AudioToolbox.framework */; };
+		557E171726242E1A00536838 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 557E171626242E1A00536838 /* InfoPlist.strings */; };
 		55842DD31D2084C60017B417 /* np2.nib in Resources */ = {isa = PBXBuildFile; fileRef = 96EFFA58054716B900000102 /* np2.nib */; };
 		55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 961B70230563FAF800000103 /* nekop2.bmp */; };
 		55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 961B70240563FAF800000103 /* np2logo.tiff */; };
@@ -482,7 +484,6 @@
 		555F6990208BDCC10002E7FF /* ucs2sjis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2sjis.c; sourceTree = "<group>"; };
 		555F6991208BDCC10002E7FF /* ucs2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ucs2utf8.c; sourceTree = "<group>"; };
 		555F6992208BDCC10002E7FF /* utf8ucs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utf8ucs2.c; sourceTree = "<group>"; };
-		556F2A671D208E0800335DF9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HIDUtilities.framework; sourceTree = "<group>"; };
 		556F2A701D20999300335DF9 /* _memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _memory.h; sourceTree = "<group>"; };
 		556F2A721D2099AA00335DF9 /* bmpdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmpdata.h; sourceTree = "<group>"; };
@@ -656,6 +657,10 @@
 		556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		556F2BCD1D20BB7500335DF9 /* fpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fpu.c; sourceTree = "<group>"; };
 		55793C1B1D2171A50043CD89 /* Non-localized.r */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.rez; path = "Non-localized.r"; sourceTree = "<group>"; };
+		557E16E226242B4600536838 /* np2tool.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = np2tool.png; sourceTree = "<group>"; };
+		557E170F26242D3200536838 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		557E171826242E2D00536838 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		557E171926242E3400536838 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		55842EC91D2084C60017B417 /* Info-np2__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-np2__Upgraded_.plist"; sourceTree = "<group>"; };
 		55842ECA1D2084C60017B417 /* Neko Project 21x.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Neko Project 21x.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5595B6461D20F67400DDA319 /* dmav30.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmav30.h; sourceTree = "<group>"; };
@@ -700,7 +705,6 @@
 		55CE2B65208BD3660080EE48 /* xdf.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = xdf.icns; sourceTree = "<group>"; };
 		9603DE2C06CFCD4800012F11 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9603DE3406CFCDE000012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = c; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		9603DE3B06CFCE4500012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9603DE6F06CFE8CC00012F11 /* ja */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.rez; name = ja; path = ja.lproj/np2.r; sourceTree = SOURCE_ROOT; };
 		96083EB205A8FDB40005CD33 /* cmjasts.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = cmjasts.c; sourceTree = "<group>"; };
 		96083FEF05A936740005CD33 /* necio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = necio.c; sourceTree = "<group>"; };
@@ -940,6 +944,7 @@
 				556F2A6D1D2098E900335DF9 /* HIDUtilities.framework in Frameworks */,
 				55842EC21D2084C60017B417 /* CoreMIDI.framework in Frameworks */,
 				556F2BCB1D20BABB00335DF9 /* CoreServices.framework in Frameworks */,
+				557E171026242D3200536838 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1012,7 +1017,7 @@
 				96EFFA58054716B900000102 /* np2.nib */,
 				55793C1B1D2171A50043CD89 /* Non-localized.r */,
 				9603DE6D06CFE8C300012F11 /* np2.r */,
-				0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */,
+				557E171326242E0B00536838 /* 21x */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1020,6 +1025,7 @@
 		20286C32FDCF999611CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				557E170F26242D3200536838 /* AudioToolbox.framework */,
 				553F7504208B264A00CF8872 /* QuickTime.framework */,
 				556F2BC91D20AF4F00335DF9 /* CoreFoundation.framework */,
 				556F2A6B1D2098D200335DF9 /* HIDUtilities.framework */,
@@ -1051,10 +1057,19 @@
 			path = codecnv;
 			sourceTree = "<group>";
 		};
+		557E171326242E0B00536838 /* 21x */ = {
+			isa = PBXGroup;
+			children = (
+				557E171626242E1A00536838 /* InfoPlist.strings */,
+			);
+			path = 21x;
+			sourceTree = "<group>";
+		};
 		55CE2B54208BD3660080EE48 /* Icon */ = {
 			isa = PBXGroup;
 			children = (
 				961B70230563FAF800000103 /* nekop2.bmp */,
+				557E16E226242B4600536838 /* np2tool.png */,
 				961B70240563FAF800000103 /* np2logo.tiff */,
 				961B70250563FAF800000103 /* np2tool.bmp */,
 				55CE2B55208BD3660080EE48 /* beta.icns */,
@@ -1853,7 +1868,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55842DD21D2084C60017B417 /* InfoPlist.strings in Resources */,
 				55842DD31D2084C60017B417 /* np2.nib in Resources */,
 				55842DDC1D2084C60017B417 /* nekop2.bmp in Resources */,
 				55842DDD1D2084C60017B417 /* np2logo.tiff in Resources */,
@@ -1873,6 +1887,8 @@
 				55CE2B74208BD3660080EE48 /* ROM.icns in Resources */,
 				55CE2B75208BD3660080EE48 /* thd.icns in Resources */,
 				55CE2B76208BD3660080EE48 /* xdf.icns in Resources */,
+				557E16E326242B4600536838 /* np2tool.png in Resources */,
+				557E171726242E1A00536838 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2128,11 +2144,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		0867D6AAFE840B52C02AAC07 /* InfoPlist.strings */ = {
+		557E171626242E1A00536838 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9603DE3B06CFCE4500012F11 /* ja */,
-				556F2A671D208E0800335DF9 /* en */,
+				557E171826242E2D00536838 /* ja */,
+				557E171926242E3400536838 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2248,11 +2264,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.retropc.Neko-Project-21x";
 				PRODUCT_NAME = "Neko Project 21x";
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2268,7 +2279,7 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = np2gcc_ia32.h;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					../mem,
 					../i386c/ia32/,
@@ -2309,11 +2320,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.retropc.Neko-Project-21x";
 				PRODUCT_NAME = "Neko Project 21x";
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

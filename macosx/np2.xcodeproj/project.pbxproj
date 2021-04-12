@@ -2075,7 +2075,6 @@
 				);
 				INFOPLIST_FILE = "Info-np2__Upgraded_-1.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					./,
 					"\"$(SRCROOT)\"",
@@ -2114,7 +2113,6 @@
 				);
 				INFOPLIST_FILE = "Info-np2__Upgraded_-1.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					./,
 					"\"$(SRCROOT)\"",
@@ -2133,7 +2131,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.5;
 				VALID_ARCHS = "ppc ppc7400 ppc970";
@@ -2147,7 +2145,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = 4.2;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = macosx10.5;
 				VALID_ARCHS = "ppc ppc7400 ppc970";
 			};

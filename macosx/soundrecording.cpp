@@ -145,7 +145,7 @@ int soundRec(bool end) {
     }
     else if (!end) {
         if (dialog_filewriteselect('AIFF', "Neko Project IIx Sound.aiff", &soundlog, hWndMain)) {
-            SInt16		ref;
+            FSVolumeRefNum	ref;
             SInt32		dir;
             Str255		path;
             OSErr		err;
