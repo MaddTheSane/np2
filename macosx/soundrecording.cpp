@@ -21,7 +21,7 @@ static	bool	rec = false;
 static	BYTE	sndbuffer[maxbuffer];
 static	long	sndposition = 0;
 static	FSSpec	soundlog;
-static	short	logref = -1;
+static	FSIORefNum	logref = -1;
 static  FSSpec	fs;
 
 static void rawtoAIFF(void) {
@@ -137,7 +137,7 @@ int soundRec(bool end) {
     if (rec) {
         FSWrite(logref, &sndposition, (char *)sndbuffer);
         rawtoAIFF();
-        FSClose(logref);
+        FSCloseFork(logref);
         OSErr err;
         err = FSpDelete(&fs);
         rec = false;
