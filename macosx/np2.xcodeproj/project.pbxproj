@@ -659,9 +659,9 @@
 		96083FEF05A936740005CD33 /* necio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = necio.c; sourceTree = "<group>"; };
 		9608400C054ED1E900000103 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		961B7003056048F500000103 /* aboutdlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aboutdlg.cpp; sourceTree = "<group>"; };
-		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = nekop2.bmp; path = Icon/nekop2.bmp; sourceTree = "<group>"; };
-		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = np2logo.tiff; path = Icon/np2logo.tiff; sourceTree = "<group>"; };
-		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = np2tool.bmp; path = Icon/np2tool.bmp; sourceTree = "<group>"; };
+		961B70230563FAF800000103 /* nekop2.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = nekop2.bmp; sourceTree = "<group>"; };
+		961B70240563FAF800000103 /* np2logo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = np2logo.tiff; sourceTree = "<group>"; };
+		961B70250563FAF800000103 /* np2tool.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = np2tool.bmp; sourceTree = "<group>"; };
 		961B71C905641E6C00000103 /* ROM.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ROM.icns; sourceTree = "<group>"; };
 		9621596705C3C2630070042E /* emsio.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = emsio.c; sourceTree = "<group>"; };
 		9645C29B05BF64CE0090B4FD /* sxsibios.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = sxsibios.c; sourceTree = "<group>"; };
@@ -956,9 +956,6 @@
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				961B70230563FAF800000103 /* nekop2.bmp */,
-				961B70240563FAF800000103 /* np2logo.tiff */,
-				961B70250563FAF800000103 /* np2tool.bmp */,
 				55CE2AA7208BCDA60080EE48 /* Non-localized.r */,
 				9603DE8106CFEAC600012F11 /* Localizable.strings */,
 				969A8347055A60A500000103 /* Icon */,
@@ -1442,7 +1439,10 @@
 				96C722A905CC3C60005B39D9 /* hdd.icns */,
 				969A834A055A60A500000103 /* hdi.icns */,
 				969A834B055A60A500000103 /* Neko Project IIx.icns */,
+				961B70230563FAF800000103 /* nekop2.bmp */,
 				96C722AD05CC3C69005B39D9 /* nhd.icns */,
+				961B70240563FAF800000103 /* np2logo.tiff */,
+				961B70250563FAF800000103 /* np2tool.bmp */,
 				969A834C055A60A500000103 /* plug-in.icns */,
 				969A834D055A60A500000103 /* preference.icns */,
 				961B71C905641E6C00000103 /* ROM.icns */,
