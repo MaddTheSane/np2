@@ -10,7 +10,7 @@ static	char	*curfilep = curpath + 1;
 void dosio_init(void) { }
 void dosio_term(void) { }
 
-											// „Éï„Ç°„Ç§„É´Êìç‰Ωú
+											// ÉtÉ@ÉCÉãëÄçÏ
 FILEH file_open(const char *path) {
 
 	FILEH	ret;
@@ -118,9 +118,9 @@ UINT file_write(FILEH handle, const void *data, UINT length) {
 		}
 	}
 	else {
-		SInt32 pos;
-		if (GetFPos(handle, &pos) == noErr) {
-			SetEOF(handle, pos);
+		SInt64 pos;
+		if (FSGetForkPosition(handle, &pos) == noErr) {
+			FSSetForkSize(handle, fsFromStart, pos);
 		}
 	}
 	return(0);
@@ -134,9 +134,9 @@ short file_close(FILEH handle) {
 
 UINT file_getsize(FILEH handle) {
 
-	SInt32 pos;
+	SInt64 pos;
 
-	if (GetEOF(handle, &pos) == noErr) {
+	if (FSGetForkSize(handle, &pos) == noErr) {
 		return((UINT)pos);
 	}
 	else {
@@ -188,26 +188,20 @@ short file_getdatetime(FILEH handle, DOSDATE *dosdate, DOSTIME *dostime) {
 
 short file_delete(const char *path) {
 
-	FSSpec	fss;
-	Str255	fname;
+	FSRef	fss;
 
-	mkstr255(fname, path);
-	FSMakeFSSpec(0, 0, fname, &fss);
-	FSpDelete(&fss);
+    FSPathMakeRef((const UInt8*)path, &fss, NULL);
+	FSDeleteObject(&fss);
 	return(0);
 }
 
 short file_attr(const char *path) {
 
-	Str255			fname;
-	FSSpec			fss;
 	FSRef			fsr;
 	FSCatalogInfo	fsci;
 	short			ret;
 
-	mkstr255(fname, path);
-	if ((FSMakeFSSpec(0, 0, fname, &fss) != noErr) ||
-		(FSpMakeFSRef(&fss, &fsr) != noErr) ||
+	if ((FSPathMakeRef((const UInt8*)path, &fsr, NULL) != noErr) ||
 		(FSGetCatalogInfo(&fsr, kFSCatInfoNodeFlags, &fsci,
 										NULL, NULL, NULL) != noErr)) {
 		return(-1);
@@ -238,7 +232,7 @@ short file_dircreate(const char *path) {
 	return(-1);
 }
 
-											// „Ç´„É¨„É≥„Éà„Éï„Ç°„Ç§„É´Êìç‰Ωú
+											// ÉJÉåÉìÉgÉtÉ@ÉCÉãëÄçÏ
 void file_setcd(const char *exepath) {
 
 	file_cpyname(curpath, exepath, sizeof(curpath));
@@ -307,14 +301,10 @@ static void char2str(char *dst, int size, const UniChar *uni, int unicnt) {
 void *file_list1st(const char *dir, FLINFO *fli) {
 
 	FLISTH		ret;
-	Str255		fname;
-	FSSpec		fss;
 	FSRef		fsr;
 	FSIterator	fsi;
 
-	mkstr255(fname, dir);
-	if ((FSMakeFSSpec(0, 0, fname, &fss) != noErr) ||
-		(FSpMakeFSRef(&fss, &fsr) != noErr) ||
+	if ((FSPathMakeRef((const UInt8*)dir, &fsr, NULL) != noErr) ||
 		(FSOpenIterator(&fsr, kFSIterateFlat, &fsi) != noErr)) {
 		goto ff1_err1;
 	}
@@ -392,17 +382,13 @@ void file_listclose(FLISTH hdl) {
 
 BOOL getLongFileName(char *dst, const char *path) {
 
-	FSSpec			fss;
-	Str255			fname;
 	FSRef			fref;
 	HFSUniStr255	name;
 
 	if (*path == '\0') {
 		return(false);
 	}
-	mkstr255(fname, path);
-	FSMakeFSSpec(0, 0, fname, &fss);
-	FSpMakeFSRef(&fss, &fref);
+	FSPathMakeRef((const UInt8*)path, &fref, NULL);
 	if (FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, &name, NULL, NULL)
 																!= noErr) {
 		return(false);
