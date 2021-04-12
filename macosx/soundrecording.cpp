@@ -14,7 +14,7 @@
 #include "np2.h"
 #include "resource.h"
 #include "soundrecording.h"
-#include <AudioToolbox/AudioServices.h>
+#include "macalert.h"
 
 #define maxbuffer 4096*64
 static	bool	rec = false;
@@ -44,22 +44,14 @@ static void rawtoAIFF(void) {
         return;
     }
     if (FSRead(logref, &size, buffer) != noErr) {
-#if defined(NP2GCC)
-        AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-        SysBeep(0);
-#endif
+        NP2Beep();
         return;
     }
     
     FSpCreate(&soundlog, 'hook', 'AIFF', smSystemScript);
     fsspec2path(&soundlog, filename, 1024);
     if ((dst = file_create(filename)) == FILEH_INVALID) {
-#if defined(NP2GCC)
-        AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-        SysBeep(0);
-#endif
+        NP2Beep();
         return;
     }
     
@@ -119,11 +111,7 @@ void recOPM(BYTE* work, int len) {
             memcpy(sndbuffer, work + (len - remain), remain);
             sndposition = remain;
             if (err != noErr) {
-#if defined(NP2GCC)
-                AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-                SysBeep(0);
-#endif
+                NP2Beep();
                 menu_setrecording(true);
             }
         }
@@ -167,11 +155,7 @@ int soundRec(bool end) {
                 ret = 1;
             }
             else {            
-#if defined(NP2GCC)
-                AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-                SysBeep(0);
-#endif
+                NP2Beep();
             }
         }
     }

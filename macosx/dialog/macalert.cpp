@@ -24,11 +24,7 @@ static SInt16 showCautionAlert(CFStringRef title, CFStringRef string, CFStringRe
     if (button) param.defaultText = button;
    
     CreateStandardAlert(kAlertCautionAlert, title, string, &param, &ret);
-#if defined(NP2GCC)
-    AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-    SysBeep(0);
-#endif
+    NP2Beep();
     RunStandardAlert(ret, NULL, &hit);
     return(hit);
 }
@@ -43,11 +39,7 @@ void ResumeErrorDialogProc(void) {
     CreateStandardAlert(kAlertStopAlert, CFCopyLocalizedString(CFSTR("Couldn't restart"), "Resume Error Message"), 
                                          CFCopyLocalizedString(CFSTR("An error occured when reading the np2.sav file. Neko Project IIx couldn't restart."), "Resume Error Description"),
                                          &param, &ret);
-#if defined(NP2GCC)
-    AudioServicesPlayAlertSound(kUserPreferredAlert);
-#else
-    SysBeep(0);
-#endif
+    NP2Beep();
     RunStandardAlert(ret, NULL, &hit);
 }
 
@@ -89,4 +81,20 @@ bool QuitWarningDialogProc(void) {
         }
     }
     return(true);
+}
+
+void NP2Beep(void) {
+#if defined(NP2GCC)
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+    AudioServicesPlayAlertSound(kUserPreferredAlert);
+#else
+    if (&AudioServicesPlayAlertSound) {
+        AudioServicesPlayAlertSound(kUserPreferredAlert);
+    } else {
+        SysBeep(0);
+    }
+#endif
+#else
+    SysBeep(0);
+#endif
 }

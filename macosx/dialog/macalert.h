@@ -15,6 +15,7 @@ void ResumeErrorDialogProc(void);
 int ResumeWarningDialogProc(const char *string);
 bool ResetWarningDialogProc(void);
 bool QuitWarningDialogProc(void);
+void NP2Beep(void);
 
 #ifdef __cplusplus
 }
