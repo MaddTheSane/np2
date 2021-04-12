@@ -14,6 +14,7 @@
 #include "np2.h"
 #include "resource.h"
 #include "soundrecording.h"
+#include <AudioToolbox/AudioServices.h>
 
 #define maxbuffer 4096*64
 static	bool	rec = false;
@@ -24,15 +25,16 @@ static	short	logref = -1;
 static  FSSpec	fs;
 
 static void rawtoAIFF(void) {
+    // TODO: Use CoreAudio!
     FILEH	dst;
     char	filename[1024];
     SInt32	size, aiffsize, partsize;
     UInt16	data[5];
     BYTE	*buffer;
-    char	form[] = "FORM";
-    char	aiff[] = "AIFF";
-    char	comm[] = "COMM";
-    char	ssnd[] = "SSND";
+    const char	form[] = "FORM";
+    const char	aiff[] = "AIFF";
+    const char	comm[] = "COMM";
+    const char	ssnd[] = "SSND";
     
     GetEOF(logref, &size);
     if (size <= 0) return;
@@ -42,14 +44,22 @@ static void rawtoAIFF(void) {
         return;
     }
     if (FSRead(logref, &size, buffer) != noErr) {
+#if defined(NP2GCC)
+        AudioServicesPlayAlertSound(kUserPreferredAlert);
+#else
         SysBeep(0);
+#endif
         return;
     }
     
     FSpCreate(&soundlog, 'hook', 'AIFF', smSystemScript);
     fsspec2path(&soundlog, filename, 1024);
     if ((dst = file_create(filename)) == FILEH_INVALID) {
+#if defined(NP2GCC)
+        AudioServicesPlayAlertSound(kUserPreferredAlert);
+#else
         SysBeep(0);
+#endif
         return;
     }
     
@@ -109,7 +119,11 @@ void recOPM(BYTE* work, int len) {
             memcpy(sndbuffer, work + (len - remain), remain);
             sndposition = remain;
             if (err != noErr) {
+#if defined(NP2GCC)
+                AudioServicesPlayAlertSound(kUserPreferredAlert);
+#else
                 SysBeep(0);
+#endif
                 menu_setrecording(true);
             }
         }
@@ -153,7 +167,11 @@ int soundRec(bool end) {
                 ret = 1;
             }
             else {            
+#if defined(NP2GCC)
+                AudioServicesPlayAlertSound(kUserPreferredAlert);
+#else
                 SysBeep(0);
+#endif
             }
         }
     }

@@ -16,7 +16,7 @@
 #include	"pccore.h"
 #include	"iocore.h"
 
-extern void HandleMenuChoice(long wParam);
+extern void HandleMenuChoice(UInt32 wParam);
 
 enum {
 	IDC_TOOLHDDACC			= 0,
@@ -857,7 +857,7 @@ const char	*base;
 	UINT	i;
     char	longname[256];
 
-	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."),"Slect Skin"), kMenuItemAttrIconDisabled, 0, 0);
+	AppendMenuItemTextWithCFString(ret, CFCopyLocalizedString(CFSTR("Select Skin..."), "Slect Skin"), kMenuItemAttrIconDisabled, 0, 0);
 	::AppendMenu(ret, "\p-");
 
 	base = np2tool.skin;
@@ -878,7 +878,9 @@ const char	*base;
 		if (!getLongFileName(longname, p)) {
             strcpy(longname, file_getname(p));
         }
-        AppendMenuItemTextWithCFString(ret, CFStringCreateWithCString(NULL, longname, kCFStringEncodingUTF8), attr, 0, 0);
+        CFStringRef tmpStr = CFStringCreateWithCString(NULL, longname, kCFStringEncodingUTF8);
+        AppendMenuItemTextWithCFString(ret, tmpStr, attr, 0, 0);
+        CFRelease(tmpStr);
 	}
 	for (i=0; i<cnt; i++) {
         if (!file_cmpname(base, np2tool.skinmru[i])) {

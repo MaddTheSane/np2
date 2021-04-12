@@ -645,9 +645,10 @@ static pascal OSStatus joyWinproc(EventHandlerCallRef myHandler, EventRef event,
 }
 
 static void setTitle(OSType type, char* elementName) {
-    Str255 str;
-    mkstr255(str, elementName);
-    SetControlTitle(getControlRefByID(type, 0, soundWin), str);
+    CFStringRef str;
+	str = CFStringCreateWithBytes(NULL, (UInt8*)elementName, strlen(elementName), kCFStringEncodingMacRoman, false);
+	SetControlTitleWithCFString(getControlRefByID(type, 0, soundWin), str);
+	CFRelease(str);
 }
 
 static OSStatus setupJoyConfig (OSType type) {

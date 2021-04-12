@@ -255,7 +255,7 @@ static void changescreen(BYTE mode) {
 	}
 }
 
-void HandleMenuChoice(long wParam) {
+void HandleMenuChoice(UInt32 wParam) {
 
 	UINT	update;
 
@@ -728,6 +728,13 @@ void HandleMenuChoice(long wParam) {
             
         case IDM_NP2HELP:
             {
+#if defined(NP2GCC)
+				CFStringRef urlCFStr = CFSTR("http://retropc.net/tk800/np2x/help/help.html");
+				CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, urlCFStr, NULL);
+
+				LSOpenCFURLRef(url, NULL);
+				CFRelease(url);
+#else
                 ICInstance inst;
                 long start, fin;
                 const char	urlStr[] = "http://retropc.net/tk800/np2x/help/help.html";
@@ -737,6 +744,7 @@ void HandleMenuChoice(long wParam) {
                 fin = strlen(urlStr);
                 ICLaunchURL(inst, "\p", urlStr, strlen(urlStr), &start, &fin);
                 ICStop(inst);
+#endif
             }
             break;
 
@@ -1072,7 +1080,7 @@ int main(int argc, char *argv[]) {
 	return(0);
 }
 
-//以下、ごっそりIIxからマージ
+///以下、ごっそりIIxからマージ
 static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef event, void* userData)
 {
     OSStatus	result = eventNotHandledErr;
@@ -1102,6 +1110,13 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                 HICommand	cmd;
                 GetEventParameter(event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd);
                 if (cmd.commandID == kHICommandAppHelp) {
+#if defined(NP2GCC)
+					CFStringRef urlCFStr = CFSTR("http://retropc.net/tk800/np2x/help/help.html");
+					CFURLRef url = CFURLCreateWithString(kCFAllocatorDefault, urlCFStr, NULL);
+					
+					LSOpenCFURLRef(url, NULL);
+					CFRelease(url);
+#else
                     ICInstance inst;
                     long start, fin;
                     const char	urlStr[] = "http://retropc.net/tk800/np2x/help/help.html";
@@ -1111,6 +1126,7 @@ static pascal OSStatus np2appevent (EventHandlerCallRef myHandlerChain, EventRef
                     fin = strlen(urlStr);
                     ICLaunchURL(inst, "\p", urlStr, strlen(urlStr), &start, &fin);
                     ICStop(inst);
+#endif
                 }
             }
             break;
@@ -1198,7 +1214,7 @@ static pascal OSStatus np2windowevent(EventHandlerCallRef myHandler,  EventRef e
     WindowRef	window;
     UInt32		whatHappened;
     OSStatus	result = eventNotHandledErr;    
-    long		eventClass;
+    OSType		eventClass;
     
     GetEventParameter(event, kEventParamDirectObject, typeWindowRef, NULL,
                          sizeof(window), NULL, &window);

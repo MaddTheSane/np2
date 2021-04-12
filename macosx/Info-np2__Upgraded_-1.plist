@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>Japanese</string>
+	<string>ja</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -208,7 +208,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Neko Project IIx.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.retropc.Neko Project IIx</string>
+	<string>net.retropc.Neko-Project-IIx</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

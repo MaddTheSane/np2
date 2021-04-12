@@ -128,7 +128,7 @@ UINT file_write(FILEH handle, const void *data, UINT length) {
 
 short file_close(FILEH handle) {
 
-	FSClose(handle);
+	FSCloseFork(handle);
 	return(0);
 }
 
