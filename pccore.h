@@ -35,7 +35,7 @@ enum {
 
 
 typedef struct {
-	// �G�~�����[�g���ɂ悭�Q�Ƃ����z
+	// エミュレート中によく参照される奴
 	UINT8	uPD72020;
 	UINT8	DISPSYNC;
 	UINT8	RASTER;
@@ -56,7 +56,7 @@ typedef struct {
 	UINT8	usefd144;
 	UINT8	wait[6];
 
-	// ���Z�b�g���Ƃ�����܂�Q�Ƃ���Ȃ��z
+	// リセット時とかあんまり参照されない奴
 	OEMCHAR	model[8];
 	UINT	baseclock;
 	UINT	multiple;
@@ -121,7 +121,7 @@ typedef struct {
 	UINT8	model;
 	UINT8	hddif;
 	UINT8	extmem;
-	UINT8	dipsw[3];		// ���Z�b�g����DIPSW
+	UINT8	dipsw[3];		// リセット時のDIPSW
 	UINT8	rom;
 
 	UINT32	sound;

@@ -67,33 +67,33 @@ extern "C" {
 
 extern	_NEVENT		nevent;
 
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void nevent_allreset(void);
 
-// Å’ZƒCƒxƒ“ƒg‚ÌƒZƒbƒg
+// æœ€çŸ­ã‚¤ãƒ™ãƒ³ãƒˆã®ã‚»ãƒƒãƒˆ
 void nevent_get1stevent(void);
 
-// ŠÔ‚ği‚ß‚é
+// æ™‚é–“ã‚’é€²ã‚ã‚‹
 void nevent_progress(void);
 
-// ƒCƒxƒ“ƒg‚ÌÀs
+// ã‚¤ãƒ™ãƒ³ãƒˆã®å®Ÿè¡Œ
 void nevent_execule(void);
 
-// ƒCƒxƒ“ƒg‚Ì’Ç‰Á
+// ã‚¤ãƒ™ãƒ³ãƒˆã®è¿½åŠ 
 void nevent_set(UINT id, SINT32 eventclock, NEVENTCB proc, BOOL absolute);
 void nevent_setbyms(UINT id, SINT32 ms, NEVENTCB proc, BOOL absolute);
 
-// ƒCƒxƒ“ƒg‚Ìíœ
+// ã‚¤ãƒ™ãƒ³ãƒˆã®å‰Šé™¤
 void nevent_reset(UINT id);
 void nevent_waitreset(UINT id);
 
-// ƒCƒxƒ“ƒg‚Ì“®ìó‘Ôæ“¾
+// ã‚¤ãƒ™ãƒ³ãƒˆã®å‹•ä½œçŠ¶æ…‹å–å¾—
 BOOL nevent_iswork(UINT id);
 
-// ƒCƒxƒ“ƒgÀs‚Ü‚Å‚ÌƒNƒƒbƒN”‚Ìæ“¾
+// ã‚¤ãƒ™ãƒ³ãƒˆå®Ÿè¡Œã¾ã§ã®ã‚¯ãƒ­ãƒƒã‚¯æ•°ã®å–å¾—
 SINT32 nevent_getremain(UINT id);
 
-// NEVENT‚Ì‹­§’Eo
+// NEVENTã®å¼·åˆ¶è„±å‡º
 void nevent_forceexit(void);
 
 #ifdef __cplusplus

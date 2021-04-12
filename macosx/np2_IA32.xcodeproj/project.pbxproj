@@ -726,7 +726,7 @@
 		9645C2D305BFA3B90090B4FD /* getsmix.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getsmix.c; sourceTree = "<group>"; };
 		9645C2D405BFA3B90090B4FD /* getsnd.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getsnd.c; sourceTree = "<group>"; };
 		9645C2D805BFA3B90090B4FD /* getwave.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = getwave.c; sourceTree = "<group>"; };
-		965751AE05E66EE8002889CD /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = keystat.c; sourceTree = "<group>"; };
+		965751AE05E66EE8002889CD /* keystat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keystat.c; sourceTree = "<group>"; };
 		965751CD05E66FBF002889CD /* np2info.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = np2info.c; sourceTree = "<group>"; };
 		9668EEFB069F4E1A00E35005 /* gcircle.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = gcircle.c; sourceTree = "<group>"; };
 		9668F291069FB00C00E35005 /* macclnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = macclnd.cpp; sourceTree = "<group>"; };
@@ -869,12 +869,12 @@
 		967C92B5055778CC00000103 /* scrndraw.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = scrndraw.c; sourceTree = "<group>"; };
 		967C92B7055778CC00000103 /* sdraw.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = sdraw.c; sourceTree = "<group>"; };
 		967C92BA055778CC00000103 /* vram.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = vram.c; sourceTree = "<group>"; };
-		967C93FE05577A1F00000103 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = calendar.c; sourceTree = "<group>"; };
-		967C93FF05577A1F00000103 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = debugsub.c; sourceTree = "<group>"; };
-		967C940005577A1F00000103 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = nevent.c; sourceTree = "<group>"; };
-		967C940105577A1F00000103 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = pccore.c; sourceTree = "<group>"; };
-		967C940205577A1F00000103 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = statsave.c; sourceTree = "<group>"; };
-		967C940305577A1F00000103 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
+		967C93FE05577A1F00000103 /* calendar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = calendar.c; sourceTree = "<group>"; };
+		967C93FF05577A1F00000103 /* debugsub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debugsub.c; sourceTree = "<group>"; };
+		967C940005577A1F00000103 /* nevent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nevent.c; sourceTree = "<group>"; };
+		967C940105577A1F00000103 /* pccore.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pccore.c; sourceTree = "<group>"; };
+		967C940205577A1F00000103 /* statsave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = statsave.c; sourceTree = "<group>"; };
+		967C940305577A1F00000103 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
 		968D8BC305F5229D00CFB890 /* cmmidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmmidi.cpp; sourceTree = "<group>"; };
 		968D8C7105F5274200CFB890 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		968D8D8C05F532C900CFB890 /* macalert.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = macalert.cpp; sourceTree = "<group>"; };

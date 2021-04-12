@@ -335,7 +335,7 @@ void statflag_seterr(STFLAGH sfh, const OEMCHAR *str) {
 
 // ---- function
 
-// ŠÖ”ƒ|ƒCƒ“ƒ^‚ğ int‚É•ÏXB
+// é–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã‚’ intã«å¤‰æ›´ã€‚
 static BRESULT proc2num(void *func, const PROCTBL *tbl, int size) {
 
 	int		i;
@@ -976,7 +976,7 @@ static int flagload_fm(STFLAGH sfh, const SFENTRY *t) {
 		ret |= statflag_read(sfh, &cs4231, sizeof(cs4231));
 	}
 
-	// •œŒ³B ‚±‚êˆÚ“®‚·‚é‚±‚ÆI
+	// å¾©å…ƒã€‚ ã“ã‚Œç§»å‹•ã™ã‚‹ã“ã¨ï¼
 	adpcm_update(&adpcm);
 	pcm86gen_update();
 	if (saveflg & FLAG_PCM86) {
@@ -1456,7 +1456,7 @@ const SFENTRY	*tblterm;
 	sound_reset();
 	fddmtrsnd_bind();
 
-	iocore_reset(&np2cfg);							// ƒTƒEƒ“ƒh‚Åpic‚ğŒÄ‚Ô‚Ì‚Åc
+	iocore_reset(&np2cfg);							// ã‚µã‚¦ãƒ³ãƒ‰ã§picã‚’å‘¼ã¶ã®ã§â€¦
 	cbuscore_reset(&np2cfg);
 	fmboard_reset(&np2cfg, pccore.sound);
 
@@ -1550,7 +1550,7 @@ const SFENTRY	*tblterm;
 	}
 	statflag_close(sffh);
 
-	// I/Oì‚è’¼‚µ
+	// I/Oä½œã‚Šç›´ã—
 	MEMM_ARCH((pccore.model & PCMODEL_EPSON)?1:0);
 	iocore_build();
 	iocore_bind();
