@@ -833,7 +833,7 @@
 		967C926B055778CC00000103 /* taskmng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = taskmng.cpp; sourceTree = "<group>"; };
 		967C926D055778CC00000103 /* timemng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timemng.cpp; sourceTree = "<group>"; };
 		967C926F055778CC00000103 /* toolwin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = toolwin.cpp; sourceTree = "<group>"; };
-		967C9272055778CC00000103 /* trace.cpp */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.cpp.cpp; path = trace.cpp; sourceTree = "<group>"; };
+		967C9272055778CC00000103 /* trace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trace.cpp; sourceTree = "<group>"; };
 		967C9277055778CC00000103 /* adpcmc.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = adpcmc.c; sourceTree = "<group>"; };
 		967C9278055778CC00000103 /* adpcmg.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = adpcmg.c; sourceTree = "<group>"; };
 		967C927A055778CC00000103 /* beepc.c */ = {isa = PBXFileReference; fileEncoding = 2147483649; lastKnownFileType = sourcecode.c.c; path = beepc.c; sourceTree = "<group>"; };

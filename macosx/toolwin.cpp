@@ -207,7 +207,7 @@ const char		*p;
 #if 0
 	GetControlBounds(hwnd, &rc);
 	width = rc.right - rc.left - 6;			// border size?
-	basedir[0] = '¥0';
+	basedir[0] = '\0';
 	if (sel < fdd->cnt) {
 		milstr_ncpy(basedir, fdd->name[fdd->pos[sel]], sizeof(basedir));
 		file_cutname(basedir);
@@ -242,6 +242,8 @@ const char		*p;
             q = file_getname((char *)p);
 #endif
             mkstr255(pname, q);
+            //CFStringRef tmpStr ;
+            //AppendMenuItemTextWithCFString(menu, tmpStr, <#MenuItemAttributes inAttributes#>, <#MenuCommand inCommandID#>, <#MenuItemIndex * outNewItem#>)
             AppendMenu(menu, pname);
             if (file_attr(p)==FILEATTR_ARCHIVE) {
                 EnableMenuItem(menu, i+1);
