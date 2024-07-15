@@ -918,9 +918,10 @@ static UINT8 sound_silence;
 static BRESULT
 sdlaudio_init(UINT rate, UINT samples)
 {
-	static SDL_AudioSpec fmt;
+	SDL_AudioSpec fmt;
 	int rv;
 
+	memset(&fmt, 0, sizeof(fmt));
 	fmt.freq = rate;
 	fmt.format = AUDIO_S16SYS;
 	fmt.channels = 2;
@@ -935,7 +936,11 @@ sdlaudio_init(UINT rate, UINT samples)
 		return FAILURE;
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	audio_fd = SDL_OpenAudioDevice(NULL, 0, &fmt, NULL, 0);
+#else
 	audio_fd = SDL_OpenAudio(&fmt, NULL);
+#endif
 	if (audio_fd < 0) {
 		g_printerr("sdlaudio_init: SDL_OpenAudio(): %s\n",
 		    SDL_GetError());
@@ -953,8 +958,13 @@ static BRESULT
 sdlaudio_term(void)
 {
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_PauseAudioDevice(audio_fd, 1);
+	SDL_CloseAudioDevice(audio_fd);
+#else
 	SDL_PauseAudio(1);
 	SDL_CloseAudio();
+#endif
 
 	return SUCCESS;
 }
@@ -963,28 +973,44 @@ static void
 sdlaudio_lock(void)
 {
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_LockAudioDevice(audio_fd);
+#else
 	SDL_LockAudio();
+#endif
 }
 
 static void
 sdlaudio_unlock(void)
 {
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_UnlockAudioDevice(audio_fd);
+#else
 	SDL_UnlockAudio();
+#endif
 }
 
 static void
 sdlaudio_play(void)
 {
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_PauseAudioDevice(audio_fd, 0);
+#else
 	SDL_PauseAudio(0);
+#endif
 }
 
 static void
 sdlaudio_stop(void)
 {
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_PauseAudioDevice(audio_fd, 1);
+#else
 	SDL_PauseAudio(1);
+#endif
 }
 
 static BRESULT
@@ -1028,7 +1054,15 @@ sdlmixer_init(UINT rate, UINT samples)
 		goto failure;
 	}
 
+#if defined(SDL_MIXER_VERSION_ATLEAST)
+#if SDL_MIXER_VERSION_ATLEAST(2, 0, 2)
+	rv = Mix_OpenAudioDevice(rate, AUDIO_S16SYS, 2, samples, NULL, 1);
+#else
 	rv = Mix_OpenAudio(rate, AUDIO_S16SYS, 2, samples);
+#endif
+#else
+	rv = Mix_OpenAudio(rate, AUDIO_S16SYS, 2, samples);
+#endif
 	if (rv < 0) {
 		g_printerr("sdlmixer_init: Mix_OpenAudio(): %s\n",
 		    Mix_GetError());
@@ -1179,9 +1213,15 @@ sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 		SNDBUF_FILLED_QUEUE_REMOVE_HEAD();
 		sndbuf_unlock();
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_MixAudioFormat(stream,
+		    sndbuf->buf + (sndbuf->size - sndbuf->remain),
+		    AUDIO_S16SYS, sndbuf->remain, SDL_MIX_MAXVOLUME);
+#else
 		SDL_MixAudio(stream,
 		    sndbuf->buf + (sndbuf->size - sndbuf->remain),
 		    sndbuf->remain, SDL_MIX_MAXVOLUME);
+#endif
 		stream += sndbuf->remain;
 		len -= sndbuf->remain;
 		sndbuf->remain = 0;
@@ -1198,8 +1238,14 @@ sdlaudio_callback(void *userdata, unsigned char *stream, int len)
 		sndbuf_unlock();
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_MixAudioFormat(stream,
+	    sndbuf->buf + (sndbuf->size - sndbuf->remain), AUDIO_S16SYS,
+	    len, SDL_MIX_MAXVOLUME);
+#else
 	SDL_MixAudio(stream, sndbuf->buf + (sndbuf->size - sndbuf->remain),
 	    len, SDL_MIX_MAXVOLUME);
+#endif
 	sndbuf->remain -= len;
 
 	if (sndbuf->remain == 0) {

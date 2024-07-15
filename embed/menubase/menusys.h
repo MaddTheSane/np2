@@ -1,3 +1,11 @@
+/**
+ * @file	menusys.h
+ * @brief	Interface of the menu of the system
+ */
+
+#pragma once
+
+#include "menubase.h"
 
 enum {
 	MENUSYS_MAX			= 8
