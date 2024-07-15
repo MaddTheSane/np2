@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -743,11 +743,11 @@
 		55F74D6C208D6EDF00643F36 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace.h; sourceTree = "<group>"; };
 		55F74D6D208D6EDF00643F36 /* trace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trace.c; sourceTree = "<group>"; };
 		55F74D6F208D6F2900643F36 /* oemtext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oemtext.h; sourceTree = "<group>"; };
-		55F74D72208D791500643F36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		55F74D74208D791A00643F36 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		55F74D72208D791500643F36 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		55F74D74208D791A00643F36 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		55F74D76208D798D00643F36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		55F74D7B208D7AC200643F36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		55F74D7D208D7AD100643F36 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		55F74D7B208D7AC200643F36 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		55F74D7D208D7AD100643F36 /* ja */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1561,8 +1561,8 @@
 				};
 			};
 			buildConfigurationList = 558516BE1D1DDD7200FDAD85 /* Build configuration list for PBXProject "Neko Project 2" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -2000,7 +2000,13 @@
 					.,
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Neko Project 2";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.86;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.ne.yui.np2mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2031,7 +2037,13 @@
 					.,
 				);
 				INFOPLIST_FILE = Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Neko Project 2";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.86;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.ne.yui.np2mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
