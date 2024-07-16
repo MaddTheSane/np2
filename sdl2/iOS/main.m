@@ -15,7 +15,7 @@ int SDL_main(int argc, char *argv[])
 	DocumentsDirPath = [paths objectAtIndex:0];
 
 	NSString *current = [DocumentsDirPath stringByAppendingString:@"/"];
-	file_setcd([current UTF8String]);
+	file_setcd([current fileSystemRepresentation]);
 
 	return np2_main(argc, argv);
 }

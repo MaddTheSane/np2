@@ -12,6 +12,12 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD14FF0DC6FC520079059D /* OpenGLES.framework */; };
 		28FD15080DC6FC5B0079059D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FD15070DC6FC5B0079059D /* QuartzCore.framework */; };
+		55C253802C45F2A400543901 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C2537F2C45F2A400543901 /* GameController.framework */; };
+		55C253822C45F2A900543901 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C253812C45F2A900543901 /* CoreHaptics.framework */; };
+		55C253842C45F2BC00543901 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C253832C45F2BC00543901 /* Metal.framework */; };
+		55C253862C45F2D100543901 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C253852C45F2D000543901 /* CoreMotion.framework */; };
+		55C253882C45F2DC00543901 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C253872C45F2DC00543901 /* AVFoundation.framework */; };
+		55C2538A2C45F31600543901 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 55C253892C45F31600543901 /* default.metallib */; };
 		BA0A37ED193EA29400009566 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EB193EA29400009566 /* Default-Landscape.png */; };
 		BA0A37EE193EA29400009566 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = BA0A37EC193EA29400009566 /* Icon-72.png */; };
 		BA2CAE5B1C2E7F2900288316 /* oplgenc.c in Sources */ = {isa = PBXBuildFile; fileRef = BA2CAE581C2E7F2900288316 /* oplgenc.c */; };
@@ -242,16 +248,13 @@
 /* Begin PBXFileReference section */
 		0097E29A12F70C4D00724AC5 /* begin_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = begin_code.h; sourceTree = "<group>"; };
 		0097E29B12F70C4D00724AC5 /* close_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = close_code.h; sourceTree = "<group>"; };
-		0097E29C12F70C4D00724AC5 /* doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxyfile; sourceTree = "<group>"; };
 		0097E29D12F70C4D00724AC5 /* SDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL.h; sourceTree = "<group>"; };
 		0097E29E12F70C4D00724AC5 /* SDL_assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_assert.h; sourceTree = "<group>"; };
 		0097E29F12F70C4D00724AC5 /* SDL_atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_atomic.h; sourceTree = "<group>"; };
 		0097E2A012F70C4D00724AC5 /* SDL_audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_audio.h; sourceTree = "<group>"; };
 		0097E2A112F70C4D00724AC5 /* SDL_blendmode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_blendmode.h; sourceTree = "<group>"; };
 		0097E2A212F70C4D00724AC5 /* SDL_clipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_clipboard.h; sourceTree = "<group>"; };
-		0097E2A312F70C4D00724AC5 /* SDL_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_compat.h; sourceTree = "<group>"; };
 		0097E2A412F70C4D00724AC5 /* SDL_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config.h; sourceTree = "<group>"; };
-		0097E2A512F70C4D00724AC5 /* SDL_config.h.default */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SDL_config.h.default; sourceTree = "<group>"; };
 		0097E2A612F70C4D00724AC5 /* SDL_config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SDL_config.h.in; sourceTree = "<group>"; };
 		0097E2A712F70C4D00724AC5 /* SDL_config_android.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_android.h; sourceTree = "<group>"; };
 		0097E2A812F70C4D00724AC5 /* SDL_config_iphoneos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_iphoneos.h; sourceTree = "<group>"; };
@@ -259,7 +262,6 @@
 		0097E2AA12F70C4D00724AC5 /* SDL_config_minimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_minimal.h; sourceTree = "<group>"; };
 		0097E2AC12F70C4D00724AC5 /* SDL_config_pandora.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_pandora.h; sourceTree = "<group>"; };
 		0097E2AD12F70C4D00724AC5 /* SDL_config_windows.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_windows.h; sourceTree = "<group>"; };
-		0097E2AE12F70C4D00724AC5 /* SDL_config_wiz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_config_wiz.h; sourceTree = "<group>"; };
 		0097E2AF12F70C4D00724AC5 /* SDL_copying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_copying.h; sourceTree = "<group>"; };
 		0097E2B012F70C4D00724AC5 /* SDL_cpuinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_cpuinfo.h; sourceTree = "<group>"; };
 		0097E2B112F70C4D00724AC5 /* SDL_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_endian.h; sourceTree = "<group>"; };
@@ -303,6 +305,12 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28FD14FF0DC6FC520079059D /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		28FD15070DC6FC5B0079059D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		55C2537F2C45F2A400543901 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		55C253812C45F2A900543901 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
+		55C253832C45F2BC00543901 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		55C253852C45F2D000543901 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		55C253872C45F2DC00543901 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		55C253892C45F31600543901 /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = default.metallib; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA0A37EB193EA29400009566 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		BA0A37EC193EA29400009566 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
@@ -720,6 +728,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55C253882C45F2DC00543901 /* AVFoundation.framework in Frameworks */,
+				55C253862C45F2D100543901 /* CoreMotion.framework in Frameworks */,
+				55C253842C45F2BC00543901 /* Metal.framework in Frameworks */,
+				55C253822C45F2A900543901 /* CoreHaptics.framework in Frameworks */,
+				55C253802C45F2A400543901 /* GameController.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				28FD15000DC6FC520079059D /* OpenGLES.framework in Frameworks */,
@@ -748,16 +761,13 @@
 			children = (
 				0097E29A12F70C4D00724AC5 /* begin_code.h */,
 				0097E29B12F70C4D00724AC5 /* close_code.h */,
-				0097E29C12F70C4D00724AC5 /* doxyfile */,
 				0097E29D12F70C4D00724AC5 /* SDL.h */,
 				0097E29E12F70C4D00724AC5 /* SDL_assert.h */,
 				0097E29F12F70C4D00724AC5 /* SDL_atomic.h */,
 				0097E2A012F70C4D00724AC5 /* SDL_audio.h */,
 				0097E2A112F70C4D00724AC5 /* SDL_blendmode.h */,
 				0097E2A212F70C4D00724AC5 /* SDL_clipboard.h */,
-				0097E2A312F70C4D00724AC5 /* SDL_compat.h */,
 				0097E2A412F70C4D00724AC5 /* SDL_config.h */,
-				0097E2A512F70C4D00724AC5 /* SDL_config.h.default */,
 				0097E2A612F70C4D00724AC5 /* SDL_config.h.in */,
 				0097E2A712F70C4D00724AC5 /* SDL_config_android.h */,
 				0097E2A812F70C4D00724AC5 /* SDL_config_iphoneos.h */,
@@ -765,7 +775,6 @@
 				0097E2AA12F70C4D00724AC5 /* SDL_config_minimal.h */,
 				0097E2AC12F70C4D00724AC5 /* SDL_config_pandora.h */,
 				0097E2AD12F70C4D00724AC5 /* SDL_config_windows.h */,
-				0097E2AE12F70C4D00724AC5 /* SDL_config_wiz.h */,
 				0097E2AF12F70C4D00724AC5 /* SDL_copying.h */,
 				0097E2B012F70C4D00724AC5 /* SDL_cpuinfo.h */,
 				0097E2B112F70C4D00724AC5 /* SDL_endian.h */,
@@ -810,6 +819,7 @@
 		0097E2D412F70C4D00724AC5 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				55C253892C45F31600543901 /* default.metallib */,
 				0097E2D512F70C4D00724AC5 /* libSDL2.a */,
 			);
 			path = lib;
@@ -862,6 +872,11 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				55C253872C45F2DC00543901 /* AVFoundation.framework */,
+				55C253852C45F2D000543901 /* CoreMotion.framework */,
+				55C253832C45F2BC00543901 /* Metal.framework */,
+				55C253812C45F2A900543901 /* CoreHaptics.framework */,
+				55C2537F2C45F2A400543901 /* GameController.framework */,
 				FDB8BFC50E5A0F6A00980157 /* CoreGraphics.framework */,
 				FD77A0840E26BDB800F39101 /* AudioToolbox.framework */,
 				FD779EDD0E26BA1200F39101 /* CoreAudio.framework */,
@@ -1486,6 +1501,7 @@
 				FD77A07D0E26BD8C00F39101 /* Icon.png in Resources */,
 				BA0A37EE193EA29400009566 /* Icon-72.png in Resources */,
 				FD77A07F0E26BDA900F39101 /* Default.png in Resources */,
+				55C2538A2C45F31600543901 /* default.metallib in Resources */,
 				BA52395F1BC3E4FC00E7C617 /* Default-568h@2x.png in Resources */,
 				BA0A37ED193EA29400009566 /* Default-Landscape.png in Resources */,
 			);
@@ -1732,7 +1748,6 @@
 				GCC_PREFIX_HEADER = ./compiler.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					.,
 					..,
 					../..,
@@ -1746,11 +1761,12 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/SDL2/lib\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = np2sdl2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1765,7 +1781,6 @@
 				GCC_PREFIX_HEADER = ./compiler.pch;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					.,
 					..,
 					../..,
@@ -1779,11 +1794,12 @@
 					../../vram,
 				);
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/SDL2/lib\"",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = np2sdl2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
